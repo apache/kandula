@@ -58,6 +58,6 @@
     </preGoal>
     
     <goal name="build-samples">
-    	<ant:ant antfile="build.xml" inheritall="false" inheritrefs="false" dir="src/samples/"/>
+    	<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/"/>
     </goal>
 </project>

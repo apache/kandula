@@ -155,7 +155,7 @@
         <dependency>
             <groupId>axis</groupId>
             <artifactId>axis-ant</artifactId>
-            <version>SNAPSHOT</version>
+            <version>1.2-RC2</version>
             <properties>
                 <module>true</module>
             </properties>
