@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project>
+
+  <!-- the version of maven's project object model -->
+  <pomVersion>3</pomVersion>
+  
+  <!-- a unique name for this project -->
+  <id>kandula</id>
+  
+  <!-- a short but descriptive name for the project -->
+  <name>Apache Kandula</name>
+  
+  <!-- The version of the project under development, e.g. 1.1, 1.2, 2.0-SNAPSHOT -->
+  <currentVersion>0.1-SNAPSHOT</currentVersion>
+  
+  <!-- details about the organization that 'owns' the project -->
+  <organization>
+    <name>Apache Web Services</name>
+    <url>http://ws.apache.org/</url>
+    <logo>http://ws.apache.org/images/project-logo.jpg</logo>
+  </organization>
+  
+  <!-- the year the project started -->
+  <inceptionYear>2004</inceptionYear>
+  <package>org.apache.ws.transaction</package>
+  <logo/>
+  <description/>
+  <!-- a short description of what the project does -->
+  <shortDescription>Kandula will provide an open-source implementation of WS-Coordination, 
+  	WS-AtomicTransaction and WS-BusinessActivity based on Axis. The initial implementation will be in 
+  	Java using Axis/Java. In addition to providing an implementation, a major focus of this project 
+  	would be to ensure interoperability with other implementations of above specifications, 
+  	particularly those by Microsoft (.NET) and IBM.</shortDescription>
+
+  <!-- the project home page -->
+  <url></url>
+  <issueTrackingUrl>http://nagoya.apache.org/jira/browse/WSFX</issueTrackingUrl>
+  <siteAddress>ws.apache.org</siteAddress>
+  <siteDirectory>/ws-fx/kandula/</siteDirectory>
+  <distributionDirectory>/www/ws.apache.org/builds/</distributionDirectory>
+
+  <!-- the version control repository and http url for online access
+       the connection element has the form:
+       scm:<system>:<system specific connection string> -->
+  <repository>
+    <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic:ws-fx/kandula/</connection>
+    <url>http://cvs.apache.org/viewcvs.cgi/ws-fx/kandula/</url>
+  </repository>
+
+  <!-- any mailing lists for the project -->
+    <mailingLists>
+        <mailingList>
+            <name>WS-FX Developer List</name>
+            <subscribe>fx-dev-subscribe@ws.apache.org</subscribe>
+            <unsubscribe>fx-dev-unsubscribe@ws.apache.org</unsubscribe>
+            <archive>http://nagoya.apache.org/eyebrowse/SummarizeList?listId=221</archive>
+        </mailingList>
+    </mailingLists>
+  
+  <!-- who the developers are for the project -->
+  <developers>
+        <developer>
+            <name>Dasarath Weeratunge</name>
+            <id>dasarath</id>
+            <email>dasarath@opensource.lk</email>
+            <organization>Lanka Software Foundation (LSF), Sri Lanka.</organization>
+        </developer>      
+        <developer>
+            <name>Sanjiva Weerawarana</name>
+            <id>sanjiva</id>
+            <email>sanjiva@opensource.lk</email>
+            <organization>Lanka Software Foundation (LSF), Sri Lanka.</organization>
+        </developer>
+  </developers>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+  
+  <!-- build information for the project -->
+  <build>
+    <nagEmailAddress>fx-dev@ws.apache.org</nagEmailAddress>
+    <sourceDirectory>src/java</sourceDirectory>
+
+    <resources>
+      <resource>
+        <directory>src/conf</directory>
+        <includes>
+          <include>*.conf</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
+
+    <!-- ============ -->
+    <!-- Dependencies -->
+    <!-- ============ -->
+
+    <dependencies>
+    
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>3.8.1</version>
+          <url>http://ws.apache.org/axis/</url>
+          <properties>
+            <module>true</module>
+          </properties>
+        </dependency>
+
+        <dependency>
+          <groupId>axis</groupId>
+          <artifactId>axis</artifactId>
+          <version>1.2-RC2</version>
+          <url>http://ws.apache.org/axis/</url>
+          <properties>
+            <module>true</module>
+          </properties>
+        </dependency>
+    
+        <dependency>
+          <groupId>axis</groupId>
+          <artifactId>axis-jaxrpc</artifactId>
+          <version>1.2-RC2</version>
+          <url>http://ws.apache.org/axis/</url>
+          <properties>
+            <module>true</module>
+          </properties>
+        </dependency>
+    
+        <dependency>
+          <groupId>axis</groupId>
+          <artifactId>axis-saaj</artifactId>
+          <version>1.2-RC2</version>
+          <url>http://ws.apache.org/axis/</url>
+          <properties>
+            <module>true</module>
+          </properties>
+        </dependency>
+    
+        <dependency>
+          <groupId>wsdl4j</groupId>
+          <artifactId>wsdl4j</artifactId>
+          <version>1.5-SNAPSHOT</version>
+          <url>http://www-124.ibm.com/developerworks/projects/wsdl4j/</url>
+          <properties>
+            <module>true</module>
+          </properties>
+        </dependency>
+
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>axis-ant</artifactId>
+            <version>SNAPSHOT</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>commons-discovery</artifactId>
+            <version>SNAPSHOT</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+
+        <dependency>
+            <groupId>axis</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>SNAPSHOT</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+        
+        <dependency>
+            <groupId>addressing</groupId>
+            <artifactId>addressing</artifactId>
+            <version>SNAPSHOT</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+
+	 <dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-j2ee</artifactId>
+            <version>1.4-rc3</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+    </dependencies>
+
+    <!-- ======= -->
+    <!-- Reports -->
+    <!-- ======= -->
+
+    <reports>
+        <report>maven-license-plugin</report>
+        <report>maven-checkstyle-plugin</report>
+        <report>maven-pmd-plugin</report>
+        <!-- <report>maven-simian-plugin</report> -->
+        <report>maven-jdepend-plugin</report>
+        <report>maven-changelog-plugin</report>
+        <!-- <report>maven-statcvs-plugin</report> -->
+        <report>maven-file-activity-plugin</report>
+        <report>maven-developer-activity-plugin</report>
+        <report>maven-jxr-plugin</report>
+        <report>maven-javadoc-plugin</report>
+        <report>maven-junit-report-plugin</report>
+        <report>maven-clover-plugin</report>
+    </reports>
+</project>
+
