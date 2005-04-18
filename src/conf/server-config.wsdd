@@ -1,0 +1,738 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment name="defaultClientConfig"
+            xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
+            xmlns:handler="http://xml.apache.org/axis/wsdd/providers/handler">
+
+ <globalConfiguration>
+   <parameter name="sendMultiRefs" value="false"/>
+   <parameter name="disablePrettyXML" value="true"/>
+   <requestFlow>
+     <handler type="java:org.apache.axis.handlers.JWSHandler">
+        <parameter name="scope" value="session"/>
+     </handler>
+     <handler type="java:org.apache.axis.handlers.JWSHandler">
+        <parameter name="scope" value="request"/>
+        <parameter name="extension" value=".jwr"/>
+     </handler>
+     <!-- uncomment this if you want the SOAP monitor -->
+     <!--
+     <handler type="java:org.apache.axis.handlers.SOAPMonitorHandler"/>
+     -->
+     
+
+     <handler type="java:org.apache.axis.message.addressing.handler.AddressingHandler">
+     	<parameter name="referencePropertyNames" 
+     		value="{http://www.cse.mrt.ac.lk/~dasaru/final-project/wsatimpl}xid,
+     		{http://schemas.xmlsoap.org/ws/2002/07/utility}Identifier"/>
+     </handler>
+
+     
+     <handler type="java:org.apache.ws.transaction.participant.j2ee.handler.TransactionHandler" />
+
+   </requestFlow>
+   <!-- uncomment this if you want the SOAP monitor -->
+
+   <responseFlow>
+     <handler type="java:org.apache.axis.handlers.SOAPMonitorHandler"/>
+    
+     <handler type="java:org.apache.axis.message.addressing.handler.AddressingHandler">
+     	<parameter name="referencePropertyNames" 
+     		value="{http://www.cse.mrt.ac.lk/~dasaru/final-project/wsatimpl}xid,
+     		{http://schemas.xmlsoap.org/ws/2002/07/utility}Identifier"/>
+     </handler>
+     
+     <handler type="java:org.apache.ws.transaction.participant.j2ee.handler.TransactionHandler" />
+
+   </responseFlow>
+
+ </globalConfiguration>
+
+ <handler type="java:org.apache.axis.handlers.http.URLMapper" name="URLMapper"/>
+ <handler type="java:org.apache.axis.transport.local.LocalResponder" name="LocalResponder"/>
+ <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler" name="Authenticate"/>
+
+ <service name="AdminService" provider="java:MSG">
+  <namespace>http://xml.apache.org/axis/wsdd/</namespace>
+  <parameter name="allowedMethods" value="AdminService"/>
+  <parameter name="enableRemoteAdmin" value="false"/>
+  <parameter name="className" value="org.apache.axis.utils.Admin"/>
+ </service>
+
+ <service name="Version" provider="java:RPC">
+  <parameter name="allowedMethods" value="getVersion"/>
+  <parameter name="className" value="org.apache.axis.Version"/>
+ </service>
+
+ <transport name="http">
+  <parameter name="qs:list" 
+               value="org.apache.axis.transport.http.QSListHandler"/>
+  <parameter name="qs:method" 
+               value="org.apache.axis.transport.http.QSMethodHandler"/>
+  <parameter name="qs:wsdl" 
+               value="org.apache.axis.transport.http.QSWSDLHandler"/>
+  <requestFlow>
+   <handler type="URLMapper"/>
+   <handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/>
+  </requestFlow>
+ </transport>
+
+ <transport name="local">
+  <responseFlow>
+   <handler type="LocalResponder"/>
+  </responseFlow>
+ </transport>
+
+<typeMapping
+	xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+      deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" 
+      encodingStyle="" 
+      qname="wsa:EndpointReference" 
+      serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+      type="java:org.apache.axis.message.addressing.EndpointReferenceType"/>
+
+ <typeMapping
+	xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing" 
+      deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory" 
+      encodingStyle="" 
+      qname="wsa:ReferencePropertiesType" 
+      serializer="org.apache.axis.encoding.ser.BeanSerializerFactory" 
+      type="java:org.apache.axis.message.addressing.ReferencePropertiesType"/>
+
+ <typeMapping 
+	xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+      deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory" 
+      encodingStyle="" 
+      qname="wsa:Address" 
+      serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory" 
+      type="java:org.apache.axis.message.addressing.Address"/>
+
+ <typeMapping 
+	xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+      deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory" 
+      encodingStyle="" 
+      qname="wsa:PortType" 
+      serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory" 
+      type="java:org.apache.axis.message.addressing.PortType" />
+
+ <typeMapping 
+	xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+      deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory" 
+      encodingStyle="" 
+      qname="wsa:ServiceNameType" 
+      serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory" 
+      type="java:org.apache.axis.message.addressing.ServiceNameType" />
+      
+      
+      
+
+  <service name="CompletionRPC" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://schemas.xmlsoap.org/ws/2003/09/wsat"/>
+      <parameter name="wsdlServiceElement" value="xxx"/>
+      <parameter name="wsdlServicePort" value="CompletionRPC"/>
+      <parameter name="className" value="org.apache.ws.transaction.wsat.CompletionRPCEndpoint"/>
+      <parameter name="wsdlPortType" value="CompletionPortTypeRPC"/>
+      <operation name="commitOperation" qname="CommitOperation" returnQName="retNS:Committed" xmlns:retNS="http://schemas.xmlsoap.org/ws/2003/09/wsat" returnType="rtns:Notification" xmlns:rtns="http://schemas.xmlsoap.org/ws/2003/09/wsat" soapAction="http://xxx" >
+        <parameter qname="pns:Commit" xmlns:pns="http://schemas.xmlsoap.org/ws/2003/09/wsat" type="tns:Notification" xmlns:tns="http://schemas.xmlsoap.org/ws/2003/09/wsat"/>
+      </operation>
+      <operation name="rollbackOperation" qname="RollbackOperation" returnQName="retNS:Aborted" xmlns:retNS="http://schemas.xmlsoap.org/ws/2003/09/wsat" returnType="rtns:Notification" xmlns:rtns="http://schemas.xmlsoap.org/ws/2003/09/wsat" soapAction="http://xxx" >
+        <parameter qname="pns:Rollback" xmlns:pns="http://schemas.xmlsoap.org/ws/2003/09/wsat" type="tns:Notification" xmlns:tns="http://schemas.xmlsoap.org/ws/2003/09/wsat"/>
+      </operation>
+      <parameter name="allowedMethods" value="commitOperation rollbackOperation"/>
+
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:ErrorCodes"
+        type="java:org.apache.ws.transaction.wsat.ErrorCodes"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:>PrepareResponse"
+        type="java:org.apache.ws.transaction.wsat.PrepareResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:Outcome"
+        type="java:org.apache.ws.transaction.wsat.Outcome"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:Vote"
+        type="java:org.apache.ws.transaction.wsat.Vote"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:>ReplayResponse"
+        type="java:org.apache.ws.transaction.wsat.ReplayResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:Notification"
+        type="java:org.apache.ws.transaction.wsat.Notification"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+
+
+  <service name="ParticipantRPC" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://schemas.xmlsoap.org/ws/2003/09/wsat"/>
+      <parameter name="wsdlServiceElement" value="xxx"/>
+      <parameter name="wsdlServicePort" value="ParticipantRPC"/>
+      <parameter name="className" value="org.apache.ws.transaction.wsat.ParticipantRPCEndpoint"/>
+      <parameter name="wsdlPortType" value="ParticipantPortTypeRPC"/>
+      <operation name="prepareOperation" qname="PrepareOperation" returnQName="retNS:PrepareResponse" xmlns:retNS="http://schemas.xmlsoap.org/ws/2003/09/wsat" returnType="rtns:>PrepareResponse" xmlns:rtns="http://schemas.xmlsoap.org/ws/2003/09/wsat" soapAction="http://xxx" >
+        <parameter qname="pns:Prepare" xmlns:pns="http://schemas.xmlsoap.org/ws/2003/09/wsat" type="tns:Notification" xmlns:tns="http://schemas.xmlsoap.org/ws/2003/09/wsat"/>
+      </operation>
+      <operation name="commitOperation" qname="CommitOperation" returnQName="retNS:Committed" xmlns:retNS="http://schemas.xmlsoap.org/ws/2003/09/wsat" returnType="rtns:Notification" xmlns:rtns="http://schemas.xmlsoap.org/ws/2003/09/wsat" soapAction="http://xxx" >
+        <parameter qname="pns:Commit" xmlns:pns="http://schemas.xmlsoap.org/ws/2003/09/wsat" type="tns:Notification" xmlns:tns="http://schemas.xmlsoap.org/ws/2003/09/wsat"/>
+      </operation>
+      <operation name="rollbackOperation" qname="RollbackOperation" returnQName="retNS:Aborted" xmlns:retNS="http://schemas.xmlsoap.org/ws/2003/09/wsat" returnType="rtns:Notification" xmlns:rtns="http://schemas.xmlsoap.org/ws/2003/09/wsat" soapAction="http://xxx" >
+        <parameter qname="pns:Rollback" xmlns:pns="http://schemas.xmlsoap.org/ws/2003/09/wsat" type="tns:Notification" xmlns:tns="http://schemas.xmlsoap.org/ws/2003/09/wsat"/>
+      </operation>
+      <parameter name="allowedMethods" value="commitOperation rollbackOperation prepareOperation"/>
+
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:ErrorCodes"
+        type="java:org.apache.ws.transaction.wsat.ErrorCodes"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:>PrepareResponse"
+        type="java:org.apache.ws.transaction.wsat.PrepareResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:Outcome"
+        type="java:org.apache.ws.transaction.wsat.Outcome"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:Vote"
+        type="java:org.apache.ws.transaction.wsat.Vote"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:>ReplayResponse"
+        type="java:org.apache.ws.transaction.wsat.ReplayResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:Notification"
+        type="java:org.apache.ws.transaction.wsat.Notification"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+
+  <service name="CoordinatorRPC" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://schemas.xmlsoap.org/ws/2003/09/wsat"/>
+      <parameter name="wsdlServiceElement" value="xxx"/>
+      <parameter name="wsdlServicePort" value="CoordinatorRPC"/>
+      <parameter name="className" value="org.apache.ws.transaction.wsat.CoordinatorRPCEndpoint"/>
+      <parameter name="wsdlPortType" value="CoordinatorPortTypeRPC"/>
+      <operation name="replayOperation" qname="ReplayOperation" returnQName="retNS:ReplayResponse" xmlns:retNS="http://schemas.xmlsoap.org/ws/2003/09/wsat" returnType="rtns:>ReplayResponse" xmlns:rtns="http://schemas.xmlsoap.org/ws/2003/09/wsat" soapAction="http://xxx" >
+        <parameter qname="pns:Replay" xmlns:pns="http://schemas.xmlsoap.org/ws/2003/09/wsat" type="tns:Notification" xmlns:tns="http://schemas.xmlsoap.org/ws/2003/09/wsat"/>
+      </operation>
+      <operation name="abortedOperation" qname="AbortedOperation" soapAction="http://xxx" mep="oneway" >
+        <parameter qname="pns:Aborted" xmlns:pns="http://schemas.xmlsoap.org/ws/2003/09/wsat" type="tns:Notification" xmlns:tns="http://schemas.xmlsoap.org/ws/2003/09/wsat"/>
+      </operation>
+      <operation name="readOnlyOperation" qname="ReadOnlyOperation" soapAction="http://xxx" mep="oneway" >
+        <parameter qname="pns:ReadOnly" xmlns:pns="http://schemas.xmlsoap.org/ws/2003/09/wsat" type="tns:Notification" xmlns:tns="http://schemas.xmlsoap.org/ws/2003/09/wsat"/>
+      </operation>
+      <parameter name="allowedMethods" value="readOnlyOperation replayOperation abortedOperation"/>
+
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:ErrorCodes"
+        type="java:org.apache.ws.transaction.wsat.ErrorCodes"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:>PrepareResponse"
+        type="java:org.apache.ws.transaction.wsat.PrepareResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:Outcome"
+        type="java:org.apache.ws.transaction.wsat.Outcome"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:Vote"
+        type="java:org.apache.ws.transaction.wsat.Vote"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:>ReplayResponse"
+        type="java:org.apache.ws.transaction.wsat.ReplayResponse"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wsat"
+        qname="ns:Notification"
+        type="java:org.apache.ws.transaction.wsat.Notification"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+  <service name="RegistrationRPC" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://schemas.xmlsoap.org/ws/2003/09/wscoor"/>
+      <parameter name="wsdlServiceElement" value="xxx"/>
+      <parameter name="wsdlServicePort" value="RegistrationRPC"/>
+      <parameter name="className" value="org.apache.ws.transaction.wscoor.RegistrationRPCEndpoint"/>
+      <parameter name="wsdlPortType" value="RegistrationPortTypeRPC"/>
+      <operation name="registerOperation" qname="RegisterOperation" returnQName="retNS:RegisterResponse" xmlns:retNS="http://schemas.xmlsoap.org/ws/2003/09/wscoor" returnType="rtns:RegisterResponseType" xmlns:rtns="http://schemas.xmlsoap.org/ws/2003/09/wscoor" soapAction="http://xxx" >
+        <parameter qname="pns:Register" xmlns:pns="http://schemas.xmlsoap.org/ws/2003/09/wscoor" type="tns:RegisterType" xmlns:tns="http://schemas.xmlsoap.org/ws/2003/09/wscoor"/>
+      </operation>
+      <parameter name="allowedMethods" value="registerOperation"/>
+
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:ReplyAfterType"
+        type="java:org.apache.axis.message.addressing.ReplyAfterType"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:Relationship"
+        type="java:org.apache.axis.message.addressing.Relationship"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:PortReferenceType"
+        type="java:org.apache.ws.transaction.utility.PortReferenceType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:AttributedQName"
+        type="java:org.apache.axis.message.addressing.AttributedQName"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:ReferencePropertiesType"
+        type="java:org.apache.axis.message.addressing.ReferencePropertiesType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:RelationshipTypeValues"
+        type="java:org.apache.axis.message.addressing.RelationshipTypeValues"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:AttributedURI"
+        type="java:org.apache.axis.message.addressing.AttributedURI"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:ReceivedType"
+        type="java:org.apache.ws.transaction.utility.ReceivedType"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:ContextType"
+        type="java:org.apache.ws.transaction.utility.ContextType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:tTimestampFault"
+        type="java:org.apache.ws.transaction.utility.TTimestampFault"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wscoor"
+        qname="ns:CreateCoordinationContextType"
+        type="java:org.apache.ws.transaction.wscoor.CreateCoordinationContextType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:AttributedURI"
+        type="java:org.apache.ws.transaction.utility.AttributedURI"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wscoor"
+        qname="ns:RegisterResponseType"
+        type="java:org.apache.ws.transaction.wscoor.RegisterResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wscoor"
+        qname="ns:CoordinationContextType"
+        type="java:org.apache.ws.transaction.wscoor.CoordinationContextType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:ServiceNameType"
+        type="java:org.apache.axis.message.addressing.ServiceNameType"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wscoor"
+        qname="ns:ErrorCodes"
+        type="java:org.apache.ws.transaction.wscoor.ErrorCodes"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wscoor"
+        qname="ns:RegisterType"
+        type="java:org.apache.ws.transaction.wscoor.RegisterType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:tContextFault"
+        type="java:org.apache.ws.transaction.utility.TContextFault"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:TimestampType"
+        type="java:org.apache.ws.transaction.utility.TimestampType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:FaultSubcodeValues"
+        type="java:org.apache.axis.message.addressing.FaultSubcodeValues"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:AttributedDateTime"
+        type="java:org.apache.ws.transaction.utility.AttributedDateTime"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:>Context"
+        type="java:org.apache.ws.transaction.utility.Context"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wscoor"
+        qname="ns:CreateCoordinationContextResponseType"
+        type="java:org.apache.ws.transaction.wscoor.CreateCoordinationContextResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:EndpointReferenceType"
+        type="java:org.apache.axis.message.addressing.EndpointReferenceType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+  <service name="ActivationRPC" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://schemas.xmlsoap.org/ws/2003/09/wscoor"/>
+      <parameter name="wsdlServiceElement" value="xxx"/>
+      <parameter name="wsdlServicePort" value="ActivationRPC"/>
+      <parameter name="className" value="org.apache.ws.transaction.wscoor.ActivationRPCEndpoint"/>
+      <parameter name="wsdlPortType" value="ActivationPortTypeRPC"/>
+      <operation name="createCoordinationContextOperation" qname="CreateCoordinationContextOperation" returnQName="retNS:CreateCoordinationContextResponse" xmlns:retNS="http://schemas.xmlsoap.org/ws/2003/09/wscoor" returnType="rtns:CreateCoordinationContextResponseType" xmlns:rtns="http://schemas.xmlsoap.org/ws/2003/09/wscoor" soapAction="http://xxx" >
+        <parameter qname="pns:CreateCoordinationContext" xmlns:pns="http://schemas.xmlsoap.org/ws/2003/09/wscoor" type="tns:CreateCoordinationContextType" xmlns:tns="http://schemas.xmlsoap.org/ws/2003/09/wscoor"/>
+      </operation>
+      <parameter name="allowedMethods" value="createCoordinationContextOperation"/>
+
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:ReplyAfterType"
+        type="java:org.apache.axis.message.addressing.ReplyAfterType"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:Relationship"
+        type="java:org.apache.axis.message.addressing.Relationship"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:PortReferenceType"
+        type="java:org.apache.ws.transaction.utility.PortReferenceType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:AttributedQName"
+        type="java:org.apache.axis.message.addressing.AttributedQName"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:ReferencePropertiesType"
+        type="java:org.apache.axis.message.addressing.ReferencePropertiesType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:RelationshipTypeValues"
+        type="java:org.apache.axis.message.addressing.RelationshipTypeValues"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:AttributedURI"
+        type="java:org.apache.axis.message.addressing.AttributedURI"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:ReceivedType"
+        type="java:org.apache.ws.transaction.utility.ReceivedType"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:ContextType"
+        type="java:org.apache.ws.transaction.utility.ContextType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:tTimestampFault"
+        type="java:org.apache.ws.transaction.utility.TTimestampFault"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wscoor"
+        qname="ns:CreateCoordinationContextType"
+        type="java:org.apache.ws.transaction.wscoor.CreateCoordinationContextType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:AttributedURI"
+        type="java:org.apache.ws.transaction.utility.AttributedURI"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wscoor"
+        qname="ns:RegisterResponseType"
+        type="java:org.apache.ws.transaction.wscoor.RegisterResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wscoor"
+        qname="ns:CoordinationContextType"
+        type="java:org.apache.ws.transaction.wscoor.CoordinationContextType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:ServiceNameType"
+        type="java:org.apache.axis.message.addressing.ServiceNameType"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wscoor"
+        qname="ns:ErrorCodes"
+        type="java:org.apache.ws.transaction.wscoor.ErrorCodes"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wscoor"
+        qname="ns:RegisterType"
+        type="java:org.apache.ws.transaction.wscoor.RegisterType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:tContextFault"
+        type="java:org.apache.ws.transaction.utility.TContextFault"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:TimestampType"
+        type="java:org.apache.ws.transaction.utility.TimestampType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:FaultSubcodeValues"
+        type="java:org.apache.axis.message.addressing.FaultSubcodeValues"
+        serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:AttributedDateTime"
+        type="java:org.apache.ws.transaction.utility.AttributedDateTime"
+        serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2002/07/utility"
+        qname="ns:>Context"
+        type="java:org.apache.ws.transaction.utility.Context"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2003/09/wscoor"
+        qname="ns:CreateCoordinationContextResponseType"
+        type="java:org.apache.ws.transaction.wscoor.CreateCoordinationContextResponseType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+        qname="ns:EndpointReferenceType"
+        type="java:org.apache.axis.message.addressing.EndpointReferenceType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+
+ 
+
+</deployment>
