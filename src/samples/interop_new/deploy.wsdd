@@ -1,0 +1,72 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from InitiatorService WSDL service -->
+
+  <service name="InitiatorPortType" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://fabrikam123.com"/>
+      <parameter name="wsdlServiceElement" value="InitiatorService"/>
+      <parameter name="wsdlServicePort" value="InitiatorPortType"/>
+      <parameter name="className" value="com.fabrikam123.InitiatorPortTypeImpl"/>
+      <parameter name="wsdlPortType" value="InitiatorPortType"/>
+      <operation name="response" qname="operNS:Response" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/InitiatorPortType/Response" mep="oneway" >
+      </operation>
+      <parameter name="allowedMethods" value="response"/>
+
+  </service>
+
+  <!-- Services from ParticipantService WSDL service -->
+
+  <service name="ParticipantPortType" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://fabrikam123.com"/>
+      <parameter name="wsdlServiceElement" value="ParticipantService"/>
+      <parameter name="wsdlServicePort" value="ParticipantPortType"/>
+      <parameter name="className" value="com.fabrikam123.ParticipantPortTypeImpl"/>
+      <parameter name="wsdlPortType" value="ParticipantPortType"/>
+      <operation name="completionCommit" qname="operNS:CompletionCommit" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" >
+      </operation>
+      <operation name="completionRollback" qname="operNS:CompletionRollback" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" >
+      </operation>
+      <operation name="commit" qname="operNS:Commit" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" >
+      </operation>
+      <operation name="rollback" qname="operNS:Rollback" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" >
+      </operation>
+      <operation name="phase2Rollback" qname="operNS:Phase2Rollback" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" mep="oneway" >
+      </operation>
+      <operation name="readonly" qname="operNS:Readonly" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" mep="oneway" >
+      </operation>
+      <operation name="volatileAndDurable" qname="operNS:VolatileAndDurable" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" mep="oneway" >
+      </operation>
+      <operation name="earlyReadonly" qname="operNS:EarlyReadonly" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" mep="oneway" >
+      </operation>
+      <operation name="earlyAborted" qname="operNS:EarlyAborted" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" mep="oneway" >
+      </operation>
+      <operation name="replayAbort" qname="operNS:ReplayAbort" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" mep="oneway" >
+      </operation>
+      <operation name="replayCommit" qname="operNS:ReplayCommit" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" mep="oneway" >
+      </operation>
+      <operation name="retryPreparedCommit" qname="operNS:RetryPreparedCommit" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" mep="oneway" >
+      </operation>
+      <operation name="retryPreparedAbort" qname="operNS:RetryPreparedAbort" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" mep="oneway" >
+      </operation>
+      <operation name="retryCommit" qname="operNS:RetryCommit" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" mep="oneway" >
+      </operation>
+      <operation name="retryReplay" qname="operNS:RetryReplay" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" mep="oneway" >
+      </operation>
+      <operation name="preparedAfterTimeout" qname="operNS:PreparedAfterTimeout" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" mep="oneway" >
+      </operation>
+      <operation name="lostCommitted" qname="operNS:LostCommitted" xmlns:operNS="http://fabrikam123.com" soapAction="http://fabrikam123.com/ParticipantPortType/Commit" mep="oneway" >
+      </operation>
+      <parameter name="allowedMethods" value="phase2Rollback retryPreparedAbort retryCommit earlyReadonly retryReplay replayCommit rollback preparedAfterTimeout readonly retryPreparedCommit completionCommit volatileAndDurable lostCommitted earlyAborted commit completionRollback replayAbort"/>
+
+  </service>
+</deployment>

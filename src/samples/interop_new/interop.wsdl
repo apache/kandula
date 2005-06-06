@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+    targetNamespace="http://fabrikam123.com"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:s="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://fabrikam123.com">
+    <types>
+        <s:schema
+            elementFormDefault="qualified"
+            targetNamespace="http://fabrikam123.com">
+            <s:complexType name="TestMessageType">
+                <s:sequence/>
+            </s:complexType>
+            <s:element name="Response" type="tns:TestMessageType"/>
+            <s:element name="CompletionCommit" type="tns:TestMessageType"/>
+            <s:element name="CompletionRollback" type="tns:TestMessageType"/>
+            <s:element name="Commit" type="tns:TestMessageType"/>
+            <s:element name="Rollback" type="tns:TestMessageType"/>
+            <s:element name="Phase2Rollback" type="tns:TestMessageType"/>
+            <s:element name="Readonly" type="tns:TestMessageType"/>
+            <s:element name="VolatileAndDurable" type="tns:TestMessageType"/>
+            <s:element name="EarlyReadonly" type="tns:TestMessageType"/>
+            <s:element name="EarlyAborted" type="tns:TestMessageType"/>
+            <s:element name="ReplayAbort" type="tns:TestMessageType"/>
+            <s:element name="ReplayCommit" type="tns:TestMessageType"/>
+            <s:element name="RetryPreparedCommit" type="tns:TestMessageType"/>
+            <s:element name="RetryPreparedAbort" type="tns:TestMessageType"/>
+            <s:element name="RetryCommit" type="tns:TestMessageType"/>
+            <s:element name="RetryReplay" type="tns:TestMessageType"/>
+            <s:element name="PreparedAfterTimeout" type="tns:TestMessageType"/>
+            <s:element name="LostCommitted" type="tns:TestMessageType"/>
+        </s:schema>
+    </types>
+    <message name="RetryReplay">
+        <part element="tns:RetryReplay" name="parameters"/>
+    </message>
+    <message name="RetryCommit">
+        <part element="tns:RetryCommit" name="parameters"/>
+    </message>
+    <message name="Response">
+        <part element="tns:Response" name="parameters"/>
+    </message>
+    <message name="ReplayAbort">
+        <part element="tns:ReplayAbort" name="parameters"/>
+    </message>
+    <message name="VolatileAndDurable">
+        <part element="tns:VolatileAndDurable" name="parameters"/>
+    </message>
+    <message name="RetryPreparedCommit">
+        <part element="tns:RetryPreparedCommit" name="parameters"/>
+    </message>
+    <message name="Rollback">
+        <part element="tns:Rollback" name="parameters"/>
+    </message>
+    <message name="EarlyAborted">
+        <part element="tns:EarlyAborted" name="parameters"/>
+    </message>
+    <message name="CompletionRollback">
+        <part element="tns:CompletionRollback" name="parameters"/>
+    </message>
+    <message name="PreparedAfterTimeout">
+        <part element="tns:PreparedAfterTimeout" name="parameters"/>
+    </message>
+    <message name="EarlyReadonly">
+        <part element="tns:EarlyReadonly" name="parameters"/>
+    </message>
+    <message name="RetryPreparedAbort">
+        <part element="tns:RetryPreparedAbort" name="parameters"/>
+    </message>
+    <message name="CompletionCommit">
+        <part element="tns:CompletionCommit" name="parameters"/>
+    </message>
+    <message name="ReplayCommit">
+        <part element="tns:ReplayCommit" name="parameters"/>
+    </message>
+    <message name="Readonly">
+        <part element="tns:Readonly" name="parameters"/>
+    </message>
+    <message name="Phase2Rollback">
+        <part element="tns:Phase2Rollback" name="parameters"/>
+    </message>
+    <message name="Commit">
+        <part element="tns:Commit" name="parameters"/>
+    </message>
+    <message name="LostCommitted">
+        <part element="tns:LostCommitted" name="parameters"/>
+    </message>
+    <portType name="InitiatorPortType">
+        <operation name="Response">
+            <input message="tns:Response" name="Response"/>
+        </operation>
+    </portType>
+    <portType name="ParticipantPortType">
+        <operation name="CompletionCommit">
+            <input message="tns:CompletionCommit" name="CompletionCommit"/>
+             <output message="tns:Response" name="Response"/>
+        </operation>
+        <operation name="CompletionRollback">
+            <input message="tns:CompletionRollback" name="CompletionRollback"/>
+            <output message="tns:Response" name="Response"/>
+        </operation>
+        <operation name="Commit">
+            <input message="tns:Commit" name="Commit"/>
+            <output message="tns:Response" name="Response"/>
+        </operation>
+        <operation name="Rollback">
+            <input message="tns:Rollback" name="Rollback"/>
+            <output message="tns:Response" name="Response"/>
+        </operation>
+        <operation name="Phase2Rollback">
+            <input message="tns:Phase2Rollback" name="Phase2Rollback"/>
+        </operation>
+        <operation name="Readonly">
+            <input message="tns:Readonly" name="Readonly"/>
+        </operation>
+        <operation name="VolatileAndDurable">
+            <input message="tns:VolatileAndDurable" name="VolatileAndDurable"/>
+        </operation>
+        <operation name="EarlyReadonly">
+            <input message="tns:EarlyReadonly" name="EarlyReadonly"/>
+        </operation>
+        <operation name="EarlyAborted">
+            <input message="tns:EarlyAborted" name="EarlyAborted"/>
+        </operation>
+        <operation name="ReplayAbort">
+            <input message="tns:ReplayAbort" name="ReplayAbort"/>
+        </operation>
+        <operation name="ReplayCommit">
+            <input message="tns:ReplayCommit" name="ReplayCommit"/>
+        </operation>
+        <operation name="RetryPreparedCommit">
+            <input message="tns:RetryPreparedCommit" name="RetryPreparedCommit"/>
+        </operation>
+        <operation name="RetryPreparedAbort">
+            <input message="tns:RetryPreparedAbort" name="RetryPreparedAbort"/>
+        </operation>
+        <operation name="RetryCommit">
+            <input message="tns:RetryCommit" name="RetryCommit"/>
+        </operation>
+        <operation name="RetryReplay">
+            <input message="tns:RetryReplay" name="RetryReplay"/>
+        </operation>
+        <operation name="PreparedAfterTimeout">
+            <input message="tns:PreparedAfterTimeout" name="PreparedAfterTimeout"/>
+        </operation>
+        <operation name="LostCommitted">
+            <input message="tns:LostCommitted" name="LostCommitted"/>
+        </operation>
+    </portType>
+    <binding name="InitiatorPortType" type="tns:InitiatorPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="Response">
+            <soap:operation
+                soapAction="http://fabrikam123.com/InitiatorPortType/Response"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <binding name="ParticipantPortType" type="tns:ParticipantPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="CompletionCommit">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="CompletionRollback">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="Commit">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="Rollback">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="Phase2Rollback">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+        <operation name="Readonly">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+        <operation name="VolatileAndDurable">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+        <operation name="EarlyReadonly">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+        <operation name="EarlyAborted">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+        <operation name="ReplayAbort">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+        <operation name="ReplayCommit">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+        <operation name="RetryPreparedCommit">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+        <operation name="RetryPreparedAbort">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+        <operation name="RetryCommit">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+        <operation name="RetryReplay">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+        <operation name="PreparedAfterTimeout">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+        <operation name="LostCommitted">
+            <soap:operation
+                soapAction="http://fabrikam123.com/ParticipantPortType/Commit"
+                style="document"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+    <service name="InitiatorService">
+        <port binding="tns:InitiatorPortType" name="InitiatorPortType">
+            <soap:address location="http://localhost/dataReceive/Service1.asmx"/>
+        </port>
+    </service>
+    <service name="ParticipantService">
+        <port binding="tns:ParticipantPortType" name="ParticipantPortType">
+            <soap:address location="http://localhost/dataReceive/Service2.asmx"/>
+        </port>
+    </service>
+</definitions>

@@ -55,7 +55,7 @@
 	</target>
 
 	<target name="dist" depends="compile">
-		<jar jarfile="${build.dir}/interop.jar">
+		<jar jarfile="${build.dir}/interop_new.jar">
 			<fileset dir="${samples.dir}/common/build">
 				<include name="**/*.class" />
 			</fileset>		
@@ -73,7 +73,7 @@
 	 			<fileset dir="${basedir}/build" includes="*.jar" />
 		 		<pathelement location="${ws-tx.dir}/conf" />
 		 	</classpath>
-	 		<test name="InteropPortTypeRPCServiceTestCase" />
+	 		<test name="com.fabrikam123.InitiatorApplicationTestCase" />
 		</junit>
 	 </target>
 </project>
