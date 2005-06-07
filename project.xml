@@ -24,16 +24,18 @@
   <inceptionYear>2004</inceptionYear>
   <package>org.apache.ws.transaction</package>
   <logo/>
-  <description/>
-  <!-- a short description of what the project does -->
-  <shortDescription>Kandula will provide an open-source implementation of WS-Coordination, 
+  <description>Kandula will provide an open-source implementation of WS-Coordination, 
   	WS-AtomicTransaction and WS-BusinessActivity based on Axis. The initial implementation will be in 
   	Java using Axis/Java. In addition to providing an implementation, a major focus of this project 
   	would be to ensure interoperability with other implementations of above specifications, 
-  	particularly those by Microsoft (.NET) and IBM.</shortDescription>
+  	particularly those by Microsoft (.NET) and IBM.
+  </description>
+  <!-- a short description of what the project does -->
+  <shortDescription>WS-Coordination, 
+  	WS-AtomicTransaction and WS-BusinessActivity implementation for Apache Axis</shortDescription>
 
   <!-- the project home page -->
-  <url></url>
+  <url>http://ws.apache.org/ws-fx/kandula/</url>
   <issueTrackingUrl>http://nagoya.apache.org/jira/browse/WSFX</issueTrackingUrl>
   <siteAddress>ws.apache.org</siteAddress>
   <siteDirectory>/ws-fx/kandula/</siteDirectory>
@@ -69,6 +71,12 @@
             <name>Sanjiva Weerawarana</name>
             <id>sanjiva</id>
             <email>sanjiva@opensource.lk</email>
+            <organization>Lanka Software Foundation (LSF), Sri Lanka.</organization>
+        </developer>
+<developer>
+            <name>Thilina Gunarathne</name>
+            <id>thilina</id>
+            <email>thilina@opensource.lk</email>
             <organization>Lanka Software Foundation (LSF), Sri Lanka.</organization>
         </developer>
   </developers>
