@@ -6,11 +6,11 @@
 
 <H1>User Guide for Apache Kandula</H1>
 <H2>Purpose</H2>
-<P>This tutorial provides a brief overview of the WS-TX project 
+<P>This tutorial provides a brief overview of the Kandula project 
 and how to try out the provided examples. For a detail illustration on the 
 design, please refer to the provided architecture documentation.</P>
 <H2>Objectives</H2>
-<P>The WS-TX project has two main objectives:</P>
+<P>The Kandula project has two main objectives:</P>
 <OL type=1>
   <LI>Provide an open source 
   implementation for the web services coordination and transaction management 
@@ -31,7 +31,7 @@ operation. Now if the two operations are to be used to perform a monetary
 transfer between two accounts, it must be ensured that either both operations 
 succeed or neither does. Under these circumstances, the web services 
 coordination framework can be used to ensure the atomicity of operations. The 
-sample code below shows how a standalone client may use the WS-TX implementation 
+sample code below shows how a standalone client may use the Kandula implementation 
 in this scenario-</P>
 <P ><source>public class ... implements SessionBean {
 private SessionContext ctx;
@@ -64,11 +64,11 @@ mentioned above is implemented in J2EE, its implementation would use JTA
 distributed transactions necessarily. Hence in the context of coordinated 
 activities, the underlying JTA runtime is required to coordinate with an 
 external coordinator to decide if and when to make any work performed as part of 
-such activities, persistent. The WS-TX provides this capability by integrating 
+such activities, persistent. The Kandula provides this capability by integrating 
 with existing transaction managers so that JTA distributed transactions started 
 locally may be coordinated by an external coordinator through the web services 
 coordination framework.</P>
-<P >Furthermore, the WS-TX runtime is also capable of implicitly 
+<P >Furthermore, the Kandula runtime is also capable of implicitly 
 propagating the local transaction context of a calling thread on web service 
 invocations. This allows distributed transactions to be propagated across 
 heterogeneous application domains. To illustrate this point consider how the 
@@ -97,7 +97,7 @@ operations. At runtime however, the transaction context of the calling thread is
 propagated to the remote service using the web services coordination 
 framework.</P>
 <H2>Deliverables</H2>
-<P >Mainly, the WS-TX project delivers a coordination service and 
+<P >Mainly, the Kandula project delivers a coordination service and 
 a server runtime for using the web services coordination framework for 
 distributed transaction management.</P>
 <P >The coordination service comprise of following web 
@@ -120,7 +120,7 @@ described by WS-Coordination and WS-AtomicTransaction.
 It also provides a participant service in accordance with WS-AtomicTransaction. As stated before, this allows J2EE web 
 services and clients to take part in atomic transactions while using JTA for 
 transaction management.</P>
-<P >Additionally, WS-TX also includes a Transaction Manager 
+<P >Additionally, Kandula also includes a Transaction Manager 
 modeled on javax.transaction.TransactionManager, 
 for use by standalone clients that need to coordinate activities using a 
 coordination service. Note that this transaction manager cannot be used to 
@@ -135,11 +135,11 @@ future.</P>
 web services, i.e. JSR109 (see src/samples/interop). 
 It also supports exporting transactions along web service calls made from J2EE 
 by J2EE components like servlets and EJB s (see src/samples/servlet).</P>
-<P >So far the WS-TX runtime has been integrated with 2 JTA 
+<P >So far the Kandula runtime has been integrated with 2 JTA 
 implementations, Java Open Transaction Manager (JOTM) from ObjectWeb and JBoss transaction 
 manager from JBoss.</P>
 <H2>Dependencies</H2>
-<P >Even though in practice the WS-TX server runtime would be 
+<P >Even though in practice the Kandula server runtime would be 
 most likely used in conjunction with a J2EE server, in order to make the test 
 cases as simple as possible, they have been designed to use Apache Tomcat servlet container instead.</P>
 <P >To try out the test cases it is required to integrate at 
@@ -150,27 +150,27 @@ you may use either one of the following transaction managers:</P>
   later 
   <LI>JBoss transaction manager from JBoss-4.0.0RC1 or later 
   application server distribution. </LI></UL>
-<H2>Using WS-TX with different JTA implementations</H2>
-<P >WS-TX architecture has been designed so that it may be used 
+<H2>Using Kandula with different JTA implementations</H2>
+<P >Kandula architecture has been designed so that it may be used 
 with any JTA implementation provided that it implements the org.apache.ws.transaction.participant.j2ee.TransactionManagerGlue 
 interface. Two sample implementations of this interface for JOTM (version 1.4.3 
 or later; version 1.5.3 is preferred but this implementation does not take 
 advantage of XATerminator 
 provided in this later version of JOTM) and JBoss 
-transaction manager (JBoss-4.0.0RC1 or later) have been provided under %WS-TX_HOME%/src/java/org/apache/ws/transaction/participant/j2ee.</P>
+transaction manager (JBoss-4.0.0RC1 or later) have been provided under %Kandula_HOME%/src/java/org/apache/ws/transaction/participant/j2ee.</P>
 <P >In general given a transaction manager, the user should first 
 determine whether it supports JCA 1.5 transaction inflow mechanism. If so, it is 
 generally possible to come up with an implementation for the above interface. It 
 may not be possible to do so otherwise.</P>
 <P >Lastly, before the Maven build is done (see below), the TransactionManagerGlueImpl 
-property in %WS-TX_HOME%/conf/jta.conf must be set to the fully qualified 
+property in %Kandula_HOME%/conf/jta.conf must be set to the fully qualified 
 class name of the class implementing org.apache.ws.transaction.participant.j2ee.TransactionManagerGlue 
 interface for the transaction manager used by the application server 
 runtime.</P>
 <H2>Running the provided samples</H2>
 <H3>Setup the TCP Monitor</H3>
-<P >All examples and WS-TX default endpoint configuration 
-parameters given in %WS-TX_HOME%/conf/endpoints.conf assume that you are using the 
+<P >All examples and Kandula default endpoint configuration 
+parameters given in %Kandula_HOME%/conf/endpoints.conf assume that you are using the 
 TCP monitor to monitor and redirect soap messages sent to port 8081 on localhost, to port 8080.</P>
 <H3>Configure Jakarta-Tomcat and deploy Axis</H3>
 <OL type=1>
@@ -178,15 +178,15 @@ TCP monitor to monitor and redirect soap messages sent to port 8081 on localhost
   The samples have been tested on Jakarta-Tomcat-5.0.25. 
   <LI  >Deploy Apache Axis. 
   Axis-1.2beta3 or later is required. </LI></OL>
-<H3>Build and deploy WS-TX</H3>
+<H3>Build and deploy Kandula</H3>
 <OL  type=1>
-  <LI >Modify %WS-TX_HOME%/conf/jta.conf. The TransactionManagerGlueImpl 
+  <LI >Modify %Kandula_HOME%/conf/jta.conf. The TransactionManagerGlueImpl 
   property must be set to the fully qualified class name of the class 
   implementing org.apache.ws.transaction.participant.j2ee.TransactionManagerGlue 
   interface for the transaction manager that you plan to use. By default the 
   property is set to use the sample implementation for JOTM. 
   <LI >If 
-  necessary, modify %WS-TX_HOME%/conf/endpoints.conf. The properties declared here 
+  necessary, modify %Kandula_HOME%/conf/endpoints.conf. The properties declared here 
   configure the numerous endpoints of the coordination service and server 
   runtime. The default values provided assume that services are available at 
   http://localhost:8081/axis/services/...
@@ -195,49 +195,63 @@ TCP monitor to monitor and redirect soap messages sent to port 8081 on localhost
   <LI  style="mso-list: l1 level1 lfo9; tab-stops: list .5in">To 
   build the kandula-0.1-SNAPSHOT.jar, 
   enter<BR clear=all><BR clear=all>maven<BR clear=all><BR 
-  clear=all>in %WS-TX_HOME%. 
+  clear=all>in %Kandula_HOME%. 
   <LI>Copy the j2ee.jar, addressing.jar &amp; 
-  jotm-*.jar files from %WS-TX_HOME%/target/lib to %CATALINA_HOME%/shared/lib. 
+  jotm-*.jar files from %Kandula_HOME%/target/lib to %CATALINA_HOME%/shared/lib. 
   <LI >*Move* all Axis jars in 
 %CATALINA_HOME%/webapps/axis/WEB-INF/lib to %CATALINA_HOME%/shared/lib 
 
-  <LI  >Copy %WS-TX_HOME%/target/kandula-0.1-SNAPSHOT.jar 
+  <LI  >Copy %Kandula_HOME%/target/kandula-0.1-SNAPSHOT.jar 
   to %CATALINA_HOME%/shared/lib. 
 
   <LI >Use 
-  the server-config.wsdd file provided in %WS-TX_HOME%/conf 
+  the server-config.wsdd file provided in %Kandula_HOME%/conf 
   to deploy the services sited above. 
   <LI>Use 
-  the server-config.wsdd file provided in %WS-TX_HOME%/conf 
-  to deploy WS-TX and WS-Addressing handlers. <BR>Note: WS-TX 
+  the server-config.wsdd file provided in %Kandula_HOME%/conf 
+  to deploy Kandula and WS-Addressing handlers. <BR>Note: Kandula 
   implementation uses reference properties that must be configured with the 
   WS-Addressing handler as illustrated in the provided server-config.wsdd file. The global type mappings 
-  provided in %WS-TX_HOME%/conf/server-config.wsdd are used by the WS-Addressing 
+  provided in %Kandula_HOME%/conf/server-config.wsdd are used by the WS-Addressing 
   implementation and *must be* copied to the server-config.wsdd. 
-  <LI>Copy %WS-TX_HOME%/conf/client-config.wsdd to %CATALINA_HOME%/webapps/axis/WEB-INF/classes. Modify the 
+  <LI>Copy %Kandula_HOME%/conf/client-config.wsdd to %CATALINA_HOME%/webapps/axis/WEB-INF/classes. Modify the 
   client-config.wsdd copied to %CATALINA_HOME%/webapps/axis/WEB-INF/classes to deploy the 
  org.apache.ws.transaction.participant.j2ee.handler.TransactionHandler 
   on request flow. Also remove the org.apache.ws.transaction.participant.standalone.handler.TransactionHandler 
   used by standalone clients. The modified client-config.wsdd is shown below. </LI></OL>
 <P><source>
-deployment ...&gt; &lt;globalConfiguration&gt;        &lt;requestFlow&gt;		&lt;handler type=&quot;java:org.apache.axis.message.addressing.handler.AddressingHandler&quot; /&gt;		&lt;handler type=&quot;java:org.apache.ws.transaction.participant.j2ee.handler.TransactionHandler&quot;/&gt;		...        &lt;/requestFlow&gt;        &lt;responseFlow&gt;        	&lt;handler type=&quot;java:org.apache.axis.message.addressing.handler.AddressingHandler&quot; /&gt;		...        &lt;/responseFlow&gt;	...  &lt;/globalConfiguration&gt;...&lt;/deployment&gt;</source></P>
+deployment ...&gt; 
+     &lt;globalConfiguration&gt;
+        &lt;requestFlow&gt;
+        		&lt;handler type=&quot;java:org.apache.axis.message.addressing.handler.AddressingHandler&quot; /&gt;
+        		&lt;handler type=&quot;java:org.apache.ws.transaction.participant.j2ee.handler.TransactionHandler&quot;/&gt;
+        				...        
+        &lt;/requestFlow&gt;
+        &lt;responseFlow&gt;
+               	&lt;handler type=&quot;java:org.apache.axis.message.addressing.handler.AddressingHandler&quot; /&gt;
+               			...        
+        &lt;/responseFlow&gt;
+        	...  
+     &lt;/globalConfiguration&gt;
+...&lt;/deployment&gt;
+</source></P>
 <H3>Build the samples</H3>
 <OL style="MARGIN-TOP: 0in" type=1>
   <LI >To 
   build the sample(s) enter,<BR clear=all><BR clear=all>ant dist<BR clear=all><BR 
-  clear=all>in %WS-TX_HOME%/src/samples </LI></OL>
+  clear=all>in %Kandula_HOME%/src/samples </LI></OL>
 <H3>Run the Interop sample</H3>
 <P >This sample shows how a standalone client may access a 
 transactional web service. To try it out,</P>
 <OL style="MARGIN-TOP: 0in" type=1>
-  <LI  >Copy the %WS-TX_HOME%/src/samples/interop/build/interop.jar to 
+  <LI  >Copy the %Kandula_HOME%/src/samples/interop/build/interop.jar to 
   %CATALINA_HOME%/webapps/axis/WEB-INF/lib 
   <LI >Use 
   the deploy.wsdd 
-  in %WS-TX_HOME%/src/samples/interop to deploy the service in 
+  in %Kandula_HOME%/src/samples/interop to deploy the service in 
   Axis. 
   <LI>Run 
   the provided JUnit test cases by entering,<BR 
   clear=all><BR clear=all>ant test<BR clear=all><BR 
-  clear=all>in %WS-TX_HOME%/   
+  clear=all>in %Kandula_HOME%/   
 </LI></OL></DIV></BODY></HTML>
