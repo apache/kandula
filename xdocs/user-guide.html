@@ -157,20 +157,20 @@ interface. Two sample implementations of this interface for JOTM (version 1.4.3
 or later; version 1.5.3 is preferred but this implementation does not take 
 advantage of XATerminator 
 provided in this later version of JOTM) and JBoss 
-transaction manager (JBoss-4.0.0RC1 or later) have been provided under %Kandula_HOME%/src/java/org/apache/ws/transaction/participant/j2ee.</P>
+transaction manager (JBoss-4.0.0RC1 or later) have been provided under %KANDULA_HOME%/src/java/org/apache/ws/transaction/participant/j2ee.</P>
 <P >In general given a transaction manager, the user should first 
 determine whether it supports JCA 1.5 transaction inflow mechanism. If so, it is 
 generally possible to come up with an implementation for the above interface. It 
 may not be possible to do so otherwise.</P>
 <P >Lastly, before the Maven build is done (see below), the TransactionManagerGlueImpl 
-property in %Kandula_HOME%/conf/jta.conf must be set to the fully qualified 
+property in %KANDULA_HOME%/conf/jta.conf must be set to the fully qualified 
 class name of the class implementing org.apache.ws.transaction.participant.j2ee.TransactionManagerGlue 
 interface for the transaction manager used by the application server 
 runtime.</P>
 <H2>Running the provided samples</H2>
 <H3>Setup the TCP Monitor</H3>
 <P >All examples and Kandula default endpoint configuration 
-parameters given in %Kandula_HOME%/conf/endpoints.conf assume that you are using the 
+parameters given in %KANDULA_HOME%/conf/endpoints.conf assume that you are using the 
 TCP monitor to monitor and redirect soap messages sent to port 8081 on localhost, to port 8080.</P>
 <H3>Configure Jakarta-Tomcat and deploy Axis</H3>
 <OL type=1>
@@ -180,13 +180,13 @@ TCP monitor to monitor and redirect soap messages sent to port 8081 on localhost
   Axis-1.2beta3 or later is required. </LI></OL>
 <H3>Build and deploy Kandula</H3>
 <OL  type=1>
-  <LI >Modify %Kandula_HOME%/conf/jta.conf. The TransactionManagerGlueImpl 
+  <LI >Modify %KANDULA_HOME%/conf/jta.conf. The TransactionManagerGlueImpl 
   property must be set to the fully qualified class name of the class 
   implementing org.apache.ws.transaction.participant.j2ee.TransactionManagerGlue 
   interface for the transaction manager that you plan to use. By default the 
   property is set to use the sample implementation for JOTM. 
   <LI >If 
-  necessary, modify %Kandula_HOME%/conf/endpoints.conf. The properties declared here 
+  necessary, modify %KANDULA_HOME%/conf/endpoints.conf. The properties declared here 
   configure the numerous endpoints of the coordination service and server 
   runtime. The default values provided assume that services are available at 
   http://localhost:8081/axis/services/...
@@ -195,63 +195,67 @@ TCP monitor to monitor and redirect soap messages sent to port 8081 on localhost
   <LI  style="mso-list: l1 level1 lfo9; tab-stops: list .5in">To 
   build the kandula-0.1-SNAPSHOT.jar, 
   enter<BR clear=all><BR clear=all>maven<BR clear=all><BR 
-  clear=all>in %Kandula_HOME%. 
+  clear=all>in %KANDULA_HOME%. 
   <LI>Copy the j2ee.jar, addressing.jar &amp; 
-  jotm-*.jar files from %Kandula_HOME%/target/lib to %CATALINA_HOME%/shared/lib. 
+  jotm-*.jar files from %KANDULA_HOME%/target/lib to %CATALINA_HOME%/shared/lib. 
   <LI >*Move* all Axis jars in 
 %CATALINA_HOME%/webapps/axis/WEB-INF/lib to %CATALINA_HOME%/shared/lib 
 
-  <LI  >Copy %Kandula_HOME%/target/kandula-0.1-SNAPSHOT.jar 
+  <LI  >Copy %KANDULA_HOME%/target/kandula-0.1-SNAPSHOT.jar 
   to %CATALINA_HOME%/shared/lib. 
 
   <LI >Use 
-  the server-config.wsdd file provided in %Kandula_HOME%/conf 
+  the server-config.wsdd file provided in %KANDULA_HOME%/conf 
   to deploy the services sited above. 
   <LI>Use 
-  the server-config.wsdd file provided in %Kandula_HOME%/conf 
+  the server-config.wsdd file provided in %KANDULA_HOME%/conf 
   to deploy Kandula and WS-Addressing handlers. <BR>Note: Kandula 
   implementation uses reference properties that must be configured with the 
   WS-Addressing handler as illustrated in the provided server-config.wsdd file. The global type mappings 
-  provided in %Kandula_HOME%/conf/server-config.wsdd are used by the WS-Addressing 
+  provided in %KANDULA_HOME%/conf/server-config.wsdd are used by the WS-Addressing 
   implementation and *must be* copied to the server-config.wsdd. 
-  <LI>Copy %Kandula_HOME%/conf/client-config.wsdd to %CATALINA_HOME%/webapps/axis/WEB-INF/classes. Modify the 
+  <LI>Copy %KANDULA_HOME%/conf/client-config.wsdd to %CATALINA_HOME%/webapps/axis/WEB-INF/classes. Modify the 
   client-config.wsdd copied to %CATALINA_HOME%/webapps/axis/WEB-INF/classes to deploy the 
  org.apache.ws.transaction.participant.j2ee.handler.TransactionHandler 
   on request flow. Also remove the org.apache.ws.transaction.participant.standalone.handler.TransactionHandler 
   used by standalone clients. The modified client-config.wsdd is shown below. </LI></OL>
-<P><source>
-deployment ...&gt; 
-     &lt;globalConfiguration&gt;
+<P><source><pre>
+&ltdeployment ...&gt;
+    &lt;globalConfiguration&gt;
         &lt;requestFlow&gt;
-        		&lt;handler type=&quot;java:org.apache.axis.message.addressing.handler.AddressingHandler&quot; /&gt;
-        		&lt;handler type=&quot;java:org.apache.ws.transaction.participant.j2ee.handler.TransactionHandler&quot;/&gt;
+            &lt;handler type=&quot;java:org.apache.axis.message.
+                addressing.handler.AddressingHandler&quot; /&gt;
+        	    &lt;handler type=&quot;java:org.apache.ws.transaction.participant.
+        	        j2ee.handler.TransactionHandler&quot;/&gt;
         				...        
         &lt;/requestFlow&gt;
         &lt;responseFlow&gt;
-               	&lt;handler type=&quot;java:org.apache.axis.message.addressing.handler.AddressingHandler&quot; /&gt;
+               	&lt;handler type=&quot;java:org.apache.axis.message.addressing.
+               	    handler.AddressingHandler&quot; /&gt;
                			...        
         &lt;/responseFlow&gt;
         	...  
      &lt;/globalConfiguration&gt;
-...&lt;/deployment&gt;
-</source></P>
+...
+&lt;/deployment&gt;
+</pre></source></P>
 <H3>Build the samples</H3>
 <OL style="MARGIN-TOP: 0in" type=1>
   <LI >To 
   build the sample(s) enter,<BR clear=all><BR clear=all>ant dist<BR clear=all><BR 
-  clear=all>in %Kandula_HOME%/src/samples </LI></OL>
+  clear=all>in %KANDULA_HOME%/src/samples </LI></OL>
 <H3>Run the Interop sample</H3>
 <P >This sample shows how a standalone client may access a 
 transactional web service. To try it out,</P>
 <OL style="MARGIN-TOP: 0in" type=1>
-  <LI  >Copy the %Kandula_HOME%/src/samples/interop/build/interop.jar to 
+  <LI  >Copy the %KANDULA_HOME%/src/samples/interop/build/interop.jar to 
   %CATALINA_HOME%/webapps/axis/WEB-INF/lib 
   <LI >Use 
   the deploy.wsdd 
-  in %Kandula_HOME%/src/samples/interop to deploy the service in 
+  in %KANDULA_HOME%/src/samples/interop to deploy the service in 
   Axis. 
   <LI>Run 
   the provided JUnit test cases by entering,<BR 
   clear=all><BR clear=all>ant test<BR clear=all><BR 
-  clear=all>in %Kandula_HOME%/   
+  clear=all>in %KANDULA_HOME%/src/samples/interop   
 </LI></OL></DIV></BODY></HTML>

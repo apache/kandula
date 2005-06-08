@@ -1,14 +1,10 @@
 
-<project name="Sandesha">
-  <title>Sandesha</title>
+<project name="Kandula">
+  <title>Kandula</title>
   <body>
-     
-    <menu name="Sandesha">
+    <menu name="Kandula">
       	<item name="Simple User Guide" href="user-guide.html"/>
-	<item name="Architecture Guide" href="architecture-guide.html"/>
-      	
-    </menu>
-     
-    
+		<item name="Architecture Guide" href="architecture-guide.html"/>
+    </menu>    
   </body>
 </project>
