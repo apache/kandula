@@ -103,8 +103,7 @@ distributed transaction management.</P>
 <P >The coordination service comprise of following web 
 services:</P>
 <UL>
-  <LI  
-  >Activation service 
+  <LI>Activation service 
   (WS-Coordination) 
   <LI>Registration service 
   (WS-Coordination) 
@@ -220,7 +219,7 @@ TCP monitor to monitor and redirect soap messages sent to port 8081 on localhost
   on request flow. Also remove the org.apache.ws.transaction.participant.standalone.handler.TransactionHandler 
   used by standalone clients. The modified client-config.wsdd is shown below. </LI></OL>
 <P><source><pre>
-&ltdeployment ...&gt;
+&lt;deployment ...&gt;
     &lt;globalConfiguration&gt;
         &lt;requestFlow&gt;
             &lt;handler type=&quot;java:org.apache.axis.message.
