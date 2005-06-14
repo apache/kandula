@@ -1,0 +1,166 @@
+
+<HTML>
+<HEAD><TITLE>Kandula - Apache Kandula</TITLE>
+</HEAD>
+<BODY>
+
+<H1>Apache Kandula</H1>
+<H2>Purpose</H2>
+<P align="justify"> Kandula will provide an open-source implementation of WS-Coordination, WS-AtomicTransaction and WS-BusinessActivity based on Axis. The initial implementation will be in Java using Axis/Java. In addition to providing an implementation, a major focus of this project would be to ensure interoperability with other implementations of above specifications, particularly those by Microsoft (.NET) and IBM.</P>
+<P align="justify">&nbsp;</P>
+<H2>Objectives</H2>
+<P align="justify">The Kandula project has two main objectives:</P>
+<div align="justify">
+  <OL type=1>
+    <LI>Provide an open source 
+      implementation for the web services coordination and transaction management 
+      frameworks defined by WS-Coordination, WS-<SPAN 
+ >AtomicTransaction and WS-<SPAN 
+ >BusinessActivity.</li>
+      <LI>Integrate existing open 
+      source JTA implementations (e.g. JOTM, JBoss, 
+      Geronimo, etc.) with the web services transaction management framework so that 
+      J2EE web services and clients may take part in atomic transactions while using 
+      JTA for transaction management</LI>
+  </OL>
+  <p>&nbsp;</p>
+</div>
+
+<H2>Overview</H2>
+<P align="justify">Think of a hypothetical web service that provides banking 
+services. The service provides 2 operations: a credit 
+operation and a debit 
+operation. Now if the two operations are to be used to perform a monetary 
+transfer between two accounts, it must be ensured that either both operations 
+succeed or neither does. Under these circumstances, the web services 
+coordination framework can be used to ensure the atomicity of operations. The 
+sample code below shows how a standalone client may use the Kandula implementation 
+in this scenario-</P>
+<P ><source>public class ... implements SessionBean {
+private SessionContext ctx;
+	public void setSessionContext(SessionContext ctx) {
+		this.ctx= ctx;	
+	}
+	public ... foo(....) {
+		Bank bank= new BankServiceLocator().getBank();
+		UserTransaction ut= ctx.getUserTransaction();
+		ut.begin();
+		try {
+			bank.credit(1001, 10);
+			bank.debit(1002, 10);
+		}catch (Exception e) {
+			ut.rollback();
+		}
+		ut.commit();
+	}
+}
+</source></P>
+<P align="justify"></P>
+<P align="justify" >The web services coordination framework describes how web 
+services may join in and participate in coordinated activities. It also 
+stipulates how participants may reach collective agreement on the ultimate 
+outcome of such activities.</P>
+<P align="justify" >Though the framework is platform independent, participant 
+services unavoidably need to use numerous incompatible, platform-specific 
+technologies to perform transactional work. For instance, if the banking service 
+mentioned above is implemented in J2EE, its implementation would use JTA 
+distributed transactions necessarily. Hence in the context of coordinated 
+activities, the underlying JTA runtime is required to coordinate with an 
+external coordinator to decide if and when to make any work performed as part of 
+such activities, persistent. The Kandula provides this capability by integrating 
+with existing transaction managers so that JTA distributed transactions started 
+locally may be coordinated by an external coordinator through the web services 
+coordination framework.</P>
+<P align="justify" >Furthermore, the Kandula runtime is also capable of implicitly 
+propagating the local transaction context of a calling thread on web service 
+invocations. This allows distributed transactions to be propagated across 
+heterogeneous application domains. To illustrate this point consider how the 
+same use case illustrated above would be implemented by a J2EE client.</P>
+<P><source> 
+public class ... implements SessionBean {
+	private SessionContext ctx;
+	public void setSessionContext(SessionContext ctx) {
+		this.ctx= ctx;	
+	}
+	public ... foo(....) {
+		Bank bank= new BankServiceLocator().getBank();
+		UserTransaction ut= ctx.getUserTransaction();
+		ut.begin();
+		try {
+		bank.credit(1001, 10);	
+		bank.debit(1002, 10);
+		}catch (Exception e) {
+			ut.rollback();
+		}
+		ut.commit();	
+	}
+}</source></P>
+<P align="justify" >Notice that the component uses JTA to ensure atomicity of 
+operations. At runtime however, the transaction context of the calling thread is 
+propagated to the remote service using the web services coordination 
+framework.</P>
+<P align="justify" >&nbsp;</P>
+<H2>Deliverables</H2>
+<P align="justify" >Mainly, the Kandula project delivers a coordination service and 
+a server runtime for using the web services coordination framework for 
+distributed transaction management.</P>
+<P align="justify" >The coordination service comprise of following web 
+services:</P>
+<div align="justify">
+  <UL>
+    <LI>Activation service 
+      (WS-Coordination) 
+    <LI>Registration service 
+      (WS-Coordination) 
+    <LI>Completion service 
+      (WS-AtomicTransaction) 
+    <LI>Coordinator service 
+      (WS-AtomicTransaction) 
+    <LI>Completion service 
+      (WS-AtomicTransaction) </LI>
+  </UL>
+</div>
+<P align="justify" >The server runtime is capable of importing and exporting 
+transactions to and from J2EE, in accordance with the coordination framework 
+described by WS-Coordination and WS-AtomicTransaction. 
+It also provides a participant service in accordance with WS-AtomicTransaction. As stated before, this allows J2EE web 
+services and clients to take part in atomic transactions while using JTA for 
+transaction management.</P>
+<P align="justify" >Additionally, Kandula also includes a Transaction Manager 
+modeled on javax.transaction.TransactionManager, 
+for use by standalone clients that need to coordinate activities using a 
+coordination service. Note that this transaction manager cannot be used to 
+perform any transactional work at the client end like JTA implementations sited 
+elsewhere in this document. It merely provides a convenient API for standalone 
+clients to use the coordination framework.</P>
+<P align="justify" >&nbsp;</P>
+<H2>Status</H2>
+<P align="justify" >Presently, the implementation only supports atomic 
+transaction coordination type. Business activities will be supported in 
+future.</P>
+<P align="justify">The framework supports importing atomic transactions for J2EE 
+web services, i.e. JSR109 (see src/samples/interop). 
+It also supports exporting transactions along web service calls made from J2EE 
+by J2EE components like servlets and EJB s (see src/samples/servlet).</P>
+<P align="justify" >So far the Kandula runtime has been integrated with 2 JTA 
+implementations, Java Open Transaction Manager (JOTM) from ObjectWeb and JBoss transaction 
+manager from JBoss.</P>
+<P align="justify" >&nbsp;</P>
+<H2>Dependencies</H2>
+<P align="justify" >Even though in practice the Kandula server runtime would be 
+most likely used in conjunction with a J2EE server, in order to make the test 
+cases as simple as possible, they have been designed to use Apache Tomcat servlet container instead.</P>
+<P align="justify" >To try out the test cases it is required to integrate at 
+least one of the above mentioned JTA implementations with Tomcat. To be specific 
+you may use either one of the following transaction managers:</P>
+<div align="justify">
+  <UL type=disc>
+    <LI>JOTM version 1.4.3 or 
+      later 
+    <LI>JBoss transaction manager from JBoss-4.0.0RC1 or later 
+      application server distribution. </LI>
+  </UL>
+</div>
+<UL type=disc>
+</UL>
+</BODY></HTML>

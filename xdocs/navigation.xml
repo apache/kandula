@@ -3,7 +3,7 @@
   <title>Kandula</title>
   <body>
     <menu name="Kandula">
-      	<item name="Simple User Guide" href="user-guide.html"/>
+      	<item name="User Guide" href="user-guide.html"/>
 		<item name="Architecture Guide" href="architecture-guide.html"/>
     </menu>    
   </body>
