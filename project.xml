@@ -46,15 +46,15 @@
        scm:<system>:<system specific connection string> -->
   <repository>
     <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic:ws-fx/kandula/</connection>
-    <url>http://cvs.apache.org/viewcvs.cgi/ws-fx/kandula/</url>
+    <url>http://cvs.apache.org/viewcvs.cgi/ws-kandula/</url>
   </repository>
 
   <!-- any mailing lists for the project -->
     <mailingLists>
         <mailingList>
-            <name>WS-FX Developer List</name>
-            <subscribe>fx-dev-subscribe@ws.apache.org</subscribe>
-            <unsubscribe>fx-dev-unsubscribe@ws.apache.org</unsubscribe>
+            <name>Kandula Developer List</name>
+            <subscribe>kandula-dev-subscribe@ws.apache.org</subscribe>
+            <unsubscribe>kandula-dev-unsubscribe@ws.apache.org</unsubscribe>
             <archive>http://nagoya.apache.org/eyebrowse/SummarizeList?listId=221</archive>
         </mailingList>
     </mailingLists>
