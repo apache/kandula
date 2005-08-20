@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<!-- 
+Legal Disclaimer
+
+The presentation, distribution or other dissemination of the information 
+contained in this specification is not a license, either expressly or impliedly, 
+to any intellectual property owned or controlled by BEA or IBM or Microsoft and\or any other 
+third party.  BEA and IBM and Microsoft and\or any other third party may have patents, patent 
+applications, trademarks, copyrights, or other intellectual property rights 
+covering subject matter in this document.  The furnishing of this document 
+does not give you any license to BEA's and IBM's and Microsoft's or any other third party's patents, trademarks, copyrights, or other intellectual property.
+
+This specification and the information contained herein is provided on an "AS IS"
+ basis and to the maximum extent permitted by applicable law, BEA and IBM and Microsoft provides 
+the document AS IS AND WITH ALL FAULTS, and hereby disclaims all other warranties 
+and conditions, either express, implied or statutory, including, but not limited 
+to, any (if any) implied warranties, duties or conditions of merchantability, of 
+fitness for a particular purpose, of accuracy or completeness of responses, of 
+results, of workmanlike effort, of lack of viruses, and of lack of negligence, 
+all with regard to the document. ALSO, THERE IS NO WARRANTY OR CONDITION OF 
+TITLE, QUIET ENJOYMENT, QUIET POSSESSION, CORRESPONDENCE TO DESCRIPTION OR 
+NON-INFRINGEMENT OF ANY INTELLECTUAL PROPERTY RIGHTS WITH REGARD TO THE DOCUMENT.
+
+IN NO EVENT WILL BEA or IBM or MICROSOFT BE LIABLE TO ANY OTHER PARTY FOR THE COST OF PROCURING 
+SUBSTITUTE GOODS OR SERVICES, LOST PROFITS, LOSS OF USE, LOSS OF DATA, OR ANY 
+INCIDENTAL, CONSEQUENTIAL, DIRECT, INDIRECT, OR SPECIAL DAMAGES WHETHER UNDER 
+CONTRACT, TORT, WARRANTY, OR OTHERWISE, ARISING IN ANY WAY OUT OF THIS OR ANY 
+OTHER AGREEMENT RELATING TO THIS DOCUMENT, WHETHER OR NOT SUCH PARTY HAD ADVANCE 
+NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
+
+Copyright Notice
+
+Copyright 2001-2004 BEA Systems and IBM Corporation and Microsoft Corporation. All rights reserved.
+-->
+<wsdl:definitions
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsba="http://schemas.xmlsoap.org/ws/2004/01/wsba"
+    targetNamespace="http://schemas.xmlsoap.org/ws/2004/01/wsba"
+>
+    <wsdl:import namespace="http://schemas.xmlsoap.org/ws/2004/01/wsba" location="http://schemas.xmlsoap.org/ws/2004/01/wsba"/>
+    <!-- Messages -->
+    <wsdl:message name="Complete">
+        <wsdl:part name="parameters" element="wsba:Complete" />
+    </wsdl:message>
+    <wsdl:message name="Completed">
+        <wsdl:part name="parameters" element="wsba:Completed" />
+    </wsdl:message>
+    <wsdl:message name="Close">
+        <wsdl:part name="parameters" element="wsba:Close" />
+    </wsdl:message>
+    <wsdl:message name="Closed">
+        <wsdl:part name="parameters" element="wsba:Closed" />
+    </wsdl:message>
+    <wsdl:message name="Cancel">
+        <wsdl:part name="parameters" element="wsba:Cancel" />
+    </wsdl:message>
+    <wsdl:message name="Canceled">
+        <wsdl:part name="parameters" element="wsba:Canceled" />
+    </wsdl:message>
+    <wsdl:message name="Compensate">
+        <wsdl:part name="parameters" element="wsba:Compensate" />
+    </wsdl:message>
+    <wsdl:message name="Compensated">
+        <wsdl:part name="parameters" element="wsba:Compensated" />
+    </wsdl:message>
+    <wsdl:message name="Fault">
+        <wsdl:part name="parameters" element="wsba:Fault" />
+    </wsdl:message>
+    <wsdl:message name="Faulted">
+        <wsdl:part name="parameters" element="wsba:Faulted" />
+    </wsdl:message>
+    <wsdl:message name="Exit">
+        <wsdl:part name="parameters" element="wsba:Exit" />
+    </wsdl:message>
+    <wsdl:message name="Exited">
+        <wsdl:part name="parameters" element="wsba:Exited" />
+    </wsdl:message>
+    <wsdl:message name="GetStatus">
+        <wsdl:part name="parameters" element="wsba:GetStatus" />
+    </wsdl:message>
+    <wsdl:message name="Status">
+        <wsdl:part name="parameters" element="wsba:Status" />
+    </wsdl:message>
+
+    <!-- BusinessAgreement Service -->
+    <wsdl:portType name="BusinessAgreementWithParticipantCompletionCoordinatorPortType">
+        <wsdl:operation name="CompletedOperation">
+            <wsdl:input message="wsba:Completed"/>
+        </wsdl:operation>
+        <wsdl:operation name="FaultOperation">
+            <wsdl:input message="wsba:Fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="CompensatedOperation">
+            <wsdl:input message="wsba:Compensated"/>
+        </wsdl:operation>
+        <wsdl:operation name="ClosedOperation">
+            <wsdl:input message="wsba:Closed"/>
+        </wsdl:operation>
+        <wsdl:operation name="CanceledOperation">
+            <wsdl:input message="wsba:Canceled"/>
+        </wsdl:operation>
+        <wsdl:operation name="ExitOperation">
+            <wsdl:input message="wsba:Exit"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetStatusOperation">
+            <wsdl:input message="wsba:GetStatus"/>
+        </wsdl:operation>
+        <wsdl:operation name="StatusOperation">
+            <wsdl:input message="wsba:Status"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:portType name="BusinessAgreementWithParticipantCompletionParticipantPortType">
+        <wsdl:operation name="CloseOperation">
+            <wsdl:input message="wsba:Close"/>
+        </wsdl:operation>
+        <wsdl:operation name="CancelOperation">
+            <wsdl:input message="wsba:Cancel"/>
+        </wsdl:operation>
+        <wsdl:operation name="CompensateOperation">
+            <wsdl:input message="wsba:Compensate"/>
+        </wsdl:operation>
+        <wsdl:operation name="FaultedOperation">
+            <wsdl:input message="wsba:Faulted"/>
+        </wsdl:operation>
+        <wsdl:operation name="ExitedOperation">
+            <wsdl:input message="wsba:Exited"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetStatusOperation">
+            <wsdl:input message="wsba:GetStatus"/>
+        </wsdl:operation>
+        <wsdl:operation name="StatusOperation">
+            <wsdl:input message="wsba:Status"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <!-- BusinessAgreementWithComplete Service -->
+    <wsdl:portType name="BusinessAgreementWithCoordinatorCompletionCoordinatorPortType">
+        <wsdl:operation name="CompletedOperation">
+            <wsdl:input message="wsba:Completed"/>
+        </wsdl:operation>
+        <wsdl:operation name="FaultOperation">
+            <wsdl:input message="wsba:Fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="CompensatedOperation">
+            <wsdl:input message="wsba:Compensated"/>
+        </wsdl:operation>
+        <wsdl:operation name="ClosedOperation">
+            <wsdl:input message="wsba:Closed"/>
+        </wsdl:operation>
+        <wsdl:operation name="CanceledOperation">
+            <wsdl:input message="wsba:Canceled"/>
+        </wsdl:operation>
+        <wsdl:operation name="ExitOperation">
+            <wsdl:input message="wsba:Exit"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetStatusOperation">
+            <wsdl:input message="wsba:GetStatus"/>
+        </wsdl:operation>
+        <wsdl:operation name="StatusOperation">
+            <wsdl:input message="wsba:Status"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:portType name="BusinessAgreementWithCoordinatorCompletionParticipantPortType">
+        <wsdl:operation name="CompleteOperation">
+            <wsdl:input message="wsba:Complete"/>
+        </wsdl:operation>
+        <wsdl:operation name="CloseOperation">
+            <wsdl:input message="wsba:Close"/>
+        </wsdl:operation>
+        <wsdl:operation name="CancelOperation">
+            <wsdl:input message="wsba:Cancel"/>
+        </wsdl:operation>
+        <wsdl:operation name="CompensateOperation">
+            <wsdl:input message="wsba:Compensate"/>
+        </wsdl:operation>
+        <wsdl:operation name="FaultedOperation">
+            <wsdl:input message="wsba:Faulted"/>
+        </wsdl:operation>
+        <wsdl:operation name="ExitedOperation">
+            <wsdl:input message="wsba:Exited"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetStatusOperation">
+            <wsdl:input message="wsba:GetStatus"/>
+        </wsdl:operation>
+        <wsdl:operation name="StatusOperation">
+            <wsdl:input message="wsba:Status"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+<wsdl:binding name="ActivationCoordinatorPortTypeBinding" type="wscoor:ActivationCoordinatorPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="CreateCoordinationContextOperation">
+			<soap:operation soapAction="http://xxx"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+</wsdl:binding>
+<wsdl:binding name="ActivationRequesterPortTypeBinding" type="wscoor:ActivationRequesterPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="CreateCoordinationContextResponseOperation">
+			<soap:operation soapAction="http://xxx"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+</wsdl:binding>
+<wsdl:binding name="RegistrationCoordinatorPortTypeBinding" type="wscoor:RegistrationCoordinatorPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="RegisterOperation">
+			<soap:operation soapAction="http://xxx"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+</wsdl:binding>
+<wsdl:binding name="RegistrationRequesterPortTypeBinding" type="wscoor:RegistrationRequesterPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="RegisterResponseOperation">
+			<soap:operation soapAction="http://xxx"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+</wsdl:binding>
+
+<!--
+
+<wsdl:binding name="ActivationPortTypeRPCBinding" type="wscoor:ActivationPortTypeRPC">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="CreateCoordinationContextOperation">
+			<soap:operation soapAction="http://xxx"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+</wsdl:binding>
+<wsdl:binding name="RegistrationPortTypeRPCBinding" type="wscoor:RegistrationPortTypeRPC">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="RegisterOperation">
+			<soap:operation soapAction="http://xxx"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+</wsdl:binding>
+-->
+
+<wsdl:service name="xxx">
+
+		<wsdl:port binding="wscoor:ActivationCoordinatorPortTypeBinding" name="ActivationCoordinator">
+      			<soap:address location="http://localhost:8081/axis/services/ActivationCoordinator"/>
+   		</wsdl:port>
+		<wsdl:port binding="wscoor:ActivationRequesterPortTypeBinding" name="ActivationRequester">
+      			<soap:address location="http://localhost:8081/axis/services/ActivationRequester"/>
+   		</wsdl:port>
+		<wsdl:port binding="wscoor:RegistrationCoordinatorPortTypeBinding" name="RegistrationCoordinator">
+      			<soap:address location="http://localhost:8081/axis/services/RegistrationCoordinator"/>
+   		</wsdl:port>
+		<wsdl:port binding="wscoor:RegistrationRequesterPortTypeBinding" name="RegistrationRequester">
+      			<soap:address location="http://localhost:8081/axis/services/RegistrationRequester"/>
+   		</wsdl:port>
+<!--
+		<wsdl:port binding="wscoor:ActivationPortTypeRPCBinding" name="ActivationRPC">
+      			<soap:address location="http://localhost:8081/axis/services/ActivationRPC"/>
+   		</wsdl:port>
+		<wsdl:port binding="wscoor:RegistrationPortTypeRPCBinding" name="RegistrationRPC">
+      			<soap:address location="http://localhost:8081/axis/services/RegistrationRPC"/>
+   		</wsdl:port>
+-->
+</wsdl:service>
+</wsdl:definitions>

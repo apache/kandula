@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Legal Disclaimer
+
+The presentation, distribution or other dissemination of the information 
+contained in this specification is not a license, either expressly or impliedly, 
+to any intellectual property owned or controlled by BEA or IBM or Microsoft and\or any other 
+third party.  BEA and IBM and Microsoft and\or any other third party may have patents, patent 
+applications, trademarks, copyrights, or other intellectual property rights 
+covering subject matter in this document.  The furnishing of this document 
+does not give you any license to BEA's and IBM's and Microsoft's or any other third party's 
+patents, trademarks, copyrights, or other intellectual property.
+
+This specification and the information contained herein is provided on an "AS IS"
+ basis and to the maximum extent permitted by applicable law, BEA and IBM and Microsoft provides 
+the document AS IS AND WITH ALL FAULTS, and hereby disclaims all other warranties 
+and conditions, either express, implied or statutory, including, but not limited 
+to, any (if any) implied warranties, duties or conditions of merchantability, of 
+fitness for a particular purpose, of accuracy or completeness of responses, of 
+results, of workmanlike effort, of lack of viruses, and of lack of negligence, 
+all with regard to the document. ALSO, THERE IS NO WARRANTY OR CONDITION OF 
+TITLE, QUIET ENJOYMENT, QUIET POSSESSION, CORRESPONDENCE TO DESCRIPTION OR 
+NON-INFRINGEMENT OF ANY INTELLECTUAL PROPERTY RIGHTS WITH REGARD TO THE DOCUMENT.
+
+IN NO EVENT WILL BEA or IBM or MICROSOFT BE LIABLE TO ANY OTHER PARTY FOR THE COST OF PROCURING 
+SUBSTITUTE GOODS OR SERVICES, LOST PROFITS, LOSS OF USE, LOSS OF DATA, OR ANY 
+INCIDENTAL, CONSEQUENTIAL, DIRECT, INDIRECT, OR SPECIAL DAMAGES WHETHER UNDER 
+CONTRACT, TORT, WARRANTY, OR OTHERWISE, ARISING IN ANY WAY OUT OF THIS OR ANY 
+OTHER AGREEMENT RELATING TO THIS DOCUMENT, WHETHER OR NOT SUCH PARTY HAD ADVANCE 
+NOTICE OF THE POSSIBILITY OF SUCH DAMAGES.
+
+Copyright Notice
+
+Copyright 2001, 2002 BEA Systems and IBM Corporation and Microsoft Corporation. All rights reserved.
+-->
+<xsd:schema targetNamespace="http://schemas.xmlsoap.org/ws/2003/09/wscoor"
+
+xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/03/addressing"
+xmlns:wsu="http://schemas.xmlsoap.org/ws/2002/07/utility"
+xmlns:wscoor="http://schemas.xmlsoap.org/ws/2003/09/wscoor"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xsd:import namespace="http://schemas.xmlsoap.org/ws/2002/07/utility" schemaLocation="utility.xsd"/> 
+
+<!-- schemaLocation="http://schemas.xmlsoap.org/ws/2002/07/utility"  -->
+	<xsd:import namespace="http://schemas.xmlsoap.org/ws/2004/03/addressing" schemaLocation="addr.xsd"/> 
+
+
+<!-- schemaLocation="http://schemas.xmlsoap.org/ws/2004/03/addressing" -->
+	<xsd:complexType name="CoordinationContextType" abstract="false">
+		<xsd:complexContent>
+			<xsd:extension base="wsu:ContextType">
+				<xsd:sequence>
+					<xsd:element name="CoordinationType" type="xsd:anyURI"/>
+					<xsd:element name="RegistrationService" type="wsa:EndpointReferenceType"/>
+					<xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="CoordinationContext" type="wscoor:CoordinationContextType"/>
+	<xsd:complexType name="CreateCoordinationContextType">
+		<xsd:sequence>
+			<xsd:element ref="wsu:Expires" minOccurs="0"/>
+			<xsd:element name="CurrentContext" type="wscoor:CoordinationContextType" minOccurs="0"/>
+			<xsd:element name="CoordinationType" type="xsd:anyURI"/>
+			<xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:anyAttribute namespace="##other" processContents="lax"/>
+	</xsd:complexType>
+	<xsd:element name="CreateCoordinationContext" type="wscoor:CreateCoordinationContextType"/>
+	<xsd:complexType name="CreateCoordinationContextResponseType">
+		<xsd:sequence>
+			<xsd:element name="CoordinationContext" type="wscoor:CoordinationContextType" minOccurs="0"/>
+			<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:anyAttribute namespace="##other" processContents="lax"/>
+	</xsd:complexType>
+	<xsd:element name="CreateCoordinationContextResponse" type="wscoor:CreateCoordinationContextResponseType"/>
+	<xsd:complexType name="RegisterType">
+		<xsd:sequence>
+			<xsd:element name="ProtocolIdentifier" type="xsd:anyURI"/>
+			<xsd:element name="ParticipantProtocolService" type="wsa:EndpointReferenceType"/>
+			<xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:anyAttribute namespace="##other" processContents="lax"/>
+	</xsd:complexType>
+	<xsd:element name="Register" type="wscoor:RegisterType"/>
+	<xsd:complexType name="RegisterResponseType">
+		<xsd:sequence>
+			<xsd:element name="CoordinatorProtocolService" type="wsa:EndpointReferenceType"/>
+			<xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:anyAttribute namespace="##other" processContents="lax"/>
+	</xsd:complexType>
+	<xsd:element name="RegisterResponse" type="wscoor:RegisterResponseType"/>
+	<xsd:simpleType name="ErrorCodes">
+		<xsd:restriction base="xsd:QName">
+			<xsd:enumeration value="wscoor:AlreadyRegistered"/>
+			<xsd:enumeration value="wscoor:InvalidState"/>
+			<xsd:enumeration value="wscoor:InvalidProtocol"/>
+			<xsd:enumeration value="wscoor:NoActivity"/>
+			<xsd:enumeration value="wscoor:InvalidCreateParameters"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>
