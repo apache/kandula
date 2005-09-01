@@ -16,6 +16,7 @@
  */
 package org.apache.kandula.coordinator.context;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.coordinator.context.at.ATActivityContext;
 import org.apache.kandula.typemapping.CoordinationContext;
@@ -34,16 +35,28 @@ public class ContextFactory {
             throws KandulaException {
         if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(protocol)) {
             return new ATActivityContext();
-        } else{
+        } else {
             throw new KandulaException(new IllegalArgumentException(
                     "Unsupported Protocol Type"));
         }
     }
 
-    public ActivityContext createActivity(CoordinationContext context) throws KandulaException {
-        if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(context.getCoordinationType())) {
+    public ActivityContext createActivity(String protocol,
+            EndpointReference activationEPR) throws KandulaException {
+        if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(protocol)) {
+            return new ATActivityContext(activationEPR);
+        } else {
+            throw new KandulaException(new IllegalArgumentException(
+                    "Unsupported Protocol Type"));
+        }
+    }
+
+    public ActivityContext createActivity(CoordinationContext context)
+            throws KandulaException {
+        if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(context
+                .getCoordinationType())) {
             return new ATActivityContext(context);
-        } else{
+        } else {
             throw new KandulaException(new IllegalArgumentException(
                     "Unsupported Protocol Type"));
         }

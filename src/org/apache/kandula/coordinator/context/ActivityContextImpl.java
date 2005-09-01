@@ -18,14 +18,13 @@ package org.apache.kandula.coordinator.context;
 
 import java.util.HashMap;
 
+import javax.xml.namespace.QName;
+
+import org.apache.axis2.addressing.AnyContentType;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Status.CoordinatorStatus;
 import org.apache.kandula.coordinator.CoordinatorUtils;
 import org.apache.kandula.typemapping.CoordinationContext;
-import org.apache.kandula.typemapping.EndPointReference;
-import org.apache.kandula.utility.EndpointReferenceFactory;
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.impl.schema.SchemaTypeLoaderImpl;
-import org.xmlsoap.schemas.ws.x2003.x09.wscoor.impl.CoordinationContextTypeImpl;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -33,32 +32,40 @@ import org.xmlsoap.schemas.ws.x2003.x09.wscoor.impl.CoordinationContextTypeImpl;
 public abstract class ActivityContextImpl implements ActivityContext {
 
     private HashMap propertyBag;
-    
-    private String activityID;
-    
+
+    protected String activityID;
+
     private int status = CoordinatorStatus.STATUS_NONE;
 
     private boolean locked = false;
-    
-    protected CoordinationContext coordinationContext;
-    
-    protected ActivityContextImpl(){    
+
+    protected CoordinationContext coordinationContext=null;
+
+    protected ActivityContextImpl() {
+        propertyBag = new HashMap();
     }
-    
+
     public ActivityContextImpl(String coordinationType) {
+        propertyBag = new HashMap();
         activityID = CoordinatorUtils.getRandomStringOf18Characters();
         coordinationContext = CoordinationContext.Factory.newInstance();
         coordinationContext.setActivityID(activityID);
-        coordinationContext.setRegistrationService(EndpointReferenceFactory.getInstance().getRegistrationEndpoint());
+        EndpointReference registrationEpr = new EndpointReference(
+                "http://localhost:8081/axis/services/RegistrationCoordinator");
+        AnyContentType referenceProp = new AnyContentType();
+        referenceProp.addReferenceValue(new QName(
+                "http://webservice.apache.org/~thilina", "myapp", "ID"),
+                activityID);
+        registrationEpr.setReferenceProperties(referenceProp);
+        coordinationContext.setRegistrationService(registrationEpr);
         coordinationContext.setCoordinationType(coordinationType);
     }
- 
+
     public CoordinationContext getCoordinationContext() {
         return coordinationContext;
     }
 
-    protected void setCoordinationContext(CoordinationContext context)
-    {
+    public void setCoordinationContext(CoordinationContext context) {
         this.coordinationContext = context;
     }
 

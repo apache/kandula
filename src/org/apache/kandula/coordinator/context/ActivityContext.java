@@ -46,4 +46,6 @@ public interface ActivityContext {
     
     public abstract CoordinationContext getCoordinationContext();
     
+    public abstract void setCoordinationContext(CoordinationContext context);
+    
 }

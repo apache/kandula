@@ -26,9 +26,8 @@ import org.apache.kandula.coordinator.context.ActivityContext;
 import org.apache.kandula.coordinator.context.ActivityContextImpl;
 import org.apache.kandula.coordinator.context.Participant;
 import org.apache.kandula.typemapping.CoordinationContext;
-import org.apache.kandula.typemapping.EndPointReference;
-import org.apache.kandula.utility.EndpointReferenceFactory;
-
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.om.impl.MIMEOutputUtils;
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
@@ -47,22 +46,44 @@ public class ATActivityContext extends ActivityContextImpl implements
 
     private boolean subDurableRegistered = false;
 
-    private EndPointReference parentEPR;
+    private EndpointReference parentEPR;
+    
+    public static String REQUESTER_ID = "requesterID";
+    
+    public static String ACTIVATION_EPR = "activationEPR";
+    
 
+    /**
+     * Used when creating new activities
+     */
     public ATActivityContext() {
         super(Constants.WS_AT);
         volatileParticipantsTable = new Hashtable();
         durableParticipantsTable = new Hashtable();
     }
 
+    /**
+     * @param context
+     * To be used when coordinator is used as a sub ordinate to an another  cooordinator
+     */
     public ATActivityContext(CoordinationContext context) {
         subOrdinate = true;
         parentEPR = context.getRegistrationService();
-        context.setRegistrationService(EndpointReferenceFactory.getInstance()
-                .getRegistrationEndpoint());
+//        context.setRegistrationService(EndpointReferenceFactory.getInstance()
+//                .getRegistrationEndpoint());
         volatileParticipantsTable = new Hashtable();
         durableParticipantsTable = new Hashtable();
         setCoordinationContext(context);
+    }
+    /**
+     * @param id
+     * To be used when using as the requester
+     */
+    public ATActivityContext(EndpointReference activationEPR)
+    {
+        super();
+        this.setProperty(REQUESTER_ID, MIMEOutputUtils.getRandomStringOf18Characters());
+        this.setProperty(ACTIVATION_EPR, activationEPR);
     }
 
     /**
