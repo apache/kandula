@@ -16,6 +16,8 @@
  */
 package org.apache.kandula.typemapping.xmlbeansimpl;
 
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.om.OMElement;
 import org.apache.kandula.typemapping.CoordinationContext;
 import org.apache.kandula.typemapping.EndPointReference;
 import org.xmlsoap.schemas.ws.x2002.x07.utility.AttributedDateTime;
@@ -50,7 +52,7 @@ public class XmlBeansTypeCoordinationContext implements CoordinationContext {
         return contextType.getCoordinationType();
     }
 
-    public EndPointReference getRegistrationService() {
+    public EndpointReference getRegistrationService() {
         return null;//contextType.getRegistrationService().
     }
 
@@ -70,8 +72,8 @@ public class XmlBeansTypeCoordinationContext implements CoordinationContext {
 
     }
 
-    public void setRegistrationService(EndPointReference value) {
-        contextType.setRegistrationService((EndpointReferenceType)value.getEndPointReferenceType());
+    public void setRegistrationService(EndpointReference value) {
+       // contextType.setRegistrationService((EndpointReferenceType)value.getEndPointReferenceType());
 
     }
 
@@ -83,6 +85,13 @@ public class XmlBeansTypeCoordinationContext implements CoordinationContext {
 
     public Object getCoordinationContextType() {
         return contextType;
+    }
+    /* (non-Javadoc)
+     * @see org.apache.kandula.typemapping.CoordinationContext#toOM()
+     */
+    public OMElement toOM() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

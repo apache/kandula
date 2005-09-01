@@ -16,6 +16,8 @@
  */
 package org.apache.kandula.typemapping;
 
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.om.OMElement;
 import org.apache.kandula.typemapping.xmlbeansimpl.XmlBeansTypeCoordinationContext;
 
 /**
@@ -26,7 +28,7 @@ public interface CoordinationContext {
 
     public abstract String getCoordinationType();
 
-    public abstract EndPointReference getRegistrationService();
+    public abstract EndpointReference getRegistrationService();
 
     public abstract long getExpires();
     
@@ -34,15 +36,20 @@ public interface CoordinationContext {
 
     public abstract void setCoordinationType(String value);
 
-    public abstract void setRegistrationService(EndPointReference value);
+    public abstract void setRegistrationService(EndpointReference value);
 
     public abstract void setExpires(long value);
+    
+    public abstract OMElement toOM();
     
     public abstract Object getCoordinationContextType();
 
     public static final class Factory {
         public static CoordinationContext newInstance() {
-            return new XmlBeansTypeCoordinationContext();
+            return new SimpleCoordinationContext();
+        }
+        public static CoordinationContext newInstance(OMElement contextElement) {
+            return new SimpleCoordinationContext(contextElement);
         }
         public static CoordinationContext newInstance(Object contextType) {
             return new XmlBeansTypeCoordinationContext(contextType);
