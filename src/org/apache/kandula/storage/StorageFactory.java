@@ -16,17 +16,23 @@
  */
 package org.apache.kandula.storage;
 
+
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class StorageFactory {
 	static StorageFactory instance = new StorageFactory();
+	private Store store;
 	public static StorageFactory getInstance()
 	{
 		return instance;
 	}
 	public Store getStore()
 	{
-		return null;
+	    if (store ==null)
+	    {
+	    store = new SimpleStore();
+	    }
+	    return store;
 	}
 }

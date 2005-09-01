@@ -26,7 +26,7 @@ public class Axis2Store implements Store{
 	/* (non-Javadoc)
 	 * @see org.apache.kandula.storage.Store#putContext(java.lang.String, org.apache.kandula.coordinator.context.CoordinationContext)
 	 */
-	public void putContext(String id, ActivityContext context) {
+	public void putContext(Object id, ActivityContext context) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -34,12 +34,12 @@ public class Axis2Store implements Store{
 	/* (non-Javadoc)
 	 * @see org.apache.kandula.storage.Store#getContext(java.lang.String)
 	 */
-	public ActivityContext getContext(String id) {
+	public ActivityContext getContext(Object id) {
 		return null;
 		
 	}
 	
-	public void forgetContext(String id)
+	public void forgetContext(Object id)
 	{		
 	}
 
