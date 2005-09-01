@@ -21,7 +21,7 @@ package org.apache.kandula;
  */
 abstract public interface Constants {
 
-	//public static final String WS_COOR="http://schemas.xmlsoap.org/ws/2003/09/wscoor";
+	public static final String WS_COOR="http://schemas.xmlsoap.org/ws/2004/10/wscoor";
 	public static final String WS_AT = "http://schemas.xmlsoap.org/ws/2004/10/wsat";
 	public static final String WS_BA  = "http://schemas.xmlsoap.org/ws/2004/10/wsba";
 	public static final String WS_AT_COMPLETION = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Completion";

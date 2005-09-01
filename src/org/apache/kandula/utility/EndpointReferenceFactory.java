@@ -16,17 +16,14 @@
  */
 package org.apache.kandula.utility;
 
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.util.Properties;
-
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.typemapping.EndPointReference;
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.impl.schema.SchemaTypeImpl;
 import org.xmlsoap.schemas.ws.x2002.x07.utility.impl.PortReferenceTypeImpl;
 import org.xmlsoap.schemas.ws.x2004.x03.addressing.ReferencePropertiesType;
 import org.xmlsoap.schemas.ws.x2004.x03.addressing.impl.EndpointReferenceTypeImpl;
+
+import java.io.InputStream;
+import java.net.InetAddress;
+import java.util.Properties;
 
 public class EndpointReferenceFactory {
 	static final String PROPERTY_FILE= "endpoints.conf";
