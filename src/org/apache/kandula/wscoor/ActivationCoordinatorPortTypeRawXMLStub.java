@@ -23,20 +23,11 @@ import javax.xml.namespace.QName;
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.description.TransportInDescription;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.om.impl.MIMEOutputUtils;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
-import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
-import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.apache.axis2.util.Utils;
 import org.apache.kandula.Constants;
+import org.apache.kandula.utility.KandulaListener;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -44,8 +35,7 @@ import org.apache.kandula.Constants;
 
 public class ActivationCoordinatorPortTypeRawXMLStub extends
         org.apache.axis2.clientapi.Stub {
-    
-    private ConfigurationContext responseConfigurationContext ;
+
     public static final String AXIS2_HOME = ".";
 
     protected static org.apache.axis2.description.OperationDescription[] operations;
@@ -80,15 +70,13 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
         //creating the configuration
         _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
                 .buildClientConfigurationContext(axis2Home);
-        responseConfigurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
-        .buildClientConfigurationContext(axis2Home);
+
         _configurationContext.getAxisConfiguration().addService(_service);
         _serviceContext = _configurationContext.createServiceContext(_service
                 .getName());
 
     }
 
-   
     private org.apache.axis2.soap.SOAPEnvelope createSOAPEnvelope(
             String coordinationType) {
         org.apache.axis2.soap.SOAPEnvelope env = super.createEnvelope();
@@ -106,66 +94,35 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
         return env;
     }
 
-    public void createCoordinationContextOperation(
-            String coordinationType, String id)
-            throws java.rmi.RemoteException {
+    public void createCoordinationContextOperation(String coordinationType,
+            String id) throws IOException {
 
         QName serviceName = new QName("ActivationRequesterPortType");
-        QName operationName = new QName(Constants.WS_COOR,"CreateCoordinationContextOperation");
+        QName operationName = new QName(Constants.WS_COOR,
+                "CreateCoordinationContextOperation");
+        KandulaListener listener = KandulaListener.getInstance();
+        listener.addService(serviceName, operationName,
+                ActivationRequesterPortTypeRawXMLSkeleton.class.getName());
+        listener.start();
 
-        ServiceDescription service = new ServiceDescription(serviceName);
-        service.addParameter(new ParameterImpl(
-                AbstractMessageReceiver.SERVICE_CLASS,
-                ActivationRequesterPortTypeRawXMLSkeleton.class.getName()));
-        service.setFileName(ActivationRequesterPortTypeRawXMLSkeleton.class.getName());
-        org.apache.axis2.description.OperationDescription responseOperationDesc;
-        operations = new org.apache.axis2.description.OperationDescription[1];
+        MessageSender messageSender = new MessageSender(_serviceContext);
+        org.apache.axis2.context.MessageContext messageContext = getMessageContext();
+        EndpointReference replyToEpr = new EndpointReference(listener.getHost()
+                + serviceName.getLocalPart());
+        AnyContentType refProperties = new AnyContentType();
+        refProperties.addReferenceValue(new QName(
+                "http://ws.apache.org/kandula", "id"), id);
+        replyToEpr.setReferenceProperties(refProperties);
+        //  messageSender.
+        messageSender.setReplyTo(replyToEpr);
+        messageSender.setTo(this.toEPR);
+        messageSender.setSoapAction("CreateCoordinationContextOperation");
+        //_call.setWsaAction("CreateCoordinationContextOperation");
+        org.apache.axis2.soap.SOAPEnvelope env = createSOAPEnvelope(coordinationType);
+        messageContext.setEnvelope(env);
+        messageSender
+                .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
+        messageSender.send(operations[0], messageContext);
 
-        responseOperationDesc = new org.apache.axis2.description.OperationDescription();
-        responseOperationDesc.setName(new javax.xml.namespace.QName(
-                "http://schemas.xmlsoap.org/ws/2003/09/wscoor",
-                "CreateCoordinationContextOperation"));
-        responseOperationDesc.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
-        operations[0] = responseOperationDesc;
-        service.addOperation(responseOperationDesc);
-         service.setClassLoader(Thread.currentThread().getContextClassLoader());
-       
-        try {
-            SimpleHTTPServer receiver=null;
-         
-            responseConfigurationContext.getAxisConfiguration().addService(service);
-            responseConfigurationContext.createServiceContext(serviceName);
-            
-            receiver = new SimpleHTTPServer(responseConfigurationContext, 6060);
-
-            receiver.start();
-            System.out.print("Server started on port " + 5050 + ".....");
-            
-            
-            Utils.resolvePhases(receiver.getSystemContext()
-                    .getAxisConfiguration(), service);
-            MessageSender messageSender = new MessageSender(_serviceContext);
-            org.apache.axis2.context.MessageContext messageContext = getMessageContext();
-            EndpointReference replyToEpr = new EndpointReference(
-                    "http://127.0.0.1:6061" + "/axis2/services/" + serviceName.getLocalPart());
-            AnyContentType refProperties = new AnyContentType();
-            refProperties.addReferenceValue(new QName("http://ws.apache.org/kandula",id),id);
-            replyToEpr.setReferenceProperties(refProperties);
-          //  messageSender.
-            messageSender.setReplyTo(replyToEpr);
-            messageSender.setTo(this.toEPR);
-            messageSender.setSoapAction("CreateCoordinationContextOperation");
-            //_call.setWsaAction("CreateCoordinationContextOperation");
-            org.apache.axis2.soap.SOAPEnvelope env = createSOAPEnvelope(coordinationType);
-            messageContext.setEnvelope(env);
-            messageSender
-                    .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
-            messageSender.send(operations[0], messageContext);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally {
-
-        }
     }
 }
