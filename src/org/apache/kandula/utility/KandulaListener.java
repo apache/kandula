@@ -42,9 +42,9 @@ public class KandulaListener {
 
     protected static org.apache.axis2.description.OperationDescription[] operations;
 
-    SimpleHTTPServer receiver = null;
+    private SimpleHTTPServer receiver = null;
 
-    boolean serverStarted = false;
+    private boolean serverStarted = false;
 
     public static final int SERVER_PORT = 5059;
 
@@ -71,6 +71,12 @@ public class KandulaListener {
             System.out.print("Server started on port " + SERVER_PORT + ".....");
         }
 
+    }
+    
+    public void stop()
+    {
+        receiver.stop();
+        serverStarted = false;
     }
 
     /**
