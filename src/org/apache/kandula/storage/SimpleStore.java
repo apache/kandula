@@ -25,7 +25,7 @@ import org.apache.kandula.coordinator.context.ActivityContext;
  */
 public class SimpleStore implements Store {
 
-    HashMap contextMap;
+    private HashMap contextMap;
     /* (non-Javadoc)
      * @see org.apache.kandula.storage.Store#putContext(java.lang.String, org.apache.kandula.coordinator.context.ActivityContext)
      */

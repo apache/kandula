@@ -34,15 +34,15 @@ import org.apache.kandula.Constants;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class SimpleCoordinationContext implements CoordinationContext {
-    String activityID;
+    private String activityID;
 
-    String coordinationType;
+    private String coordinationType;
 
-    long expires;
+    private long expires;
 
-    EndpointReference registrationServiceEpr;
+    private EndpointReference registrationServiceEpr;
 
-    OMElement contextElement = null;
+    private OMElement contextElement = null;
 
     public SimpleCoordinationContext() {
         super();
