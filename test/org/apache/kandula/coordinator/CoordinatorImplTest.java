@@ -16,6 +16,7 @@
  */
 package org.apache.kandula.coordinator;
 
+import junit.framework.TestCase;
 import org.apache.kandula.Constants;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.Status;
@@ -23,8 +24,6 @@ import org.apache.kandula.coordinator.context.ActivityContext;
 import org.apache.kandula.coordinator.context.at.ATActivityContext;
 import org.apache.kandula.typemapping.CoordinationContext;
 import org.xmlsoap.schemas.ws.x2003.x09.wscoor.CoordinationContextType;
-
-import junit.framework.TestCase;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
