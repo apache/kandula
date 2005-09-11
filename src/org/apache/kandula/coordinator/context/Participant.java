@@ -16,6 +16,8 @@
  */
 package org.apache.kandula.coordinator.context;
 
+import org.apache.axis2.addressing.EndpointReference;
+
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  * 
@@ -23,7 +25,7 @@ package org.apache.kandula.coordinator.context;
  * of Participants
  */
 public class Participant {
-    private String epr;
+    private EndpointReference epr;
     private String protocol;
     private int status;
        
@@ -32,7 +34,7 @@ public class Participant {
      * @param protocol
      * @param activityId
      */
-    public Participant(String epr, String protocol) {
+    public Participant(EndpointReference epr, String protocol) {
         super();
         this.epr = epr;
         this.protocol = protocol;

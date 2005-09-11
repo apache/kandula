@@ -16,6 +16,7 @@
  */
 package org.apache.kandula.coordinator;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.coordinator.at.ATCoordinator;
 import org.apache.kandula.coordinator.at.ATCoordinatorImpl;
@@ -32,7 +33,7 @@ import org.apache.kandula.typemapping.CoordinationContext;
  */
 
 public class CoordinatorImpl implements Coordinator {
-    Store store;
+    private Store store;
 
     public CoordinatorImpl() {
         StorageFactory storageFactory = StorageFactory.getInstance();
@@ -51,12 +52,13 @@ public class CoordinatorImpl implements Coordinator {
      * initiator,Participants and coordinator
      * @throws KandulaException
      */
-    public ActivityContext createCoordinationContext(String coordinationType, long expires) throws KandulaException {
+    public ActivityContext createCoordinationContext(String coordinationType,
+            long expires) throws KandulaException {
         ContextFactory factory = ContextFactory.getInstance();
-        ActivityContext context = factory
-                .createActivity(coordinationType);
+        ActivityContext context = factory.createActivity(coordinationType);
         context.getCoordinationContext().setExpires(expires);
-        store.putContext(context.getCoordinationContext().getActivityID(), context);
+        store.putContext(context.getCoordinationContext().getActivityID(),
+                context);
         return context;
     }
 
@@ -70,14 +72,15 @@ public class CoordinatorImpl implements Coordinator {
      * CoordinationContext will be replaced by the RegistrationEPR of this
      * Coordinator.
      */
-    public ActivityContext createCoordinationContext(CoordinationContext coorContext) throws KandulaException{
+    public ActivityContext createCoordinationContext(
+            CoordinationContext coorContext) throws KandulaException {
         ContextFactory factory = ContextFactory.getInstance();
-        ActivityContext context = factory
-                .createActivity(coorContext);
-        store.putContext(context.getCoordinationContext().getActivityID(), context);
+        ActivityContext context = factory.createActivity(coorContext);
+        store.putContext(context.getCoordinationContext().getActivityID(),
+                context);
         return context;
     }
-    
+
     /**
      * @param coordinationProtocol
      * @param participantEPR
@@ -86,10 +89,12 @@ public class CoordinatorImpl implements Coordinator {
      * 
      * This method provides the functional logic for participants to register
      * for a particular transaction activity which was created by a initiator.
-     * Registration request will be forwarded to repective protocol coordinators.
+     * Registration request will be forwarded to repective protocol
+     * coordinators.
      * @throws KandulaException
      */
-    public String registerParticipant(String id, String protocol, String participantEPR) throws KandulaException {
+    public EndpointReference registerParticipant(String id, String protocol,
+            EndpointReference participantEPR) throws KandulaException {
 
         ActivityContext context = getCoordinationContext(id);
         if (context == null) {
@@ -98,7 +103,7 @@ public class CoordinatorImpl implements Coordinator {
         }
         //TODO use "switch case" when BA is present
         ATCoordinator atCoordinator = new ATCoordinatorImpl();
-        return atCoordinator.register(context,protocol,participantEPR);
+        return atCoordinator.register(context, protocol, participantEPR);
     }
 
     private ActivityContext getCoordinationContext(String id) {

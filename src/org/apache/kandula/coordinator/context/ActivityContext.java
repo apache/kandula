@@ -18,6 +18,7 @@ package org.apache.kandula.coordinator.context;
 
 import java.util.Iterator;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.typemapping.CoordinationContext;
 
@@ -26,7 +27,7 @@ import org.apache.kandula.typemapping.CoordinationContext;
  */
 public interface ActivityContext {
     
-    public abstract String addParticipant(String participantEPR, String protocol) throws KandulaException;
+    public abstract EndpointReference addParticipant(EndpointReference participantEPR, String protocol) throws KandulaException;
     
     public abstract Iterator getRegisteredParticipants(String protocol);
     

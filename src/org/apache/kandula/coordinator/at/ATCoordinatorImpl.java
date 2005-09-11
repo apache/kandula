@@ -18,6 +18,7 @@ package org.apache.kandula.coordinator.at;
 
 import java.util.Iterator;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.Status;
@@ -31,8 +32,8 @@ import org.apache.kandula.coordinator.context.at.ATActivityContext;
  */
 public class ATCoordinatorImpl implements ATCoordinator {
 
-    public String register(ActivityContext context, String protocol,
-            String participantEPR) throws KandulaException {
+    public EndpointReference register(ActivityContext context, String protocol,
+            EndpointReference participantEPR) throws KandulaException {
         context.lock();
         switch (context.getStatus()) {
         case CoordinatorStatus.STATUS_PREPARING_DURABLE:
@@ -52,7 +53,7 @@ public class ATCoordinatorImpl implements ATCoordinator {
             throw new IllegalStateException("Coordinator is in Aborting state");
         case CoordinatorStatus.STATUS_ACTIVE:
         case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
-            return addParticipant(context,participantEPR, protocol);
+            return addParticipant(context,protocol, participantEPR);
         case CoordinatorStatus.STATUS_NONE:
         default:
             context.unlock();
@@ -255,8 +256,8 @@ public class ATCoordinatorImpl implements ATCoordinator {
         return Status.CoordinatorStatus.STATUS_ABORTING;
     }
 
-    public String addParticipant(ActivityContext context, String protocol,
-            String participantEPR) throws KandulaException {
+    public EndpointReference addParticipant(ActivityContext context, String protocol,
+            EndpointReference participantEPR) throws KandulaException {
         ATActivityContext atContext = (ATActivityContext) context;
         if (protocol.equals(Constants.WS_AT_DURABLE2PC))
             return atContext.addParticipant(participantEPR, protocol);

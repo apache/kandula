@@ -26,6 +26,8 @@ import org.apache.kandula.coordinator.context.ActivityContext;
 import org.apache.kandula.coordinator.context.ActivityContextImpl;
 import org.apache.kandula.coordinator.context.Participant;
 import org.apache.kandula.typemapping.CoordinationContext;
+import org.apache.kandula.utility.EndpointReferenceFactory;
+import org.apache.kandula.utility.KandulaUtils;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.om.impl.MIMEOutputUtils;
 /**
@@ -82,7 +84,7 @@ public class ATActivityContext extends ActivityContextImpl implements
     public ATActivityContext(EndpointReference activationEPR)
     {
         super();
-        this.setProperty(REQUESTER_ID, MIMEOutputUtils.getRandomStringOf18Characters());
+        this.setProperty(REQUESTER_ID, KandulaUtils.getRandomStringOf18Characters());
         this.setProperty(ACTIVATION_EPR, activationEPR);
     }
 
@@ -92,32 +94,41 @@ public class ATActivityContext extends ActivityContextImpl implements
      * @return Coordinator protocol service.
      * @throws KandulaException
      */
-    public String addParticipant(String participantEPR, String protocol)
+    public EndpointReference addParticipant(EndpointReference participantEPR, String protocol)
             throws KandulaException {
-        if (protocol.equals(Constants.WS_AT_VOLATILE2PC)) {
-            return addVolatileParticipant(participantEPR);
-        } else if (protocol.equals(Constants.WS_AT_DURABLE2PC)) {
-            return addDurableParticipant(participantEPR);
+        if (Constants.WS_AT_VOLATILE2PC.equals(protocol)) {
+            addVolatileParticipant(participantEPR);
+            return EndpointReferenceFactory.getInstance().get2PCEndpoint(this.activityID);
+        } else if (Constants.WS_AT_DURABLE2PC.equals(protocol)) {
+            addDurableParticipant(participantEPR);
+            return EndpointReferenceFactory.getInstance().get2PCEndpoint(this.activityID);
+        }else if  (Constants.WS_AT_COMPLETION.equals(protocol))
+        {
+            //TODO keep track of requesters
+            return EndpointReferenceFactory.getInstance().getCompletionEndpoint(this.activityID);
         }
-        return "2PC port EPR";
+        else
+        {
+            throw new KandulaException("UnSupported Protocol");
+        }
     }
 
-    public String addVolatileParticipant(String participantEPR)
+    public void addVolatileParticipant(EndpointReference participantEPR)
             throws KandulaException {
         if (volatileParticipantsTable.contains(participantEPR))
             throw new KandulaException("wscoor:Already Registered");
         volatileParticipantsTable.put(participantEPR, new Participant(
                 participantEPR, Constants.WS_AT_VOLATILE2PC));
-        return "2PC port";
+       
     }
 
-    public String addDurableParticipant(String participantEPR)
+    public void addDurableParticipant(EndpointReference participantEPR)
             throws KandulaException {
         if (durableParticipantsTable.contains(participantEPR))
             throw new KandulaException("wscoor:Already Registered");
         durableParticipantsTable.put(participantEPR, new Participant(
                 participantEPR, Constants.WS_AT_DURABLE2PC));
-        return "2PC port";
+       
     }
 
     public Iterator getRegisteredParticipants(String protocol) {
@@ -141,11 +152,7 @@ public class ATActivityContext extends ActivityContextImpl implements
     }
 
     public boolean hasMorePreparing() {
-        if (preparingParticipantsCount > 0) {
-            return true;
-        } else {
-            return false;
-        }
+       return (preparingParticipantsCount > 0); 
     }
 
     public boolean getSubVolatileRegistered() {

@@ -18,6 +18,7 @@ package org.apache.kandula.coordinator.context;
 
 import java.util.HashMap;
 
+import javax.mail.internet.MimeUtility;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.addressing.AnyContentType;
@@ -25,6 +26,8 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Status.CoordinatorStatus;
 import org.apache.kandula.coordinator.CoordinatorUtils;
 import org.apache.kandula.typemapping.CoordinationContext;
+import org.apache.kandula.utility.EndpointReferenceFactory;
+import org.apache.kandula.utility.KandulaUtils;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -39,7 +42,7 @@ public abstract class ActivityContextImpl implements ActivityContext {
 
     private boolean locked = false;
 
-    protected CoordinationContext coordinationContext=null;
+    protected CoordinationContext coordinationContext = null;
 
     protected ActivityContextImpl() {
         propertyBag = new HashMap();
@@ -47,11 +50,11 @@ public abstract class ActivityContextImpl implements ActivityContext {
 
     public ActivityContextImpl(String coordinationType) {
         propertyBag = new HashMap();
-        activityID = CoordinatorUtils.getRandomStringOf18Characters();
+        activityID =  KandulaUtils.getRandomStringOf18Characters();
         coordinationContext = CoordinationContext.Factory.newInstance();
         coordinationContext.setActivityID(activityID);
-        EndpointReference registrationEpr = new EndpointReference(
-                "http://localhost:8081/axis/services/RegistrationCoordinator");
+        EndpointReference registrationEpr = EndpointReferenceFactory
+                .getInstance().getRegistrationEndpoint(activityID);
         AnyContentType referenceProp = new AnyContentType();
         referenceProp.addReferenceValue(new QName(
                 "http://webservice.apache.org/~thilina", "myapp", "ID"),

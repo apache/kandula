@@ -16,6 +16,7 @@
  */
 package org.apache.kandula.coordinator;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.coordinator.context.ActivityContext;
 import org.apache.kandula.typemapping.CoordinationContext;
@@ -66,6 +67,6 @@ public interface Coordinator {
      * by a initiator. Registration request will be forwarded to repective
      * protocol coordinators.
      */
-    public abstract String registerParticipant(String protocol,
-            String participantEPR, String id) throws KandulaException;
+    public abstract EndpointReference registerParticipant(String protocol,
+            String id,EndpointReference participantEPR) throws KandulaException;
 }

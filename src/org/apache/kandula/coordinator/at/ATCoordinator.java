@@ -16,6 +16,7 @@
  */
 package org.apache.kandula.coordinator.at;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.coordinator.context.ActivityContext;
 
@@ -24,8 +25,8 @@ import org.apache.kandula.coordinator.context.ActivityContext;
  */
 public interface ATCoordinator {
 
-    public abstract String register(ActivityContext context, String protocol,
-            String participantEPR) throws KandulaException;
+    public abstract EndpointReference register(ActivityContext context, String protocol,
+            EndpointReference participantEPR) throws KandulaException;
 
     /**
      * @param Activity
@@ -85,6 +86,6 @@ public interface ATCoordinator {
      */
     public abstract int abort(ActivityContext context);
     
-    public String addParticipant(ActivityContext context, String protocol,
-            String participantEPR) throws KandulaException;
+    public EndpointReference addParticipant(ActivityContext context, String protocol,
+            EndpointReference participantEPR) throws KandulaException;
 }

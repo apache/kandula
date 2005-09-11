@@ -25,7 +25,7 @@ import org.apache.kandula.typemapping.CoordinationContext;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class ContextFactory {
-    static ContextFactory instance = new ContextFactory();
+    private static ContextFactory instance = new ContextFactory();
 
     public static ContextFactory getInstance() {
         return instance;

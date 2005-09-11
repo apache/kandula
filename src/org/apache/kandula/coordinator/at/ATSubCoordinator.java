@@ -16,6 +16,7 @@
  */
 package org.apache.kandula.coordinator.at;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.coordinator.context.ActivityContext;
@@ -36,8 +37,8 @@ public class ATSubCoordinator extends ATCoordinatorImpl {
                 "This activity is a Sub Ordinate activity. Completion Protocol not supported.");
     }
 
-    public String addParticipant(ActivityContext context, String protocol,
-            String participantEPR) throws KandulaException {
+    public EndpointReference addParticipant(ActivityContext context, String protocol,
+            EndpointReference participantEPR) throws KandulaException {
         ATActivityContext atContext = (ATActivityContext) context;
         if (protocol.equals(Constants.WS_AT_DURABLE2PC)) {
             if (!atContext.getSubDurableRegistered()) {
