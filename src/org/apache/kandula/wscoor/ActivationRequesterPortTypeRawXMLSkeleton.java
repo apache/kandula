@@ -32,7 +32,7 @@ import org.apache.kandula.typemapping.CoordinationContext;
  */
 
 public class ActivationRequesterPortTypeRawXMLSkeleton {
-    MessageContext msgContext;
+    private MessageContext msgContext;
 
     public void init(MessageContext context) {
         this.msgContext = context;
