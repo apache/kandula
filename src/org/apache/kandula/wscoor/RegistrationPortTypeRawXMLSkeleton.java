@@ -21,17 +21,15 @@ import java.util.Iterator;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.kandula.KandulaException;
-import org.apache.kandula.coordinator.CoordinatorImpl;
+import org.apache.kandula.coordinator.Coordinator;
 import org.apache.kandula.participant.standalone.TransactionManager;
 import org.apache.kandula.utility.KandulaUtils;
 
@@ -71,7 +69,7 @@ public class RegistrationPortTypeRawXMLSkeleton {
         ArrayList list = msgContext.getMessageInformationHeaders()
                 .getReferenceParameters();
 
-        CoordinatorImpl coordinator = new CoordinatorImpl();
+        Coordinator coordinator = new Coordinator();
         EndpointReference epr = coordinator.registerParticipant(
                 TransactionManager.tempID, protocolIdentifier, participantEPR);
         System.out.println("visited registration skeleton");

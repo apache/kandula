@@ -5,7 +5,6 @@ import javax.xml.namespace.QName;
 import org.apache.axis2.om.OMElement;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.coordinator.Coordinator;
-import org.apache.kandula.coordinator.CoordinatorImpl;
 import org.apache.kandula.coordinator.context.ActivityContext;
 
 /**
@@ -23,10 +22,10 @@ public class ActivationPortTypeRawXMLSkeleton {
             OMElement requestElement)
             throws KandulaException {
         ActivityContext context;
-        Coordinator coordinator = new CoordinatorImpl();
+        Coordinator coordinator = new Coordinator();
         
 //          ActivityContext context;
-//        Coordinator coordinator = new CoordinatorImpl();
+//        Coordinator coordinator = new Coordinator();
 //        if (requestDoc.getCreateCoordinationContext().getCurrentContext() != null) {
 //            CoordinationContext coorContext = CoordinationContext.Factory.newInstance(requestDoc
 //                    .getCreateCoordinationContext().getCurrentContext());
