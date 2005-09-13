@@ -25,7 +25,7 @@ import org.apache.kandula.coordinator.context.at.ATActivityContext;
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public class ATSubCoordinator extends ATCoordinatorImpl {
+public class ATSubCoordinator extends ATCoordinator {
 
     public String commitOperation(String id) throws IllegalAccessException {
         throw new IllegalAccessException(
