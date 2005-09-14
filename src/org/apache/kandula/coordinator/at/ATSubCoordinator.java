@@ -19,8 +19,8 @@ package org.apache.kandula.coordinator.at;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
 import org.apache.kandula.KandulaException;
-import org.apache.kandula.coordinator.context.ActivityContext;
-import org.apache.kandula.coordinator.context.at.ATActivityContext;
+import org.apache.kandula.context.ActivityContext;
+import org.apache.kandula.context.at.ATActivityContext;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>

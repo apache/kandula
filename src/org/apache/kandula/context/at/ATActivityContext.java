@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.coordinator.context.at;
+package org.apache.kandula.context.at;
 
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -22,14 +22,13 @@ import java.util.LinkedList;
 
 import org.apache.kandula.Constants;
 import org.apache.kandula.KandulaException;
-import org.apache.kandula.coordinator.context.ActivityContext;
-import org.apache.kandula.coordinator.context.ActivityContextImpl;
-import org.apache.kandula.coordinator.context.Participant;
+import org.apache.kandula.context.ActivityContext;
+import org.apache.kandula.context.ActivityContextImpl;
+import org.apache.kandula.context.Participant;
 import org.apache.kandula.typemapping.CoordinationContext;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.utility.KandulaUtils;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.om.impl.MIMEOutputUtils;
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
@@ -49,11 +48,11 @@ public class ATActivityContext extends ActivityContextImpl implements
     private boolean subDurableRegistered = false;
 
     private EndpointReference parentEPR;
-    
+
     public static String REQUESTER_ID = "requesterID";
-    
+
     public static String ACTIVATION_EPR = "activationEPR";
-    
+
 
     /**
      * Used when creating new activities
@@ -119,7 +118,7 @@ public class ATActivityContext extends ActivityContextImpl implements
             throw new KandulaException("wscoor:Already Registered");
         volatileParticipantsTable.put(participantEPR, new Participant(
                 participantEPR, Constants.WS_AT_VOLATILE2PC));
-       
+
     }
 
     public void addDurableParticipant(EndpointReference participantEPR)
@@ -128,7 +127,7 @@ public class ATActivityContext extends ActivityContextImpl implements
             throw new KandulaException("wscoor:Already Registered");
         durableParticipantsTable.put(participantEPR, new Participant(
                 participantEPR, Constants.WS_AT_DURABLE2PC));
-       
+
     }
 
     public Iterator getRegisteredParticipants(String protocol) {
@@ -152,7 +151,7 @@ public class ATActivityContext extends ActivityContextImpl implements
     }
 
     public boolean hasMorePreparing() {
-       return (preparingParticipantsCount > 0); 
+       return (preparingParticipantsCount > 0);
     }
 
     public boolean getSubVolatileRegistered() {

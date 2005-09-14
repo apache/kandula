@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.coordinator.context;
+package org.apache.kandula.context;
 
 import java.util.Iterator;
 

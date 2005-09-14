@@ -14,9 +14,6 @@ import org.apache.kandula.Constants;
 import org.apache.kandula.utility.KandulaListener;
 import org.apache.kandula.utility.KandulaUtils;
 
-/*
- *  Auto generated java implementation by the Axis code generator
- */
 
 public class RegistrationCoordinatorPortTypeRawXMLStub extends
         org.apache.axis2.clientapi.Stub {

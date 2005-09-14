@@ -5,7 +5,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis2.om.OMElement;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.coordinator.Coordinator;
-import org.apache.kandula.coordinator.context.ActivityContext;
+import org.apache.kandula.context.ActivityContext;
 
 /**
  *  Auto generated java skeleton for the service by the Axis code generator
@@ -15,7 +15,7 @@ public class ActivationPortTypeRawXMLSkeleton {
 
     /**
      * Auto generated method signature
-     *@param requestDoc
+     *@param requestElement
      * @throws KandulaException
      */
     public OMElement CreateCoordinationContextOperation(

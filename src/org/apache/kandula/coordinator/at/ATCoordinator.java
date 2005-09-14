@@ -25,8 +25,8 @@ import org.apache.kandula.Status;
 import org.apache.kandula.Status.CoordinatorStatus;
 import org.apache.kandula.coordinator.CoordinatorUtils;
 import org.apache.kandula.coordinator.Registerable;
-import org.apache.kandula.coordinator.context.ActivityContext;
-import org.apache.kandula.coordinator.context.at.ATActivityContext;
+import org.apache.kandula.context.ActivityContext;
+import org.apache.kandula.context.at.ATActivityContext;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>

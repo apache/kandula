@@ -16,7 +16,7 @@
  */
 package org.apache.kandula.storage;
 
-import org.apache.kandula.coordinator.context.ActivityContext;
+import org.apache.kandula.context.ActivityContext;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -24,7 +24,7 @@ import org.apache.kandula.coordinator.context.ActivityContext;
 public class Axis1Store implements Store {
 
 	/* (non-Javadoc)
-	 * @see org.apache.kandula.storage.Store#putContext(java.lang.String, org.apache.kandula.coordinator.context.CoordinationContext)
+	 * @see org.apache.kandula.storage.Store#putContext(java.lang.String, org.apache.kandula.context.CoordinationContext)
 	 */
 	public void putContext(Object id, ActivityContext context) {
 		// TODO Auto-generated method stub

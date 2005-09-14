@@ -1,7 +1,7 @@
 package org.apache.kandula.coordinator;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.kandula.coordinator.context.ActivityContext;
+import org.apache.kandula.context.ActivityContext;
 import org.apache.kandula.KandulaException;
 
 /**

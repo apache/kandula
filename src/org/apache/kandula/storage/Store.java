@@ -16,7 +16,7 @@
  */
 package org.apache.kandula.storage;
 
-import org.apache.kandula.coordinator.context.ActivityContext;
+import org.apache.kandula.context.ActivityContext;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>

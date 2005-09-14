@@ -14,11 +14,11 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.coordinator.context;
+package org.apache.kandula.context;
 
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.KandulaException;
-import org.apache.kandula.coordinator.context.at.ATActivityContext;
+import org.apache.kandula.context.at.ATActivityContext;
 import org.apache.kandula.typemapping.CoordinationContext;
 
 /**

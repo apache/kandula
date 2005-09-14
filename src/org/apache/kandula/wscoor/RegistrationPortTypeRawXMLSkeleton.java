@@ -71,7 +71,7 @@ public class RegistrationPortTypeRawXMLSkeleton {
 
         Coordinator coordinator = new Coordinator();
         EndpointReference epr = coordinator.registerParticipant(
-                TransactionManager.tempID, protocolIdentifier, participantEPR);
+                Coordinator.ACTIVITY_ID, protocolIdentifier, participantEPR);
         System.out.println("visited registration skeleton");
         return toOM(epr);
     }

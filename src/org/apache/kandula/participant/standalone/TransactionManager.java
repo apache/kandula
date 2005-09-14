@@ -18,12 +18,11 @@ package org.apache.kandula.participant.standalone;
 
 import java.rmi.RemoteException;
 
-import org.apache.axis2.Constants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.KandulaException;
-import org.apache.kandula.coordinator.context.ActivityContext;
-import org.apache.kandula.coordinator.context.ContextFactory;
-import org.apache.kandula.coordinator.context.at.ATActivityContext;
+import org.apache.kandula.context.ActivityContext;
+import org.apache.kandula.context.ContextFactory;
+import org.apache.kandula.context.at.ATActivityContext;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
 import org.apache.kandula.utility.EndpointReferenceFactory;

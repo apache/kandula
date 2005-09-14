@@ -14,17 +14,15 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.coordinator.context;
+package org.apache.kandula.context;
 
 import java.util.HashMap;
 
-import javax.mail.internet.MimeUtility;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Status.CoordinatorStatus;
-import org.apache.kandula.coordinator.CoordinatorUtils;
 import org.apache.kandula.typemapping.CoordinationContext;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.utility.KandulaUtils;

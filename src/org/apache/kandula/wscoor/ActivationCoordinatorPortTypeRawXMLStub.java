@@ -112,7 +112,7 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
         AnyContentType refProperties = new AnyContentType();
         refProperties.addReferenceValue(new QName(
                 "http://ws.apache.org/kandula", "id"), id);
-        replyToEpr.setReferenceProperties(refProperties);
+        replyToEpr.setReferenceParameters(refProperties);
         //  messageSender.
         messageSender.setReplyTo(replyToEpr);
         messageSender.setTo(this.toEPR);

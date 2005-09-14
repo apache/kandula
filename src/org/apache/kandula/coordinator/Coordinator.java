@@ -19,8 +19,8 @@ package org.apache.kandula.coordinator;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.coordinator.at.ATCoordinator;
-import org.apache.kandula.coordinator.context.ActivityContext;
-import org.apache.kandula.coordinator.context.ContextFactory;
+import org.apache.kandula.context.ActivityContext;
+import org.apache.kandula.context.ContextFactory;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
 import org.apache.kandula.typemapping.CoordinationContext;
@@ -33,6 +33,8 @@ import org.apache.kandula.typemapping.CoordinationContext;
 
 public class Coordinator {
     private Store store;
+    //till we be able to use refrence propoerties correctly
+    public static String ACTIVITY_ID;
 
     public Coordinator() {
         StorageFactory storageFactory = StorageFactory.getInstance();
@@ -56,13 +58,14 @@ public class Coordinator {
         ContextFactory factory = ContextFactory.getInstance();
         ActivityContext context = factory.createActivity(coordinationType);
         context.getCoordinationContext().setExpires(expires);
+          ACTIVITY_ID = context.getCoordinationContext().getActivityID();
         store.putContext(context.getCoordinationContext().getActivityID(),
                 context);
         return context;
     }
 
     /**
-     * @param Coordinationcontext
+     * @param CoordinationContext
      * @return the interposed Coordination Context created
      * 
      * Participants decided to use this Coordinator as a interposed
