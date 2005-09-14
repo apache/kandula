@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.participant.standalone;
+package org.apache.kandula.initiator;
 
 import java.rmi.RemoteException;
 

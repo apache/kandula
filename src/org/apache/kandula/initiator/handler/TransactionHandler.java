@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.participant.standalone.handler;
+package org.apache.kandula.participant.initiator;
 
 
 
