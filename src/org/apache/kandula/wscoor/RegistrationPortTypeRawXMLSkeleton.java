@@ -30,7 +30,6 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.coordinator.Coordinator;
-import org.apache.kandula.participant.standalone.TransactionManager;
 import org.apache.kandula.utility.KandulaUtils;
 
 /**

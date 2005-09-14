@@ -3,7 +3,7 @@ package org.apache.kandula.wscoor;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMElement;
 import org.apache.kandula.context.ActivityContext;
-import org.apache.kandula.participant.standalone.TransactionManager;
+import org.apache.kandula.initiator.TransactionManager;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.typemapping.CoordinationContext;
 
