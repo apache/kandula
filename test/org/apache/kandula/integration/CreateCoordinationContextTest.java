@@ -30,7 +30,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.kandula.Constants;
-import org.apache.kandula.participant.standalone.TransactionManager;
+import org.apache.kandula.initiator.TransactionManager;
 
 public class CreateCoordinationContextTest extends TestCase {
 

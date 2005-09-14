@@ -20,8 +20,8 @@ import junit.framework.TestCase;
 import org.apache.kandula.Constants;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.Status;
-import org.apache.kandula.coordinator.context.ActivityContext;
-import org.apache.kandula.coordinator.context.at.ATActivityContext;
+import org.apache.kandula.context.ActivityContext;
+import org.apache.kandula.context.at.ATActivityContext;
 import org.apache.kandula.typemapping.CoordinationContext;
 import org.xmlsoap.schemas.ws.x2003.x09.wscoor.CoordinationContextType;
 
@@ -48,7 +48,7 @@ public class CoordinatorImplTest extends TestCase {
      * Class under test for ActivityContext createCoordinationContext(String, long)
      */
     public void testCreateCoordinationContextStringlong() throws KandulaException {
-        CoordinatorImpl coordinator =  new CoordinatorImpl();
+        Coordinator coordinator =  new Coordinator();
         ActivityContext context = coordinator.createCoordinationContext(Constants.WS_AT,3000);
         assertTrue(ATActivityContext.class.isInstance(context));
         assertNotNull(context.getCoordinationContext());
@@ -59,7 +59,7 @@ public class CoordinatorImplTest extends TestCase {
      * Class under test for ActivityContext createCoordinationContext(CoordinationContext)
      */
     public void testCreateCoordinationContextCoordinationContext() throws KandulaException {
-        CoordinatorImpl coordinator =  new CoordinatorImpl();
+        Coordinator coordinator =  new Coordinator();
         CoordinationContext coorContext =  CoordinationContext.Factory.newInstance();
         coorContext.setCoordinationType(Constants.WS_AT);
         coorContext.setExpires(3000);
