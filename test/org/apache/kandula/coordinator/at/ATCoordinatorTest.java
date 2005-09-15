@@ -32,6 +32,7 @@ public class ATCoordinatorTest extends TestCase {
 
     /**
      * Constructor for ATCoordinatorTest.
+     *
      * @param arg0
      */
     public ATCoordinatorTest(String arg0) {

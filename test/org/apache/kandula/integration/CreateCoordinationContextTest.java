@@ -20,10 +20,7 @@ package org.apache.kandula.integration;
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  */
 
-import java.io.File;
-
 import junit.framework.TestCase;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
@@ -32,12 +29,14 @@ import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.kandula.Constants;
 import org.apache.kandula.initiator.TransactionManager;
 
+import java.io.File;
+
 public class CreateCoordinationContextTest extends TestCase {
 
     private String repository = "test-resources/testing-repository";
-    
+
     private SimpleHTTPServer server;
-    
+
     private boolean finish = false;
 
 
@@ -55,7 +54,7 @@ public class CreateCoordinationContextTest extends TestCase {
         if (!file.exists()) {
             throw new Exception(
                     "repository directory " + file.getAbsolutePath() +
-                    " does not exists");
+                            " does not exists");
         }
         ConfigurationContext er = erfac.buildConfigurationContext(
                 file.getAbsolutePath());
@@ -66,7 +65,7 @@ public class CreateCoordinationContextTest extends TestCase {
             server.start();
             System.out.print(
                     "Server started on port " + 8081 +
-                    ".....");
+                            ".....");
         } finally {
 
         }
@@ -85,7 +84,6 @@ public class CreateCoordinationContextTest extends TestCase {
     }
 
 
-   
     public void testEchoXMLSync() throws Exception {
         TransactionManager tm = new TransactionManager(Constants.WS_AT, new EndpointReference("http://localhost:8081/axis/services/ActivationCoordinator"));
         //Thread.sleep(100000);
