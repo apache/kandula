@@ -16,21 +16,21 @@
  */
 package org.apache.kandula.context;
 
-import java.util.Iterator;
-
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.KandulaException;
-import org.apache.kandula.typemapping.CoordinationContext;
+import org.apache.kandula.context.coordination.CoordinationContext;
+
+import java.util.Iterator;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public interface ActivityContext {
-    
+
     public abstract EndpointReference addParticipant(EndpointReference participantEPR, String protocol) throws KandulaException;
-    
+
     public abstract Iterator getRegisteredParticipants(String protocol);
-    
+
     public abstract Iterator getAllParticipants();
 
     public abstract int getStatus();
@@ -40,13 +40,13 @@ public interface ActivityContext {
     public abstract void lock();
 
     public abstract void unlock();
-    
+
     public abstract void setProperty(Object key, Object value);
-    
+
     public abstract Object getProperty(Object key);
-    
+
     public abstract CoordinationContext getCoordinationContext();
-    
+
     public abstract void setCoordinationContext(CoordinationContext context);
-    
+
 }

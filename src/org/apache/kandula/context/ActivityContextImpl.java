@@ -16,16 +16,15 @@
  */
 package org.apache.kandula.context;
 
-import java.util.HashMap;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.kandula.context.coordination.CoordinationContext;
 import org.apache.kandula.Status.CoordinatorStatus;
-import org.apache.kandula.typemapping.CoordinationContext;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.utility.KandulaUtils;
+
+import javax.xml.namespace.QName;
+import java.util.HashMap;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -48,7 +47,7 @@ public abstract class ActivityContextImpl implements ActivityContext {
 
     public ActivityContextImpl(String coordinationType) {
         propertyBag = new HashMap();
-        activityID =  KandulaUtils.getRandomStringOf18Characters();
+        activityID = KandulaUtils.getRandomStringOf18Characters();
         coordinationContext = CoordinationContext.Factory.newInstance();
         coordinationContext.setActivityID(activityID);
         EndpointReference registrationEpr = EndpointReferenceFactory
@@ -69,6 +68,12 @@ public abstract class ActivityContextImpl implements ActivityContext {
     public void setCoordinationContext(CoordinationContext context) {
         this.coordinationContext = context;
     }
+
+//    public abstract EndpointReference addParticipant(EndpointReference participantEPR, String protocol) throws KandulaException;
+//
+//    public abstract Iterator getRegisteredParticipants(String protocol);
+//
+//    public abstract Iterator getAllParticipants();
 
     public int getStatus() {
         return status;

@@ -19,7 +19,7 @@ package org.apache.kandula.context;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.context.at.ATActivityContext;
-import org.apache.kandula.typemapping.CoordinationContext;
+import org.apache.kandula.context.coordination.CoordinationContext;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -42,7 +42,7 @@ public class ContextFactory {
     }
 
     public ActivityContext createActivity(String protocol,
-            EndpointReference activationEPR) throws KandulaException {
+                                          EndpointReference activationEPR) throws KandulaException {
         if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(protocol)) {
             return new ATActivityContext(activationEPR);
         } else {

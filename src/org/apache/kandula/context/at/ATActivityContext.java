@@ -16,19 +16,20 @@
  */
 package org.apache.kandula.context.at;
 
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedList;
-
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.context.ActivityContext;
 import org.apache.kandula.context.ActivityContextImpl;
 import org.apache.kandula.context.Participant;
-import org.apache.kandula.typemapping.CoordinationContext;
+import org.apache.kandula.context.coordination.CoordinationContext;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.utility.KandulaUtils;
-import org.apache.axis2.addressing.EndpointReference;
+
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedList;
+
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
@@ -64,8 +65,7 @@ public class ATActivityContext extends ActivityContextImpl implements
     }
 
     /**
-     * @param context
-     * To be used when coordinator is used as a sub ordinate to an another  cooordinator
+     * @param context To be used when coordinator is used as a sub ordinate to an another  cooordinator
      */
     public ATActivityContext(CoordinationContext context) {
         subOrdinate = true;
@@ -76,12 +76,11 @@ public class ATActivityContext extends ActivityContextImpl implements
         durableParticipantsTable = new Hashtable();
         setCoordinationContext(context);
     }
+
     /**
-     * @param id
-     * To be used when using as the requester
+     * @param id To be used when using as the requester
      */
-    public ATActivityContext(EndpointReference activationEPR)
-    {
+    public ATActivityContext(EndpointReference activationEPR) {
         super();
         this.setProperty(REQUESTER_ID, KandulaUtils.getRandomStringOf18Characters());
         this.setProperty(ACTIVATION_EPR, activationEPR);
@@ -101,13 +100,10 @@ public class ATActivityContext extends ActivityContextImpl implements
         } else if (Constants.WS_AT_DURABLE2PC.equals(protocol)) {
             addDurableParticipant(participantEPR);
             return EndpointReferenceFactory.getInstance().get2PCEndpoint(this.activityID);
-        }else if  (Constants.WS_AT_COMPLETION.equals(protocol))
-        {
+        } else if (Constants.WS_AT_COMPLETION.equals(protocol)) {
             //TODO keep track of requesters
             return EndpointReferenceFactory.getInstance().getCompletionEndpoint(this.activityID);
-        }
-        else
-        {
+        } else {
             throw new KandulaException("UnSupported Protocol");
         }
     }
@@ -151,7 +147,7 @@ public class ATActivityContext extends ActivityContextImpl implements
     }
 
     public boolean hasMorePreparing() {
-       return (preparingParticipantsCount > 0);
+        return (preparingParticipantsCount > 0);
     }
 
     public boolean getSubVolatileRegistered() {
