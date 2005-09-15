@@ -19,6 +19,7 @@ package org.apache.kandula.context.at;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
 import org.apache.kandula.KandulaException;
+import org.apache.kandula.Status;
 import org.apache.kandula.context.ActivityContext;
 import org.apache.kandula.context.ActivityContextImpl;
 import org.apache.kandula.context.Participant;
@@ -60,6 +61,7 @@ public class ATActivityContext extends ActivityContextImpl implements
      */
     public ATActivityContext() {
         super(Constants.WS_AT);
+        this.setStatus(Status.CoordinatorStatus.STATUS_ACTIVE);
         volatileParticipantsTable = new Hashtable();
         durableParticipantsTable = new Hashtable();
     }
@@ -72,6 +74,7 @@ public class ATActivityContext extends ActivityContextImpl implements
         parentEPR = context.getRegistrationService();
 //        context.setRegistrationService(EndpointReferenceFactory.getInstance()
 //                .getRegistrationEndpoint());
+        this.setStatus(Status.CoordinatorStatus.STATUS_ACTIVE);
         volatileParticipantsTable = new Hashtable();
         durableParticipantsTable = new Hashtable();
         setCoordinationContext(context);

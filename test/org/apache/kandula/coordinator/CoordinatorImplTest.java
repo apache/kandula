@@ -23,7 +23,6 @@ import org.apache.kandula.Status;
 import org.apache.kandula.context.ActivityContext;
 import org.apache.kandula.context.coordination.CoordinationContext;
 import org.apache.kandula.context.at.ATActivityContext;
-import org.xmlsoap.schemas.ws.x2003.x09.wscoor.CoordinationContextType;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
