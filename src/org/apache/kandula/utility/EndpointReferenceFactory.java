@@ -16,14 +16,16 @@
  */
 package org.apache.kandula.utility;
 
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.util.Properties;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
+
+import javax.xml.namespace.QName;
+import java.util.Properties;
+
+/**
+ * @author Dasarath Weeratunge
+ * @author <a href="mailto:thilina@apache.org"> Thilina Gunarathne </a>
+ */
 
 public class EndpointReferenceFactory {
     static final String PROPERTY_FILE = "endpoints.conf";
@@ -76,7 +78,7 @@ public class EndpointReferenceFactory {
         epr.setReferenceProperties(refProperties);
         return epr;
     }
-    
+
     public EndpointReference getCompletionParticipantEndpoint(String id) {
         //TODO set this somehow reading the conf file
         EndpointReference epr = new EndpointReference(

@@ -18,7 +18,7 @@ package org.apache.kandula.typemapping.xmlbeansimpl;
 
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.om.OMElement;
-import org.apache.kandula.typemapping.CoordinationContext;
+import org.apache.kandula.context.coordination.CoordinationContext;
 import org.apache.kandula.typemapping.EndPointReference;
 import org.xmlsoap.schemas.ws.x2002.x07.utility.AttributedDateTime;
 import org.xmlsoap.schemas.ws.x2002.x07.utility.AttributedURI;
@@ -30,20 +30,21 @@ import org.xmlsoap.schemas.ws.x2004.x03.addressing.EndpointReferenceType;
  */
 public class XmlBeansTypeCoordinationContext implements CoordinationContext {
     private CoordinationContextType contextType;
-    
+
     public XmlBeansTypeCoordinationContext() {
         super();
         EndpointReferenceType epr = EndpointReferenceType.Factory.newInstance();
         contextType = CoordinationContextType.Factory.newInstance();
     }
+
     /**
      * @param contextType
      */
     public XmlBeansTypeCoordinationContext(Object contextType) {
         super();
-        this.contextType = (CoordinationContextType)contextType;
+        this.contextType = (CoordinationContextType) contextType;
     }
- 
+
     public String getActivityID() {
         return contextType.getIdentifier().getId();
     }
@@ -73,7 +74,7 @@ public class XmlBeansTypeCoordinationContext implements CoordinationContext {
     }
 
     public void setRegistrationService(EndpointReference value) {
-       // contextType.setRegistrationService((EndpointReferenceType)value.getEndPointReferenceType());
+        // contextType.setRegistrationService((EndpointReferenceType)value.getEndPointReferenceType());
 
     }
 
@@ -86,9 +87,10 @@ public class XmlBeansTypeCoordinationContext implements CoordinationContext {
     public Object getCoordinationContextType() {
         return contextType;
     }
+
     /* (non-Javadoc)
-     * @see org.apache.kandula.typemapping.CoordinationContext#toOM()
-     */
+    * @see org.apache.kandula.context.coordination.CoordinationContext#toOM()
+    */
     public OMElement toOM() {
         // TODO Auto-generated method stub
         return null;

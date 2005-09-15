@@ -16,17 +16,17 @@
  */
 package org.apache.kandula.coordinator.at;
 
-import java.util.Iterator;
-
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.Status;
 import org.apache.kandula.Status.CoordinatorStatus;
-import org.apache.kandula.coordinator.CoordinatorUtils;
-import org.apache.kandula.coordinator.Registerable;
 import org.apache.kandula.context.ActivityContext;
 import org.apache.kandula.context.at.ATActivityContext;
+import org.apache.kandula.coordinator.CoordinatorUtils;
+import org.apache.kandula.coordinator.Registerable;
+
+import java.util.Iterator;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -34,37 +34,36 @@ import org.apache.kandula.context.at.ATActivityContext;
 public class ATCoordinator implements Registerable {
 
     public EndpointReference register(ActivityContext context, String protocol,
-            EndpointReference participantEPR) throws KandulaException {
+                                      EndpointReference participantEPR) throws KandulaException {
         context.lock();
         switch (context.getStatus()) {
-        case CoordinatorStatus.STATUS_PREPARING_DURABLE:
-            context.unlock();
-            this.abort(context);
-            throw new IllegalStateException(
-                    "Coordinator is in preparing state - Durable ");
-        case CoordinatorStatus.STATUS_PREPARED_SUCCESS:
-            context.unlock();
-            throw new IllegalStateException(
-                    "Coordinator is in prepared success state");
-        case CoordinatorStatus.STATUS_COMMITTING:
-            context.unlock();
-            throw new IllegalStateException(
-                    "Coordinator is in committing state");
-        case CoordinatorStatus.STATUS_ABORTING:
-            throw new IllegalStateException("Coordinator is in Aborting state");
-        case CoordinatorStatus.STATUS_ACTIVE:
-        case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
-            return addParticipant(context,protocol, participantEPR);
-        case CoordinatorStatus.STATUS_NONE:
-        default:
-            context.unlock();
-            throw new IllegalStateException();
+            case CoordinatorStatus.STATUS_PREPARING_DURABLE:
+                context.unlock();
+                this.abort(context);
+                throw new IllegalStateException(
+                        "Coordinator is in preparing state - Durable ");
+            case CoordinatorStatus.STATUS_PREPARED_SUCCESS:
+                context.unlock();
+                throw new IllegalStateException(
+                        "Coordinator is in prepared success state");
+            case CoordinatorStatus.STATUS_COMMITTING:
+                context.unlock();
+                throw new IllegalStateException(
+                        "Coordinator is in committing state");
+            case CoordinatorStatus.STATUS_ABORTING:
+                throw new IllegalStateException("Coordinator is in Aborting state");
+            case CoordinatorStatus.STATUS_ACTIVE:
+            case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
+                return addParticipant(context, protocol, participantEPR);
+            case CoordinatorStatus.STATUS_NONE:
+            default:
+                context.unlock();
+                throw new IllegalStateException();
         }
     }
 
     /**
-     * @param Activity
-     *            Id taken from the Request
+     * @param Activity Id taken from the Request
      * @return should be a notification This wraps the Commit operation defined
      *         in Ws-AtomicTransaction specification.
      */
@@ -81,35 +80,35 @@ public class ATCoordinator implements Registerable {
          */
         context.lock();
         switch (context.getStatus()) {
-        case CoordinatorStatus.STATUS_NONE:
-        case CoordinatorStatus.STATUS_ABORTING:
-            context.unlock();
-            return "Aborted";
-        case CoordinatorStatus.STATUS_PREPARING_DURABLE:
-        case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
-        case CoordinatorStatus.STATUS_PREPARED_SUCCESS:
-            //If prepared success Ignore this message
-            context.unlock();
-            return null;
-        case CoordinatorStatus.STATUS_COMMITTING:
-            context.unlock();
-            return "Committed";
-        case Status.CoordinatorStatus.STATUS_ACTIVE:
-            int result;
-            result = volatilePrepare(context);
-
-            if (result == Status.CoordinatorStatus.STATUS_ABORTING) {
-                context.lock();
-                context.setStatus(Status.CoordinatorStatus.STATUS_ABORTING);
+            case CoordinatorStatus.STATUS_NONE:
+            case CoordinatorStatus.STATUS_ABORTING:
                 context.unlock();
-                abort(context);
-            }
+                return "Aborted";
+            case CoordinatorStatus.STATUS_PREPARING_DURABLE:
+            case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
+            case CoordinatorStatus.STATUS_PREPARED_SUCCESS:
+                //If prepared success Ignore this message
+                context.unlock();
+                return null;
+            case CoordinatorStatus.STATUS_COMMITTING:
+                context.unlock();
+                return "Committed";
+            case Status.CoordinatorStatus.STATUS_ACTIVE:
+                int result;
+                result = volatilePrepare(context);
 
-            result = commit(context);
-            return null;
-        default:
-            context.unlock();
-            return null;
+                if (result == Status.CoordinatorStatus.STATUS_ABORTING) {
+                    context.lock();
+                    context.setStatus(Status.CoordinatorStatus.STATUS_ABORTING);
+                    context.unlock();
+                    abort(context);
+                }
+
+                result = commit(context);
+                return null;
+            default:
+                context.unlock();
+                return null;
         }
 
     }
@@ -126,32 +125,32 @@ public class ATCoordinator implements Registerable {
          */
         context.lock();
         switch (context.getStatus()) {
-        case CoordinatorStatus.STATUS_NONE:
-        case CoordinatorStatus.STATUS_ABORTING:
-            context.unlock();
-            return "Aborted";
-        case CoordinatorStatus.STATUS_PREPARING_DURABLE:
-        case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
-        case CoordinatorStatus.STATUS_PREPARED_SUCCESS:
-            //If prepared success Ignore this message
-            context.unlock();
-            return null;
-        case CoordinatorStatus.STATUS_COMMITTING:
-            context.unlock();
-            return "Committed";
-        case Status.CoordinatorStatus.STATUS_ACTIVE:
-            context.setStatus(Status.CoordinatorStatus.STATUS_ABORTING);
-            context.unlock();
-            int result = abort(context);
-            //                if (result ==fdsfsfd)
-            //                {
-            //                    throw new Exception
-            //                }
+            case CoordinatorStatus.STATUS_NONE:
+            case CoordinatorStatus.STATUS_ABORTING:
+                context.unlock();
+                return "Aborted";
+            case CoordinatorStatus.STATUS_PREPARING_DURABLE:
+            case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
+            case CoordinatorStatus.STATUS_PREPARED_SUCCESS:
+                //If prepared success Ignore this message
+                context.unlock();
+                return null;
+            case CoordinatorStatus.STATUS_COMMITTING:
+                context.unlock();
+                return "Committed";
+            case Status.CoordinatorStatus.STATUS_ACTIVE:
+                context.setStatus(Status.CoordinatorStatus.STATUS_ABORTING);
+                context.unlock();
+                int result = abort(context);
+                //                if (result ==fdsfsfd)
+                //                {
+                //                    throw new Exception
+                //                }
 
-            return null;
-        default:
-            context.unlock();
-            return null;
+                return null;
+            default:
+                context.unlock();
+                return null;
         }
     }
 
@@ -258,7 +257,7 @@ public class ATCoordinator implements Registerable {
     }
 
     public EndpointReference addParticipant(ActivityContext context, String protocol,
-            EndpointReference participantEPR) throws KandulaException {
+                                            EndpointReference participantEPR) throws KandulaException {
         ATActivityContext atContext = (ATActivityContext) context;
         if (protocol.equals(Constants.WS_AT_DURABLE2PC))
             return atContext.addParticipant(participantEPR, protocol);

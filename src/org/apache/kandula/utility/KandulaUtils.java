@@ -16,6 +16,15 @@
  */
 package org.apache.kandula.utility;
 
+import org.apache.axis2.addressing.AddressingConstants;
+import org.apache.axis2.addressing.AddressingConstants.Final;
+import org.apache.axis2.addressing.AnyContentType;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.soap.SOAPFactory;
+
+import javax.xml.namespace.QName;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
@@ -23,22 +32,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.Random;
 
-import javax.xml.namespace.QName;
-
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AnyContentType;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.AddressingConstants.Final;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.soap.SOAPFactory;
-
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class KandulaUtils {
-    public static void endpointToOM(EndpointReference epr, OMElement parentEPR,SOAPFactory factory)
-    {
+    public static void endpointToOM(EndpointReference epr, OMElement parentEPR, SOAPFactory factory) {
         OMNamespace wsAddressing = factory.createOMNamespace(
                 AddressingConstants.Submission.WSA_NAMESPACE,
                 AddressingConstants.WSA_DEFAULT_PRFIX);
@@ -67,9 +65,11 @@ public class KandulaUtils {
             }
         }
     }
+
     /**
      * MD5 a random string with localhost/date etc will return 128 bits
      * construct a string of 18 characters from those bits.
+     *
      * @return string
      */
     public static String getRandomStringOf18Characters() {
@@ -103,7 +103,7 @@ public class KandulaUtils {
             sb2.append(Integer.toHexString(b));
         }
         int begin = myRand.nextInt();
-        if(begin < 0) begin = begin * -1;
+        if (begin < 0) begin = begin * -1;
         begin = begin % 8;
         return new String(sb2.toString().substring(begin, begin + 18)).toUpperCase();
     }

@@ -16,13 +16,17 @@
  */
 package org.apache.kandula.coordinator.ba;
 
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.kandula.KandulaException;
 import org.apache.kandula.context.ActivityContext;
+import org.apache.kandula.coordinator.Registerable;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public interface BACoordinator {
-    public abstract String register(ActivityContext context, String protocol,
-            String participantEPR);
+public class BACoordinator implements Registerable {
 
+    public EndpointReference register(ActivityContext context, String protocol, EndpointReference participantEPR) throws KandulaException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

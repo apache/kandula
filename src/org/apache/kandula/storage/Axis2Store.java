@@ -21,26 +21,25 @@ import org.apache.kandula.context.ActivityContext;
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public class Axis2Store implements Store{
+public class Axis2Store implements Store {
 
-	/* (non-Javadoc)
-	 * @see org.apache.kandula.storage.Store#putContext(java.lang.String, org.apache.kandula.context.CoordinationContext)
-	 */
-	public void putContext(Object id, ActivityContext context) {
-		// TODO Auto-generated method stub
-		
-	}
+    /* (non-Javadoc)
+      * @see org.apache.kandula.storage.Store#putContext(java.lang.String, org.apache.kandula.context.coordination.CoordinationContext)
+      */
+    public void putContext(Object id, ActivityContext context) {
+        // TODO Auto-generated method stub
 
-	/* (non-Javadoc)
-	 * @see org.apache.kandula.storage.Store#getContext(java.lang.String)
-	 */
-	public ActivityContext getContext(Object id) {
-		return null;
-		
-	}
-	
-	public void forgetContext(Object id)
-	{		
-	}
+    }
+
+    /* (non-Javadoc)
+      * @see org.apache.kandula.storage.Store#getContext(java.lang.String)
+      */
+    public ActivityContext getContext(Object id) {
+        return null;
+
+    }
+
+    public void forgetContext(Object id) {
+    }
 
 }

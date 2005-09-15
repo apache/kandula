@@ -16,9 +16,9 @@
  */
 package org.apache.kandula.storage;
 
-import java.util.HashMap;
-
 import org.apache.kandula.context.ActivityContext;
+
+import java.util.HashMap;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -26,13 +26,14 @@ import org.apache.kandula.context.ActivityContext;
 public class SimpleStore implements Store {
 
     private HashMap contextMap;
+
     /* (non-Javadoc)
-     * @see org.apache.kandula.storage.Store#putContext(java.lang.String, org.apache.kandula.context.ActivityContext)
-     */
-    public SimpleStore()
-    {
+    * @see org.apache.kandula.storage.Store#putContext(java.lang.String, org.apache.kandula.context.ActivityContext)
+    */
+    public SimpleStore() {
         contextMap = new HashMap();
     }
+
     public void putContext(Object id, ActivityContext context) {
         contextMap.put(id, context);
     }
@@ -41,7 +42,7 @@ public class SimpleStore implements Store {
      * @see org.apache.kandula.storage.Store#getContext(java.lang.String)
      */
     public ActivityContext getContext(Object id) {
-        return (ActivityContext)contextMap.get(id);
+        return (ActivityContext) contextMap.get(id);
     }
 
     /* (non-Javadoc)

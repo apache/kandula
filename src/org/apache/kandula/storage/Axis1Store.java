@@ -23,28 +23,28 @@ import org.apache.kandula.context.ActivityContext;
  */
 public class Axis1Store implements Store {
 
-	/* (non-Javadoc)
-	 * @see org.apache.kandula.storage.Store#putContext(java.lang.String, org.apache.kandula.context.CoordinationContext)
-	 */
-	public void putContext(Object id, ActivityContext context) {
-		// TODO Auto-generated method stub
-		
-	}
+    /* (non-Javadoc)
+      * @see org.apache.kandula.storage.Store#putContext(java.lang.String, org.apache.kandula.context.coordination.CoordinationContext)
+      */
+    public void putContext(Object id, ActivityContext context) {
+        // TODO Auto-generated method stub
 
-	/* (non-Javadoc)
-	 * @see org.apache.kandula.storage.Store#getContext(java.lang.String)
-	 */
-	public ActivityContext getContext(Object id) {
-	
-		return null;
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see org.apache.kandula.storage.Store#forgetContext(java.lang.String)
-	 */
-	public void forgetContext(Object id) {
-		// TODO Auto-generated method stub
-		
-	}
+    /* (non-Javadoc)
+      * @see org.apache.kandula.storage.Store#getContext(java.lang.String)
+      */
+    public ActivityContext getContext(Object id) {
+
+        return null;
+    }
+
+    /* (non-Javadoc)
+      * @see org.apache.kandula.storage.Store#forgetContext(java.lang.String)
+      */
+    public void forgetContext(Object id) {
+        // TODO Auto-generated method stub
+
+    }
 
 }

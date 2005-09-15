@@ -1,9 +1,5 @@
 package org.apache.kandula.wscoor;
 
-import java.io.IOException;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
@@ -13,6 +9,9 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.kandula.Constants;
 import org.apache.kandula.utility.KandulaListener;
 import org.apache.kandula.utility.KandulaUtils;
+
+import javax.xml.namespace.QName;
+import java.io.IOException;
 
 
 public class RegistrationCoordinatorPortTypeRawXMLStub extends
@@ -46,7 +45,7 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
      * Constructor
      */
     public RegistrationCoordinatorPortTypeRawXMLStub(String axis2Home,
-            EndpointReference targetEndpoint) throws java.lang.Exception {
+                                                     EndpointReference targetEndpoint) throws java.lang.Exception {
         this.toEPR = targetEndpoint;
         //creating the configuration
         _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
@@ -58,7 +57,7 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
     }
 
     private org.apache.axis2.soap.SOAPEnvelope createSOAPEnvelope(
-            String protocolType,EndpointReference epr) {
+            String protocolType, EndpointReference epr) {
         org.apache.axis2.soap.SOAPEnvelope env = super.createEnvelope();
         org.apache.axis2.soap.SOAPFactory factory = OMAbstractFactory
                 .getSOAP12Factory();
@@ -70,9 +69,9 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
                 "ProtocolIdentifier", wsCoor);
         protocolTypeElement.setText(protocolType);
         request.addChild(protocolTypeElement);
-        
-        OMElement protocolService = factory.createOMElement("ParticipantProtocolService",wsCoor);
-        KandulaUtils.endpointToOM(epr,protocolService,factory);
+
+        OMElement protocolService = factory.createOMElement("ParticipantProtocolService", wsCoor);
+        KandulaUtils.endpointToOM(epr, protocolService, factory);
         request.addChild(protocolService);
         env.getBody().addChild(request);
         return env;
@@ -81,7 +80,7 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
     }
 
     public void RegisterOperation(String protocolType, EndpointReference epr,
-            String id) throws IOException {
+                                  String id) throws IOException {
 
         QName serviceName = new QName("RegistrationRequesterPortType");
         QName operationName = new QName(Constants.WS_COOR, "RegisterOperation");
@@ -104,7 +103,7 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
         messageSender.setTo(this.toEPR);
         messageSender.setSoapAction("RegisterOperation");
         //_call.setWsaAction("CreateCoordinationContextOperation");
-        org.apache.axis2.soap.SOAPEnvelope env = createSOAPEnvelope(protocolType,epr);
+        org.apache.axis2.soap.SOAPEnvelope env = createSOAPEnvelope(protocolType, epr);
         messageContext.setEnvelope(env);
 
         System.out.println("visited registration send");

@@ -16,12 +16,6 @@
  */
 package org.apache.kandula.utility;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.ParameterImpl;
@@ -30,6 +24,11 @@ import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
+
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -72,9 +71,8 @@ public class KandulaListener {
         }
 
     }
-    
-    public void stop()
-    {
+
+    public void stop() {
         receiver.stop();
         serverStarted = false;
     }
@@ -82,12 +80,11 @@ public class KandulaListener {
     /**
      * @param serviceName
      * @param operationName
-     * @throws AxisFault
-     *             To add services with only one operation, which is the
-     *             frequent case in reponses
+     * @throws AxisFault To add services with only one operation, which is the
+     *                   frequent case in reponses
      */
     public void addService(QName serviceName, QName operationName,
-            String className) throws AxisFault {
+                           String className) throws AxisFault {
         ServiceDescription service = new ServiceDescription(serviceName);
         service.addParameter(new ParameterImpl(
                 AbstractMessageReceiver.SERVICE_CLASS, className));
@@ -110,7 +107,7 @@ public class KandulaListener {
     }
 
     public String getHost() throws UnknownHostException {
-        return "http://"+InetAddress.getLocalHost().getHostAddress() + ":" + SERVER_PORT
+        return "http://" + InetAddress.getLocalHost().getHostAddress() + ":" + SERVER_PORT
                 + "/axis2/services/";
     }
 }

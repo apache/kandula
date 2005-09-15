@@ -18,22 +18,20 @@ package org.apache.kandula.coordinator;
 
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.KandulaException;
-import org.apache.kandula.coordinator.at.ATCoordinator;
 import org.apache.kandula.context.ActivityContext;
 import org.apache.kandula.context.ContextFactory;
+import org.apache.kandula.coordinator.at.ATCoordinator;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
-import org.apache.kandula.typemapping.CoordinationContext;
+import org.apache.kandula.context.coordination.CoordinationContext;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- * 
- * This class implements the operations defined in WS-Coordination specification
  */
 
 public class Coordinator {
     private Store store;
-    //till we be able to use refrence propoerties correctly
+    //till we be able to use reference properties correctly
     public static String ACTIVITY_ID;
 
     public Coordinator() {
@@ -42,23 +40,22 @@ public class Coordinator {
     }
 
     /**
-     * @param Coordination
-     *            Type
+     * @param Coordination Type
      * @return the Coordination Context created
-     * 
-     * Initiators can use this to Create new Distributed transactions.This will
-     * take in the Coordination Type and will create an instance of the
-     * reapective ActivityContext. The Coordination Context created by this can
-     * be used to convey the information about the transaction between
-     * initiator,Participants and coordinator
+     *         <p/>
+     *         Initiators can use this to Create new Distributed transactions.This will
+     *         take in the Coordination Type and will create an instance of the
+     *         reapective ActivityContext. The Coordination Context created by this can
+     *         be used to convey the information about the transaction between
+     *         initiator,Participants and coordinator
      * @throws KandulaException
      */
     public ActivityContext createCoordinationContext(String coordinationType,
-            long expires) throws KandulaException {
+                                                     long expires) throws KandulaException {
         ContextFactory factory = ContextFactory.getInstance();
         ActivityContext context = factory.createActivity(coordinationType);
         context.getCoordinationContext().setExpires(expires);
-          ACTIVITY_ID = context.getCoordinationContext().getActivityID();
+        ACTIVITY_ID = context.getCoordinationContext().getActivityID();
         store.putContext(context.getCoordinationContext().getActivityID(),
                 context);
         return context;
@@ -67,12 +64,12 @@ public class Coordinator {
     /**
      * @param CoordinationContext
      * @return the interposed Coordination Context created
-     * 
-     * Participants decided to use this Coordinator as a interposed
-     * sub-coordinator.The newly created CoordinationContext will contain the
-     * same ActivityIdentifier & Protocol type. Registration EPR of the earlier
-     * CoordinationContext will be replaced by the RegistrationEPR of this
-     * Coordinator.
+     *         <p/>
+     *         Participants decided to use this Coordinator as a interposed
+     *         sub-coordinator.The newly created CoordinationContext will contain the
+     *         same ActivityIdentifier & Protocol type. Registration EPR of the earlier
+     *         CoordinationContext will be replaced by the RegistrationEPR of this
+     *         Coordinator.
      */
     public ActivityContext createCoordinationContext(
             CoordinationContext coorContext) throws KandulaException {
@@ -88,15 +85,15 @@ public class Coordinator {
      * @param participantEPR
      * @param Activity-id
      * @return Should return the particular Coordiators End Point Reference
-     * 
-     * This method provides the functional logic for participants to register
-     * for a particular transaction activity which was created by a initiator.
-     * Registration request will be forwarded to repective protocol
-     * coordinators.
+     *         <p/>
+     *         This method provides the functional logic for participants to register
+     *         for a particular transaction activity which was created by a initiator.
+     *         Registration request will be forwarded to repective protocol
+     *         coordinators.
      * @throws KandulaException
      */
     public EndpointReference registerParticipant(String id, String protocol,
-            EndpointReference participantEPR) throws KandulaException {
+                                                 EndpointReference participantEPR) throws KandulaException {
 
         ActivityContext context = getCoordinationContext(id);
         if (context == null) {

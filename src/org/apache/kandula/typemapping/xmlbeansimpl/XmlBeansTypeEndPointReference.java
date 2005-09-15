@@ -23,28 +23,30 @@ import org.xmlsoap.schemas.ws.x2004.x03.addressing.EndpointReferenceType;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class XmlBeansTypeEndPointReference implements EndPointReference {
-    
+
     EndpointReferenceType eprType;
-    
+
     /**
      * 
      */
     public XmlBeansTypeEndPointReference() {
         super();
-        eprType =  EndpointReferenceType.Factory.newInstance();
+        eprType = EndpointReferenceType.Factory.newInstance();
     }
+
     /**
      * @param eprType
      */
     public XmlBeansTypeEndPointReference(Object eprType) {
         super();
-        this.eprType = (EndpointReferenceType)eprType;
+        this.eprType = (EndpointReferenceType) eprType;
     }
+
     public Object getEndPointReferenceType() {
         return eprType;
     }
-    public String getPortTypeLocalPart()
-    {
+
+    public String getPortTypeLocalPart() {
         return eprType.getPortType().getQNameValue().getLocalPart();
     }
 

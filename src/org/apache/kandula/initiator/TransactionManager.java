@@ -16,8 +16,6 @@
  */
 package org.apache.kandula.initiator;
 
-import java.rmi.RemoteException;
-
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.context.ActivityContext;
@@ -28,6 +26,8 @@ import org.apache.kandula.storage.Store;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.wscoor.ActivationCoordinatorPortTypeRawXMLStub;
 import org.apache.kandula.wscoor.RegistrationCoordinatorPortTypeRawXMLStub;
+
+import java.rmi.RemoteException;
 
 /**
  * @author Dasarath Weeratunge
@@ -42,7 +42,7 @@ public class TransactionManager {
     public static String tempID;
 
     public TransactionManager(String coordinationType,
-            EndpointReference coordEPR) throws KandulaException {
+                              EndpointReference coordEPR) throws KandulaException {
         threadInfo = new ThreadLocal();
         ActivityContext context = ContextFactory.getInstance().createActivity(
                 coordinationType, coordEPR);
@@ -66,7 +66,7 @@ public class TransactionManager {
         threadInfo.set(id);
         ActivationCoordinatorPortTypeRawXMLStub activationCoordinator = new ActivationCoordinatorPortTypeRawXMLStub(
                 ".", (EndpointReference) context
-                        .getProperty(ATActivityContext.ACTIVATION_EPR));
+                .getProperty(ATActivityContext.ACTIVATION_EPR));
         activationCoordinator.createCoordinationContextOperation(
                 org.apache.kandula.Constants.WS_AT, id);
         while (context.getCoordinationContext() == null) {

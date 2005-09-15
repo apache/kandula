@@ -14,26 +14,13 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.participant.initiator;
-
-
-
+package org.apache.kandula.participant.simple;
 
 /**
- * @author Dasarath Weeratunge
+ * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-//public class TransactionHandler extends BasicHandler {
-////	TransactionManager tm= TransactionManager.getInstance();
-////	public void invoke(MessageContext msgContext) throws AxisFault {
-////		Transaction tx= tm.getTransaction();
-////		if (tx != null) {
-////			try {
-////				SOAPHeader header= msgContext.getCurrentMessage().getSOAPEnvelope().getHeader();
-////				tx.getCoordinationContex().toSOAPHeaderElement(header);
-////			}
-////			catch (Exception e) {
-////				throw AxisFault.makeFault(e);
-////			}
-////		}
-////	}
-//}
+public interface SimpleResource {
+    public void commit();
+    public void rollback();
+    public boolean prepare();
+}

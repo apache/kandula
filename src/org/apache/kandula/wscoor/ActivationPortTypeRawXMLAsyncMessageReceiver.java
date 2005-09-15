@@ -62,7 +62,7 @@ public class ActivationPortTypeRawXMLAsyncMessageReceiver extends
                 }
                 newMsgContext.setEnvelope(envelope);
                 newMsgContext.setSoapAction("CreateCoordinationContextOperation");
-               // callback.handleResult(newMsgContext);
+                // callback.handleResult(newMsgContext);
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

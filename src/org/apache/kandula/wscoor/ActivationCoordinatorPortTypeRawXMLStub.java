@@ -16,10 +16,6 @@
  */
 package org.apache.kandula.wscoor;
 
-import java.io.IOException;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
@@ -28,6 +24,9 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.kandula.Constants;
 import org.apache.kandula.utility.KandulaListener;
+
+import javax.xml.namespace.QName;
+import java.io.IOException;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -65,7 +64,7 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
      * Constructor
      */
     public ActivationCoordinatorPortTypeRawXMLStub(String axis2Home,
-            EndpointReference targetEndpoint) throws java.lang.Exception {
+                                                   EndpointReference targetEndpoint) throws java.lang.Exception {
         this.toEPR = targetEndpoint;
         //creating the configuration
         _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
@@ -95,7 +94,7 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
     }
 
     public void createCoordinationContextOperation(String coordinationType,
-            String id) throws IOException {
+                                                   String id) throws IOException {
 
         QName serviceName = new QName("ActivationRequesterPortType");
         QName operationName = new QName(Constants.WS_COOR,

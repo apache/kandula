@@ -5,7 +5,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.kandula.context.ActivityContext;
 import org.apache.kandula.initiator.TransactionManager;
 import org.apache.kandula.storage.StorageFactory;
-import org.apache.kandula.typemapping.CoordinationContext;
+import org.apache.kandula.context.coordination.CoordinationContext;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -39,12 +39,11 @@ public class ActivationRequesterPortTypeRawXMLSkeleton {
     public OMElement CreateCoordinationContextOperation(OMElement requestElement) {
 //        OMElement coordinationContextElement = requestElement
 //                .getFirstChildWithName(new QName("CoordinationContext"));
-        if ("CoordinationContext".equals(requestElement.getLocalName()))
-        {
-        msgContext.getMessageInformationHeaders().getReferenceParameters();
-        CoordinationContext  coordinationContext  =CoordinationContext.Factory.newInstance(requestElement);
-        ActivityContext context = StorageFactory.getInstance().getStore().getContext(TransactionManager.tempID);
-        context.setCoordinationContext(coordinationContext);
+        if ("CoordinationContext".equals(requestElement.getLocalName())) {
+            msgContext.getMessageInformationHeaders().getReferenceParameters();
+            CoordinationContext coordinationContext = CoordinationContext.Factory.newInstance(requestElement);
+            ActivityContext context = StorageFactory.getInstance().getStore().getContext(TransactionManager.tempID);
+            context.setCoordinationContext(coordinationContext);
         }
         return null;
     }

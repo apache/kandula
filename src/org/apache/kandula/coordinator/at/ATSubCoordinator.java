@@ -38,7 +38,7 @@ public class ATSubCoordinator extends ATCoordinator {
     }
 
     public EndpointReference addParticipant(ActivityContext context, String protocol,
-            EndpointReference participantEPR) throws KandulaException {
+                                            EndpointReference participantEPR) throws KandulaException {
         ATActivityContext atContext = (ATActivityContext) context;
         if (protocol.equals(Constants.WS_AT_DURABLE2PC)) {
             if (!atContext.getSubDurableRegistered()) {

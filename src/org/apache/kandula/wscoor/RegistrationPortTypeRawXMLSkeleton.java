@@ -16,11 +16,6 @@
  */
 package org.apache.kandula.wscoor;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
@@ -31,6 +26,10 @@ import org.apache.axis2.soap.SOAPFactory;
 import org.apache.kandula.KandulaException;
 import org.apache.kandula.coordinator.Coordinator;
 import org.apache.kandula.utility.KandulaUtils;
+
+import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * @author <a href="mailto:thilina@apache.org"> Thilina Gunarathne </a>
@@ -83,7 +82,7 @@ public class RegistrationPortTypeRawXMLSkeleton {
                 "CoordinatorProtocolService", wsCoor);
         OMElement coordinatorProtocolService = factory.createOMElement(
                 "CoordinatorProtocolService", wsCoor);
-        KandulaUtils.endpointToOM(epr,coordinatorProtocolService,factory);
+        KandulaUtils.endpointToOM(epr, coordinatorProtocolService, factory);
         protocolService.addChild(coordinatorProtocolService);
         return protocolService;
     }

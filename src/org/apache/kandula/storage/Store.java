@@ -22,7 +22,9 @@ import org.apache.kandula.context.ActivityContext;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public interface Store {
-	void putContext(Object id,ActivityContext context);
-	ActivityContext getContext(Object id);
-	void forgetContext(Object id);
+    void putContext(Object id, ActivityContext context);
+
+    ActivityContext getContext(Object id);
+
+    void forgetContext(Object id);
 }

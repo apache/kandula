@@ -23,21 +23,22 @@ abstract public interface Status {
     interface ParticipantStatus {
 
         public static final int STATUS_VOLATILE_PREPARING = 20;
-        
+
         public static final int STATUS_DURABLE_PREPARING = 21;
-        
+
         public static final int STATUS_PREPARED = 22;
-        
-        public static final int STATUS_ABORTED = 23; 
-        
+
+        public static final int STATUS_ABORTED = 23;
+
         public static final int STATUS_READ_ONLY = 24;
     }
+
     interface CoordinatorStatus {
 
         public static final int STATUS_NONE = 6;
 
         public static final int STATUS_COMMITTING = 8;
-        
+
         public static final int STATUS_PREPARING = 10;
 
         public static final int STATUS_PREPARING_DURABLE = 11;
