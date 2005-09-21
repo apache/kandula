@@ -17,13 +17,32 @@
 package org.apache.kandula.coordinator;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.kandula.KandulaException;
-import org.apache.kandula.context.ActivityContext;
+import org.apache.kandula.Constants;
+import org.apache.kandula.context.AbstractContext;
+import org.apache.kandula.coordinator.at.ATCoordinator;
+import org.apache.kandula.faults.AbstractKandulaException;
+import org.apache.kandula.faults.InvalidProtocolException;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public interface Registerable {
-    public EndpointReference register(ActivityContext context, String protocol,
-                                      EndpointReference participantEPR) throws KandulaException;
+    public EndpointReference register(AbstractContext context, String protocol,
+            EndpointReference participantEPR) throws AbstractKandulaException;
+
+    public static final class Factory {
+        public static Registerable newRegisterable(String coordinationType)
+                throws InvalidProtocolException {
+            if (Constants.WS_AT.equals(coordinationType)) {
+
+                return new ATCoordinator();
+
+            } else {
+                throw new InvalidProtocolException("Unsupported Coordination Type");
+            }
+        }
+
+        private Factory() {
+        }
+    }
 }

@@ -17,9 +17,9 @@
 package org.apache.kandula.context;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.kandula.KandulaException;
 import org.apache.kandula.context.at.ATActivityContext;
 import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.faults.InvalidProtocolException;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -31,34 +31,31 @@ public class ContextFactory {
         return instance;
     }
 
-    public ActivityContext createActivity(String protocol)
-            throws KandulaException {
+    public AbstractContext createActivity(String protocol)
+            throws InvalidProtocolException {
         if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(protocol)) {
             return new ATActivityContext();
         } else {
-            throw new KandulaException(new IllegalArgumentException(
-                    "Unsupported Protocol Type"));
+            throw new InvalidProtocolException("Unsupported Protocol Type");
         }
     }
 
-    public ActivityContext createActivity(String protocol,
-                                          EndpointReference activationEPR) throws KandulaException {
+    public AbstractContext createActivity(String protocol,
+                                          EndpointReference activationEPR) throws InvalidProtocolException {
         if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(protocol)) {
             return new ATActivityContext(activationEPR);
         } else {
-            throw new KandulaException(new IllegalArgumentException(
-                    "Unsupported Protocol Type"));
+            throw new InvalidProtocolException("Unsupported Protocol Type");
         }
     }
 
-    public ActivityContext createActivity(CoordinationContext context)
-            throws KandulaException {
+    public AbstractContext createActivity(CoordinationContext context)
+            throws InvalidProtocolException{
         if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(context
                 .getCoordinationType())) {
             return new ATActivityContext(context);
         } else {
-            throw new KandulaException(new IllegalArgumentException(
-                    "Unsupported Protocol Type"));
+            throw new InvalidProtocolException("Unsupported Protocol Type");
         }
     }
 }

@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.context.coordination.simple;
+package org.apache.kandula.context.coordination;
 
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AddressingConstants.Final;
@@ -25,7 +25,6 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.kandula.Constants;
-import org.apache.kandula.context.coordination.CoordinationContext;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
@@ -44,8 +43,10 @@ public class SimpleCoordinationContext implements CoordinationContext {
 
     private OMElement contextElement = null;
 
-    public SimpleCoordinationContext() {
-        super();
+    public SimpleCoordinationContext(String activityID,String coordinationType, EndpointReference epr) {
+        this.activityID = activityID;
+        this.coordinationType  = coordinationType;
+        this.registrationServiceEpr = epr;
     }
 
     public SimpleCoordinationContext(OMElement contextElement) {

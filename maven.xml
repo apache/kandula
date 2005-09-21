@@ -1,78 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="jar"
-         xmlns:j="jelly:core"
-         xmlns:maven="jelly:maven"
-         xmlns:deploy="deploy"
-         xmlns:ant="jelly:ant">
-
+	xmlns:j="jelly:core"
+    xmlns:maven="jelly:maven"
+    xmlns:deploy="deploy"
+    xmlns:ant="jelly:ant">
+    
     <goal name="setclasspath">
         <path id="test.classpath">
             <path refid="maven.dependency.classpath"/>
         </path>
     </goal>
-
+    
     <postGoal name="jar">
-        <ant:mkdir dir="${basedir}/target/lib"/>
-        <deploy:copy-deps todir="${basedir}/target/lib"/>
+    	<ant:mkdir dir="${basedir}/target/lib"/>
+    	<deploy:copy-deps todir="${basedir}/target/lib"/>
     </postGoal>
-
+    
     <preGoal name="java:compile">
-        <mkdir dir="${maven.build.dir}/stubs/src"/>
-
+    <mkdir dir="${maven.build.dir}/stubs/src"/>
+    
+    	<ant:echo>+----------------------------------------+</ant:echo>
+        <ant:echo>| Code Generating For WS-Coordination    |</ant:echo>
         <ant:echo>+----------------------------------------+</ant:echo>
-        <ant:echo>| Code Generating For WS-Coordination |</ant:echo>
-        <ant:echo>+----------------------------------------+</ant:echo>
-        <java classname="org.apache.axis2.wsdl.WSDL2Java"
-              failonerror="true" fork="yes">
-            <classpath>
-                <path refid="maven.dependency.classpath"/>
-            </classpath>
-            <arg value="-ss"/>
-            <arg value="-uri"/>
-            <arg value="${basedir}/schema/wscoor.wsdl"/>
-            <arg value="-o"/>
-            <arg value="${maven.build.dir}/stubs/src/wscoor"/>
-        </java>
-
-        <ant:echo>+------------------------------------------+</ant:echo>
+    	<java classname="org.apache.axis2.wsdl.WSDL2Java"
+    		failonerror="true" fork="yes">
+    		<classpath>
+    			<path refid="maven.dependency.classpath"/>
+    		</classpath> 
+    		<arg value="-ss"/>
+    		<arg value="-uri"/>
+    		<arg value="${basedir}/schema/wscoor.wsdl"/>   		
+    		<arg value="-o"/>
+    		<arg value="${maven.build.dir}/stubs/src/wscoor"/>   
+    	</java>
+ 
+ 		<ant:echo>+------------------------------------------+</ant:echo>
         <ant:echo>| Code Generating For WS-AtomicTransaction |</ant:echo>
-        <ant:echo>+------------------------------------------+</ant:echo>
-        <java classname="org.apache.axis2.wsdl.WSDL2Java"
-              failonerror="true" fork="yes">
-            <classpath>
-                <path refid="maven.dependency.classpath"/>
-            </classpath>
-            <arg value="-uri"/>
-            <arg value="${basedir}/schema/wsat.wsdl"/>
-            <arg value="-o"/>
-            <arg value="${maven.build.dir}/stubs/src/wsat"/>
-        </java>
-
+        <ant:echo>+------------------------------------------+ </ant:echo>
+    	<java classname="org.apache.axis2.wsdl.WSDL2Java"
+    		failonerror="true" fork="yes">
+    		<classpath>
+    			<path refid="maven.dependency.classpath"/>
+    		</classpath>    		
+    		<arg value="-uri"/>
+    		<arg value="${basedir}/schema/wsat.wsdl"/>   		
+    		<arg value="-o"/>
+    		<arg value="${maven.build.dir}/stubs/src/wsat"/>  
+    	</java>
+		
         <ant:echo>Copying generated *Class(.class)* file + it's resources to Classpath</ant:echo>
-        <mkdir dir="${maven.build.dir}/classes/schema/system/foo"/>
+		<mkdir dir="${maven.build.dir}/classes/schema/system/foo"/>
         <copy todir="${maven.build.dir}/classes/schema/system/foo">
             <fileset dir="${maven.build.dir}/stubs/src/wscoor/schema/system/foo">
                 <include name="*.*"/>
             </fileset>
         </copy>
-        <ant:path
-                id="stubs.src.wscoor.dir"
-                location="${maven.build.dir}/stubs/src/wscoor"/>
-        <ant:path
-                id="stubs.src.wsat.dir"
-                location="${maven.build.dir}/stubs/src/wsat"/>
-
-        <maven:addPath
-                id="maven.compile.src.set"
-                refid="stubs.src.wscoor.dir"/>
-        <maven:addPath
-                id="maven.compile.src.set"
-                refid="stubs.src.wsat.dir"/>
+    	<ant:path
+    		id="stubs.src.wscoor.dir"
+    		location="${maven.build.dir}/stubs/src/wscoor"/> 
+    	<ant:path
+    		id="stubs.src.wsat.dir"
+    		location="${maven.build.dir}/stubs/src/wsat"/>  
+    	
+    	<maven:addPath
+    		id="maven.compile.src.set"
+    		refid="stubs.src.wscoor.dir"/>  
+    	<maven:addPath
+    		id="maven.compile.src.set"
+    		refid="stubs.src.wsat.dir"/> 	
     </preGoal>
-
+   
     <!--
     <goal name="build-samples">
-        <ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/"/>
+    	<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/"/>
     </goal>
     -->
 </project>

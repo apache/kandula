@@ -2,7 +2,7 @@ package org.apache.kandula.wscoor;
 
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMElement;
-import org.apache.kandula.context.ActivityContext;
+import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.initiator.TransactionManager;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.context.coordination.CoordinationContext;
@@ -37,12 +37,10 @@ public class ActivationRequesterPortTypeRawXMLSkeleton {
     }
 
     public OMElement CreateCoordinationContextOperation(OMElement requestElement) {
-//        OMElement coordinationContextElement = requestElement
-//                .getFirstChildWithName(new QName("CoordinationContext"));
         if ("CoordinationContext".equals(requestElement.getLocalName())) {
             msgContext.getMessageInformationHeaders().getReferenceParameters();
-            CoordinationContext coordinationContext = CoordinationContext.Factory.newInstance(requestElement);
-            ActivityContext context = StorageFactory.getInstance().getStore().getContext(TransactionManager.tempID);
+            CoordinationContext coordinationContext = CoordinationContext.Factory.newContext(requestElement);
+            AbstractContext context = (AbstractContext)StorageFactory.getInstance().getStore().get(TransactionManager.tempID);
             context.setCoordinationContext(coordinationContext);
         }
         return null;

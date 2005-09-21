@@ -16,26 +16,26 @@
  */
 package org.apache.kandula.context.at;
 
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.kandula.Constants;
-import org.apache.kandula.KandulaException;
-import org.apache.kandula.Status;
-import org.apache.kandula.context.ActivityContext;
-import org.apache.kandula.context.ActivityContextImpl;
-import org.apache.kandula.context.Participant;
-import org.apache.kandula.context.coordination.CoordinationContext;
-import org.apache.kandula.utility.EndpointReferenceFactory;
-import org.apache.kandula.utility.KandulaUtils;
-
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.kandula.Constants;
+import org.apache.kandula.Status;
+import org.apache.kandula.context.AbstractContext;
+import org.apache.kandula.context.Participant;
+import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.faults.AbstractKandulaException;
+import org.apache.kandula.faults.AlreadyRegisteredException;
+import org.apache.kandula.faults.InvalidProtocolException;
+import org.apache.kandula.utility.EndpointReferenceFactory;
+import org.apache.kandula.utility.KandulaUtils;
+
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public class ATActivityContext extends ActivityContextImpl implements
-        ActivityContext {
+public class ATActivityContext extends AbstractContext {
 
     private int preparingParticipantsCount = 0;
 
@@ -93,10 +93,10 @@ public class ATActivityContext extends ActivityContextImpl implements
      * @param participantEPR
      * @param protocol
      * @return Coordinator protocol service.
-     * @throws KandulaException
+     * @throws AbstractKandulaException
      */
     public EndpointReference addParticipant(EndpointReference participantEPR, String protocol)
-            throws KandulaException {
+            throws AbstractKandulaException {
         if (Constants.WS_AT_VOLATILE2PC.equals(protocol)) {
             addVolatileParticipant(participantEPR);
             return EndpointReferenceFactory.getInstance().get2PCEndpoint(this.activityID);
@@ -107,23 +107,23 @@ public class ATActivityContext extends ActivityContextImpl implements
             //TODO keep track of requesters
             return EndpointReferenceFactory.getInstance().getCompletionEndpoint(this.activityID);
         } else {
-            throw new KandulaException("UnSupported Protocol");
+            throw new InvalidProtocolException();
         }
     }
 
     public void addVolatileParticipant(EndpointReference participantEPR)
-            throws KandulaException {
+            throws AbstractKandulaException {
         if (volatileParticipantsTable.contains(participantEPR))
-            throw new KandulaException("wscoor:Already Registered");
+            throw new AlreadyRegisteredException();
         volatileParticipantsTable.put(participantEPR, new Participant(
                 participantEPR, Constants.WS_AT_VOLATILE2PC));
 
     }
 
     public void addDurableParticipant(EndpointReference participantEPR)
-            throws KandulaException {
+            throws AlreadyRegisteredException {
         if (durableParticipantsTable.contains(participantEPR))
-            throw new KandulaException("wscoor:Already Registered");
+            throw new AlreadyRegisteredException();
         durableParticipantsTable.put(participantEPR, new Participant(
                 participantEPR, Constants.WS_AT_DURABLE2PC));
 
@@ -176,5 +176,10 @@ public class ATActivityContext extends ActivityContextImpl implements
     //            //throw new
     //        }
     //    }
+
+    
+    public String getCoordinationType() {
+        return Constants.WS_AT;
+    }
 
 }

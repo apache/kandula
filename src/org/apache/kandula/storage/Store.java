@@ -16,15 +16,14 @@
  */
 package org.apache.kandula.storage;
 
-import org.apache.kandula.context.ActivityContext;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public interface Store {
-    void putContext(Object id, ActivityContext context);
+    void put(Object id, Object context);
 
-    ActivityContext getContext(Object id);
+    Object get(Object id);
 
-    void forgetContext(Object id);
+    void forget(Object id);
 }

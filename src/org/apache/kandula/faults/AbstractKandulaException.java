@@ -14,40 +14,48 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.typemapping.xmlbeansimpl;
-
-import org.apache.kandula.typemapping.EndPointReference;
-import org.xmlsoap.schemas.ws.x2004.x03.addressing.EndpointReferenceType;
+package org.apache.kandula.faults;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public class XmlBeansTypeEndPointReference implements EndPointReference {
-
-    EndpointReferenceType eprType;
-
-    /**
-     * 
-     */
-    public XmlBeansTypeEndPointReference() {
+public abstract class AbstractKandulaException extends Exception{
+    
+    public AbstractKandulaException() {
         super();
-        eprType = EndpointReferenceType.Factory.newInstance();
     }
 
     /**
-     * @param eprType
+     * @param arg0 - String
      */
-    public XmlBeansTypeEndPointReference(Object eprType) {
-        super();
-        this.eprType = (EndpointReferenceType) eprType;
+    public AbstractKandulaException(String arg0) {
+        super(arg0);
     }
 
-    public Object getEndPointReferenceType() {
-        return eprType;
+    /**
+     * @param arg0 - Throwable
+     */
+    public AbstractKandulaException(Throwable arg0) {
+        super(arg0);
     }
 
-    public String getPortTypeLocalPart() {
-        return eprType.getPortType().getQNameValue().getLocalPart();
+    /**
+     * @param arg0 - String
+     * @param arg1 - Throwable
+     */
+    public AbstractKandulaException(String arg0, Throwable arg1) {
+        super(arg0, arg1);
+    }
+
+    public abstract String getFaultCode();
+
+    public abstract String getFaultSubcode();
+
+    public abstract String getFaultReason();
+
+    public String getFaultDetail()
+    {
+        return this.toString();
     }
 
 }

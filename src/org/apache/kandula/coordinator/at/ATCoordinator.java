@@ -16,49 +16,51 @@
  */
 package org.apache.kandula.coordinator.at;
 
+import java.util.Iterator;
+
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
-import org.apache.kandula.KandulaException;
 import org.apache.kandula.Status;
 import org.apache.kandula.Status.CoordinatorStatus;
-import org.apache.kandula.context.ActivityContext;
+import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.at.ATActivityContext;
 import org.apache.kandula.coordinator.CoordinatorUtils;
 import org.apache.kandula.coordinator.Registerable;
-
-import java.util.Iterator;
+import org.apache.kandula.faults.AbstractKandulaException;
+import org.apache.kandula.faults.InvalidProtocolException;
+import org.apache.kandula.faults.InvalidStateException;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class ATCoordinator implements Registerable {
 
-    public EndpointReference register(ActivityContext context, String protocol,
-                                      EndpointReference participantEPR) throws KandulaException {
+    public EndpointReference register(AbstractContext context, String protocol,
+                                      EndpointReference participantEPR) throws AbstractKandulaException {
         context.lock();
         switch (context.getStatus()) {
             case CoordinatorStatus.STATUS_PREPARING_DURABLE:
                 context.unlock();
                 this.abort(context);
-                throw new IllegalStateException(
+                throw new InvalidStateException(
                         "Coordinator is in preparing state - Durable ");
             case CoordinatorStatus.STATUS_PREPARED_SUCCESS:
                 context.unlock();
-                throw new IllegalStateException(
+                throw new InvalidStateException(
                         "Coordinator is in prepared success state");
             case CoordinatorStatus.STATUS_COMMITTING:
                 context.unlock();
-                throw new IllegalStateException(
+                throw new InvalidStateException(
                         "Coordinator is in committing state");
             case CoordinatorStatus.STATUS_ABORTING:
-                throw new IllegalStateException("Coordinator is in Aborting state");
+                throw new InvalidStateException("Coordinator is in Aborting state");
             case CoordinatorStatus.STATUS_ACTIVE:
             case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
                 return addParticipant(context, protocol, participantEPR);
             case CoordinatorStatus.STATUS_NONE:
             default:
                 context.unlock();
-                throw new IllegalStateException();
+                throw new InvalidStateException();
         }
     }
 
@@ -68,7 +70,7 @@ public class ATCoordinator implements Registerable {
      *         in Ws-AtomicTransaction specification.
      */
     public String commitOperation(String id) throws IllegalAccessException {
-        ActivityContext context = CoordinatorUtils.getActivityContext(id);
+        AbstractContext context = CoordinatorUtils.getActivityContext(id);
         // if store throws a Exception capture it
         if (context == null) {
             throw new IllegalStateException(
@@ -114,7 +116,7 @@ public class ATCoordinator implements Registerable {
     }
 
     public String rollbackOperation(String id) throws IllegalAccessException {
-        ActivityContext context = CoordinatorUtils.getActivityContext(id);
+        AbstractContext context = CoordinatorUtils.getActivityContext(id);
         // if store throws a Exception capture it
         if (context == null) {
             throw new IllegalStateException(
@@ -163,7 +165,7 @@ public class ATCoordinator implements Registerable {
      *      check if there are any more participants to be responded by checking
      *      the hasMorePreparing() methode of the context.
      */
-    public int volatilePrepare(ActivityContext context) {
+    public int volatilePrepare(AbstractContext context) {
         ATActivityContext atContext = (ATActivityContext) context;
         Iterator volatilePartipantIterator = atContext
                 .getRegisteredParticipants(Constants.WS_AT_VOLATILE2PC);
@@ -189,7 +191,7 @@ public class ATCoordinator implements Registerable {
      *      check if there are any more participants to be responded by checking
      *      the hasMorePreparing() methode of the context.
      */
-    public int durablePrepare(ActivityContext context) {
+    public int durablePrepare(AbstractContext context) {
         ATActivityContext atContext = (ATActivityContext) context;
         Iterator durablePartipantIterator = atContext
                 .getRegisteredParticipants(Constants.WS_AT_DURABLE2PC);
@@ -218,7 +220,7 @@ public class ATCoordinator implements Registerable {
      *      registered for the Transaction Must check whether all the
      *      participants have replied to the prepare()
      */
-    public int commit(ActivityContext context) {
+    public int commit(AbstractContext context) {
         // check whether all participants are prepared
         ATActivityContext atContext = (ATActivityContext) context;
         while (atContext.hasMorePreparing()) {
@@ -243,12 +245,12 @@ public class ATCoordinator implements Registerable {
      *      registered for the Transaction Do not have to check whether all the
      *      participants have replied to the prepare()
      */
-    public int abort(ActivityContext context) {
-        // check whether all participants are prepared
-        context.lock();
-        context.setStatus(Status.CoordinatorStatus.STATUS_ABORTING);
-        context.unlock();
-        Iterator participants = context.getAllParticipants();
+    public int abort(AbstractContext context) {
+        ATActivityContext atContext = (ATActivityContext) context;
+        atContext.lock();
+        atContext.setStatus(Status.CoordinatorStatus.STATUS_ABORTING);
+        atContext.unlock();
+        Iterator participants = atContext.getAllParticipants();
 
         while (participants.hasNext()) {
             //port.rollback(participant)
@@ -256,8 +258,8 @@ public class ATCoordinator implements Registerable {
         return Status.CoordinatorStatus.STATUS_ABORTING;
     }
 
-    public EndpointReference addParticipant(ActivityContext context, String protocol,
-                                            EndpointReference participantEPR) throws KandulaException {
+    public EndpointReference addParticipant(AbstractContext context, String protocol,
+                                            EndpointReference participantEPR) throws AbstractKandulaException {
         ATActivityContext atContext = (ATActivityContext) context;
         if (protocol.equals(Constants.WS_AT_DURABLE2PC))
             return atContext.addParticipant(participantEPR, protocol);
@@ -266,7 +268,6 @@ public class ATCoordinator implements Registerable {
         else if (protocol.equals(Constants.WS_AT_COMPLETION))
             return atContext.addParticipant(participantEPR, protocol);
         else
-            throw new KandulaException(new IllegalArgumentException(
-                    "Unsupported Protocol"));
+            throw new InvalidProtocolException();
     }
 }

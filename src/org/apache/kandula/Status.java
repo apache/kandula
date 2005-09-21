@@ -21,16 +21,15 @@ package org.apache.kandula;
  */
 abstract public interface Status {
     interface ParticipantStatus {
-
+        
         public static final int STATUS_VOLATILE_PREPARING = 20;
 
         public static final int STATUS_DURABLE_PREPARING = 21;
 
-        public static final int STATUS_PREPARED = 22;
+        public static final int STATUS_ABORTED = 22;
 
-        public static final int STATUS_ABORTED = 23;
-
-        public static final int STATUS_READ_ONLY = 24;
+        public static final int STATUS_READ_ONLY = 23;
+        
     }
 
     interface CoordinatorStatus {
@@ -46,6 +45,8 @@ abstract public interface Status {
         public static final int STATUS_PREPARING_VOLATILE = 12;
 
         public static final int STATUS_PREPARED_SUCCESS = 13;
+        
+        public static final int STATUS_PREPARED = 14;
 
         public static final int STATUS_ABORTING = 9;
 

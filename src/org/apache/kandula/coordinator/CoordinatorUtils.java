@@ -16,13 +16,9 @@
  */
 package org.apache.kandula.coordinator;
 
-import org.apache.kandula.context.ActivityContext;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Random;
+
+import org.apache.kandula.context.AbstractContext;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -30,7 +26,7 @@ import java.util.Random;
 public class CoordinatorUtils {
     private static Random myRand = null;
 
-    public static ActivityContext getActivityContext(String id) {
+    public static AbstractContext getActivityContext(String id) {
         return null;
     }
 }

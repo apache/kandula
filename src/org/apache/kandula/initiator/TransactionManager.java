@@ -16,18 +16,19 @@
  */
 package org.apache.kandula.initiator;
 
+import java.rmi.RemoteException;
+
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.kandula.KandulaException;
-import org.apache.kandula.context.ActivityContext;
+import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.ContextFactory;
 import org.apache.kandula.context.at.ATActivityContext;
+import org.apache.kandula.faults.AbstractKandulaException;
+import org.apache.kandula.faults.InvalidStateException;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.wscoor.ActivationCoordinatorPortTypeRawXMLStub;
 import org.apache.kandula.wscoor.RegistrationCoordinatorPortTypeRawXMLStub;
-
-import java.rmi.RemoteException;
 
 /**
  * @author Dasarath Weeratunge
@@ -42,17 +43,18 @@ public class TransactionManager {
     public static String tempID;
 
     public TransactionManager(String coordinationType,
-                              EndpointReference coordEPR) throws KandulaException {
+                              EndpointReference coordinatorEPR) throws AbstractKandulaException {
         threadInfo = new ThreadLocal();
-        ActivityContext context = ContextFactory.getInstance().createActivity(
-                coordinationType, coordEPR);
+        ATInitiatorTransaction transaction = new ATInitiatorTransaction(coordinatorEPR);
+        AbstractContext context = ContextFactory.getInstance().createActivity(
+                coordinationType, coordinatorEPR);
         if (threadInfo.get() != null)
             throw new IllegalStateException();
-        threadInfo.set(context.getProperty(ATActivityContext.REQUESTER_ID));
+        threadInfo.set(transaction);
         //TODO remove this when we get replyTo reference properties correctly
         tempID = (String) context.getProperty(ATActivityContext.REQUESTER_ID);
         Store store = StorageFactory.getInstance().getStore();
-        store.putContext(context.getProperty(ATActivityContext.REQUESTER_ID),
+        store.put(context.getProperty(ATActivityContext.REQUESTER_ID),
                 context);
     }
 
@@ -60,7 +62,7 @@ public class TransactionManager {
      * @throws Exception
      */
     public void begin() throws Exception {
-        ActivityContext context = getTransaction();
+        AbstractContext context = getTransaction();
         String id = (String) context
                 .getProperty(ATActivityContext.REQUESTER_ID);
         threadInfo.set(id);
@@ -118,12 +120,12 @@ public class TransactionManager {
     //		threadInfo.set(null);
     //	}
 
-    public ActivityContext getTransaction() throws KandulaException {
+    public AbstractContext getTransaction() throws AbstractKandulaException {
         Object key = threadInfo.get();
-        ActivityContext context = StorageFactory.getInstance().getStore()
-                .getContext(key);
+        AbstractContext context = (AbstractContext) StorageFactory.getInstance().getStore()
+                .get(key);
         if (context == null) {
-            throw new KandulaException("IllegalState");
+            throw new InvalidStateException("No Activity Found");
         }
         return context;
     }

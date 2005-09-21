@@ -17,12 +17,14 @@
 package org.apache.kandula.coordinator;
 
 import junit.framework.TestCase;
+
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
-import org.apache.kandula.KandulaException;
 import org.apache.kandula.Status;
-import org.apache.kandula.context.ActivityContext;
-import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.at.ATActivityContext;
+import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.faults.AbstractKandulaException;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -46,9 +48,9 @@ public class CoordinatorImplTest extends TestCase {
     /*
      * Class under test for ActivityContext createCoordinationContext(String, long)
      */
-    public void testCreateCoordinationContextStringlong() throws KandulaException {
+    public void testCreateCoordinationContextStringlong() throws AbstractKandulaException {
         Coordinator coordinator = new Coordinator();
-        ActivityContext context = coordinator.createCoordinationContext(Constants.WS_AT, 3000);
+        AbstractContext context = coordinator.createCoordinationContext(Constants.WS_AT, 3000);
         assertTrue(ATActivityContext.class.isInstance(context));
         assertNotNull(context.getCoordinationContext());
         assertTrue(context.getStatus() == Status.CoordinatorStatus.STATUS_ACTIVE);
@@ -57,14 +59,12 @@ public class CoordinatorImplTest extends TestCase {
     /*
      * Class under test for ActivityContext createCoordinationContext(CoordinationContext)
      */
-    public void testCreateCoordinationContextCoordinationContext() throws KandulaException {
+    public void testCreateCoordinationContextCoordinationContext() throws AbstractKandulaException {
         Coordinator coordinator = new Coordinator();
-        CoordinationContext coorContext = CoordinationContext.Factory.newInstance();
-        coorContext.setCoordinationType(Constants.WS_AT);
+        CoordinationContext coorContext = CoordinationContext.Factory.newContext("uuid:29919219jdk02102021",Constants.WS_AT,new EndpointReference(""));
         coorContext.setExpires(3000);
-        coorContext.setActivityID("uuid:29919219jdk02102021");
         // coorContext.setRegistrationService()
-        ActivityContext context = coordinator.createCoordinationContext(coorContext);
+        AbstractContext context = coordinator.createCoordinationContext(coorContext);
         assertTrue(ATActivityContext.class.isInstance(context));
         assertNotNull(context.getCoordinationContext());
         assertTrue(context.getStatus() == Status.CoordinatorStatus.STATUS_ACTIVE);

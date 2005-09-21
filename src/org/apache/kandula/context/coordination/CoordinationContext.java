@@ -18,8 +18,6 @@ package org.apache.kandula.context.coordination;
 
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.om.OMElement;
-import org.apache.kandula.typemapping.xmlbeansimpl.XmlBeansTypeCoordinationContext;
-import org.apache.kandula.context.coordination.simple.SimpleCoordinationContext;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -46,17 +44,17 @@ public interface CoordinationContext {
     public abstract Object getCoordinationContextType();
 
     public static final class Factory {
-        public static CoordinationContext newInstance() {
-            return new SimpleCoordinationContext();
+        public static CoordinationContext newContext(String activityId ,String coordinationType, EndpointReference epr) {
+            return new SimpleCoordinationContext(activityId,coordinationType, epr);
         }
 
-        public static CoordinationContext newInstance(OMElement contextElement) {
+        public static CoordinationContext newContext(OMElement contextElement) {
             return new SimpleCoordinationContext(contextElement);
         }
 
-        public static CoordinationContext newInstance(Object contextType) {
-            return new XmlBeansTypeCoordinationContext(contextType);
-        }
+//        public static CoordinationContext newInstance(Object contextType) {
+//            return new XmlBeansTypeCoordinationContext(contextType);
+//        }
 
         private Factory() {
         } // No instance of this class allowed

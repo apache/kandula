@@ -16,6 +16,12 @@
  */
 package org.apache.kandula.wscoor;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
@@ -23,13 +29,9 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
-import org.apache.kandula.KandulaException;
 import org.apache.kandula.coordinator.Coordinator;
+import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.utility.KandulaUtils;
-
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * @author <a href="mailto:thilina@apache.org"> Thilina Gunarathne </a>
@@ -43,15 +45,22 @@ public class RegistrationPortTypeRawXMLSkeleton {
     }
 
     public OMElement RegisterOperation(OMElement request)
-            throws KandulaException {
+            throws AxisFault {
 
-        String protocolIdentifier = request.getFirstChildWithName(
+        String protocolIdentifier;
+        EndpointReference participantEPR;
+        String activityId;
+
+        /*
+         * Extracting data from the received message 
+         */
+        protocolIdentifier = request.getFirstChildWithName(
                 new QName("ProtocolIdentifier")).getText();
         OMElement participantEPRElement = request
                 .getFirstChildWithName(new QName("ParticipantProtocolService"));
-        EndpointReference participantEPR = new EndpointReference(
-                participantEPRElement.getFirstChildWithName(
-                        new QName("Address")).getText());
+        //Extracting the participant EPR 
+        participantEPR = new EndpointReference(participantEPRElement
+                .getFirstChildWithName(new QName("Address")).getText());
         AnyContentType referenceProperties = new AnyContentType();
         OMElement referencePropertiesElement = participantEPRElement
                 .getFirstChildWithName(new QName("ReferenceProperties"));
@@ -66,14 +75,27 @@ public class RegistrationPortTypeRawXMLSkeleton {
         //have to extract the reference parameter "id". Axis2 does not support
         ArrayList list = msgContext.getMessageInformationHeaders()
                 .getReferenceParameters();
+        //TODO :Have to use the Activity ID came with EPR as a reference property
+        activityId = Coordinator.ACTIVITY_ID;
 
+        /*
+         * Registering the participant for the activity for the given protocol
+         */
+        try{
         Coordinator coordinator = new Coordinator();
-        EndpointReference epr = coordinator.registerParticipant(
-                Coordinator.ACTIVITY_ID, protocolIdentifier, participantEPR);
-        System.out.println("visited registration skeleton");
+        EndpointReference epr = coordinator.registerParticipant(activityId,
+                protocolIdentifier, participantEPR);
         return toOM(epr);
+        } catch (AbstractKandulaException e) {
+            AxisFault fault = new AxisFault(e);
+            fault.setFaultCode(e.getFaultCode());
+            throw fault;
+        }
     }
 
+    /**
+     * Serializes an EndpointRefrence to OM Nodes
+     */
     private OMElement toOM(EndpointReference epr) {
         SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
         OMNamespace wsCoor = factory.createOMNamespace(

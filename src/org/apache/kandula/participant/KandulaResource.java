@@ -14,13 +14,13 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.participant.simple;
+package org.apache.kandula.participant;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public interface SimpleResource {
+public interface KandulaResource {
     public void commit();
     public void rollback();
-    public boolean prepare();
+    public Vote prepare();
 }

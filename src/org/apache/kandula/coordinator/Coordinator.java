@@ -17,13 +17,12 @@
 package org.apache.kandula.coordinator;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.kandula.KandulaException;
-import org.apache.kandula.context.ActivityContext;
+import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.ContextFactory;
-import org.apache.kandula.coordinator.at.ATCoordinator;
+import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
-import org.apache.kandula.context.coordination.CoordinationContext;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -31,6 +30,7 @@ import org.apache.kandula.context.coordination.CoordinationContext;
 
 public class Coordinator {
     private Store store;
+
     //till we be able to use reference properties correctly
     public static String ACTIVITY_ID;
 
@@ -40,42 +40,41 @@ public class Coordinator {
     }
 
     /**
-     * @param Coordination Type
-     * @return the Coordination Context created
-     *         <p/>
-     *         Initiators can use this to Create new Distributed transactions.This will
-     *         take in the Coordination Type and will create an instance of the
-     *         reapective ActivityContext. The Coordination Context created by this can
-     *         be used to convey the information about the transaction between
+     * @param Coordination
+     *            Type
+     * @return the Coordination Context created <p/>Initiators can use this to
+     *         Create new Distributed transactions.This will take in the
+     *         Coordination Type and will create an instance of the reapective
+     *         ActivityContext. The Coordination Context created by this can be
+     *         used to convey the information about the transaction between
      *         initiator,Participants and coordinator
-     * @throws KandulaException
+     * @throws AbstractKandulaException
      */
-    public ActivityContext createCoordinationContext(String coordinationType,
-                                                     long expires) throws KandulaException {
+    public AbstractContext createCoordinationContext(String coordinationType,
+            long expires) throws AbstractKandulaException {
         ContextFactory factory = ContextFactory.getInstance();
-        ActivityContext context = factory.createActivity(coordinationType);
+        AbstractContext context = factory.createActivity(coordinationType);
         context.getCoordinationContext().setExpires(expires);
         ACTIVITY_ID = context.getCoordinationContext().getActivityID();
-        store.putContext(context.getCoordinationContext().getActivityID(),
+        store.put(context.getCoordinationContext().getActivityID(),
                 context);
         return context;
     }
 
     /**
      * @param CoordinationContext
-     * @return the interposed Coordination Context created
-     *         <p/>
-     *         Participants decided to use this Coordinator as a interposed
-     *         sub-coordinator.The newly created CoordinationContext will contain the
-     *         same ActivityIdentifier & Protocol type. Registration EPR of the earlier
-     *         CoordinationContext will be replaced by the RegistrationEPR of this
-     *         Coordinator.
+     * @return the interposed Coordination Context created <p/>Participants
+     *         decided to use this Coordinator as a interposed
+     *         sub-coordinator.The newly created CoordinationContext will
+     *         contain the same ActivityIdentifier & Protocol type. Registration
+     *         EPR of the earlier CoordinationContext will be replaced by the
+     *         RegistrationEPR of this Coordinator.
      */
-    public ActivityContext createCoordinationContext(
-            CoordinationContext coorContext) throws KandulaException {
+    public AbstractContext createCoordinationContext(
+            CoordinationContext coorContext) throws AbstractKandulaException {
         ContextFactory factory = ContextFactory.getInstance();
-        ActivityContext context = factory.createActivity(coorContext);
-        store.putContext(context.getCoordinationContext().getActivityID(),
+        AbstractContext context = factory.createActivity(coorContext);
+        store.put(context.getCoordinationContext().getActivityID(),
                 context);
         return context;
     }
@@ -84,28 +83,29 @@ public class Coordinator {
      * @param coordinationProtocol
      * @param participantEPR
      * @param Activity-id
-     * @return Should return the particular Coordiators End Point Reference
-     *         <p/>
-     *         This method provides the functional logic for participants to register
-     *         for a particular transaction activity which was created by a initiator.
-     *         Registration request will be forwarded to repective protocol
-     *         coordinators.
-     * @throws KandulaException
+     * @return Should return the particular Coordiators End Point Reference <p/>
+     *         This method provides the functional logic for participants to
+     *         register for a particular transaction activity which was created
+     *         by a initiator. Registration request will be forwarded to
+     *         repective protocol coordinators.
+     * @throws AbstractKandulaException
      */
     public EndpointReference registerParticipant(String id, String protocol,
-                                                 EndpointReference participantEPR) throws KandulaException {
+            EndpointReference participantEPR) throws AbstractKandulaException {
 
-        ActivityContext context = getCoordinationContext(id);
+        AbstractContext context = getCoordinationContext(id);
         if (context == null) {
             throw new IllegalStateException(
                     "No Activity Found for this Activity ID");
         }
-        //TODO use "switch case" when BA is present
-        Registerable activityCoordinator = new ATCoordinator();
-        return activityCoordinator.register(context, protocol, participantEPR);
+
+        Registerable registerableCoordinator = Registerable.Factory
+                .newRegisterable(context.getCoordinationType());
+        return registerableCoordinator.register(context, protocol,
+                participantEPR);
     }
 
-    private ActivityContext getCoordinationContext(String id) {
-        return store.getContext(id);
+    private AbstractContext getCoordinationContext(String id) {
+        return (AbstractContext)store.get(id);
     }
 }

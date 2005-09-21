@@ -107,7 +107,7 @@ public class KandulaListener {
     }
 
     public String getHost() throws UnknownHostException {
-        return "http://" + InetAddress.getLocalHost().getHostAddress() + ":" + SERVER_PORT
+        return "http://" + InetAddress.getLocalHost().getHostAddress() + ":" + 5060
                 + "/axis2/services/";
     }
 }

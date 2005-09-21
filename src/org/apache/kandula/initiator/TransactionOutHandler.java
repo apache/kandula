@@ -14,14 +14,14 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.initiator.handler;
+package org.apache.kandula.initiator;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.soap.SOAPHeader;
-import org.apache.kandula.context.ActivityContext;
+import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.coordination.CoordinationContext;
 import org.apache.kandula.storage.StorageFactory;
 
@@ -32,8 +32,8 @@ public class TransactionOutHandler extends AbstractHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         Object key = threadInfo.get();
         if (null != key) {
-            ActivityContext context = StorageFactory.getInstance().getStore()
-                    .getContext(key);
+            AbstractContext context = (AbstractContext)StorageFactory.getInstance().getStore()
+                    .get(key);
             if (context == null) {
                 throw new AxisFault("IllegalState");
             }

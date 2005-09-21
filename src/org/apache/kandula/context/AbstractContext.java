@@ -16,20 +16,21 @@
  */
 package org.apache.kandula.context;
 
-import org.apache.axis2.addressing.AnyContentType;
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.kandula.context.coordination.CoordinationContext;
-import org.apache.kandula.Status.CoordinatorStatus;
-import org.apache.kandula.utility.EndpointReferenceFactory;
-import org.apache.kandula.utility.KandulaUtils;
+import java.util.HashMap;
 
 import javax.xml.namespace.QName;
-import java.util.HashMap;
+
+import org.apache.axis2.addressing.AnyContentType;
+import org.apache.axis2.addressing.EndpointReference;
+import org.apache.kandula.Status.CoordinatorStatus;
+import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.utility.EndpointReferenceFactory;
+import org.apache.kandula.utility.KandulaUtils;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public abstract class ActivityContextImpl implements ActivityContext {
+public abstract class AbstractContext {
 
     private HashMap propertyBag;
 
@@ -41,15 +42,13 @@ public abstract class ActivityContextImpl implements ActivityContext {
 
     protected CoordinationContext coordinationContext = null;
 
-    protected ActivityContextImpl() {
+    protected AbstractContext() {
         propertyBag = new HashMap();
     }
 
-    public ActivityContextImpl(String coordinationType) {
+    public AbstractContext(String coordinationType) {
         propertyBag = new HashMap();
         activityID = KandulaUtils.getRandomStringOf18Characters();
-        coordinationContext = CoordinationContext.Factory.newInstance();
-        coordinationContext.setActivityID(activityID);
         EndpointReference registrationEpr = EndpointReferenceFactory
                 .getInstance().getRegistrationEndpoint(activityID);
         AnyContentType referenceProp = new AnyContentType();
@@ -57,8 +56,8 @@ public abstract class ActivityContextImpl implements ActivityContext {
                 "http://webservice.apache.org/~thilina", "myapp", "ID"),
                 activityID);
         registrationEpr.setReferenceProperties(referenceProp);
-        coordinationContext.setRegistrationService(registrationEpr);
-        coordinationContext.setCoordinationType(coordinationType);
+        coordinationContext = CoordinationContext.Factory.newContext(
+                activityID, coordinationType, registrationEpr);
     }
 
     public CoordinationContext getCoordinationContext() {
@@ -68,12 +67,6 @@ public abstract class ActivityContextImpl implements ActivityContext {
     public void setCoordinationContext(CoordinationContext context) {
         this.coordinationContext = context;
     }
-
-//    public abstract EndpointReference addParticipant(EndpointReference participantEPR, String protocol) throws KandulaException;
-//
-//    public abstract Iterator getRegisteredParticipants(String protocol);
-//
-//    public abstract Iterator getAllParticipants();
 
     public int getStatus() {
         return status;
@@ -114,4 +107,5 @@ public abstract class ActivityContextImpl implements ActivityContext {
     public Object getProperty(Object key) {
         return propertyBag.get(key);
     }
+    public abstract String getCoordinationType();
 }

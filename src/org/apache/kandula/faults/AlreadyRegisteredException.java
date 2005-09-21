@@ -14,44 +14,66 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula;
+package org.apache.kandula.faults;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public class KandulaException extends Exception {
+public class AlreadyRegisteredException extends AbstractKandulaException {
 
     /**
-     * 
+     *  
      */
-    public KandulaException() {
+    public AlreadyRegisteredException() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     /**
      * @param arg0
      */
-    public KandulaException(String arg0) {
+    public AlreadyRegisteredException(String arg0) {
         super(arg0);
-        // TODO Auto-generated constructor stub
     }
 
     /**
      * @param arg0
      */
-    public KandulaException(Throwable arg0) {
+    public AlreadyRegisteredException(Throwable arg0) {
         super(arg0);
-        // TODO Auto-generated constructor stub
     }
 
     /**
      * @param arg0
      * @param arg1
      */
-    public KandulaException(String arg0, Throwable arg1) {
+    public AlreadyRegisteredException(String arg0, Throwable arg1) {
         super(arg0, arg1);
-        // TODO Auto-generated constructor stub
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.kandula.faults.KandulaFault#getFaultCode()
+     */
+    public String getFaultCode() {
+        return "Sender";
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.kandula.faults.KandulaFault#getFaultSubcode()
+     */
+    public String getFaultSubcode() {
+        return "wscoor:AlreadyRegistered";
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.kandula.faults.KandulaFault#getFaultReason()
+     */
+    public String getFaultReason() {
+        return "The participant has already registered for the same protocol.";
+    }
 }

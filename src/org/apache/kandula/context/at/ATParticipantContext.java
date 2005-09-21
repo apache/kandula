@@ -14,19 +14,40 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.coordinator.ba;
+package org.apache.kandula.context.at;
 
-import org.apache.axis2.addressing.EndpointReference;
+import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.coordinator.Registerable;
-import org.apache.kandula.faults.AbstractKandulaException;
+import org.apache.kandula.participant.KandulaResource;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public class BACoordinator implements Registerable {
+public class ATParticipantContext extends AbstractContext {
+    KandulaResource resource;
 
-    public EndpointReference register(AbstractContext context, String protocol, EndpointReference participantEPR) throws AbstractKandulaException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    /**
+     * @return Returns the resource.
+     */
+    public KandulaResource getResource() {
+        return resource;
     }
+
+    /**
+     * @param resource
+     *            The resource to set.
+     */
+    public void setResource(KandulaResource resource) {
+        this.resource = resource;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.kandula.context.AbstractContext#getCoordinationType()
+     */
+    public String getCoordinationType() {
+        return Constants.WS_AT;
+    }
+
 }

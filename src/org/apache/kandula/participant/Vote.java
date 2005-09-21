@@ -14,19 +14,30 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.coordinator.ba;
+package org.apache.kandula.participant;
 
-import org.apache.axis2.addressing.EndpointReference;
-import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.coordinator.Registerable;
-import org.apache.kandula.faults.AbstractKandulaException;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public class BACoordinator implements Registerable {
-
-    public EndpointReference register(AbstractContext context, String protocol, EndpointReference participantEPR) throws AbstractKandulaException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+public class Vote {
+    
+    public static Vote READ_ONLY = new Vote("VoteReadOnly");
+    
+    public static Vote ABORT = new Vote("VoteAbort");
+    
+    public static Vote PREPARED = new Vote("VotePrepared");
+    
+    public static Vote NONE = new Vote("");
+    
+    private String state;
+    
+    public Vote(String outcome)
+    {
+        this.state = outcome;
+    }
+    public String getOutcome()
+    {
+        return state;
     }
 }
