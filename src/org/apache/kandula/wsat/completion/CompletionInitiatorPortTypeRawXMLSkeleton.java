@@ -1,4 +1,4 @@
-package org.apache.kandula.wscoor;
+package org.apache.kandula.wsat.completion;
 
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMElement;
@@ -29,20 +29,28 @@ import org.apache.kandula.context.coordination.CoordinationContext;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 
-public class ActivationRequesterPortTypeRawXMLSkeleton {
+public class CompletionInitiatorPortTypeRawXMLSkeleton {
     private MessageContext msgContext;
 
     public void init(MessageContext context) {
         this.msgContext = context;
     }
 
-    public OMElement createCoordinationContextResponseOperation(OMElement responseElement) {
-        OMElement response = responseElement.getFirstElement();
-        if ("CoordinationContext".equals(response.getLocalName())) {
+    public OMElement committedOperation(OMElement requestElement) {
+        if ("CoordinationContext".equals(requestElement.getLocalName())) {
             msgContext.getMessageInformationHeaders().getReferenceParameters();
-            CoordinationContext coordinationContext = CoordinationContext.Factory.newContext(response);
+            CoordinationContext coordinationContext = CoordinationContext.Factory.newContext(requestElement);
             AbstractContext context = (AbstractContext)StorageFactory.getInstance().getStore().get(TransactionManager.tempID);
-            context.setCoordinationContext(coordinationContext);
+          //  context.setCoordinationContext(coordinationContext);
+        }
+        return null;
+    }
+    public OMElement abortedOperation(OMElement requestElement) {
+        if ("CoordinationContext".equals(requestElement.getLocalName())) {
+            msgContext.getMessageInformationHeaders().getReferenceParameters();
+            CoordinationContext coordinationContext = CoordinationContext.Factory.newContext(requestElement);
+            AbstractContext context = (AbstractContext)StorageFactory.getInstance().getStore().get(TransactionManager.tempID);
+            //context.setCoordinationContext(coordinationContext);
         }
         return null;
     }

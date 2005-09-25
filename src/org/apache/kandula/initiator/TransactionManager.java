@@ -16,7 +16,7 @@
  */
 package org.apache.kandula.initiator;
 
-import java.rmi.RemoteException;
+import java.io.IOException;
 
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.context.AbstractContext;
@@ -27,6 +27,7 @@ import org.apache.kandula.faults.InvalidStateException;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
 import org.apache.kandula.utility.EndpointReferenceFactory;
+import org.apache.kandula.wsat.completion.CompletionCoordinatorPortTypeRawXMLStub;
 import org.apache.kandula.wscoor.ActivationCoordinatorPortTypeRawXMLStub;
 import org.apache.kandula.wscoor.RegistrationCoordinatorPortTypeRawXMLStub;
 
@@ -45,12 +46,12 @@ public class TransactionManager {
     public TransactionManager(String coordinationType,
                               EndpointReference coordinatorEPR) throws AbstractKandulaException {
         threadInfo = new ThreadLocal();
-        ATInitiatorTransaction transaction = new ATInitiatorTransaction(coordinatorEPR);
+        //ATInitiatorTransaction transaction = new ATInitiatorTransaction(coordinatorEPR);
         AbstractContext context = ContextFactory.getInstance().createActivity(
                 coordinationType, coordinatorEPR);
         if (threadInfo.get() != null)
             throw new IllegalStateException();
-        threadInfo.set(transaction);
+        threadInfo.set(context.getProperty(ATActivityContext.REQUESTER_ID));
         //TODO remove this when we get replyTo reference properties correctly
         tempID = (String) context.getProperty(ATActivityContext.REQUESTER_ID);
         Store store = StorageFactory.getInstance().getStore();
@@ -65,7 +66,6 @@ public class TransactionManager {
         AbstractContext context = getTransaction();
         String id = (String) context
                 .getProperty(ATActivityContext.REQUESTER_ID);
-        threadInfo.set(id);
         ActivationCoordinatorPortTypeRawXMLStub activationCoordinator = new ActivationCoordinatorPortTypeRawXMLStub(
                 ".", (EndpointReference) context
                 .getProperty(ATActivityContext.ACTIVATION_EPR));
@@ -79,28 +79,26 @@ public class TransactionManager {
                 ".", context.getCoordinationContext().getRegistrationService());
         EndpointReference registrationRequeterPortEPR = EndpointReferenceFactory
                 .getInstance().getCompletionParticipantEndpoint(id);
-        registrationCoordinator.RegisterOperation(
+        registrationCoordinator.registerOperation(
                 org.apache.kandula.Constants.WS_AT_COMPLETION,
                 registrationRequeterPortEPR, id);
-        while (true) {
+        while (context.getProperty(ATActivityContext.COORDINATION_EPR)==null) {
             Thread.sleep(10);
         }
     }
 
-    public void commit() throws RemoteException {
-        //		Transaction tx= getTransaction();
-        //		if (tx == null)
-        //			throw new IllegalStateException();
-        //		forget();
-        //		tx.commit();
+    public void commit() throws AbstractKandulaException, IOException {
+        AbstractContext context = getTransaction();
+        EndpointReference coordinationEPR = (EndpointReference)context.getProperty(ATActivityContext.COORDINATION_EPR);
+        CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(".",coordinationEPR);
+        stub.commitOperation();
     }
 
-    public void rollback() throws RemoteException {
-        //		Transaction tx= getTransaction();
-        //		if (tx == null)
-        //			throw new IllegalStateException();
-        //		forget();
-        //		tx.rollback();
+    public void rollback() throws AbstractKandulaException, IOException {
+        AbstractContext context = getTransaction();
+        EndpointReference coordinationEPR = (EndpointReference)context.getProperty(ATActivityContext.COORDINATION_EPR);
+        CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(".",coordinationEPR);
+        stub.rollbackOperation();
     }
 
     //	public Transaction suspend() {
@@ -120,7 +118,7 @@ public class TransactionManager {
     //		threadInfo.set(null);
     //	}
 
-    public AbstractContext getTransaction() throws AbstractKandulaException {
+    private AbstractContext getTransaction() throws AbstractKandulaException {
         Object key = threadInfo.get();
         AbstractContext context = (AbstractContext) StorageFactory.getInstance().getStore()
                 .get(key);

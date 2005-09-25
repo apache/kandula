@@ -17,7 +17,9 @@
 package org.apache.kandula.wscoor;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.om.OMElement;
+import org.apache.kandula.Constants;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -34,6 +36,9 @@ public class ActivationPortTypeRawXMLAsyncMessageReceiver extends
 
             // get the implementation class for the Web Service
             Object obj = getTheImplementationObject(msgContext);
+            
+            //Inject the Message Context if it is asked for
+            DependencyManager.configureBusinessLogicProvider(obj, msgContext, newMsgContext);
 
             ActivationPortTypeRawXMLSkeleton skel = (ActivationPortTypeRawXMLSkeleton) obj;
             //Out Envelop
@@ -45,12 +50,12 @@ public class ActivationPortTypeRawXMLAsyncMessageReceiver extends
             String methodName;
             if (op.getName() != null
                     & (methodName = op.getName().getLocalPart()) != null) {
-                if (methodName.equals("CreateCoordinationContextOperation")) {
+                if (methodName.equals("createCoordinationContextOperation")) {
                     OMElement response = null;
 
                     //doc style
                     response = skel
-                            .CreateCoordinationContextOperation((org.apache.axis2.om.OMElement) msgContext
+                            .createCoordinationContextOperation((org.apache.axis2.om.OMElement) msgContext
                                     .getEnvelope().getBody().getFirstChild()
                                     .detach());
 
@@ -61,8 +66,7 @@ public class ActivationPortTypeRawXMLAsyncMessageReceiver extends
                     envelope.getBody().setFirstChild(response);
                 }
                 newMsgContext.setEnvelope(envelope);
-                newMsgContext.setSoapAction("CreateCoordinationContextOperation");
-                // callback.handleResult(newMsgContext);
+                newMsgContext.setWSAAction(Constants.WS_COOR_CREATE_COORDINATIONCONTEXT_RESPONSE);
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

@@ -1,7 +1,14 @@
 package org.apache.kandula.wscoor;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMElement;
+import org.apache.kandula.context.AbstractContext;
+import org.apache.kandula.context.at.ATActivityContext;
+import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.initiator.TransactionManager;
+import org.apache.kandula.storage.StorageFactory;
+import org.apache.kandula.utility.KandulaUtils;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -32,16 +39,13 @@ public class RegistrationRequesterPortTypeRawXMLSkeleton {
         this.msgContext = context;
     }
 
-    public OMElement RegisterOperation(OMElement requestElement) {
-//        OMElement coordinationContextElement = requestElement
-//                .getFirstChildWithName(new QName("CoordinationContext"));
-//        if ("CoordinationContext".equals(requestElement.getLocalName()))
-//        {
-//        msgContext.getMessageInformationHeaders().getReferenceParameters();
-//        CoordinationContext  coordinationContext  =CoordinationContext.Factory.newInstance(requestElement);
-//        ActivityContext context = StorageFactory.getInstance().getStore().getContext(TransactionManager.tempID);
-//        context.setCoordinationContext(coordinationContext);
-//        }
+    public OMElement registerResponseOperation(OMElement responseElement) {
+        OMElement response = responseElement.getFirstElement();
+        if ("CoordinatorProtocolService".equals(response.getLocalName())) {
+            EndpointReference coordinatorService  = KandulaUtils.endpointFromOM(response.getFirstElement());
+            AbstractContext context = (AbstractContext)StorageFactory.getInstance().getStore().get(TransactionManager.tempID);
+            context.setProperty(ATActivityContext.COORDINATION_EPR,coordinatorService);
+        }
         return null;
     }
 }

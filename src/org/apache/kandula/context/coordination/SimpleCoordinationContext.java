@@ -25,6 +25,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.kandula.Constants;
+import org.apache.kandula.utility.KandulaUtils;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
@@ -58,18 +59,7 @@ public class SimpleCoordinationContext implements CoordinationContext {
                 new QName("CoordinationType")).getText();
         OMElement registrationElement = contextElement.getFirstChildWithName(
                 new QName("RegistrationService"));
-        registrationServiceEpr = new EndpointReference(registrationElement
-                .getFirstChildWithName(new QName("Address")).getText());
-        AnyContentType referenceProperties = new AnyContentType();
-        OMElement referencePropertiesElement = registrationElement
-                .getFirstChildWithName(new QName("ReferenceProperties"));
-        Iterator propertyIter = referencePropertiesElement.getChildElements();
-        while (propertyIter.hasNext()) {
-            OMElement element = (OMElement) propertyIter.next();
-            referenceProperties.addReferenceValue(element.getQName(), element
-                    .getText());
-        }
-        registrationServiceEpr.setReferenceProperties(referenceProperties);
+        registrationServiceEpr = KandulaUtils.endpointFromOM(registrationElement);
     }
 
     public String getActivityID() {

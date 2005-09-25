@@ -52,6 +52,8 @@ public class ATActivityContext extends AbstractContext {
     private EndpointReference parentEPR;
 
     public static String REQUESTER_ID = "requesterID";
+    
+    public static String COORDINATION_EPR = "coordinationEPR";
 
     public static String ACTIVATION_EPR = "activationEPR";
 

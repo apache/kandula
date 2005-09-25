@@ -18,12 +18,16 @@ package org.apache.kandula.utility;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.OperationDescription;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
+import org.apache.kandula.Constants;
+import org.apache.wsdl.WSDLService;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -83,25 +87,12 @@ public class KandulaListener {
      * @throws AxisFault To add services with only one operation, which is the
      *                   frequent case in reponses
      */
-    public void addService(QName serviceName, QName operationName,
-                           String className) throws AxisFault {
-        ServiceDescription service = new ServiceDescription(serviceName);
-        service.addParameter(new ParameterImpl(
-                AbstractMessageReceiver.SERVICE_CLASS, className));
-        service.setFileName(className);
+    public void addService(ServiceDescription service) throws AxisFault {
         org.apache.axis2.description.OperationDescription responseOperationDesc;
-        operations = new org.apache.axis2.description.OperationDescription[1];
-
-        responseOperationDesc = new org.apache.axis2.description.OperationDescription();
-        responseOperationDesc.setName(operationName);
-        responseOperationDesc
-                .setMessageReceiver(new RawXMLINOnlyMessageReceiver());
-        operations[0] = responseOperationDesc;
-        service.addOperation(responseOperationDesc);
+        
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
 
         responseConfigurationContext.getAxisConfiguration().addService(service);
-        responseConfigurationContext.createServiceContext(serviceName);
         Utils.resolvePhases(receiver.getSystemContext().getAxisConfiguration(),
                 service);
     }

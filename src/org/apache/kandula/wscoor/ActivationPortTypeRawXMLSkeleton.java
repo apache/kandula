@@ -3,7 +3,11 @@ package org.apache.kandula.wscoor;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
+import org.apache.axis2.om.OMNamespace;
+import org.apache.axis2.soap.SOAPFactory;
+import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.coordinator.Coordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
@@ -20,7 +24,7 @@ public class ActivationPortTypeRawXMLSkeleton {
      * @param requestElement
      * @throws AbstractKandulaException
      */
-    public OMElement CreateCoordinationContextOperation(OMElement requestElement)
+    public OMElement createCoordinationContextOperation(OMElement requestElement)
             throws AxisFault {
         AbstractContext context;
 
@@ -47,7 +51,12 @@ public class ActivationPortTypeRawXMLSkeleton {
             Coordinator coordinator = new Coordinator();
             context = coordinator.createCoordinationContext(coordinationType,
                     expiresL);
-            return context.getCoordinationContext().toOM();
+            SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
+            OMNamespace wsCoor = factory.createOMNamespace(Constants.WS_COOR,
+                    "wscoor");
+            OMElement responseEle = factory.createOMElement("CreateCoordinationContextResponse",wsCoor);
+            responseEle.addChild(context.getCoordinationContext().toOM());
+            return responseEle;
         } catch (AbstractKandulaException e) {
             AxisFault fault = new AxisFault(e);
             fault.setFaultCode(e.getFaultCode());

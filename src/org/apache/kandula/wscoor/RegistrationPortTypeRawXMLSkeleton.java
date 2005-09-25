@@ -29,6 +29,7 @@ import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
+import org.apache.kandula.Constants;
 import org.apache.kandula.coordinator.Coordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.utility.KandulaUtils;
@@ -44,7 +45,7 @@ public class RegistrationPortTypeRawXMLSkeleton {
         this.msgContext = msgContext;
     }
 
-    public OMElement RegisterOperation(OMElement request)
+    public OMElement registerOperation(OMElement request)
             throws AxisFault {
 
         String protocolIdentifier;
@@ -59,18 +60,7 @@ public class RegistrationPortTypeRawXMLSkeleton {
         OMElement participantEPRElement = request
                 .getFirstChildWithName(new QName("ParticipantProtocolService"));
         //Extracting the participant EPR 
-        participantEPR = new EndpointReference(participantEPRElement
-                .getFirstChildWithName(new QName("Address")).getText());
-        AnyContentType referenceProperties = new AnyContentType();
-        OMElement referencePropertiesElement = participantEPRElement
-                .getFirstChildWithName(new QName("ReferenceProperties"));
-        Iterator propertyIter = referencePropertiesElement.getChildElements();
-        while (propertyIter.hasNext()) {
-            OMElement element = (OMElement) propertyIter.next();
-            referenceProperties.addReferenceValue(element.getQName(), element
-                    .getText());
-        }
-        participantEPR.setReferenceProperties(referenceProperties);
+        participantEPR = KandulaUtils.endpointFromOM(participantEPRElement);
 
         //have to extract the reference parameter "id". Axis2 does not support
         ArrayList list = msgContext.getMessageInformationHeaders()
@@ -85,7 +75,12 @@ public class RegistrationPortTypeRawXMLSkeleton {
         Coordinator coordinator = new Coordinator();
         EndpointReference epr = coordinator.registerParticipant(activityId,
                 protocolIdentifier, participantEPR);
-        return toOM(epr);
+        SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
+        OMNamespace wsCoor = factory.createOMNamespace(Constants.WS_COOR,
+                "wscoor");
+        OMElement responseEle = factory.createOMElement("RegisterResponse",wsCoor);
+        responseEle.addChild(toOM(epr));
+        return responseEle;
         } catch (AbstractKandulaException e) {
             AxisFault fault = new AxisFault(e);
             fault.setFaultCode(e.getFaultCode());

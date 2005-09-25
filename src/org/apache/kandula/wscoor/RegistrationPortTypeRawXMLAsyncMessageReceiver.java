@@ -19,6 +19,7 @@ package org.apache.kandula.wscoor;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.om.OMElement;
+import org.apache.kandula.Constants;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -49,12 +50,12 @@ public class RegistrationPortTypeRawXMLAsyncMessageReceiver extends
             String methodName;
             if (op.getName() != null
                     & (methodName = op.getName().getLocalPart()) != null) {
-                if (methodName.equals("RegisterOperation")) {
+                if (methodName.equals("registerOperation")) {
                     OMElement response = null;
 
                     //doc style
                     response = skel
-                            .RegisterOperation((org.apache.axis2.om.OMElement) msgContext
+                            .registerOperation((org.apache.axis2.om.OMElement) msgContext
                                     .getEnvelope().getBody().getFirstChild()
                                     .detach());
 
@@ -65,8 +66,7 @@ public class RegistrationPortTypeRawXMLAsyncMessageReceiver extends
                     envelope.getBody().setFirstChild(response);
                 }
                 newMsgContext.setEnvelope(envelope);
-                newMsgContext.setSoapAction("RegisterOperation");
-                // callback.handleResult(newMsgContext);
+                newMsgContext.setWSAAction(Constants.WS_COOR_REGISTER_RESPONSE);
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

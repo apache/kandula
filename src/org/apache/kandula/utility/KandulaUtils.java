@@ -36,6 +36,7 @@ import java.util.Random;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class KandulaUtils {
+    
     public static void endpointToOM(EndpointReference epr, OMElement parentEPR, SOAPFactory factory) {
         OMNamespace wsAddressing = factory.createOMNamespace(
                 AddressingConstants.Submission.WSA_NAMESPACE,
@@ -64,6 +65,24 @@ public class KandulaUtils {
                 omElement.setText(value);
             }
         }
+    }
+    
+    public static EndpointReference endpointFromOM(OMElement eprElement)
+    {
+        EndpointReference epr;
+        epr = new EndpointReference(eprElement
+                .getFirstChildWithName(new QName("Address")).getText());
+        AnyContentType referenceProperties = new AnyContentType();
+        OMElement referencePropertiesElement = eprElement
+                .getFirstChildWithName(new QName("ReferenceProperties"));
+        Iterator propertyIter = referencePropertiesElement.getChildElements();
+        while (propertyIter.hasNext()) {
+            OMElement element = (OMElement) propertyIter.next();
+            referenceProperties.addReferenceValue(element.getQName(), element
+                    .getText());
+        }
+        epr.setReferenceProperties(referenceProperties);
+        return epr;
     }
 
     /**
