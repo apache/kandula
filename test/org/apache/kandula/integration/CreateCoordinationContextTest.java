@@ -85,7 +85,7 @@ public class CreateCoordinationContextTest extends TestCase {
 
 
     public void testEchoXMLSync() throws Exception {
-        TransactionManager tm = new TransactionManager(Constants.WS_AT, new EndpointReference("http://localhost:8082/axis/services/ActivationCoordinator"));
+        TransactionManager tm = new TransactionManager(Constants.WS_AT, new EndpointReference("http://localhost:8081/axis/services/ActivationCoordinator"));
         //Thread.sleep(100000);
         tm.begin();
     }

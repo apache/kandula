@@ -48,6 +48,7 @@ public class EndpointReferenceFactory {
     String location = null;
 
     private EndpointReferenceFactory() {
+/*
         InputStream in = getClass().getClassLoader().getResourceAsStream(
                 PROPERTY_FILE);
         properties = new Properties();
@@ -65,6 +66,7 @@ public class EndpointReferenceFactory {
             else
                 throw new RuntimeException(e);
         }
+*/
     }
     
     public static EndpointReferenceFactory getInstance() {
@@ -76,7 +78,7 @@ public class EndpointReferenceFactory {
     public EndpointReference getRegistrationEndpoint(String id) {
         //TODO set this somehow reading the conf file
         EndpointReference epr = new EndpointReference(
-                "http://localhost:8082/axis/services/RegistrationCoordinator");
+                "http://localhost:8081/axis/services/RegistrationCoordinator");
         AnyContentType refProperties = new AnyContentType();
         refProperties.addReferenceValue(
                 new QName("http://ws.apache.org/Kandula", "id"), id);
@@ -97,7 +99,7 @@ public class EndpointReferenceFactory {
     public EndpointReference getCompletionEndpoint(String id) {
         //TODO set this somehow reading the conf file
         EndpointReference epr = new EndpointReference(
-                "http://localhost:8082/axis/services/RegistrationCoordinator");
+                "http://localhost:8081/axis/services/RegistrationCoordinator");
         AnyContentType refProperties = new AnyContentType();
         refProperties.addReferenceValue(
                 new QName("http://ws.apache.org/Kandula", "id"), id);
@@ -108,7 +110,7 @@ public class EndpointReferenceFactory {
     public EndpointReference get2PCEndpoint(String id) {
         //TODO set this somehow reading the conf file
         EndpointReference epr = new EndpointReference(
-                "http://localhost:8082/axis/services/RegistrationCoordinator");
+                "http://localhost:8081/axis/services/RegistrationCoordinator");
         AnyContentType refProperties = new AnyContentType();
         refProperties.addReferenceValue(
                 new QName("http://ws.apache.org/Kandula", "id"), id);
