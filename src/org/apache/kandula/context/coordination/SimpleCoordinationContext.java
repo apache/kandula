@@ -16,19 +16,20 @@
  */
 package org.apache.kandula.context.coordination;
 
+import java.util.Iterator;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.kandula.Constants;
 import org.apache.kandula.utility.KandulaUtils;
-
-import javax.xml.namespace.QName;
-import java.util.Iterator;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -44,9 +45,10 @@ public class SimpleCoordinationContext implements CoordinationContext {
 
     private OMElement contextElement = null;
 
-    public SimpleCoordinationContext(String activityID,String coordinationType, EndpointReference epr) {
+    public SimpleCoordinationContext(String activityID,
+            String coordinationType, EndpointReference epr) {
         this.activityID = activityID;
-        this.coordinationType  = coordinationType;
+        this.coordinationType = coordinationType;
         this.registrationServiceEpr = epr;
     }
 
@@ -57,9 +59,10 @@ public class SimpleCoordinationContext implements CoordinationContext {
                 new QName("Identifier")).getText();
         coordinationType = contextElement.getFirstChildWithName(
                 new QName("CoordinationType")).getText();
-        OMElement registrationElement = contextElement.getFirstChildWithName(
-                new QName("RegistrationService"));
-        registrationServiceEpr = KandulaUtils.endpointFromOM(registrationElement);
+        OMElement registrationElement = contextElement
+                .getFirstChildWithName(new QName("RegistrationService"));
+        registrationServiceEpr = KandulaUtils
+                .endpointFromOM(registrationElement);
     }
 
     public String getActivityID() {

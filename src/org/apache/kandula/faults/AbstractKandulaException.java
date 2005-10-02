@@ -19,29 +19,33 @@ package org.apache.kandula.faults;
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public abstract class AbstractKandulaException extends Exception{
-    
+public abstract class AbstractKandulaException extends Exception {
+
     public AbstractKandulaException() {
         super();
     }
 
     /**
-     * @param arg0 - String
+     * @param arg0 -
+     *            String
      */
     public AbstractKandulaException(String arg0) {
         super(arg0);
     }
 
     /**
-     * @param arg0 - Throwable
+     * @param arg0 -
+     *            Throwable
      */
     public AbstractKandulaException(Throwable arg0) {
         super(arg0);
     }
 
     /**
-     * @param arg0 - String
-     * @param arg1 - Throwable
+     * @param arg0 -
+     *            String
+     * @param arg1 -
+     *            Throwable
      */
     public AbstractKandulaException(String arg0, Throwable arg1) {
         super(arg0, arg1);
@@ -53,8 +57,7 @@ public abstract class AbstractKandulaException extends Exception{
 
     public abstract String getFaultReason();
 
-    public String getFaultDetail()
-    {
+    public String getFaultDetail() {
         return this.toString();
     }
 

@@ -44,17 +44,19 @@ public interface CoordinationContext {
     public abstract Object getCoordinationContextType();
 
     public static final class Factory {
-        public static CoordinationContext newContext(String activityId ,String coordinationType, EndpointReference epr) {
-            return new SimpleCoordinationContext(activityId,coordinationType, epr);
+        public static CoordinationContext newContext(String activityId,
+                String coordinationType, EndpointReference epr) {
+            return new SimpleCoordinationContext(activityId, coordinationType,
+                    epr);
         }
 
         public static CoordinationContext newContext(OMElement contextElement) {
             return new SimpleCoordinationContext(contextElement);
         }
 
-//        public static CoordinationContext newInstance(Object contextType) {
-//            return new XmlBeansTypeCoordinationContext(contextType);
-//        }
+        //        public static CoordinationContext newInstance(Object contextType) {
+        //            return new XmlBeansTypeCoordinationContext(contextType);
+        //        }
 
         private Factory() {
         } // No instance of this class allowed

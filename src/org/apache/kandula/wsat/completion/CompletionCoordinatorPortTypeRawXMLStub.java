@@ -1,14 +1,9 @@
 package org.apache.kandula.wsat.completion;
 
-import java.io.IOException;
-
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.clientapi.MessageSender;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
 import org.apache.kandula.Constants;
+import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.wsat.AbstractATNotifierStub;
 
 public class CompletionCoordinatorPortTypeRawXMLStub extends
@@ -41,6 +36,7 @@ public class CompletionCoordinatorPortTypeRawXMLStub extends
 
     /**
      * Constructor
+     * 
      * @throws AxisFault
      */
     public CompletionCoordinatorPortTypeRawXMLStub(String axis2Home,
@@ -55,13 +51,13 @@ public class CompletionCoordinatorPortTypeRawXMLStub extends
                 _service.getName().getLocalPart());
     }
 
-    public void commitOperation() throws IOException {
+    public void commitOperation() throws AbstractKandulaException {
         //TODO must send reply to epr
         this.notify("Commit", Constants.WS_AT_COMMIT, 0, null);
 
     }
 
-    public void rollbackOperation() throws IOException {
+    public void rollbackOperation() throws AbstractKandulaException {
         //TODO must send reply to EPR
         this.notify("Rollback", Constants.WS_AT_ROLLBACK, 1, null);
 

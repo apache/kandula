@@ -29,8 +29,11 @@ public class RegistrationPortTypeRawXMLAsyncMessageReceiver extends
 
     public void invokeBusinessLogic(
             org.apache.axis2.context.MessageContext msgContext,
-            org.apache.axis2.context.MessageContext newMsgContext/*,
-            ServerCallback callback*/) throws org.apache.axis2.AxisFault {
+            org.apache.axis2.context.MessageContext newMsgContext/*
+                                                                  * ,
+                                                                  * ServerCallback
+                                                                  * callback
+                                                                  */) throws org.apache.axis2.AxisFault {
 
         try {
 
@@ -38,7 +41,8 @@ public class RegistrationPortTypeRawXMLAsyncMessageReceiver extends
             Object obj = getTheImplementationObject(msgContext);
 
             //Inject the Message Context if it is asked for
-            DependencyManager.configureBusinessLogicProvider(obj, msgContext, newMsgContext);
+            DependencyManager.configureBusinessLogicProvider(obj, msgContext,
+                    newMsgContext);
 
             RegistrationPortTypeRawXMLSkeleton skel = (RegistrationPortTypeRawXMLSkeleton) obj;
             //Out Envelop
@@ -50,7 +54,7 @@ public class RegistrationPortTypeRawXMLAsyncMessageReceiver extends
             String methodName;
             if (op.getName() != null
                     & (methodName = op.getName().getLocalPart()) != null) {
-                if (methodName.equals("registerOperation")) {
+                if (("registerOperation").equals(methodName)) {
                     OMElement response = null;
 
                     //doc style

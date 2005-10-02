@@ -40,8 +40,7 @@ public class Coordinator {
     }
 
     /**
-     * @param Coordination
-     *            Type
+     * @param coordinationType
      * @return the Coordination Context created <p/>Initiators can use this to
      *         Create new Distributed transactions.This will take in the
      *         Coordination Type and will create an instance of the reapective
@@ -56,13 +55,12 @@ public class Coordinator {
         AbstractContext context = factory.createActivity(coordinationType);
         context.getCoordinationContext().setExpires(expires);
         ACTIVITY_ID = context.getCoordinationContext().getActivityID();
-        store.put(context.getCoordinationContext().getActivityID(),
-                context);
+        store.put(context.getCoordinationContext().getActivityID(), context);
         return context;
     }
 
     /**
-     * @param CoordinationContext
+     * @param coorContext
      * @return the interposed Coordination Context created <p/>Participants
      *         decided to use this Coordinator as a interposed
      *         sub-coordinator.The newly created CoordinationContext will
@@ -74,15 +72,14 @@ public class Coordinator {
             CoordinationContext coorContext) throws AbstractKandulaException {
         ContextFactory factory = ContextFactory.getInstance();
         AbstractContext context = factory.createActivity(coorContext);
-        store.put(context.getCoordinationContext().getActivityID(),
-                context);
+        store.put(context.getCoordinationContext().getActivityID(), context);
         return context;
     }
 
     /**
-     * @param coordinationProtocol
+     * @param protocol
      * @param participantEPR
-     * @param Activity-id
+     * @param id
      * @return Should return the particular Coordiators End Point Reference <p/>
      *         This method provides the functional logic for participants to
      *         register for a particular transaction activity which was created
@@ -106,6 +103,6 @@ public class Coordinator {
     }
 
     private AbstractContext getCoordinationContext(String id) {
-        return (AbstractContext)store.get(id);
+        return (AbstractContext) store.get(id);
     }
 }

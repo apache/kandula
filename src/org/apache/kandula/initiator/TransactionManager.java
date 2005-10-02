@@ -44,9 +44,10 @@ public class TransactionManager {
     public static String tempID;
 
     public TransactionManager(String coordinationType,
-                              EndpointReference coordinatorEPR) throws AbstractKandulaException {
+            EndpointReference coordinatorEPR) throws AbstractKandulaException {
         threadInfo = new ThreadLocal();
-        //ATInitiatorTransaction transaction = new ATInitiatorTransaction(coordinatorEPR);
+        //ATInitiatorTransaction transaction = new
+        // ATInitiatorTransaction(coordinatorEPR);
         AbstractContext context = ContextFactory.getInstance().createActivity(
                 coordinationType, coordinatorEPR);
         if (threadInfo.get() != null)
@@ -55,8 +56,7 @@ public class TransactionManager {
         //TODO remove this when we get replyTo reference properties correctly
         tempID = (String) context.getProperty(ATActivityContext.REQUESTER_ID);
         Store store = StorageFactory.getInstance().getStore();
-        store.put(context.getProperty(ATActivityContext.REQUESTER_ID),
-                context);
+        store.put(context.getProperty(ATActivityContext.REQUESTER_ID), context);
     }
 
     /**
@@ -68,7 +68,7 @@ public class TransactionManager {
                 .getProperty(ATActivityContext.REQUESTER_ID);
         ActivationCoordinatorPortTypeRawXMLStub activationCoordinator = new ActivationCoordinatorPortTypeRawXMLStub(
                 ".", (EndpointReference) context
-                .getProperty(ATActivityContext.ACTIVATION_EPR));
+                        .getProperty(ATActivityContext.ACTIVATION_EPR));
         activationCoordinator.createCoordinationContextOperation(
                 org.apache.kandula.Constants.WS_AT, id);
         while (context.getCoordinationContext() == null) {
@@ -82,22 +82,26 @@ public class TransactionManager {
         registrationCoordinator.registerOperation(
                 org.apache.kandula.Constants.WS_AT_COMPLETION,
                 registrationRequeterPortEPR, id);
-        while (context.getProperty(ATActivityContext.COORDINATION_EPR)==null) {
+        while (context.getProperty(ATActivityContext.COORDINATION_EPR) == null) {
             Thread.sleep(10);
         }
     }
 
     public void commit() throws AbstractKandulaException, IOException {
         AbstractContext context = getTransaction();
-        EndpointReference coordinationEPR = (EndpointReference)context.getProperty(ATActivityContext.COORDINATION_EPR);
-        CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(".",coordinationEPR);
+        EndpointReference coordinationEPR = (EndpointReference) context
+                .getProperty(ATActivityContext.COORDINATION_EPR);
+        CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(
+                ".", coordinationEPR);
         stub.commitOperation();
     }
 
     public void rollback() throws AbstractKandulaException, IOException {
         AbstractContext context = getTransaction();
-        EndpointReference coordinationEPR = (EndpointReference)context.getProperty(ATActivityContext.COORDINATION_EPR);
-        CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(".",coordinationEPR);
+        EndpointReference coordinationEPR = (EndpointReference) context
+                .getProperty(ATActivityContext.COORDINATION_EPR);
+        CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(
+                ".", coordinationEPR);
         stub.rollbackOperation();
     }
 
@@ -120,8 +124,8 @@ public class TransactionManager {
 
     private AbstractContext getTransaction() throws AbstractKandulaException {
         Object key = threadInfo.get();
-        AbstractContext context = (AbstractContext) StorageFactory.getInstance().getStore()
-                .get(key);
+        AbstractContext context = (AbstractContext) StorageFactory
+                .getInstance().getStore().get(key);
         if (context == null) {
             throw new InvalidStateException("No Activity Found");
         }

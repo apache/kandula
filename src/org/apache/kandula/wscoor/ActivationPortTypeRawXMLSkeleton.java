@@ -54,7 +54,8 @@ public class ActivationPortTypeRawXMLSkeleton {
             SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
             OMNamespace wsCoor = factory.createOMNamespace(Constants.WS_COOR,
                     "wscoor");
-            OMElement responseEle = factory.createOMElement("CreateCoordinationContextResponse",wsCoor);
+            OMElement responseEle = factory.createOMElement(
+                    "CreateCoordinationContextResponse", wsCoor);
             responseEle.addChild(context.getCoordinationContext().toOM());
             return responseEle;
         } catch (AbstractKandulaException e) {

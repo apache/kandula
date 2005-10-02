@@ -2,10 +2,10 @@ package org.apache.kandula.wsat.completion;
 
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMElement;
+import org.apache.kandula.Status;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.initiator.TransactionManager;
 import org.apache.kandula.storage.StorageFactory;
-import org.apache.kandula.context.coordination.CoordinationContext;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -37,21 +37,24 @@ public class CompletionInitiatorPortTypeRawXMLSkeleton {
     }
 
     public OMElement committedOperation(OMElement requestElement) {
-        if ("CoordinationContext".equals(requestElement.getLocalName())) {
-            msgContext.getMessageInformationHeaders().getReferenceParameters();
-            CoordinationContext coordinationContext = CoordinationContext.Factory.newContext(requestElement);
-            AbstractContext context = (AbstractContext)StorageFactory.getInstance().getStore().get(TransactionManager.tempID);
-          //  context.setCoordinationContext(coordinationContext);
-        }
+        //TODO use refrence parameters for this
+        //Have to wait till Axis2 Addressing get this correctly
+        //String requesterID ;
+
+        AbstractContext context = (AbstractContext) StorageFactory
+                .getInstance().getStore().get(TransactionManager.tempID);
+        context.setStatus(Status.ParticipantStatus.STATUS_COMMITED);
         return null;
     }
+
     public OMElement abortedOperation(OMElement requestElement) {
-        if ("CoordinationContext".equals(requestElement.getLocalName())) {
-            msgContext.getMessageInformationHeaders().getReferenceParameters();
-            CoordinationContext coordinationContext = CoordinationContext.Factory.newContext(requestElement);
-            AbstractContext context = (AbstractContext)StorageFactory.getInstance().getStore().get(TransactionManager.tempID);
-            //context.setCoordinationContext(coordinationContext);
-        }
+        //      TODO use refrence parameters for this
+        //Have to wait till Axis2 Addressing get this correctly
+        //String requesterID ;
+
+        AbstractContext context = (AbstractContext) StorageFactory
+                .getInstance().getStore().get(TransactionManager.tempID);
+        context.setStatus(Status.ParticipantStatus.STATUS_ABORTED);
         return null;
     }
 }

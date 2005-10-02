@@ -16,23 +16,15 @@
  */
 package org.apache.kandula.utility;
 
-import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.OperationDescription;
-import org.apache.axis2.description.Parameter;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
-import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
-import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.apache.axis2.util.Utils;
-import org.apache.kandula.Constants;
-import org.apache.wsdl.WSDLService;
-
-import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.transport.http.SimpleHTTPServer;
+import org.apache.axis2.util.Utils;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -84,12 +76,13 @@ public class KandulaListener {
     /**
      * @param serviceName
      * @param operationName
-     * @throws AxisFault To add services with only one operation, which is the
-     *                   frequent case in reponses
+     * @throws AxisFault
+     *             To add services with only one operation, which is the
+     *             frequent case in reponses
      */
     public void addService(ServiceDescription service) throws AxisFault {
         org.apache.axis2.description.OperationDescription responseOperationDesc;
-        
+
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
 
         responseConfigurationContext.getAxisConfiguration().addService(service);
@@ -98,7 +91,7 @@ public class KandulaListener {
     }
 
     public String getHost() throws UnknownHostException {
-        return "http://" + InetAddress.getLocalHost().getHostAddress() + ":" + SERVER_PORT 
-                + "/axis2/services/";
+        return "http://" + InetAddress.getLocalHost().getHostAddress() + ":"
+                + SERVER_PORT + "/axis2/services/";
     }
 }

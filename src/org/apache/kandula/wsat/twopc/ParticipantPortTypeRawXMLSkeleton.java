@@ -1,14 +1,7 @@
 package org.apache.kandula.wsat.twopc;
 
-import java.io.IOException;
-
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMElement;
-import org.apache.kandula.Constants;
-import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.initiator.TransactionManager;
-import org.apache.kandula.storage.StorageFactory;
-import org.apache.kandula.context.coordination.CoordinationContext;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -39,8 +32,8 @@ public class ParticipantPortTypeRawXMLSkeleton {
         this.msgContext = context;
     }
 
-    public OMElement prepareOperation(OMElement requestEle){
-      return null;
+    public OMElement prepareOperation(OMElement requestEle) {
+        return null;
 
     }
 
@@ -48,7 +41,7 @@ public class ParticipantPortTypeRawXMLSkeleton {
         return null;
     }
 
-    public OMElement rollbackOperation(OMElement requestEle){
+    public OMElement rollbackOperation(OMElement requestEle) {
         return null;
     }
 }

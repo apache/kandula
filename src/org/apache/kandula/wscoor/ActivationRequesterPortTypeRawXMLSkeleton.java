@@ -3,9 +3,9 @@ package org.apache.kandula.wscoor;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMElement;
 import org.apache.kandula.context.AbstractContext;
+import org.apache.kandula.context.coordination.CoordinationContext;
 import org.apache.kandula.initiator.TransactionManager;
 import org.apache.kandula.storage.StorageFactory;
-import org.apache.kandula.context.coordination.CoordinationContext;
 
 /*
  * Copyright 2004,2005 The Apache Software Foundation.
@@ -36,12 +36,15 @@ public class ActivationRequesterPortTypeRawXMLSkeleton {
         this.msgContext = context;
     }
 
-    public OMElement createCoordinationContextResponseOperation(OMElement responseElement) {
+    public OMElement createCoordinationContextResponseOperation(
+            OMElement responseElement) {
         OMElement response = responseElement.getFirstElement();
         if ("CoordinationContext".equals(response.getLocalName())) {
             msgContext.getMessageInformationHeaders().getReferenceParameters();
-            CoordinationContext coordinationContext = CoordinationContext.Factory.newContext(response);
-            AbstractContext context = (AbstractContext)StorageFactory.getInstance().getStore().get(TransactionManager.tempID);
+            CoordinationContext coordinationContext = CoordinationContext.Factory
+                    .newContext(response);
+            AbstractContext context = (AbstractContext) StorageFactory
+                    .getInstance().getStore().get(TransactionManager.tempID);
             context.setCoordinationContext(coordinationContext);
         }
         return null;

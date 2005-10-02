@@ -20,7 +20,7 @@ package org.apache.kandula;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 abstract public interface Constants {
-    
+
     //WS-Coordination URI's
 
     public static final String WS_COOR = "http://schemas.xmlsoap.org/ws/2004/10/wscoor";
@@ -34,9 +34,9 @@ abstract public interface Constants {
     public static final String WS_COOR_REGISTER_RESPONSE = "http://schemas.xmlsoap.org/ws/2004/10/wscoor/RegisterResponse";
 
     //WS-AT URI's
-    
+
     public static final String WS_AT = "http://schemas.xmlsoap.org/ws/2004/10/wsat";
-    
+
     public static final String WS_AT_COMPLETION = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Completion";
 
     public static final String WS_AT_COMMIT = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Commit";
@@ -62,7 +62,7 @@ abstract public interface Constants {
     public static final String SUB_VOLATILE_REGISTERED = "registered for volatile 2PC";
 
     public static final String SUB_DURABLE_REGISTERED = "registered for durable 2PC";
-    
+
     //WS-BA URI's
 
     public static final String WS_BA = "http://schemas.xmlsoap.org/ws/2004/10/wsba";

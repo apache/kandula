@@ -16,7 +16,6 @@
  */
 package org.apache.kandula.storage;
 
-
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */

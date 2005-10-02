@@ -1,13 +1,8 @@
 package org.apache.kandula.wsat.twopc;
 
-import java.io.IOException;
-
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.clientapi.MessageSender;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
 import org.apache.kandula.Constants;
+import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.wsat.AbstractATNotifierStub;
 
 public class CoordinatorPortTypeRawXMLStub extends AbstractATNotifierStub {
@@ -68,26 +63,26 @@ public class CoordinatorPortTypeRawXMLStub extends AbstractATNotifierStub {
                 _service.getName().getLocalPart());
     }
 
-    public void preparedOperation() throws IOException {
+    public void preparedOperation() throws AbstractKandulaException {
         // must send reply to epr
         this.notify("Prepared", Constants.WS_AT_PREPARED, 0, null);
     }
 
-    public void abortedOperation() throws IOException {
+    public void abortedOperation() throws AbstractKandulaException {
         this.notify("Aborted", Constants.WS_AT_ABORTED, 1, null);
     }
 
-    public void readOnlyOperation() throws IOException {
+    public void readOnlyOperation() throws AbstractKandulaException {
         this.notify("ReadOnly", Constants.WS_AT_READONLY, 2, null);
 
     }
 
-    public void committedOperation() throws IOException {
+    public void committedOperation() throws AbstractKandulaException {
         this.notify("Committed", Constants.WS_AT_COMMITTED, 3, null);
 
     }
 
-    public void replayOperation() throws IOException {
+    public void replayOperation() throws AbstractKandulaException {
         //must send reply to epr
         this.notify("Replay", Constants.WS_AT_REPLAY, 4, null);
     }

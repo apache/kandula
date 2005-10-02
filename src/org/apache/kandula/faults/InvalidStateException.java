@@ -22,7 +22,7 @@ package org.apache.kandula.faults;
 public class InvalidStateException extends AbstractKandulaException {
 
     /**
-     * 
+     *  
      */
     public InvalidStateException() {
         super();
@@ -50,21 +50,27 @@ public class InvalidStateException extends AbstractKandulaException {
         super(arg0, arg1);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.kandula.faults.KandulaFault#getFaultCode()
      */
     public String getFaultCode() {
         return "Sender";
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.kandula.faults.KandulaFault#getFaultSubcode()
      */
     public String getFaultSubcode() {
         return "wscoor:InvalidState";
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.kandula.faults.KandulaFault#getFaultReason()
      */
     public String getFaultReason() {

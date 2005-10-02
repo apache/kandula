@@ -16,28 +16,26 @@
  */
 package org.apache.kandula.participant;
 
-
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class Vote {
-    
+
     public static Vote READ_ONLY = new Vote("VoteReadOnly");
-    
+
     public static Vote ABORT = new Vote("VoteAbort");
-    
+
     public static Vote PREPARED = new Vote("VotePrepared");
-    
+
     public static Vote NONE = new Vote("");
-    
+
     private String state;
-    
-    public Vote(String outcome)
-    {
+
+    public Vote(String outcome) {
         this.state = outcome;
     }
-    public String getOutcome()
-    {
+
+    public String getOutcome() {
         return state;
     }
 }

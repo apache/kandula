@@ -16,6 +16,10 @@
  */
 package org.apache.kandula.wscoor;
 
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
@@ -29,9 +33,6 @@ import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
 import org.apache.kandula.utility.KandulaListener;
-
-import javax.xml.namespace.QName;
-import java.io.IOException;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>

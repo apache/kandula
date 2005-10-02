@@ -34,7 +34,8 @@ import org.apache.kandula.utility.KandulaListener;
 public class CompletionInitiatorServiceListener {
 
     private static CompletionInitiatorServiceListener instance = null;
-    private EndpointReference epr=null;
+
+    private EndpointReference epr = null;
 
     private CompletionInitiatorServiceListener() {
         super();
@@ -47,14 +48,13 @@ public class CompletionInitiatorServiceListener {
         return instance;
     }
 
-    public EndpointReference getEpr() throws IOException
-    {
-        if (epr==null)
-        {
+    public EndpointReference getEpr() throws IOException {
+        if (epr == null) {
             this.epr = setupListener();
         }
         return this.epr;
     }
+
     private EndpointReference setupListener() throws IOException {
         QName serviceName = new QName("CompletionInitiatorPortType");
         String className = CompletionInitiatorPortTypeRawXMLSkeleton.class

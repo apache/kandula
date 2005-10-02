@@ -45,6 +45,9 @@ public class ATActivityContext extends AbstractContext {
 
     private Hashtable durableParticipantsTable;
 
+    //TODO : check whether there can be more than 1 initiator
+    private EndpointReference completionParticipant;
+
     private boolean subVolatileRegistered = false;
 
     private boolean subDurableRegistered = false;
@@ -52,11 +55,10 @@ public class ATActivityContext extends AbstractContext {
     private EndpointReference parentEPR;
 
     public static String REQUESTER_ID = "requesterID";
-    
+
     public static String COORDINATION_EPR = "coordinationEPR";
 
     public static String ACTIVATION_EPR = "activationEPR";
-
 
     /**
      * Used when creating new activities
@@ -69,13 +71,15 @@ public class ATActivityContext extends AbstractContext {
     }
 
     /**
-     * @param context To be used when coordinator is used as a sub ordinate to an another  cooordinator
+     * @param context
+     *            To be used when coordinator is used as a sub ordinate to an
+     *            another cooordinator
      */
     public ATActivityContext(CoordinationContext context) {
         subOrdinate = true;
         parentEPR = context.getRegistrationService();
-//        context.setRegistrationService(EndpointReferenceFactory.getInstance()
-//                .getRegistrationEndpoint());
+        //        context.setRegistrationService(EndpointReferenceFactory.getInstance()
+        //                .getRegistrationEndpoint());
         this.setStatus(Status.CoordinatorStatus.STATUS_ACTIVE);
         volatileParticipantsTable = new Hashtable();
         durableParticipantsTable = new Hashtable();
@@ -83,11 +87,13 @@ public class ATActivityContext extends AbstractContext {
     }
 
     /**
-     * @param id To be used when using as the requester
+     * @param id
+     *            To be used when using as the requester
      */
     public ATActivityContext(EndpointReference activationEPR) {
         super();
-        this.setProperty(REQUESTER_ID, KandulaUtils.getRandomStringOf18Characters());
+        this.setProperty(REQUESTER_ID, KandulaUtils
+                .getRandomStringOf18Characters());
         this.setProperty(ACTIVATION_EPR, activationEPR);
     }
 
@@ -97,41 +103,44 @@ public class ATActivityContext extends AbstractContext {
      * @return Coordinator protocol service.
      * @throws AbstractKandulaException
      */
-    public EndpointReference addParticipant(EndpointReference participantEPR, String protocol)
-            throws AbstractKandulaException {
+    public EndpointReference addParticipant(EndpointReference participantEPR,
+            String protocol) throws AbstractKandulaException {
+        String enlistmentID = KandulaUtils.getRandomStringOf18Characters();
         if (Constants.WS_AT_VOLATILE2PC.equals(protocol)) {
-            addVolatileParticipant(participantEPR);
-            return EndpointReferenceFactory.getInstance().get2PCEndpoint(this.activityID);
+            addVolatileParticipant(participantEPR,enlistmentID);
+            return EndpointReferenceFactory.getInstance().get2PCEndpoint(
+                    this.activityID);
         } else if (Constants.WS_AT_DURABLE2PC.equals(protocol)) {
-            addDurableParticipant(participantEPR);
-            return EndpointReferenceFactory.getInstance().get2PCEndpoint(this.activityID);
+            addDurableParticipant(participantEPR,enlistmentID);
+            return EndpointReferenceFactory.getInstance().get2PCEndpoint(
+                    this.activityID);
         } else if (Constants.WS_AT_COMPLETION.equals(protocol)) {
-            //TODO keep track of requesters
-            return EndpointReferenceFactory.getInstance().getCompletionEndpoint(this.activityID);
+            completionParticipant = participantEPR;
+            return EndpointReferenceFactory.getInstance()
+                    .getCompletionEndpoint(this.activityID);
         } else {
             throw new InvalidProtocolException();
         }
     }
 
-    public void addVolatileParticipant(EndpointReference participantEPR)
+    public void addVolatileParticipant(EndpointReference participantEPR, String enlistmentID)
             throws AbstractKandulaException {
         if (volatileParticipantsTable.contains(participantEPR))
             throw new AlreadyRegisteredException();
-        volatileParticipantsTable.put(participantEPR, new Participant(
-                participantEPR, Constants.WS_AT_VOLATILE2PC));
-
+        Participant participant = new Participant(participantEPR, Constants.WS_AT_VOLATILE2PC,enlistmentID);
+        volatileParticipantsTable.put(enlistmentID, participant);
     }
 
-    public void addDurableParticipant(EndpointReference participantEPR)
+    public void addDurableParticipant(EndpointReference participantEPR, String enlistmentID)
             throws AlreadyRegisteredException {
         if (durableParticipantsTable.contains(participantEPR))
             throw new AlreadyRegisteredException();
-        durableParticipantsTable.put(participantEPR, new Participant(
-                participantEPR, Constants.WS_AT_DURABLE2PC));
+        Participant participant = new Participant(participantEPR, Constants.WS_AT_DURABLE2PC,enlistmentID);
+        durableParticipantsTable.put(enlistmentID, participant);
 
     }
 
-    public Iterator getRegisteredParticipants(String protocol) {
+    public Iterator getRegistered2PCParticipants(String protocol) {
         if (protocol.equals(Constants.WS_AT_VOLATILE2PC)) {
             return volatileParticipantsTable.values().iterator();
         } else if (protocol.equals(Constants.WS_AT_DURABLE2PC)) {
@@ -140,15 +149,43 @@ public class ATActivityContext extends AbstractContext {
         return null;
     }
 
-    public Iterator getAllParticipants() {
+    public Iterator getAll2PCParticipants() {
         LinkedList list = new LinkedList(volatileParticipantsTable.values());
         list.addAll(durableParticipantsTable.values());
         return list.iterator();
+    }
+    
+    public Participant getParticipant(String enlistmentId)
+    {
+        if (volatileParticipantsTable.containsKey(enlistmentId))
+        {
+            return (Participant)volatileParticipantsTable.get(enlistmentId);
+        }
+        else if (durableParticipantsTable.containsKey(enlistmentId))
+        {
+            return (Participant)durableParticipantsTable.get(enlistmentId);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /**
+     * @return the completion initiator epr
+     */
+    public EndpointReference getCompletionParticipant() {
+        return completionParticipant;
     }
 
     public void countPreparing() {
         preparingParticipantsCount++;
 
+    }
+    
+    public void decrementPreparing()
+    {
+        preparingParticipantsCount--;
     }
 
     public boolean hasMorePreparing() {
@@ -171,6 +208,7 @@ public class ATActivityContext extends AbstractContext {
     public void setSubDurableRegistered(boolean value) {
         subDurableRegistered = value;
     }
+
     //    public void prepared(Participant participant)
     //    {
     //        if (participant.getStatus()==Status.ParticipantStatus.STATUS_ABORTED)
@@ -179,7 +217,6 @@ public class ATActivityContext extends AbstractContext {
     //        }
     //    }
 
-    
     public String getCoordinationType() {
         return Constants.WS_AT;
     }

@@ -20,7 +20,10 @@ package org.apache.kandula.integration;
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  */
 
+import java.io.File;
+
 import junit.framework.TestCase;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
@@ -29,8 +32,6 @@ import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.kandula.Constants;
 import org.apache.kandula.initiator.TransactionManager;
 
-import java.io.File;
-
 public class CreateCoordinationContextTest extends TestCase {
 
     private String repository = "test-resources/testing-repository";
@@ -38,7 +39,6 @@ public class CreateCoordinationContextTest extends TestCase {
     private SimpleHTTPServer server;
 
     private boolean finish = false;
-
 
     public CreateCoordinationContextTest() {
         super(CreateCoordinationContextTest.class.getName());
@@ -52,20 +52,17 @@ public class CreateCoordinationContextTest extends TestCase {
         ConfigurationContextFactory erfac = new ConfigurationContextFactory();
         File file = new File(repository);
         if (!file.exists()) {
-            throw new Exception(
-                    "repository directory " + file.getAbsolutePath() +
-                            " does not exists");
+            throw new Exception("repository directory "
+                    + file.getAbsolutePath() + " does not exists");
         }
-        ConfigurationContext er = erfac.buildConfigurationContext(
-                file.getAbsolutePath());
+        ConfigurationContext er = erfac.buildConfigurationContext(file
+                .getAbsolutePath());
 
         server = new SimpleHTTPServer(er, 8081);
 
         try {
             server.start();
-            System.out.print(
-                    "Server started on port " + 8081 +
-                            ".....");
+            System.out.print("Server started on port " + 8081 + ".....");
         } finally {
 
         }
@@ -76,17 +73,18 @@ public class CreateCoordinationContextTest extends TestCase {
             throw new AxisFault("Thread interuptted", e1);
         }
 
-
     }
 
     protected void tearDown() throws Exception {
         server.stop();
     }
 
-
     public void testEchoXMLSync() throws Exception {
-        TransactionManager tm = new TransactionManager(Constants.WS_AT, new EndpointReference("http://localhost:8081/axis/services/ActivationCoordinator"));
-        //Thread.sleep(100000);
+        TransactionManager tm = new TransactionManager(
+                Constants.WS_AT,
+                new EndpointReference(
+                        "http://localhost:8081/axis/services/ActivationCoordinator"));
+        
         tm.begin();
     }
 }

@@ -44,10 +44,10 @@
   <!-- the version control repository and http url for online access
        the connection element has the form:
        scm:<system>:<system specific connection string> -->
-  <repository>
-    <connection>scm|svn|https://svn.apache.org/repos/asf/webservices/kandula/trunk/java/</connection>
+  <!--repository>
+    <connection>scm: svn:https://svn.apache.org/repos/asf/webservices/kandula/trunk/java/</connection>
     <url>http://svn.apache.org/repos/asf/webservices/kandula/trunk/java/</url>
-  </repository>
+  </repository-->
 
   <!-- any mailing lists for the project -->
     <mailingLists>
@@ -251,15 +251,14 @@
     <!-- ======= -->
 
     <reports>
-     <report>maven-license-plugin</report>
+     <report>maven-changes-plugin</report>
+        <report>maven-jdepend-plugin</report>
         <report>maven-checkstyle-plugin</report>
         <report>maven-pmd-plugin</report>
-        <report>maven-jdepend-plugin</report>
-        <report>maven-jxr-plugin</report>
-        <report>maven-javadoc-plugin</report>
         <report>maven-junit-report-plugin</report>
-        <report>maven-clover-plugin</report>
-        <report>maven-changes-plugin</report>
+        <report>maven-license-plugin</report>
+        <report>maven-jxr-plugin</report>
+
     </reports>
 </project>
 

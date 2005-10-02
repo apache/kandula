@@ -1,5 +1,9 @@
 package org.apache.kandula.wscoor;
 
+import java.io.IOException;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
@@ -13,9 +17,6 @@ import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
 import org.apache.kandula.utility.KandulaListener;
 import org.apache.kandula.utility.KandulaUtils;
-
-import javax.xml.namespace.QName;
-import java.io.IOException;
 
 public class RegistrationCoordinatorPortTypeRawXMLStub extends
         org.apache.axis2.clientapi.Stub {

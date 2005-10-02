@@ -32,7 +32,7 @@ import org.apache.kandula.utility.KandulaUtils;
  */
 public abstract class AbstractContext {
 
-    private HashMap propertyBag;
+    private final HashMap propertyBag;
 
     protected String activityID;
 
@@ -60,23 +60,25 @@ public abstract class AbstractContext {
                 activityID, coordinationType, registrationEpr);
     }
 
-    public CoordinationContext getCoordinationContext() {
+    public final CoordinationContext getCoordinationContext() {
         return coordinationContext;
     }
 
-    public void setCoordinationContext(CoordinationContext context) {
+    public final void setCoordinationContext(CoordinationContext context) {
         this.coordinationContext = context;
     }
 
-    public int getStatus() {
+    public final int getStatus() {
         return status;
     }
 
-    public void setStatus(int value) {
+    // we can use a publisher-subscriber in the future to notify listeners abt
+    // state changes.
+    public final void setStatus(int value) {
         status = value;
     }
 
-    public synchronized void lock() {
+    public final synchronized void lock() {
         if (locked) {
             while (locked) {
                 try {
@@ -92,20 +94,21 @@ public abstract class AbstractContext {
         locked = true;
     }
 
-    public synchronized void unlock() {
+    public final synchronized void unlock() {
         if (!locked)
             throw new IllegalStateException();
         locked = false;
         notify();
     }
 
-    public void setProperty(Object key, Object value) {
+    public final void setProperty(Object key, Object value) {
         propertyBag.put(key, value);
 
     }
 
-    public Object getProperty(Object key) {
+    public final Object getProperty(Object key) {
         return propertyBag.get(key);
     }
+
     public abstract String getCoordinationType();
 }

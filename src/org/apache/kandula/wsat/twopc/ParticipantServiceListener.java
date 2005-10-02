@@ -23,12 +23,10 @@ import javax.xml.namespace.QName;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ServiceDescription;
-import org.apache.axis2.om.OMElement;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
 import org.apache.kandula.utility.KandulaListener;
-import org.apache.kandula.wsat.completion.CompletionInitiatorPortTypeRawXMLSkeleton;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -59,8 +57,7 @@ public class ParticipantServiceListener {
 
     private EndpointReference setupListener() throws IOException {
         QName serviceName = new QName("ParticipantPortType");
-        String className = ParticipantPortTypeRawXMLSkeleton.class
-                .getName();
+        String className = ParticipantPortTypeRawXMLSkeleton.class.getName();
         ServiceDescription service = new ServiceDescription(serviceName);
         service.addParameter(new ParameterImpl(
                 AbstractMessageReceiver.SERVICE_CLASS, className));

@@ -38,7 +38,8 @@ public interface Registerable {
                 return new ATCoordinator();
 
             } else {
-                throw new InvalidProtocolException("Unsupported Coordination Type");
+                throw new InvalidProtocolException(
+                        "Unsupported Coordination Type");
             }
         }
 

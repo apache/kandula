@@ -41,7 +41,7 @@ public class ContextFactory {
     }
 
     public AbstractContext createActivity(String protocol,
-                                          EndpointReference activationEPR) throws InvalidProtocolException {
+            EndpointReference activationEPR) throws InvalidProtocolException {
         if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(protocol)) {
             return new ATActivityContext(activationEPR);
         } else {
@@ -50,7 +50,7 @@ public class ContextFactory {
     }
 
     public AbstractContext createActivity(CoordinationContext context)
-            throws InvalidProtocolException{
+            throws InvalidProtocolException {
         if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(context
                 .getCoordinationType())) {
             return new ATActivityContext(context);

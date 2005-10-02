@@ -22,7 +22,7 @@ package org.apache.kandula.faults;
 public class NoActivityException extends AbstractKandulaException {
 
     /**
-     * 
+     *  
      */
     public NoActivityException() {
         super();
@@ -50,21 +50,27 @@ public class NoActivityException extends AbstractKandulaException {
         super(arg0, arg1);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.kandula.faults.KandulaFault#getFaultCode()
      */
     public String getFaultCode() {
         return "Sender";
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.kandula.faults.KandulaFault#getFaultSubcode()
      */
     public String getFaultSubcode() {
         return "wscoor:NoActivity";
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.kandula.faults.KandulaFault#getFaultReason()
      */
     public String getFaultReason() {

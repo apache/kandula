@@ -1,9 +1,11 @@
 package org.apache.kandula.wsat.completion;
 
-import java.io.IOException;
-
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.deployment.DeploymentException;
 import org.apache.kandula.Constants;
+import org.apache.kandula.faults.AbstractKandulaException;
+import org.apache.kandula.faults.KandulaGeneralException;
 import org.apache.kandula.wsat.AbstractATNotifierStub;
 
 public class CompletionInitiatorPortTypeRawXMLStub extends
@@ -36,24 +38,32 @@ public class CompletionInitiatorPortTypeRawXMLStub extends
 
     /**
      * Constructor
+     * 
+     * @throws AbstractKandulaException
      */
     public CompletionInitiatorPortTypeRawXMLStub(String axis2Home,
-            EndpointReference targetEndpoint) throws java.lang.Exception {
+            EndpointReference targetEndpoint) throws AbstractKandulaException {
         this.toEPR = targetEndpoint;
-        //creating the configuration
-        _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
-                .buildClientConfigurationContext(axis2Home);
-        _configurationContext.getAxisConfiguration().addService(_service);
+        try {
+            //creating the configuration
+            _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
+                    .buildClientConfigurationContext(axis2Home);
+            _configurationContext.getAxisConfiguration().addService(_service);
+        } catch (DeploymentException e) {
+            throw new KandulaGeneralException(e);
+        } catch (AxisFault e1) {
+            throw new KandulaGeneralException(e1);
+        }
         _serviceContext = _service.getParent().getServiceGroupContext(
                 _configurationContext).getServiceContext(
                 _service.getName().getLocalPart());
     }
 
-    public void committedOperation() throws IOException {
+    public void committedOperation() throws AbstractKandulaException {
         this.notify("Committed", Constants.WS_AT_COMMITTED, 0, null);
     }
 
-    public void abortedOperation() throws IOException {
+    public void abortedOperation() throws AbstractKandulaException {
         this.notify("Aborted", Constants.WS_AT_ABORTED, 1, null);
     }
 

@@ -21,6 +21,8 @@ package org.apache.kandula.participant;
  */
 public interface KandulaResource {
     public void commit();
+
     public void rollback();
+
     public Vote prepare();
 }
