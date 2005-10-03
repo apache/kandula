@@ -35,19 +35,19 @@
   	WS-AtomicTransaction and WS-BusinessActivity implementation for Apache Axis</shortDescription>
 
   <!-- the project home page -->
-  <url>http://ws.apache.org/ws-fx/kandula/</url>
-  <issueTrackingUrl>http://nagoya.apache.org/jira/browse/WSFX</issueTrackingUrl>
+  <url>http://ws.apache.org/kandula/</url>
+  <issueTrackingUrl>http://issues.apache.org/jira/browse/KAND</issueTrackingUrl>
   <siteAddress>ws.apache.org</siteAddress>
-  <siteDirectory>/ws-fx/kandula/</siteDirectory>
+  <siteDirectory>/kandula/</siteDirectory>
   <distributionDirectory>/www/ws.apache.org/builds/</distributionDirectory>
 
   <!-- the version control repository and http url for online access
        the connection element has the form:
        scm:<system>:<system specific connection string> -->
-  <repository>
+  <!--repository>
     <connection>scm:cvs:pserver:anoncvs@cvs.apache.org:/home/cvspublic:ws-fx/kandula/</connection>
     <url>http://cvs.apache.org/viewcvs.cgi/ws-kandula/</url>
-  </repository>
+  </repository-->
 
   <!-- any mailing lists for the project -->
     <mailingLists>
@@ -77,7 +77,7 @@
             <name>Thilina Gunarathne</name>
             <id>thilina</id>
             <email>thilina@opensource.lk</email>
-            <organization>Lanka Software Foundation (LSF), Sri Lanka.</organization>
+            <organization>{Lanka Software Foundation (LSF),University of Moratuwa} Sri Lanka.</organization>
         </developer>
   </developers>
 
@@ -91,7 +91,7 @@
   
   <!-- build information for the project -->
   <build>
-    <nagEmailAddress>fx-dev@ws.apache.org</nagEmailAddress>
+    <nagEmailAddress>kandula-dev@ws.apache.org</nagEmailAddress>
     <sourceDirectory>src/java</sourceDirectory>
 
     <resources>
