@@ -1,0 +1,18 @@
+<service name="Participant">
+    <description>
+        Participant 2PC Coordination service.
+    </description>
+   <parameter name="ServiceClass" locked="xsd:false">org.apache.kandula.wsat.twopc.ParticipantPortTypeRawXMLSkeleton</parameter>
+    <operation name="commitOperation">
+        <parameter name="wsamapping" locked="xsd:false">http://schemas.xmlsoap.org/ws/2004/10/wsat/Commit</parameter>
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
+    </operation>
+    <operation name="rollbackOperation">
+        <parameter name="wsamapping" locked="xsd:false">http://schemas.xmlsoap.org/ws/2004/10/wsat/Rollback</parameter>
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
+    </operation>
+    <operation name="prepareOperation">
+        <parameter name="wsamapping" locked="xsd:false">http://schemas.xmlsoap.org/ws/2004/10/wsat/Prepare</parameter>
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
+    </operation>
+</service>

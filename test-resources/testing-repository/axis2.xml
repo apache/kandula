@@ -2,7 +2,7 @@
     <!-- ================================================= -->
     <!-- Parameters -->
     <!-- ================================================= -->
-    <parameter name="hotdeployment" locked="xsd:false">true</parameter>
+    <parameter name="hotdeployment" locked="xsd:false">false</parameter>
     <parameter name="hotupdate" locked="xsd:false">false</parameter>
     <parameter name="enableMTOM" locked="xsd:false">true</parameter>
     <!-- Uncomment this to enable REST support -->

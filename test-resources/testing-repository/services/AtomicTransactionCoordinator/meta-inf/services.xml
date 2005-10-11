@@ -1,0 +1,26 @@
+<service name="AtomicTransactionCoordinator">
+    <description>
+        Atomic transaction Coordination service.
+    </description>
+   <parameter name="ServiceClass" locked="xsd:false">org.apache.kandula.wsat.twopc.CoordinatorPortTypeRawXMLSkeleton</parameter>
+    <operation name="abortedOperation">
+        <parameter name="wsamapping" locked="xsd:false">http://schemas.xmlsoap.org/ws/2004/10/wsat/Aborted</parameter>
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
+    </operation>
+    <operation name="committedOperation">
+        <parameter name="wsamapping" locked="xsd:false">http://schemas.xmlsoap.org/ws/2004/10/wsat/Committed</parameter>
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
+    </operation>
+    <operation name="preparedOperation">
+        <parameter name="wsamapping" locked="xsd:false">http://schemas.xmlsoap.org/ws/2004/10/wsat/Prepared</parameter>
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
+    </operation>
+    <operation name="readOnlyOperation">
+        <parameter name="wsamapping" locked="xsd:false">http://schemas.xmlsoap.org/ws/2004/10/wsat/ReadOnly</parameter>
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
+    </operation>
+    <operation name="replayOperation">
+        <parameter name="wsamapping" locked="xsd:false">http://schemas.xmlsoap.org/ws/2004/10/wsat/Replay</parameter>
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
+    </operation>
+</service>
