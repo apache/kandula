@@ -16,14 +16,9 @@
  */
 package org.apache.kandula.context.coordination;
 
-import java.util.Iterator;
-
 import javax.xml.namespace.QName;
 
-import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
@@ -128,34 +123,8 @@ public class SimpleCoordinationContext implements CoordinationContext {
             contextElement.addChild(coorTypeElement);
             OMElement registrationServiceElement = factory.createOMElement(
                     "RegistrationService", wsCoor);
-            OMNamespace wsAddressing = factory.createOMNamespace(
-                    AddressingConstants.Submission.WSA_NAMESPACE,
-                    AddressingConstants.WSA_DEFAULT_PRFIX);
-            OMElement addressElement = factory.createOMElement("Address",
-                    wsAddressing);
-            addressElement.setText(registrationServiceEpr.getAddress());
-            registrationServiceElement.addChild(addressElement);
-            AnyContentType referenceValues = registrationServiceEpr
-                    .getReferenceProperties();
-            if (referenceValues != null) {
-                OMElement refPropertyElement = factory.createOMElement(
-                        "ReferenceProperties", wsAddressing);
-                registrationServiceElement.addChild(refPropertyElement);
-                Iterator iterator = referenceValues.getKeys();
-                while (iterator.hasNext()) {
-                    QName key = (QName) iterator.next();
-                    String value = referenceValues.getReferenceValue(key);
-                    OMElement omElement = factory.createOMElement(key,
-                            refPropertyElement);
-                    refPropertyElement.addChild(omElement);
-                    if (Final.WSA_NAMESPACE.equals(wsAddressing)) {
-                        omElement.addAttribute(
-                                Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
-                                Final.WSA_TYPE_ATTRIBUTE_VALUE, wsAddressing);
-                    }
-                    omElement.setText(value);
-                }
-            }
+            KandulaUtils.endpointToOM(registrationServiceEpr,
+                    registrationServiceElement, factory);
             contextElement.addChild(registrationServiceElement);
             return contextElement;
         }

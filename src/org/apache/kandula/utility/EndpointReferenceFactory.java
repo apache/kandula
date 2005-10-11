@@ -19,10 +19,9 @@ package org.apache.kandula.utility;
 import java.io.IOException;
 import java.util.Properties;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.kandula.Constants;
 import org.apache.kandula.wsat.completion.CompletionInitiatorServiceListener;
 
 /**
@@ -68,11 +67,10 @@ public class EndpointReferenceFactory {
     public EndpointReference getRegistrationEndpoint(String id) {
         //TODO set this somehow reading the conf file
         EndpointReference epr = new EndpointReference(
-                "http://localhost:8081/axis/services/RegistrationCoordinator");
-        AnyContentType refProperties = new AnyContentType();
-        refProperties.addReferenceValue(new QName(
-                "http://ws.apache.org/Kandula", "id"), id);
-        epr.setReferenceProperties(refProperties);
+                "http://localhost:8082/axis/services/RegistrationCoordinator");
+        AnyContentType refParameters = new AnyContentType();
+        refParameters.addReferenceValue(Constants.TRANSACTION_ID_PARAMETER, id);
+        epr.setReferenceParameters(refParameters);
         return epr;
     }
 
@@ -81,10 +79,9 @@ public class EndpointReferenceFactory {
         CompletionInitiatorServiceListener serviceListener = CompletionInitiatorServiceListener
                 .getInstance();
         EndpointReference epr = serviceListener.getEpr();
-        AnyContentType refProperties = new AnyContentType();
-        refProperties.addReferenceValue(new QName(
-                "http://ws.apache.org/Kandula", "id"), id);
-        epr.setReferenceProperties(refProperties);
+        AnyContentType refParameters = new AnyContentType();
+        refParameters.addReferenceValue(Constants.REQUESTER_ID_PARAMETER, id);
+        epr.setReferenceParameters(refParameters);
         return epr;
     }
 
@@ -92,21 +89,19 @@ public class EndpointReferenceFactory {
         //TODO set this somehow reading the conf file
         EndpointReference epr = new EndpointReference(
                 "http://localhost:8082/axis/services/CompletionCoordinator");
-        AnyContentType refProperties = new AnyContentType();
-        refProperties.addReferenceValue(new QName(
-                "http://ws.apache.org/Kandula", "id"), id);
-        epr.setReferenceProperties(refProperties);
+        AnyContentType refParameters = new AnyContentType();
+        refParameters.addReferenceValue(Constants.TRANSACTION_ID_PARAMETER, id);
+        epr.setReferenceParameters(refParameters);
         return epr;
     }
 
     public EndpointReference get2PCEndpoint(String id) {
         //TODO set this somehow reading the conf file
         EndpointReference epr = new EndpointReference(
-                "http://localhost:8081/axis/services/RegistrationCoordinator");
-        AnyContentType refProperties = new AnyContentType();
-        refProperties.addReferenceValue(new QName(
-                "http://ws.apache.org/Kandula", "id"), id);
-        epr.setReferenceProperties(refProperties);
+                "http://localhost:8082/axis/services/RegistrationCoordinator");
+        AnyContentType refParameters = new AnyContentType();
+        refParameters.addReferenceValue(Constants.TRANSACTION_ID_PARAMETER, id);
+        epr.setReferenceParameters(refParameters);
         return epr;
     }
     //	public EndpointReferenceTypeImpl

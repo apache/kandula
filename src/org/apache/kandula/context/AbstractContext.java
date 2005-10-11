@@ -18,8 +18,6 @@ package org.apache.kandula.context;
 
 import java.util.HashMap;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Status.CoordinatorStatus;
@@ -42,6 +40,12 @@ public abstract class AbstractContext {
 
     protected CoordinationContext coordinationContext = null;
 
+    public static String REQUESTER_ID = "requesterID";
+
+    public static String COORDINATION_EPR = "coordinationEPR";
+
+    public static String ACTIVATION_EPR = "activationEPR";
+
     protected AbstractContext() {
         propertyBag = new HashMap();
     }
@@ -52,9 +56,6 @@ public abstract class AbstractContext {
         EndpointReference registrationEpr = EndpointReferenceFactory
                 .getInstance().getRegistrationEndpoint(activityID);
         AnyContentType referenceProp = new AnyContentType();
-        referenceProp.addReferenceValue(new QName(
-                "http://webservice.apache.org/~thilina", "myapp", "ID"),
-                activityID);
         registrationEpr.setReferenceProperties(referenceProp);
         coordinationContext = CoordinationContext.Factory.newContext(
                 activityID, coordinationType, registrationEpr);

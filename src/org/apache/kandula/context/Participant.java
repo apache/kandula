@@ -25,16 +25,15 @@ import org.apache.axis2.addressing.EndpointReference;
  */
 //TODO see whether we can avoid this class
 public class Participant {
-    
+
     private EndpointReference epr;
 
     private String protocol;
 
     private int status;
-    
+
     private String enlistmentId;
 
-    
     /**
      * @param epr
      * @param protocol
@@ -47,38 +46,44 @@ public class Participant {
         this.protocol = protocol;
         this.enlistmentId = enlistmentId;
     }
-    
+
     /**
      * @return Returns the enlistmentId.
      */
     public String getEnlistmentId() {
         return enlistmentId;
     }
-    
+
     /**
      * @return Returns the epr.
      */
     public EndpointReference getEpr() {
         return epr;
     }
+
     /**
-     * @param epr The epr to set.
+     * @param epr
+     *            The epr to set.
      */
     public void setEpr(EndpointReference epr) {
         this.epr = epr;
     }
+
     /**
      * @return Returns the status.
      */
     public int getStatus() {
         return status;
     }
+
     /**
-     * @param status The status to set.
+     * @param status
+     *            The status to set.
      */
     public void setStatus(int status) {
         this.status = status;
     }
+
     /**
      * @return Returns the protocol.
      */

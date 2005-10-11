@@ -25,4 +25,6 @@ public interface KandulaResource {
     public void rollback();
 
     public Vote prepare();
+
+    public String getProtocol();
 }

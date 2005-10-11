@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.description.InOnlyOperationDescription;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
@@ -68,7 +69,7 @@ public class CompletionInitiatorServiceListener {
                 "committedOperation");
         org.apache.axis2.description.OperationDescription committedOperationDesc;
         String committedMapping = Constants.WS_AT_COMMITTED;
-        committedOperationDesc = new org.apache.axis2.description.OperationDescription();
+        committedOperationDesc = new InOnlyOperationDescription();
         committedOperationDesc.setName(committedOperationName);
         committedOperationDesc
                 .setMessageReceiver(new RawXMLINOnlyMessageReceiver());
@@ -80,7 +81,7 @@ public class CompletionInitiatorServiceListener {
                 "abortedOperation");
         org.apache.axis2.description.OperationDescription abortedOperationDesc;
         String abortedMapping = Constants.WS_AT_ABORTED;
-        abortedOperationDesc = new org.apache.axis2.description.OperationDescription();
+        abortedOperationDesc = new InOnlyOperationDescription();
         abortedOperationDesc.setName(abortedOperationName);
         abortedOperationDesc
                 .setMessageReceiver(new RawXMLINOnlyMessageReceiver());

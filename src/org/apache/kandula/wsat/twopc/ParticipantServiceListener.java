@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.description.InOnlyOperationDescription;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
@@ -67,7 +68,7 @@ public class ParticipantServiceListener {
                 "prepareOperation");
         org.apache.axis2.description.OperationDescription prepareOperationDesc;
         String prepareMapping = Constants.WS_AT_PREPARE;
-        prepareOperationDesc = new org.apache.axis2.description.OperationDescription();
+        prepareOperationDesc = new InOnlyOperationDescription();
         prepareOperationDesc.setName(prepareOperationName);
         prepareOperationDesc
                 .setMessageReceiver(new RawXMLINOnlyMessageReceiver());
@@ -79,7 +80,7 @@ public class ParticipantServiceListener {
                 "commitOperation");
         org.apache.axis2.description.OperationDescription commitOperationDesc;
         String commitMapping = Constants.WS_AT_COMMIT;
-        commitOperationDesc = new org.apache.axis2.description.OperationDescription();
+        commitOperationDesc = new InOnlyOperationDescription();
         commitOperationDesc.setName(commitOperationName);
         commitOperationDesc
                 .setMessageReceiver(new RawXMLINOnlyMessageReceiver());
@@ -91,7 +92,7 @@ public class ParticipantServiceListener {
                 "rollbackOperation");
         org.apache.axis2.description.OperationDescription rollbackOperationDesc;
         String rollbackMapping = Constants.WS_AT_ROLLBACK;
-        rollbackOperationDesc = new org.apache.axis2.description.OperationDescription();
+        rollbackOperationDesc = new InOnlyOperationDescription();
         rollbackOperationDesc.setName(rollbackOperationName);
         rollbackOperationDesc
                 .setMessageReceiver(new RawXMLINOnlyMessageReceiver());

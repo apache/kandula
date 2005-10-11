@@ -3,6 +3,7 @@ package org.apache.kandula.wsat.twopc;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.deployment.DeploymentException;
+import org.apache.axis2.description.OutOnlyOperationDescription;
 import org.apache.kandula.Constants;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.KandulaGeneralException;
@@ -22,19 +23,19 @@ public class ParticipantPortTypeRawXMLStub extends AbstractATNotifierStub {
         org.apache.axis2.description.OperationDescription operation;
         operations = new org.apache.axis2.description.OperationDescription[3];
 
-        operation = new org.apache.axis2.description.OperationDescription();
+        operation = new OutOnlyOperationDescription();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "prepareOperation"));
         operations[0] = operation;
         _service.addOperation(operation);
 
-        operation = new org.apache.axis2.description.OperationDescription();
+        operation = new OutOnlyOperationDescription();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
-                "committOperation"));
+                "commitOperation"));
         operations[1] = operation;
         _service.addOperation(operation);
 
-        operation = new org.apache.axis2.description.OperationDescription();
+        operation = new OutOnlyOperationDescription();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "rollbackOperation"));
         operations[2] = operation;

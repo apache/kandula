@@ -47,10 +47,10 @@ public class KandulaUtils {
                 wsAddressing);
         addressElement.setText(epr.getAddress());
         parentEPR.addChild(addressElement);
-        AnyContentType referenceValues = epr.getReferenceProperties();
+        AnyContentType referenceValues = epr.getReferenceParameters();
         if (referenceValues != null) {
             OMElement refPropertyElement = factory.createOMElement(
-                    "ReferenceProperties", wsAddressing);
+                    "ReferenceParameters", wsAddressing);
             parentEPR.addChild(refPropertyElement);
             Iterator iterator = referenceValues.getKeys();
             while (iterator.hasNext()) {
@@ -75,14 +75,14 @@ public class KandulaUtils {
                 new QName("Address")).getText());
         AnyContentType referenceProperties = new AnyContentType();
         OMElement referencePropertiesElement = eprElement
-                .getFirstChildWithName(new QName("ReferenceProperties"));
+                .getFirstChildWithName(new QName("ReferenceParameters"));
         Iterator propertyIter = referencePropertiesElement.getChildElements();
         while (propertyIter.hasNext()) {
             OMElement element = (OMElement) propertyIter.next();
             referenceProperties.addReferenceValue(element.getQName(), element
                     .getText());
         }
-        epr.setReferenceProperties(referenceProperties);
+        epr.setReferenceParameters(referenceProperties);
         return epr;
     }
 

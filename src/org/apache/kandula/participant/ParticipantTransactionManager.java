@@ -25,6 +25,7 @@ import org.apache.kandula.faults.InvalidStateException;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class ParticipantTransactionManager {
+
     public Vote prepare(AbstractContext context) throws InvalidStateException {
         ATParticipantContext atContext = (ATParticipantContext) context;
         atContext.lock();
@@ -50,5 +51,32 @@ public class ParticipantTransactionManager {
             context.unlock();
             throw new InvalidStateException();
         }
+    }
+
+    public void commit(AbstractContext context) throws InvalidStateException {
+        //        ATParticipantContext atContext = (ATParticipantContext) context;
+        //        atContext.lock();
+        //        switch (context.getStatus()) {
+        //        case (Status.CoordinatorStatus.STATUS_NONE):
+        //            //TODO send aborted
+        //            atContext.unlock();
+        //            return Vote.ABORT;
+        //        case (Status.CoordinatorStatus.STATUS_PREPARING):
+        //        case (Status.CoordinatorStatus.STATUS_PREPARED):
+        //        case (Status.CoordinatorStatus.STATUS_COMMITTING):
+        //            //Ignore the message
+        //            atContext.unlock();
+        //            return Vote.NONE;
+        //        case (Status.CoordinatorStatus.STATUS_PREPARED_SUCCESS):
+        //            atContext.unlock();
+        //            return Vote.PREPARED;
+        //        case (Status.CoordinatorStatus.STATUS_ACTIVE):
+        //            atContext.setStatus(Status.CoordinatorStatus.STATUS_PREPARING);
+        //            KandulaResource resource = atContext.getResource();
+        //            return resource.prepare();
+        //        default:
+        //            context.unlock();
+        //            throw new InvalidStateException();
+        //        }
     }
 }

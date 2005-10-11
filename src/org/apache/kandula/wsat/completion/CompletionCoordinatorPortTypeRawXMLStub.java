@@ -2,6 +2,7 @@ package org.apache.kandula.wsat.completion;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.description.OutOnlyOperationDescription;
 import org.apache.kandula.Constants;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.wsat.AbstractATNotifierStub;
@@ -21,13 +22,13 @@ public class CompletionCoordinatorPortTypeRawXMLStub extends
         org.apache.axis2.description.OperationDescription operation;
         operations = new org.apache.axis2.description.OperationDescription[2];
 
-        operation = new org.apache.axis2.description.OperationDescription();
+        operation = new OutOnlyOperationDescription();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "commitOperation"));
         operations[0] = operation;
         _service.addOperation(operation);
 
-        operation = new org.apache.axis2.description.OperationDescription();
+        operation = new OutOnlyOperationDescription();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "rollbackOperation"));
         operations[1] = operation;

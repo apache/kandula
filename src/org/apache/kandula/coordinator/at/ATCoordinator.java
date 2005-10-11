@@ -38,12 +38,14 @@ import org.apache.kandula.wsat.twopc.ParticipantPortTypeRawXMLStub;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class ATCoordinator implements Registerable {
-    
+
     private Store store;
+
     public ATCoordinator() {
         StorageFactory storageFactory = StorageFactory.getInstance();
         store = storageFactory.getStore();
     }
+
     public EndpointReference register(AbstractContext context, String protocol,
             EndpointReference participantEPR) throws AbstractKandulaException {
         ATActivityContext atContext = (ATActivityContext) context;
@@ -72,7 +74,7 @@ public class ATCoordinator implements Registerable {
         case CoordinatorStatus.STATUS_ACTIVE:
         case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
             atContext.unlock();
-            return atContext.addParticipant( participantEPR,protocol);
+            return atContext.addParticipant(participantEPR, protocol);
         case CoordinatorStatus.STATUS_NONE:
         default:
             atContext.unlock();
@@ -88,8 +90,8 @@ public class ATCoordinator implements Registerable {
      */
     public void commitOperation(String id) throws AbstractKandulaException {
         CompletionInitiatorPortTypeRawXMLStub stub;
-        ATActivityContext atContext = (ATActivityContext)store.get(id);
-        
+        ATActivityContext atContext = (ATActivityContext) store.get(id);
+
         if (atContext == null) {
             throw new IllegalStateException(
                     "No Activity Found for this Activity ID");
@@ -125,13 +127,12 @@ public class ATCoordinator implements Registerable {
             volatilePrepare(atContext);
             // wait till all the Volatile prepare()'s are done
             while (atContext.hasMorePreparing()) {
-                if (atContext.getStatus() == Status.CoordinatorStatus.STATUS_ABORTING)
-                {
+                if (atContext.getStatus() == Status.CoordinatorStatus.STATUS_ABORTING) {
                     abortActivity(atContext);
-                stub = new CompletionInitiatorPortTypeRawXMLStub(".", atContext
-                        .getCompletionParticipant());
-                stub.abortedOperation();
-                return;
+                    stub = new CompletionInitiatorPortTypeRawXMLStub(".",
+                            atContext.getCompletionParticipant());
+                    stub.abortedOperation();
+                    return;
                 }
             }
             durablePrepare(atContext);
@@ -153,7 +154,7 @@ public class ATCoordinator implements Registerable {
 
     public void rollbackOperation(String id) throws Exception {
         CompletionInitiatorPortTypeRawXMLStub stub;
-        ATActivityContext atContext = (ATActivityContext)store.get(id);
+        ATActivityContext atContext = (ATActivityContext) store.get(id);
 
         // if store throws a Exception capture it
         if (atContext == null) {
@@ -223,21 +224,17 @@ public class ATCoordinator implements Registerable {
             }
         }
     }
-    
-    public void countVote(String activityID, Vote vote,String enlistmentID) throws AbstractKandulaException
-    {
-        ATActivityContext context = (ATActivityContext)store.get(activityID);
+
+    public void countVote(String activityID, Vote vote, String enlistmentID)
+            throws AbstractKandulaException {
+        ATActivityContext context = (ATActivityContext) store.get(activityID);
         Participant participant = context.getParticipant(enlistmentID);
-        
-        if (Vote.PREPARED.equals(vote))
-        {
-           participant.setStatus(Status.CoordinatorStatus.STATUS_PREPARED);
-        }
-        else if (Vote.READ_ONLY.equals(vote))
-        {
-           participant.setStatus(Status.CoordinatorStatus.STATUS_READ_ONLY);
-        }else if(Vote.ABORT.equals(vote))
-        {
+
+        if (Vote.PREPARED.equals(vote)) {
+            participant.setStatus(Status.CoordinatorStatus.STATUS_PREPARED);
+        } else if (Vote.READ_ONLY.equals(vote)) {
+            participant.setStatus(Status.CoordinatorStatus.STATUS_READ_ONLY);
+        } else if (Vote.ABORT.equals(vote)) {
             participant.setStatus(Status.ParticipantStatus.STATUS_ABORTED);
             abortActivity(context);
         }

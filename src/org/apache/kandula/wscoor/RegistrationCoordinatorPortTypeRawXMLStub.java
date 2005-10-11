@@ -4,9 +4,12 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
+import org.apache.axis2.description.InOnlyOperationDescription;
+import org.apache.axis2.description.OutInOperationDescription;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -15,6 +18,8 @@ import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
+import org.apache.kandula.faults.AbstractKandulaException;
+import org.apache.kandula.faults.KandulaGeneralException;
 import org.apache.kandula.utility.KandulaListener;
 import org.apache.kandula.utility.KandulaUtils;
 
@@ -36,7 +41,7 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
         org.apache.axis2.description.OperationDescription __operation;
         _operations = new org.apache.axis2.description.OperationDescription[1];
 
-        __operation = new org.apache.axis2.description.OperationDescription();
+        __operation = new OutInOperationDescription();
         __operation.setName(new javax.xml.namespace.QName(
                 "http://schemas.xmlsoap.org/ws/2003/09/wscoor",
                 "RegisterOperation"));
@@ -49,12 +54,18 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
      * Constructor
      */
     public RegistrationCoordinatorPortTypeRawXMLStub(String axis2Home,
-            EndpointReference targetEndpoint) throws java.lang.Exception {
+            EndpointReference targetEndpoint) throws AbstractKandulaException {
         this.toEPR = targetEndpoint;
-        //creating the configuration
-        _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
-                .buildClientConfigurationContext(axis2Home);
-        _configurationContext.getAxisConfiguration().addService(_service);
+        try {
+            //creating the configuration
+            _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
+                    .buildClientConfigurationContext(axis2Home);
+
+            _configurationContext.getAxisConfiguration().addService(_service);
+        } catch (AxisFault e1) {
+            throw new KandulaGeneralException(e1);
+        }
+
         _serviceContext = _service.getParent().getServiceGroupContext(
                 _configurationContext).getServiceContext(
                 _service.getName().getLocalPart());
@@ -71,10 +82,9 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
         messageContext.setEnvelope(env);
 
         replyToEpr = setupListener();
-        AnyContentType refProperties = new AnyContentType();
-        refProperties.addReferenceValue(new QName(
-                "http://ws.apache.org/kandula", id), id);
-        replyToEpr.setReferenceProperties(refProperties);
+        AnyContentType refParameters = new AnyContentType();
+        refParameters.addReferenceValue(Constants.REQUESTER_ID_PARAMETER, id);
+        replyToEpr.setReferenceParameters(refParameters);
 
         MessageSender messageSender = new MessageSender(_serviceContext);
         messageSender.setReplyTo(replyToEpr);
@@ -122,7 +132,7 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
                 AbstractMessageReceiver.SERVICE_CLASS, className));
         service.setFileName(className);
 
-        responseOperationDesc = new org.apache.axis2.description.OperationDescription();
+        responseOperationDesc = new InOnlyOperationDescription();
         responseOperationDesc.setName(operationName);
         responseOperationDesc
                 .setMessageReceiver(new RawXMLINOnlyMessageReceiver());

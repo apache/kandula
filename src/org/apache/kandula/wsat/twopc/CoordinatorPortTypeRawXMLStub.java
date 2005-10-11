@@ -1,6 +1,7 @@
 package org.apache.kandula.wsat.twopc;
 
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.description.OutOnlyOperationDescription;
 import org.apache.kandula.Constants;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.wsat.AbstractATNotifierStub;
@@ -19,29 +20,29 @@ public class CoordinatorPortTypeRawXMLStub extends AbstractATNotifierStub {
         org.apache.axis2.description.OperationDescription operation;
         operations = new org.apache.axis2.description.OperationDescription[5];
 
-        operation = new org.apache.axis2.description.OperationDescription();
+        operation = new OutOnlyOperationDescription();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "PreparedOperation"));
         operations[0] = operation;
         _service.addOperation(operation);
 
-        operation = new org.apache.axis2.description.OperationDescription();
+        operation = new OutOnlyOperationDescription();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "AbortedOperation"));
         operations[1] = operation;
         _service.addOperation(operation);
-        operation = new org.apache.axis2.description.OperationDescription();
+        operation = new OutOnlyOperationDescription();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "ReadOnlyOperation"));
         operations[2] = operation;
         _service.addOperation(operation);
 
-        operation = new org.apache.axis2.description.OperationDescription();
+        operation = new OutOnlyOperationDescription();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "CommittedOperation"));
         operations[3] = operation;
         _service.addOperation(operation);
-        operation = new org.apache.axis2.description.OperationDescription();
+        operation = new OutOnlyOperationDescription();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "ReplayOperation"));
         operations[4] = operation;

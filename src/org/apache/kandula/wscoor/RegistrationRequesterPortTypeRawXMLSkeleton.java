@@ -3,9 +3,9 @@ package org.apache.kandula.wscoor;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMElement;
+import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.at.ATActivityContext;
-import org.apache.kandula.initiator.TransactionManager;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.utility.KandulaUtils;
 
@@ -41,10 +41,13 @@ public class RegistrationRequesterPortTypeRawXMLSkeleton {
     public OMElement registerResponseOperation(OMElement responseElement) {
         OMElement response = responseElement.getFirstElement();
         if ("CoordinatorProtocolService".equals(response.getLocalName())) {
+            OMElement header = msgContext.getEnvelope().getHeader();
+            String requesterID = header.getFirstChildWithName(
+                    Constants.REQUESTER_ID_PARAMETER).getText();
             EndpointReference coordinatorService = KandulaUtils
                     .endpointFromOM(response.getFirstElement());
             AbstractContext context = (AbstractContext) StorageFactory
-                    .getInstance().getStore().get(TransactionManager.tempID);
+                    .getInstance().getStore().get(requesterID);
             context.setProperty(ATActivityContext.COORDINATION_EPR,
                     coordinatorService);
         }

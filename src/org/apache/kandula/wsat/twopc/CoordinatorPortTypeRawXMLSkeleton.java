@@ -21,9 +21,9 @@ public class CoordinatorPortTypeRawXMLSkeleton {
     public OMElement preparedOperation(OMElement requestElement)
             throws AxisFault {
         String activityId = Coordinator.ACTIVITY_ID;
-        ATCoordinator coordinator= new ATCoordinator();
+        ATCoordinator coordinator = new ATCoordinator();
         try {
-            coordinator.countVote(activityId,Vote.PREPARED,null);
+            coordinator.countVote(activityId, Vote.PREPARED, null);
         } catch (AbstractKandulaException e) {
             AxisFault fault = new AxisFault(e);
             fault.setFaultCode(e.getFaultCode());
@@ -39,9 +39,9 @@ public class CoordinatorPortTypeRawXMLSkeleton {
     public OMElement abortedOperation(OMElement requestElement)
             throws AxisFault {
         String activityId = Coordinator.ACTIVITY_ID;
-        ATCoordinator coordinator= new ATCoordinator();
+        ATCoordinator coordinator = new ATCoordinator();
         try {
-            coordinator.countVote(activityId,Vote.ABORT,null);
+            coordinator.countVote(activityId, Vote.ABORT, null);
         } catch (AbstractKandulaException e) {
             AxisFault fault = new AxisFault(e);
             fault.setFaultCode(e.getFaultCode());
@@ -57,9 +57,9 @@ public class CoordinatorPortTypeRawXMLSkeleton {
     public OMElement readOnlyOperation(OMElement requestElement)
             throws AxisFault {
         String activityId = Coordinator.ACTIVITY_ID;
-        ATCoordinator coordinator= new ATCoordinator();
+        ATCoordinator coordinator = new ATCoordinator();
         try {
-            coordinator.countVote(activityId,Vote.READ_ONLY,null);
+            coordinator.countVote(activityId, Vote.READ_ONLY, null);
         } catch (AbstractKandulaException e) {
             AxisFault fault = new AxisFault(e);
             fault.setFaultCode(e.getFaultCode());

@@ -29,11 +29,8 @@ public class RegistrationPortTypeRawXMLAsyncMessageReceiver extends
 
     public void invokeBusinessLogic(
             org.apache.axis2.context.MessageContext msgContext,
-            org.apache.axis2.context.MessageContext newMsgContext/*
-                                                                  * ,
-                                                                  * ServerCallback
-                                                                  * callback
-                                                                  */) throws org.apache.axis2.AxisFault {
+            org.apache.axis2.context.MessageContext newMsgContext)
+            throws org.apache.axis2.AxisFault {
 
         try {
 
@@ -60,7 +57,7 @@ public class RegistrationPortTypeRawXMLAsyncMessageReceiver extends
                     //doc style
                     response = skel
                             .registerOperation((org.apache.axis2.om.OMElement) msgContext
-                                    .getEnvelope().getBody().getFirstChild()
+                                    .getEnvelope().getBody().getFirstElement()
                                     .detach());
 
                     //Create a default envelop

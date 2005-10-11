@@ -54,12 +54,6 @@ public class ATActivityContext extends AbstractContext {
 
     private EndpointReference parentEPR;
 
-    public static String REQUESTER_ID = "requesterID";
-
-    public static String COORDINATION_EPR = "coordinationEPR";
-
-    public static String ACTIVATION_EPR = "activationEPR";
-
     /**
      * Used when creating new activities
      */
@@ -107,11 +101,11 @@ public class ATActivityContext extends AbstractContext {
             String protocol) throws AbstractKandulaException {
         String enlistmentID = KandulaUtils.getRandomStringOf18Characters();
         if (Constants.WS_AT_VOLATILE2PC.equals(protocol)) {
-            addVolatileParticipant(participantEPR,enlistmentID);
+            addVolatileParticipant(participantEPR, enlistmentID);
             return EndpointReferenceFactory.getInstance().get2PCEndpoint(
                     this.activityID);
         } else if (Constants.WS_AT_DURABLE2PC.equals(protocol)) {
-            addDurableParticipant(participantEPR,enlistmentID);
+            addDurableParticipant(participantEPR, enlistmentID);
             return EndpointReferenceFactory.getInstance().get2PCEndpoint(
                     this.activityID);
         } else if (Constants.WS_AT_COMPLETION.equals(protocol)) {
@@ -123,19 +117,21 @@ public class ATActivityContext extends AbstractContext {
         }
     }
 
-    public void addVolatileParticipant(EndpointReference participantEPR, String enlistmentID)
-            throws AbstractKandulaException {
+    public void addVolatileParticipant(EndpointReference participantEPR,
+            String enlistmentID) throws AbstractKandulaException {
         if (volatileParticipantsTable.contains(participantEPR))
             throw new AlreadyRegisteredException();
-        Participant participant = new Participant(participantEPR, Constants.WS_AT_VOLATILE2PC,enlistmentID);
+        Participant participant = new Participant(participantEPR,
+                Constants.WS_AT_VOLATILE2PC, enlistmentID);
         volatileParticipantsTable.put(enlistmentID, participant);
     }
 
-    public void addDurableParticipant(EndpointReference participantEPR, String enlistmentID)
-            throws AlreadyRegisteredException {
+    public void addDurableParticipant(EndpointReference participantEPR,
+            String enlistmentID) throws AlreadyRegisteredException {
         if (durableParticipantsTable.contains(participantEPR))
             throw new AlreadyRegisteredException();
-        Participant participant = new Participant(participantEPR, Constants.WS_AT_DURABLE2PC,enlistmentID);
+        Participant participant = new Participant(participantEPR,
+                Constants.WS_AT_DURABLE2PC, enlistmentID);
         durableParticipantsTable.put(enlistmentID, participant);
 
     }
@@ -154,19 +150,13 @@ public class ATActivityContext extends AbstractContext {
         list.addAll(durableParticipantsTable.values());
         return list.iterator();
     }
-    
-    public Participant getParticipant(String enlistmentId)
-    {
-        if (volatileParticipantsTable.containsKey(enlistmentId))
-        {
-            return (Participant)volatileParticipantsTable.get(enlistmentId);
-        }
-        else if (durableParticipantsTable.containsKey(enlistmentId))
-        {
-            return (Participant)durableParticipantsTable.get(enlistmentId);
-        }
-        else
-        {
+
+    public Participant getParticipant(String enlistmentId) {
+        if (volatileParticipantsTable.containsKey(enlistmentId)) {
+            return (Participant) volatileParticipantsTable.get(enlistmentId);
+        } else if (durableParticipantsTable.containsKey(enlistmentId)) {
+            return (Participant) durableParticipantsTable.get(enlistmentId);
+        } else {
             return null;
         }
     }
@@ -182,9 +172,8 @@ public class ATActivityContext extends AbstractContext {
         preparingParticipantsCount++;
 
     }
-    
-    public void decrementPreparing()
-    {
+
+    public void decrementPreparing() {
         preparingParticipantsCount--;
     }
 

@@ -16,6 +16,8 @@
  */
 package org.apache.kandula;
 
+import javax.xml.namespace.QName;
+
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
@@ -66,5 +68,23 @@ abstract public interface Constants {
     //WS-BA URI's
 
     public static final String WS_BA = "http://schemas.xmlsoap.org/ws/2004/10/wsba";
+    
+    //Kandula Specific Constants----------------------------------------------------------------------------------------------------
+    public static String KANDULA_URI = "http://ws.apache.org/kandula";
+
+    public static String KANDULA_RESOURCE = "KandulaResource";
+    
+    public static String KANDULA_PRE = "kand";
+    
+    public static final QName TRANSACTION_ID_PARAMETER = new QName(
+            KANDULA_URI, "TransactionID",KANDULA_PRE);
+    
+    public static final QName REQUESTER_ID_PARAMETER = new QName(
+           KANDULA_URI, "RequesterID",KANDULA_PRE);
+    
+    public static final QName ENLISTMENT_ID_PARAMETER = new QName(
+            KANDULA_URI, "EnlistmentID",KANDULA_PRE);
+
+
 
 }

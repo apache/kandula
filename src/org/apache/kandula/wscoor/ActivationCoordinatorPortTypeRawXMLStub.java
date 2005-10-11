@@ -24,6 +24,8 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
+import org.apache.axis2.description.InOnlyOperationDescription;
+import org.apache.axis2.description.OutInOperationDescription;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.om.OMAbstractFactory;
@@ -57,7 +59,7 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
         org.apache.axis2.description.OperationDescription operationDesc;
         operations = new org.apache.axis2.description.OperationDescription[1];
 
-        operationDesc = new org.apache.axis2.description.OperationDescription();
+        operationDesc = new OutInOperationDescription();
         operationDesc.setName(new javax.xml.namespace.QName(
                 "http://schemas.xmlsoap.org/ws/2003/09/wscoor",
                 "CreateCoordinationContextOperation"));
@@ -95,10 +97,9 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
         messageContext.setEnvelope(env);
 
         replyToEpr = setupListener();
-        AnyContentType refProperties = new AnyContentType();
-        refProperties.addReferenceValue(new QName(
-                "http://ws.apache.org/kandula", "id"), id);
-        replyToEpr.setReferenceParameters(refProperties);
+        AnyContentType refParameters = new AnyContentType();
+        refParameters.addReferenceValue(Constants.REQUESTER_ID_PARAMETER, id);
+        replyToEpr.setReferenceParameters(refParameters);
 
         MessageSender messageSender = new MessageSender(_serviceContext);
         messageSender.setReplyTo(replyToEpr);
@@ -143,7 +144,7 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
                 AbstractMessageReceiver.SERVICE_CLASS, className));
         service.setFileName(className);
 
-        responseOperationDesc = new org.apache.axis2.description.OperationDescription();
+        responseOperationDesc = new InOnlyOperationDescription();
         responseOperationDesc.setName(operationName);
         responseOperationDesc
                 .setMessageReceiver(new RawXMLINOnlyMessageReceiver());
