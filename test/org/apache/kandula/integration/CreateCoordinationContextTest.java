@@ -83,8 +83,8 @@ public class CreateCoordinationContextTest extends TestCase {
         TransactionManager tm = new TransactionManager(
                 Constants.WS_AT,
                 new EndpointReference(
-                        "http://localhost:8081/axis/services/ActivationCoordinator"));
-        
+                        "http://localhost:8082/axis/services/ActivationCoordinator"));
+
         tm.begin();
     }
 }
