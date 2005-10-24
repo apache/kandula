@@ -1,0 +1,10 @@
+<service name="ActivationCoordinator">
+    <description>
+        Coordination service.
+    </description>
+    <parameter name="ServiceClass" locked="xsd:false">org.apache.kandula.wscoor.ActivationPortTypeRawXMLSkeleton</parameter>
+    <operation name="createCoordinationContextOperation">
+        <parameter name="wsamapping" locked="xsd:false">http://schemas.xmlsoap.org/ws/2004/10/wscoor/CreateCoordinationContext</parameter>
+        <messageReceiver class="org.apache.kandula.wscoor.ActivationPortTypeRawXMLAsyncMessageReceiver"/>
+    </operation>
+</service>

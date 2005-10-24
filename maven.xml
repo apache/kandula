@@ -11,12 +11,76 @@
         </path>
     </goal>
     
-    <postGoal name="jar">
-    	<ant:mkdir dir="${basedir}/target/lib"/>
+    <postGoal name="test:compile">
+	<ant:mkdir dir="${basedir}/target/lib"/>
     	<deploy:copy-deps todir="${basedir}/target/lib"/>
+
+	<echo message="----------------Creating Kandula Module----------------"/>
+        <mkdir dir="target/module/META-INF"/>
+        <copy file="conf/module.xml"
+            tofile="target/module/META-INF/module.xml"/>
+        <jar jarfile="target/kandula.mar" basedir="target/module">
+            <include name="**"/>
+        </jar>
+
+	<echo message="----------------Creating ActivationCoordinator.aar----------------"/>
+	<mkdir dir="target/services/ActivationCoordinator/META-INF"/>
+        <copy file="conf/ActivationCoordinator/META-INF/services.xml"
+            tofile="target/services/ActivationCoordinator/META-INF/services.xml"/>
+        <jar jarfile="target/ActivationCoordinator.aar" 			basedir="target/services/ActivationCoordinator">
+            <include name="**"/>
+        </jar>
+
+	<echo message="----------------Creating AtomicTransactionCoordinator.aar----------------"/>
+	<mkdir dir="target/services/AtomicTransactionCoordinator/META-INF"/>
+        <copy file="conf/AtomicTransactionCoordinator/META-INF/services.xml"
+            tofile="target/services/AtomicTransactionCoordinator/META-INF/services.xml"/>
+        <jar jarfile="target/AtomicTransactionCoordinator.aar" 					basedir="target/services/AtomicTransactionCoordinator">
+            <include name="**"/>
+        </jar>
+
+
+	<echo message="----------------Creating AtomicTransactionParticipant.aar----------------"/>
+	<mkdir dir="target/services/AtomicTransactionParticipant/META-INF"/>
+        <copy file="conf/AtomicTransactionParticipant/META-INF/services.xml"
+            tofile="target/services/AtomicTransactionParticipant/META-INF/services.xml"/>
+        <jar jarfile="target/AtomicTransactionParticipant.aar" 					basedir="target/services/AtomicTransactionParticipant">
+            <include name="**"/>
+        </jar>
+
+
+	<echo message="----------------Creating CompletionCoordinator.aar----------------"/>
+	<mkdir dir="target/services/CompletionCoordinator/META-INF"/>
+        <copy file="conf/CompletionCoordinator/META-INF/services.xml"
+            tofile="target/services/CompletionCoordinator/META-INF/services.xml"/>
+        <jar jarfile="target/CompletionCoordinator.aar" 					basedir="target/services/CompletionCoordinator">
+            <include name="**"/>
+        </jar>
+
+
+	<echo message="----------------Creating RegistrationCoordinator.aar----------------"/>
+	<mkdir dir="target/services/RegistrationCoordinator/META-INF"/>
+        <copy file="conf/RegistrationCoordinator/META-INF/services.xml"
+            tofile="target/services/RegistrationCoordinator/META-INF/services.xml"/>
+        <jar jarfile="target/RegistrationCoordinator.aar" 					basedir="target/services/RegistrationCoordinator">
+            <include name="**"/>
+        </jar>
+
+
+	<mkdir dir="target/module/META-INF"/>
+        <copy file="conf/module.xml"
+            tofile="target/module/META-INF/module.xml"/>
+        <mkdir dir="target/modules"/>
+        <jar jarfile="target/kandula.mar" basedir="target/module">
+            <include name="**"/>
+        </jar>
+        
+    	<mkdir dir="${basedir}/target/client-repo"/>
+        <copy file="${basedir}/test-resources/client-repo/client-axis2.xml"
+            tofile="${basedir}/target/test-resources/client-repo/axis2.xml"/>
+    	<mkdir dir="${basedir}/target/test-resources/client-repo/modules"/>
+       
+       
     </postGoal>
     
-    <preGoal name="java:compile">
-   
-    </preGoal>
 </project>

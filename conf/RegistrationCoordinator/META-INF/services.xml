@@ -1,0 +1,10 @@
+<service name="RegistrationCoordinator">
+    <description>
+        Coordination service.
+    </description>
+    <parameter name="ServiceClass" locked="xsd:false">org.apache.kandula.wscoor.RegistrationPortTypeRawXMLSkeleton</parameter>
+    <operation name="registerOperation">
+        <parameter name="wsamapping" locked="xsd:false">http://schemas.xmlsoap.org/ws/2004/10/wscoor/Register</parameter>
+        <messageReceiver class="org.apache.kandula.wscoor.RegistrationPortTypeRawXMLAsyncMessageReceiver"/>
+    </operation>
+</service>
