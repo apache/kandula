@@ -30,6 +30,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.kandula.Constants;
+import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.initiator.TransactionManager;
 
 public class CreateCoordinationContextTest extends TestCase {
@@ -86,5 +87,11 @@ public class CreateCoordinationContextTest extends TestCase {
                         "http://localhost:8082/axis/services/ActivationCoordinator"));
 
         tm.begin();
+        KandulaDemoServiceStub stub = new KandulaDemoServiceStub("test-resources/client-repo",new EndpointReference(
+        "http://localhost:8082/axis/services/KandulaDemoService"));
+        stub.creditOperation();
+        tm.commit();
+        Thread.sleep(3000);
+        
     }
 }
