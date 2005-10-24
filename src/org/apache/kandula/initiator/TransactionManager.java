@@ -38,23 +38,17 @@ import org.apache.kandula.wscoor.RegistrationCoordinatorPortTypeRawXMLStub;
 
 public class TransactionManager {
 
-    private ThreadLocal threadInfo;
-
-    //till we get reply to reference properties correctly in Axis 2 Addressing
-    public static String tempID;
-
+    private static ThreadLocal threadInfo;
+    
     public TransactionManager(String coordinationType,
             EndpointReference coordinatorEPR) throws AbstractKandulaException {
+        
         threadInfo = new ThreadLocal();
-        //ATInitiatorTransaction transaction = new
-        // ATInitiatorTransaction(coordinatorEPR);
         AbstractContext context = ContextFactory.getInstance().createActivity(
                 coordinationType, coordinatorEPR);
         if (threadInfo.get() != null)
             throw new IllegalStateException();
         threadInfo.set(context.getProperty(ATActivityContext.REQUESTER_ID));
-        //TODO remove this when we get replyTo reference properties correctly
-        tempID = (String) context.getProperty(ATActivityContext.REQUESTER_ID);
         Store store = StorageFactory.getInstance().getStore();
         store.put(context.getProperty(ATActivityContext.REQUESTER_ID), context);
     }
@@ -122,7 +116,7 @@ public class TransactionManager {
     //		threadInfo.set(null);
     //	}
 
-    private AbstractContext getTransaction() throws AbstractKandulaException {
+    public static AbstractContext getTransaction() throws AbstractKandulaException {
         Object key = threadInfo.get();
         AbstractContext context = (AbstractContext) StorageFactory
                 .getInstance().getStore().get(key);

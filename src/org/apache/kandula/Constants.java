@@ -55,7 +55,7 @@ abstract public interface Constants {
 
     public static final String WS_AT_PREPARE = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Prepare";
 
-    public static final String WS_AT_PREPARED = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Preapared";
+    public static final String WS_AT_PREPARED = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Prepared";
 
     public static final String WS_AT_REPLAY = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Replay";
 
@@ -84,7 +84,5 @@ abstract public interface Constants {
     
     public static final QName ENLISTMENT_ID_PARAMETER = new QName(
             KANDULA_URI, "EnlistmentID",KANDULA_PRE);
-
-
-
 }
+

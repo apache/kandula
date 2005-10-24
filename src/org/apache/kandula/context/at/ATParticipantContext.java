@@ -16,7 +16,9 @@
  */
 package org.apache.kandula.context.at;
 
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
+import org.apache.kandula.Status;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.participant.KandulaResource;
 
@@ -26,6 +28,10 @@ import org.apache.kandula.participant.KandulaResource;
 public class ATParticipantContext extends AbstractContext {
     KandulaResource resource;
 
+
+    public ATParticipantContext() {
+        this.setStatus(Status.CoordinatorStatus.STATUS_ACTIVE);
+    }
     /**
      * @return Returns the resource.
      */
@@ -48,6 +54,11 @@ public class ATParticipantContext extends AbstractContext {
      */
     public String getCoordinationType() {
         return Constants.WS_AT;
+    }
+    
+    public EndpointReference getCoordinationEPR()
+    {
+        return (EndpointReference)getProperty(ATActivityContext.COORDINATION_EPR);
     }
 
 }

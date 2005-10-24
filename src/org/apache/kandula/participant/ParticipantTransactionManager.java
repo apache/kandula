@@ -19,34 +19,54 @@ package org.apache.kandula.participant;
 import org.apache.kandula.Status;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.at.ATParticipantContext;
+import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.InvalidStateException;
+import org.apache.kandula.wsat.twopc.CoordinatorPortTypeRawXMLStub;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class ParticipantTransactionManager {
 
-    public Vote prepare(AbstractContext context) throws InvalidStateException {
+    public void prepare(AbstractContext context)
+            throws AbstractKandulaException {
+        CoordinatorPortTypeRawXMLStub stub;
         ATParticipantContext atContext = (ATParticipantContext) context;
         atContext.lock();
         switch (context.getStatus()) {
         case (Status.CoordinatorStatus.STATUS_NONE):
-            //TODO send aborted
             atContext.unlock();
-            return Vote.ABORT;
+            stub = new CoordinatorPortTypeRawXMLStub(".", atContext
+                    .getCoordinationEPR());
+            stub.abortedOperation();
+            break;
         case (Status.CoordinatorStatus.STATUS_PREPARING):
         case (Status.CoordinatorStatus.STATUS_PREPARED):
         case (Status.CoordinatorStatus.STATUS_COMMITTING):
             //Ignore the message
             atContext.unlock();
-            return Vote.NONE;
+            break;
         case (Status.CoordinatorStatus.STATUS_PREPARED_SUCCESS):
             atContext.unlock();
-            return Vote.PREPARED;
+            stub = new CoordinatorPortTypeRawXMLStub(".", atContext
+                    .getCoordinationEPR());
+            stub.preparedOperation();
+            break;
         case (Status.CoordinatorStatus.STATUS_ACTIVE):
             atContext.setStatus(Status.CoordinatorStatus.STATUS_PREPARING);
+            atContext.unlock();
             KandulaResource resource = atContext.getResource();
-            return resource.prepare();
+            Vote vote = resource.prepare();
+            stub = new CoordinatorPortTypeRawXMLStub(".", atContext
+                    .getCoordinationEPR());
+            if (vote == Vote.ABORT) {
+                stub.abortedOperation();
+            } else if (vote == Vote.PREPARED) {
+                stub.preparedOperation();
+            } else if (vote == Vote.READ_ONLY) {
+                stub.readOnlyOperation();
+            }
+            break;
         default:
             context.unlock();
             throw new InvalidStateException();
@@ -54,6 +74,8 @@ public class ParticipantTransactionManager {
     }
 
     public void commit(AbstractContext context) throws InvalidStateException {
+        ATParticipantContext atContext = (ATParticipantContext) context;
+        atContext.getResource().commit();
         //        ATParticipantContext atContext = (ATParticipantContext) context;
         //        atContext.lock();
         //        switch (context.getStatus()) {
@@ -79,4 +101,10 @@ public class ParticipantTransactionManager {
         //            throw new InvalidStateException();
         //        }
     }
+    public void rollback(AbstractContext context) throws InvalidStateException {
+        ATParticipantContext atContext = (ATParticipantContext) context;
+        atContext.getResource().rollback();
+        
+    }
+    
 }

@@ -75,6 +75,7 @@ public class ATCoordinator implements Registerable {
         case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
             atContext.unlock();
             return atContext.addParticipant(participantEPR, protocol);
+
         case CoordinatorStatus.STATUS_NONE:
         default:
             atContext.unlock();
@@ -128,22 +129,19 @@ public class ATCoordinator implements Registerable {
             // wait till all the Volatile prepare()'s are done
             while (atContext.hasMorePreparing()) {
                 if (atContext.getStatus() == Status.CoordinatorStatus.STATUS_ABORTING) {
-                    abortActivity(atContext);
-                    stub = new CompletionInitiatorPortTypeRawXMLStub(".",
-                            atContext.getCompletionParticipant());
-                    stub.abortedOperation();
                     return;
                 }
             }
             durablePrepare(atContext);
             //wait till all the Durable prepare()'s are done
             while (atContext.hasMorePreparing()) {
-                if (atContext.getStatus() == Status.CoordinatorStatus.STATUS_ABORTING)
-                    abortActivity(atContext);
-
-                return;
+                if (atContext.getStatus() == Status.CoordinatorStatus.STATUS_ABORTING) {
+                    return;
+                }
             }
-            commitActivity(atContext);
+            if (!(atContext.getStatus() == Status.CoordinatorStatus.STATUS_ABORTING)) {
+                commitActivity(atContext);
+            }
             break;
         default:
             atContext.unlock();
@@ -258,7 +256,6 @@ public class ATCoordinator implements Registerable {
         Iterator durablePartipantIterator = atContext
                 .getRegistered2PCParticipants(Constants.WS_AT_DURABLE2PC);
         if (durablePartipantIterator.hasNext()) {
-
             atContext.lock();
             atContext
                     .setStatus(Status.CoordinatorStatus.STATUS_PREPARING_DURABLE);
@@ -290,7 +287,11 @@ public class ATCoordinator implements Registerable {
         atContext.unlock();
         Iterator participants = atContext.getAll2PCParticipants();
         while (participants.hasNext()) {
-            stub.commitOperation(((Participant) participants.next()).getEpr());
+            Participant participant = (Participant) participants.next();
+            if (!(Status.CoordinatorStatus.STATUS_READ_ONLY == participant
+                    .getStatus())) {
+                stub.commitOperation(participant.getEpr());
+            }
         }
         CompletionInitiatorPortTypeRawXMLStub completionStub = new CompletionInitiatorPortTypeRawXMLStub(
                 ".", atContext.getCompletionParticipant());

@@ -31,9 +31,6 @@ import org.apache.kandula.storage.Store;
 public class Coordinator {
     private Store store;
 
-    //till we be able to use reference properties correctly
-    public static String ACTIVITY_ID;
-
     public Coordinator() {
         StorageFactory storageFactory = StorageFactory.getInstance();
         store = storageFactory.getStore();
@@ -54,7 +51,6 @@ public class Coordinator {
         ContextFactory factory = ContextFactory.getInstance();
         AbstractContext context = factory.createActivity(coordinationType);
         context.getCoordinationContext().setExpires(expires);
-        ACTIVITY_ID = context.getCoordinationContext().getActivityID();
         store.put(context.getCoordinationContext().getActivityID(), context);
         return context;
     }

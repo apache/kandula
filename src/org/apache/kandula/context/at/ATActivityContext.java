@@ -102,12 +102,12 @@ public class ATActivityContext extends AbstractContext {
         String enlistmentID = KandulaUtils.getRandomStringOf18Characters();
         if (Constants.WS_AT_VOLATILE2PC.equals(protocol)) {
             addVolatileParticipant(participantEPR, enlistmentID);
-            return EndpointReferenceFactory.getInstance().get2PCEndpoint(
-                    this.activityID);
+            return EndpointReferenceFactory.getInstance()
+                    .get2PCCoordinatorEndpoint(activityID,enlistmentID);
         } else if (Constants.WS_AT_DURABLE2PC.equals(protocol)) {
             addDurableParticipant(participantEPR, enlistmentID);
-            return EndpointReferenceFactory.getInstance().get2PCEndpoint(
-                    this.activityID);
+            return EndpointReferenceFactory.getInstance()
+                    .get2PCCoordinatorEndpoint(activityID,enlistmentID);
         } else if (Constants.WS_AT_COMPLETION.equals(protocol)) {
             completionParticipant = participantEPR;
             return EndpointReferenceFactory.getInstance()
@@ -128,8 +128,9 @@ public class ATActivityContext extends AbstractContext {
 
     public void addDurableParticipant(EndpointReference participantEPR,
             String enlistmentID) throws AlreadyRegisteredException {
-        if (durableParticipantsTable.contains(participantEPR))
+        if (durableParticipantsTable.contains(participantEPR)) {
             throw new AlreadyRegisteredException();
+        }
         Participant participant = new Participant(participantEPR,
                 Constants.WS_AT_DURABLE2PC, enlistmentID);
         durableParticipantsTable.put(enlistmentID, participant);

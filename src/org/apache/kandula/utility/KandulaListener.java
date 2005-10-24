@@ -19,6 +19,7 @@ package org.apache.kandula.utility;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
@@ -84,10 +85,17 @@ public class KandulaListener {
         org.apache.axis2.description.OperationDescription responseOperationDesc;
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
+        HashMap allServices = responseConfigurationContext
+                .getAxisConfiguration().getServices();
 
-        responseConfigurationContext.getAxisConfiguration().addService(service);
-        Utils.resolvePhases(receiver.getSystemContext().getAxisConfiguration(),
-                service);
+        if (allServices.get(service.getName().getLocalPart()) == null) {
+
+            responseConfigurationContext.getAxisConfiguration().addService(
+                    service);
+            Utils.resolvePhases(receiver.getSystemContext()
+                    .getAxisConfiguration(), service);
+        }
+
     }
 
     public String getHost() throws UnknownHostException {

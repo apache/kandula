@@ -59,13 +59,9 @@ public class RegistrationPortTypeRawXMLSkeleton {
         //Extracting the participant EPR
         participantEPR = KandulaUtils.endpointFromOM(participantEPRElement);
 
-        //have to extract the reference parameter "id". Axis2 does not support
-        ArrayList list = msgContext.getMessageInformationHeaders()
-                .getReferenceParameters();
-        //TODO :Have to use the Activity ID came with EPR as a reference
-        // property
-        activityId = Coordinator.ACTIVITY_ID;
-
+        OMElement header = msgContext.getEnvelope().getHeader();
+        activityId = header.getFirstChildWithName(
+                Constants.TRANSACTION_ID_PARAMETER).getText();
         /*
          * Registering the participant for the activity for the given protocol
          */

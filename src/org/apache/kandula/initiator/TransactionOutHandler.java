@@ -23,25 +23,22 @@ import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.soap.SOAPHeader;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.coordination.CoordinationContext;
-import org.apache.kandula.storage.StorageFactory;
+import org.apache.kandula.faults.AbstractKandulaException;
 
 public class TransactionOutHandler extends AbstractHandler {
-    private ThreadLocal threadInfo = new ThreadLocal();
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Object key = threadInfo.get();
-        if (null != key) {
-            AbstractContext context = (AbstractContext) StorageFactory
-                    .getInstance().getStore().get(key);
-            if (context == null) {
-                throw new AxisFault("IllegalState");
-            }
 
+        AbstractContext context;
+        try {
+            context = TransactionManager.getTransaction();
             MessageInformationHeaders messageInformationHeaders = msgContext
                     .getMessageInformationHeaders();
             SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
             CoordinationContext coorContext = context.getCoordinationContext();
             soapHeader.addChild(coorContext.toOM());
+        } catch (AbstractKandulaException e) {
+            throw new AxisFault(e);
         }
     }
 }

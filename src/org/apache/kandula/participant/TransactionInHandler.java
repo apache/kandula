@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.om.OMElement;
@@ -33,6 +34,7 @@ import org.apache.kandula.context.coordination.SimpleCoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
+import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.utility.KandulaUtils;
 import org.apache.kandula.wscoor.RegistrationCoordinatorPortTypeRawXMLStub;
 
@@ -53,17 +55,14 @@ public class TransactionInHandler extends AbstractHandler {
                 coordinationElement);
         context.setCoordinationContext(coorContext);
 
-        // TODO  : See whether we can allow the user to set this when the business logiv receives the message
+        // TODO : See whether we can allow the user to set the resource when the
+        // business logic receives the message
         String resourceFile = (String) msgContext.getParameter(
                 Constants.KANDULA_RESOURCE).getValue();
         try {
             resource = (KandulaResource) Class.forName(resourceFile)
                     .newInstance();
-        } catch (ClassNotFoundException e) {
-            throw new AxisFault(e);
-        } catch (InstantiationException e) {
-            throw new AxisFault(e);
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
             throw new AxisFault(e);
         }
         context.setResource(resource);
@@ -76,9 +75,11 @@ public class TransactionInHandler extends AbstractHandler {
         try {
             RegistrationCoordinatorPortTypeRawXMLStub stub = new RegistrationCoordinatorPortTypeRawXMLStub(
                     ".", coorContext.getRegistrationService());
-            // TODO: try to get the protocol through configuration parameter 
-            stub.registerOperation(resource.getProtocol(), coorContext
-                    .getRegistrationService(), id);
+            // TODO: try to get the protocol through configuration parameter
+            EndpointReference participantProtocolService = EndpointReferenceFactory
+                    .getInstance().get2PCParticipantEndpoint(id);
+            stub.registerOperation(resource.getProtocol(),
+                    participantProtocolService, id);
         } catch (IOException e) {
             throw new AxisFault(e);
         } catch (AbstractKandulaException e) {

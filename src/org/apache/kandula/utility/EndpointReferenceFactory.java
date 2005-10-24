@@ -95,12 +95,22 @@ public class EndpointReferenceFactory {
         return epr;
     }
 
-    public EndpointReference get2PCEndpoint(String id) {
+    public EndpointReference get2PCCoordinatorEndpoint(String activityId, String enlistmentId) {
         //TODO set this somehow reading the conf file
         EndpointReference epr = new EndpointReference(
-                "http://localhost:8082/axis/services/RegistrationCoordinator");
+                "http://localhost:8082/axis/services/AtomicTransactionCoordinator");
         AnyContentType refParameters = new AnyContentType();
-        refParameters.addReferenceValue(Constants.TRANSACTION_ID_PARAMETER, id);
+        refParameters.addReferenceValue(Constants.TRANSACTION_ID_PARAMETER, activityId);
+        refParameters.addReferenceValue(Constants.ENLISTMENT_ID_PARAMETER, enlistmentId);
+        epr.setReferenceParameters(refParameters);
+        return epr;
+    }
+    public EndpointReference get2PCParticipantEndpoint(String id) {
+        //TODO set this somehow reading the conf file
+        EndpointReference epr = new EndpointReference(
+                "http://localhost:8082/axis/services/AtomicTransactionParticipant");
+        AnyContentType refParameters = new AnyContentType();
+        refParameters.addReferenceValue(Constants.REQUESTER_ID_PARAMETER, id);
         epr.setReferenceParameters(refParameters);
         return epr;
     }
