@@ -1,0 +1,11 @@
+<service name="KandulaDemoService">
+    <description>
+        Participant 2PC Coordination service.
+    </description>
+    <module ref="kandula"/>
+   	<parameter name="ServiceClass" locked="xsd:false">org.apache.kandula.integration.KandulaDemoService</parameter>
+    <parameter name="KandulaResource" locked="xsd:false">org.apache.kandula.integration.DummyResource</parameter>
+    <operation name="creditOperation">
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
+    </operation>
+</service>
