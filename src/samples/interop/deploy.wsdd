@@ -1,0 +1,29 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from InteropPortTypeRPCService WSDL service -->
+
+  <service name="InteropService" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="urn:test"/>
+      <parameter name="wsdlServiceElement" value="InteropPortTypeRPCService"/>
+      <parameter name="wsdlServicePort" value="InteropService"/>
+      <parameter name="className" value="InteropServiceSoapBindingImpl"/>
+      <parameter name="wsdlPortType" value="InteropPortTypeRPC"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation name="commit" qname="operNS:commit" xmlns:operNS="urn:test" soapAction="urn:test#Commit" >
+      </operation>
+      <operation name="rollback" qname="operNS:rollback" xmlns:operNS="urn:test" soapAction="urn:test#Rollback" >
+      </operation>
+      <parameter name="allowedMethods" value="commit rollback"/>
+
+  </service>
+</deployment>

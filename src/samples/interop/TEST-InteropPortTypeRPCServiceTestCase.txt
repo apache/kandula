@@ -1,0 +1,5 @@
+Testsuite: InteropPortTypeRPCServiceTestCase
+Tests run: 2, Failures: 0, Errors: 0, Time elapsed: 3.344 sec
+
+Testcase: testInteropServiceCommitUnsuccessful took 2.86 sec
+Testcase: testInteropServiceRollback took 0.484 sec
