@@ -26,7 +26,7 @@ import org.apache.ws.transaction.coordinator.at.AtCoordinator;
 import org.apache.ws.transaction.coordinator.at.AtCoordinatorImpl;
 import org.apache.ws.transaction.coordinator.at.AtSubCoordinator;
 import org.apache.ws.transaction.coordinator.at.XidImpl;
-import org.apache.ws.transaction.wscoor.CoordinationContext;
+import org.apache.ws.transaction.wscoor._CoordinationContext;
 
 
 public class CoordinationService {
@@ -48,7 +48,7 @@ public class CoordinationService {
 		return coordinator;
 	}
 
-	public Coordinator interpose(CoordinationContext ctx) {
+	public Coordinator interpose(_CoordinationContext ctx) {
 		throw new UnsupportedOperationException();
 	}
 

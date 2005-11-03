@@ -19,12 +19,12 @@ package org.apache.ws.transaction.coordinator;
 
 import org.apache.axis.message.addressing.EndpointReference;
 import org.apache.axis.types.URI;
-import org.apache.ws.transaction.wscoor.CoordinationContext;
+import org.apache.ws.transaction.wscoor._CoordinationContext;
 
 
 
 public interface Coordinator {
 	Identifier getActivityId();
-	CoordinationContext getCoordinationContext();
+	_CoordinationContext getCoordinationContext();
 	EndpointReference registerParticipant(URI protocol, EndpointReference participant);
 }

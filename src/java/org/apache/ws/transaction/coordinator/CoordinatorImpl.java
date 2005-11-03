@@ -17,18 +17,18 @@
 package org.apache.ws.transaction.coordinator;
 
 import org.apache.ws.transaction.utility.EndpointReferenceFactory;
-import org.apache.ws.transaction.wscoor.CoordinationContext;
 import org.apache.ws.transaction.wscoor.RegistrationRPCEndpoint;
+import org.apache.ws.transaction.wscoor._CoordinationContext;
 
 
 public abstract class CoordinatorImpl implements Coordinator {
 	protected Identifier activityId;
-	protected CoordinationContext coordinationContext;
+	protected _CoordinationContext coordinationContext;
 
 	protected CoordinatorImpl(Identifier activityId, String coordinationType) {
 		this.activityId= activityId;
 		coordinationContext=
-			new CoordinationContext(
+			new _CoordinationContext(
 				activityId,
 				coordinationType,
 				EndpointReferenceFactory.getInstance().getEndpointReference(
@@ -40,7 +40,7 @@ public abstract class CoordinatorImpl implements Coordinator {
 		return activityId;
 	}
 
-	public CoordinationContext getCoordinationContext() {
+	public _CoordinationContext getCoordinationContext() {
 		return coordinationContext;
 	}
 
