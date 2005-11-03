@@ -39,12 +39,12 @@ public class ActivationRPCPort {
 		}
 	}
 
-	public CoordinationContext createCoordinationContext(String coordinationType) throws RemoteException {
+	public _CoordinationContext createCoordinationContext(String coordinationType) throws RemoteException {
 		try {
 			CreateCoordinationContextType parameters= new CreateCoordinationContextType();
 			parameters.setCoordinationType(new URI(coordinationType));
 			CreateCoordinationContextResponseType response= stub.createCoordinationContextOperation(parameters);
-			return new CoordinationContext(response.getCoordinationContext());
+			return new _CoordinationContext(response.getCoordinationContext());
 		}
 		catch (URI.MalformedURIException e) {
 			throw new IllegalArgumentException(e + "???" + coordinationType);

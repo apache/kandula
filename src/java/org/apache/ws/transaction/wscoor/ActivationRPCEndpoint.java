@@ -33,7 +33,7 @@ public class ActivationRPCEndpoint implements ActivationPortTypeRPC {
 			Coordinator coordinator= CoordinationService.getInstance().coordinate(coordinationType);
 			CreateCoordinationContextResponseType response= new CreateCoordinationContextResponseType();
 			response.setCoordinationContext(
-				coordinator.getCoordinationContext().toCoordinationContextType());
+				coordinator.getCoordinationContext().toCoordinationContext());
 			return response;
 		}
 		catch (Exception e) {
