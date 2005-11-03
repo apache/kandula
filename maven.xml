@@ -27,8 +27,7 @@
     		</classpath>    		
     		<arg value="-o${maven.build.dir}/stubs/src"/>
     		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/08/addressing=org.apache.axis.message.addressing"/>
-    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2003/09/wscoor=org.apache.ws.transaction.wscoor"/>
-    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2002/07/utility=org.apache.ws.transaction.utility"/>    		
+    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/10/wscoor=org.apache.ws.transaction.wscoor"/>
     		<arg value="-xhttp://schemas.xmlsoap.org/ws/2004/08/addressing"/>
     		<arg value="${basedir}/src/schema/wscoor.wsdl"/>
     	</java>
@@ -37,12 +36,11 @@
     		failonerror="true" fork="yes">
     		<classpath>
     			<path refid="maven.dependency.classpath"/>
-    		</classpath>    		
+    		</classpath>		 		
     		<arg value="-o${maven.build.dir}/stubs/src"/>
     		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/08/addressing=org.apache.axis.message.addressing"/>
-    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2003/09/wsat=org.apache.ws.transaction.wsat"/>
-    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2003/09/wscoor=org.apache.ws.transaction.wscoor"/>
-    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2002/07/utility=org.apache.ws.transaction.utility"/>
+    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/10/wsat=org.apache.ws.transaction.wsat"/>
+    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/10/wscoor=org.apache.ws.transaction.wscoor"/>    
     		<arg value="-xhttp://schemas.xmlsoap.org/ws/2004/08/addressing"/>
     		<arg value="${basedir}/src/schema/wsat.wsdl"/>
     	</java>
