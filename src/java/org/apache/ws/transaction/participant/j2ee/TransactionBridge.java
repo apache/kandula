@@ -24,7 +24,7 @@ import javax.transaction.Transaction;
 
 import org.apache.ws.transaction.coordinator.Identifier;
 import org.apache.ws.transaction.coordinator.UnknownActivityException;
-import org.apache.ws.transaction.wscoor.CoordinationContext;
+import org.apache.ws.transaction.wscoor._CoordinationContext;
 
 
 public class TransactionBridge {
@@ -36,18 +36,18 @@ public class TransactionBridge {
 		return instance;
 	}
 
-	public CoordinationContext exportJ2eeTransaction(Transaction localTx) {
+	public _CoordinationContext exportJ2eeTransaction(Transaction localTx) {
 		InterposedTransaction tx= (InterposedTransaction)byLocalTx.get(localTx);
 		if (tx != null)
 			return tx.getCoordinationContext();
 		tx= new ExportedTransaction(localTx);
 		byLocalTx.put(localTx, tx);
-		CoordinationContext ctx= tx.getCoordinationContext();
+		_CoordinationContext ctx= tx.getCoordinationContext();
 		byCtx.put(ctx.getActivityId(), tx);
 		return ctx;
 	}
 
-	public Transaction importWSTransaction(CoordinationContext ctx) {
+	public Transaction importWSTransaction(_CoordinationContext ctx) {
 		InterposedTransaction tx= (InterposedTransaction)byCtx.get(ctx.getActivityId());
 		if (tx != null)
 			return tx.getLocalTransaction();

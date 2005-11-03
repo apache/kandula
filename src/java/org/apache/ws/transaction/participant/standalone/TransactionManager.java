@@ -22,7 +22,7 @@ import org.apache.axis.message.addressing.EndpointReference;
 import org.apache.ws.transaction.utility.EndpointReferenceFactory;
 import org.apache.ws.transaction.wscoor.ActivationRPCEndpoint;
 import org.apache.ws.transaction.wscoor.ActivationRPCPort;
-import org.apache.ws.transaction.wscoor.CoordinationContext;
+import org.apache.ws.transaction.wscoor._CoordinationContext;
 
 
 public class TransactionManager {
@@ -48,7 +48,7 @@ public class TransactionManager {
 		if (threadInfo.get() != null)
 			throw new IllegalStateException();
 		ActivationRPCPort act= new ActivationRPCPort(coord);
-		CoordinationContext ctx= act.createCoordinationContext(COORDINATION_TYPE);
+		_CoordinationContext ctx= act.createCoordinationContext(COORDINATION_TYPE);
 		threadInfo.set(new Transaction(ctx));
 	}
 

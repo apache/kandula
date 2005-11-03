@@ -20,11 +20,11 @@ package org.apache.ws.transaction.participant.j2ee;
 import javax.transaction.Status;
 import javax.transaction.Transaction;
 
-import org.apache.ws.transaction.wscoor.CoordinationContext;
+import org.apache.ws.transaction.wscoor._CoordinationContext;
 
 
 class InterposedTransaction {
-	protected CoordinationContext ctx;
+	protected _CoordinationContext ctx;
 	protected Transaction localTx;
 	protected int status;
 
@@ -36,7 +36,7 @@ class InterposedTransaction {
 		return localTx;
 	}
 
-	public CoordinationContext getCoordinationContext() {
+	public _CoordinationContext getCoordinationContext() {
 		return ctx;
 	}
 

@@ -29,7 +29,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.ws.transaction.participant.j2ee.TransactionBridge;
 import org.apache.ws.transaction.participant.j2ee.TransactionManagerGlueFactory;
-import org.apache.ws.transaction.wscoor.CoordinationContext;
+import org.apache.ws.transaction.wscoor._CoordinationContext;
 
 
 public class TransactionHandler extends BasicHandler {
@@ -44,7 +44,7 @@ public class TransactionHandler extends BasicHandler {
 				Transaction localTx= tm.getTransaction();
 				if (localTx != null) {
 					SOAPHeader header= msgContext.getCurrentMessage().getSOAPEnvelope().getHeader();
-					CoordinationContext coordinationContext= bridge.exportJ2eeTransaction(localTx);
+					_CoordinationContext coordinationContext= bridge.exportJ2eeTransaction(localTx);
 					coordinationContext.toSOAPHeaderElement(header);
 				}
 			}
@@ -60,9 +60,9 @@ public class TransactionHandler extends BasicHandler {
 					Iterator iter= header.getChildElements();
 					while (iter.hasNext()) {
 						SOAPElement e= (SOAPElement)iter.next();
-						if (CoordinationContext.is(e)) {
-							CoordinationContext coordinationContext=
-								new CoordinationContext(e);
+						if (_CoordinationContext.is(e)) {
+							_CoordinationContext coordinationContext=
+								new _CoordinationContext(e);
 							Transaction localTx=
 								bridge.importWSTransaction(coordinationContext);
 							tm.resume(localTx);

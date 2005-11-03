@@ -27,7 +27,7 @@ import org.apache.ws.transaction.coordinator.at.XidImpl;
 import org.apache.ws.transaction.utility.EndpointReferenceFactory;
 import org.apache.ws.transaction.wsat.ParticipantRPCEndpoint;
 import org.apache.ws.transaction.wsat.Vote;
-import org.apache.ws.transaction.wscoor.CoordinationContext;
+import org.apache.ws.transaction.wscoor._CoordinationContext;
 
 public class ImportedTransaction extends InterposedTransaction {
 	static final String DURABLE_2PC_PROTOCOL= "http://schemas.xmlsoap.org/ws/2003/09/wsat#Durable2PC";
@@ -36,7 +36,7 @@ public class ImportedTransaction extends InterposedTransaction {
 	EndpointReference coordinator;
 	Xid xid= new XidImpl();
 
-	public ImportedTransaction(CoordinationContext ctx) {
+	public ImportedTransaction(_CoordinationContext ctx) {
 		super.ctx= ctx;
 		try {
 			coordinator=

@@ -21,7 +21,7 @@ import java.rmi.RemoteException;
 import org.apache.ws.transaction.utility.EndpointReferenceFactory;
 import org.apache.ws.transaction.wsat.CompletionRPCPort;
 import org.apache.ws.transaction.wsat.ParticipantRPCEndpoint;
-import org.apache.ws.transaction.wscoor.CoordinationContext;
+import org.apache.ws.transaction.wscoor._CoordinationContext;
 
 /**
  * @author Dasarath Weeratunge
@@ -29,11 +29,11 @@ import org.apache.ws.transaction.wscoor.CoordinationContext;
 public class Transaction {
 	private static String COMPLETION_PROTOCOL = "http://schemas.xmlsoap.org/ws/2003/09/wsat#Completion";
 
-	private CoordinationContext ctx;
+	private _CoordinationContext ctx;
 
 	private CompletionRPCPort compPort;
 
-	public Transaction(CoordinationContext ctx) throws RemoteException {
+	public Transaction(_CoordinationContext ctx) throws RemoteException {
 		this.ctx = ctx;
 		// FIXME: 
 		compPort = new CompletionRPCPort(ctx.register(COMPLETION_PROTOCOL,
@@ -41,7 +41,7 @@ public class Transaction {
 						ParticipantRPCEndpoint.PORT_TYPE, null)));
 	}
 
-	public CoordinationContext getCoordinationContex() {
+	public _CoordinationContext getCoordinationContex() {
 		return ctx;
 	}
 

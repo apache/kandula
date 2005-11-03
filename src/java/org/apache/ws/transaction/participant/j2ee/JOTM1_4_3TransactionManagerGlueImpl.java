@@ -12,8 +12,6 @@ import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 
-import org.apache.ws.transaction.participant.j2ee.TransactionImporter;
-import org.apache.ws.transaction.participant.j2ee.TransactionManagerGlue;
 import org.objectweb.jotm.Control;
 import org.objectweb.jotm.ControlImpl;
 import org.objectweb.jotm.Coordinator;
