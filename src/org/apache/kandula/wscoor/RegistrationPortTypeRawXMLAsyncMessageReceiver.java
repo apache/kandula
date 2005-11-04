@@ -17,6 +17,7 @@
 package org.apache.kandula.wscoor;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.axis2.om.OMElement;
 import org.apache.kandula.Constants;
@@ -45,7 +46,7 @@ public class RegistrationPortTypeRawXMLAsyncMessageReceiver extends
             //Out Envelop
             org.apache.axis2.soap.SOAPEnvelope envelope = null;
             //Find the operation that has been set by the Dispatch phase.
-            org.apache.axis2.description.OperationDescription op = msgContext
+            AxisOperation op = msgContext
                     .getOperationContext().getAxisOperation();
 
             String methodName;

@@ -21,9 +21,10 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.description.InOnlyOperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
@@ -60,16 +61,16 @@ public class CompletionInitiatorServiceListener {
         QName serviceName = new QName("CompletionInitiatorPortType");
         String className = CompletionInitiatorPortTypeRawXMLSkeleton.class
                 .getName();
-        ServiceDescription service = new ServiceDescription(serviceName);
+        AxisService service = new AxisService(serviceName);
         service.addParameter(new ParameterImpl(
                 AbstractMessageReceiver.SERVICE_CLASS, className));
         service.setFileName(className);
 
         QName committedOperationName = new QName(Constants.WS_COOR,
                 "committedOperation");
-        org.apache.axis2.description.OperationDescription committedOperationDesc;
+        AxisOperation committedOperationDesc;
         String committedMapping = Constants.WS_AT_COMMITTED;
-        committedOperationDesc = new InOnlyOperationDescription();
+        committedOperationDesc = new InOnlyAxisOperation();
         committedOperationDesc.setName(committedOperationName);
         committedOperationDesc
                 .setMessageReceiver(new RawXMLINOnlyMessageReceiver());
@@ -79,9 +80,9 @@ public class CompletionInitiatorServiceListener {
 
         QName abortedOperationName = new QName(Constants.WS_COOR,
                 "abortedOperation");
-        org.apache.axis2.description.OperationDescription abortedOperationDesc;
+        AxisOperation abortedOperationDesc;
         String abortedMapping = Constants.WS_AT_ABORTED;
-        abortedOperationDesc = new InOnlyOperationDescription();
+        abortedOperationDesc = new InOnlyAxisOperation();
         abortedOperationDesc.setName(abortedOperationName);
         abortedOperationDesc
                 .setMessageReceiver(new RawXMLINOnlyMessageReceiver());

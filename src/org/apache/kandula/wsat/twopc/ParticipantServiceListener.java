@@ -21,9 +21,10 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.description.InOnlyOperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
@@ -59,16 +60,16 @@ public class ParticipantServiceListener {
     private EndpointReference setupListener() throws IOException {
         QName serviceName = new QName("ParticipantPortType");
         String className = ParticipantPortTypeRawXMLSkeleton.class.getName();
-        ServiceDescription service = new ServiceDescription(serviceName);
+        AxisService service = new AxisService(serviceName);
         service.addParameter(new ParameterImpl(
                 AbstractMessageReceiver.SERVICE_CLASS, className));
         service.setFileName(className);
 
         QName prepareOperationName = new QName(Constants.WS_COOR,
                 "prepareOperation");
-        org.apache.axis2.description.OperationDescription prepareOperationDesc;
+        AxisOperation prepareOperationDesc;
         String prepareMapping = Constants.WS_AT_PREPARE;
-        prepareOperationDesc = new InOnlyOperationDescription();
+        prepareOperationDesc = new InOnlyAxisOperation();
         prepareOperationDesc.setName(prepareOperationName);
         prepareOperationDesc
                 .setMessageReceiver(new RawXMLINOnlyMessageReceiver());
@@ -78,9 +79,9 @@ public class ParticipantServiceListener {
 
         QName commitOperationName = new QName(Constants.WS_COOR,
                 "commitOperation");
-        org.apache.axis2.description.OperationDescription commitOperationDesc;
+        AxisOperation commitOperationDesc;
         String commitMapping = Constants.WS_AT_COMMIT;
-        commitOperationDesc = new InOnlyOperationDescription();
+        commitOperationDesc = new InOnlyAxisOperation();
         commitOperationDesc.setName(commitOperationName);
         commitOperationDesc
                 .setMessageReceiver(new RawXMLINOnlyMessageReceiver());
@@ -90,9 +91,9 @@ public class ParticipantServiceListener {
 
         QName rollbackOperationName = new QName(Constants.WS_COOR,
                 "rollbackOperation");
-        org.apache.axis2.description.OperationDescription rollbackOperationDesc;
+        AxisOperation rollbackOperationDesc;
         String rollbackMapping = Constants.WS_AT_ROLLBACK;
-        rollbackOperationDesc = new InOnlyOperationDescription();
+        rollbackOperationDesc = new InOnlyAxisOperation();
         rollbackOperationDesc.setName(rollbackOperationName);
         rollbackOperationDesc
                 .setMessageReceiver(new RawXMLINOnlyMessageReceiver());

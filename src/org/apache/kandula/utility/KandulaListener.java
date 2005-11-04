@@ -23,7 +23,8 @@ import java.util.HashMap;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.axis2.util.Utils;
 
@@ -36,7 +37,7 @@ public class KandulaListener {
 
     private ConfigurationContext responseConfigurationContext;
 
-    protected static org.apache.axis2.description.OperationDescription[] operations;
+    protected static AxisOperation[] operations;
 
     private SimpleHTTPServer receiver = null;
 
@@ -81,8 +82,8 @@ public class KandulaListener {
      *             To add services with only one operation, which is the
      *             frequent case in reponses
      */
-    public void addService(ServiceDescription service) throws AxisFault {
-        org.apache.axis2.description.OperationDescription responseOperationDesc;
+    public void addService(AxisService service) throws AxisFault {
+        AxisOperation responseOperationDesc;
 
         service.setClassLoader(Thread.currentThread().getContextClassLoader());
         HashMap allServices = responseConfigurationContext

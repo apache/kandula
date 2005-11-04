@@ -22,6 +22,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
 import org.apache.axis2.clientapi.Stub;
+import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
@@ -33,7 +34,7 @@ import org.apache.kandula.faults.KandulaGeneralException;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public abstract class AbstractATNotifierStub extends Stub {
-    protected static org.apache.axis2.description.OperationDescription[] operations;
+    protected static AxisOperation[] operations;
 
     public AbstractATNotifierStub() {
         super();

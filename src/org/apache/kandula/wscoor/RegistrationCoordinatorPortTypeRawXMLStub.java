@@ -24,10 +24,11 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
-import org.apache.axis2.description.InOnlyOperationDescription;
-import org.apache.axis2.description.OutInOperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.InOnlyAxisOperation;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
@@ -45,21 +46,21 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
         org.apache.axis2.clientapi.Stub {
     public static final String AXIS2_HOME = ".";
 
-    protected static org.apache.axis2.description.OperationDescription[] _operations;
+    protected static org.apache.axis2.description.AxisOperation[] _operations;
 
     static {
 
         //creating the Service
-        _service = new org.apache.axis2.description.ServiceDescription(
+        _service = new AxisService(
                 new javax.xml.namespace.QName(
                         "http://schemas.xmlsoap.org/ws/2003/09/wscoor",
                         "RegistrationCoordinatorPortType"));
 
         //creating the operations
-        org.apache.axis2.description.OperationDescription __operation;
-        _operations = new org.apache.axis2.description.OperationDescription[1];
+        org.apache.axis2.description.AxisOperation __operation;
+        _operations = new org.apache.axis2.description.AxisOperation[1];
 
-        __operation = new OutInOperationDescription();
+        __operation = new OutInAxisOperation();
         __operation.setName(new javax.xml.namespace.QName(
                 "http://schemas.xmlsoap.org/ws/2003/09/wscoor",
                 "RegisterOperation"));
@@ -139,18 +140,18 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
         QName serviceName = new QName("RegistrationRequesterPortType");
         QName operationName = new QName(Constants.WS_COOR,
                 "registerResponseOperation");
-        org.apache.axis2.description.OperationDescription responseOperationDesc;
+        AxisOperation responseOperationDesc;
         String className = RegistrationRequesterPortTypeRawXMLSkeleton.class
                 .getName();
         String mapping = Constants.WS_COOR_REGISTER_RESPONSE;
 
         KandulaListener listener = KandulaListener.getInstance();
-        ServiceDescription service = new ServiceDescription(serviceName);
+        AxisService service = new AxisService(serviceName);
         service.addParameter(new ParameterImpl(
                 AbstractMessageReceiver.SERVICE_CLASS, className));
         service.setFileName(className);
 
-        responseOperationDesc = new InOnlyOperationDescription();
+        responseOperationDesc = new InOnlyAxisOperation();
         responseOperationDesc.setName(operationName);
         responseOperationDesc
                 .setMessageReceiver(new RawXMLINOnlyMessageReceiver());

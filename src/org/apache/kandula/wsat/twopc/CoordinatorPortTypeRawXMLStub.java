@@ -17,7 +17,9 @@
 package org.apache.kandula.wsat.twopc;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.description.OutOnlyOperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.kandula.Constants;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.KandulaGeneralException;
@@ -31,37 +33,37 @@ public class CoordinatorPortTypeRawXMLStub extends AbstractATNotifierStub {
     static {
 
         //creating the Service
-        _service = new org.apache.axis2.description.ServiceDescription(
+        _service = new AxisService(
                 new javax.xml.namespace.QName(Constants.WS_AT,
                         "CoordinatorPortType"));
 
         //creating the operations
-        org.apache.axis2.description.OperationDescription operation;
-        operations = new org.apache.axis2.description.OperationDescription[5];
+        AxisOperation operation;
+        operations = new AxisOperation[5];
 
-        operation = new OutOnlyOperationDescription();
+        operation = new OutOnlyAxisOperation();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "PreparedOperation"));
         operations[0] = operation;
         _service.addOperation(operation);
 
-        operation = new OutOnlyOperationDescription();
+        operation = new OutOnlyAxisOperation();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "AbortedOperation"));
         operations[1] = operation;
         _service.addOperation(operation);
-        operation = new OutOnlyOperationDescription();
+        operation = new OutOnlyAxisOperation();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "ReadOnlyOperation"));
         operations[2] = operation;
         _service.addOperation(operation);
 
-        operation = new OutOnlyOperationDescription();
+        operation = new OutOnlyAxisOperation();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "CommittedOperation"));
         operations[3] = operation;
         _service.addOperation(operation);
-        operation = new OutOnlyOperationDescription();
+        operation = new OutOnlyAxisOperation();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "ReplayOperation"));
         operations[4] = operation;

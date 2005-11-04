@@ -19,7 +19,9 @@ package org.apache.kandula.wsat.twopc;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.deployment.DeploymentException;
-import org.apache.axis2.description.OutOnlyOperationDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.kandula.Constants;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.KandulaGeneralException;
@@ -33,27 +35,27 @@ public class ParticipantPortTypeRawXMLStub extends AbstractATNotifierStub {
     static {
 
         //creating the Service
-        _service = new org.apache.axis2.description.ServiceDescription(
+        _service = new AxisService(
                 new javax.xml.namespace.QName(Constants.WS_AT,
                         "ParticipantPortType"));
 
         //creating the operations
-        org.apache.axis2.description.OperationDescription operation;
-        operations = new org.apache.axis2.description.OperationDescription[3];
+        AxisOperation operation;
+        operations = new AxisOperation[3];
 
-        operation = new OutOnlyOperationDescription();
+        operation = new OutOnlyAxisOperation();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "prepareOperation"));
         operations[0] = operation;
         _service.addOperation(operation);
 
-        operation = new OutOnlyOperationDescription();
+        operation = new OutOnlyAxisOperation();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "commitOperation"));
         operations[1] = operation;
         _service.addOperation(operation);
 
-        operation = new OutOnlyOperationDescription();
+        operation = new OutOnlyAxisOperation();
         operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
                 "rollbackOperation"));
         operations[2] = operation;
