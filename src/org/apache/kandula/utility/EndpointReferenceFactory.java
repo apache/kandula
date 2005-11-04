@@ -17,6 +17,8 @@
 package org.apache.kandula.utility;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetAddress;
 import java.util.Properties;
 
 import org.apache.axis2.addressing.AnyContentType;
@@ -30,105 +32,125 @@ import org.apache.kandula.wsat.completion.CompletionInitiatorServiceListener;
  */
 
 public class EndpointReferenceFactory {
-    static final String PROPERTY_FILE = "endpoints.conf";
+	static final String PROPERTY_FILE = "endpoints.conf";
 
-    static final String PROTOCOL_PROPERTY = "protocol";
+	//  static final String PROTOCOL_PROPERTY = "protocol";
 
-    static final String HOST_PROPERTY = "host";
+	static final String HOST_PROPERTY = "host";
 
-    static final String PORT_PROPERTY = "port";
+	static final String PORT_PROPERTY = "port";
 
-    private static EndpointReferenceFactory instance = null;
+	static final String TCPMON_ENABLE = "tcpmon_enable";
+	
+	static final String REPO = "PARTICIPANT_REPOSITORY";
 
-    Properties properties = null;
+	private static EndpointReferenceFactory instance = null;
 
-    String location = null;
+	Properties properties = null;
 
-    private EndpointReferenceFactory() {
-        /*
-         * InputStream in = getClass().getClassLoader().getResourceAsStream(
-         * PROPERTY_FILE); properties = new Properties(); try {
-         * properties.load(in); in.close(); String host =
-         * properties.getProperty(HOST_PROPERTY); if (host == null) host =
-         * InetAddress.getLocalHost().getHostAddress(); location =
-         * properties.getProperty(PROTOCOL_PROPERTY) + "://" + host + ":" +
-         * properties.getProperty(PORT_PROPERTY); } catch (Exception e) { if (e
-         * instanceof RuntimeException) throw (RuntimeException) e; else throw
-         * new RuntimeException(e); }
-         */
-    }
+	String location = null;
+	
+	String participantRepository =null;
 
-    public static EndpointReferenceFactory getInstance() {
-        if (instance == null)
-            instance = new EndpointReferenceFactory();
-        return instance;
-    }
+	private EndpointReferenceFactory() {
 
-    public EndpointReference getRegistrationEndpoint(String id) {
-        //TODO set this somehow reading the conf file
-        EndpointReference epr = new EndpointReference(
-                "http://localhost:8082/axis/services/RegistrationCoordinator");
-        AnyContentType refParameters = new AnyContentType();
-        refParameters.addReferenceValue(Constants.TRANSACTION_ID_PARAMETER, id);
-        epr.setReferenceParameters(refParameters);
-        return epr;
-    }
+		String port = null;
 
-    public EndpointReference getCompletionParticipantEndpoint(String id)
-            throws IOException {
-        CompletionInitiatorServiceListener serviceListener = CompletionInitiatorServiceListener
-                .getInstance();
-        EndpointReference epr = serviceListener.getEpr();
-        AnyContentType refParameters = new AnyContentType();
-        refParameters.addReferenceValue(Constants.REQUESTER_ID_PARAMETER, id);
-        epr.setReferenceParameters(refParameters);
-        return epr;
-    }
+		String host = null;
+		InputStream in = getClass().getClassLoader().getResourceAsStream(
+				PROPERTY_FILE);
+		properties = new Properties();
+		try {
+			properties.load(in);
+			in.close();
+			host = properties.getProperty(HOST_PROPERTY);
+			port = properties.getProperty(PORT_PROPERTY);
+			participantRepository = properties.getProperty(REPO);
+			if (participantRepository ==null)
+			{
+				participantRepository = ".";
+			}
+			
+			if (port == null) {
+				port = "8080";
+			}
+			if (host == null) {
+				host = InetAddress.getLocalHost().getHostAddress();
+			}
+			
 
-    public EndpointReference getCompletionEndpoint(String id) {
-        //TODO set this somehow reading the conf file
-        EndpointReference epr = new EndpointReference(
-                "http://localhost:8082/axis/services/CompletionCoordinator");
-        AnyContentType refParameters = new AnyContentType();
-        refParameters.addReferenceValue(Constants.TRANSACTION_ID_PARAMETER, id);
-        epr.setReferenceParameters(refParameters);
-        return epr;
-    }
+			location = "http://" + host + ":"+port;
+		} catch (Exception e) {
+			if (e instanceof RuntimeException)
+				throw (RuntimeException) e;
+			else
+				throw new RuntimeException(e);
+		}
 
-    public EndpointReference get2PCCoordinatorEndpoint(String activityId, String enlistmentId) {
-        //TODO set this somehow reading the conf file
-        EndpointReference epr = new EndpointReference(
-                "http://localhost:8082/axis/services/AtomicTransactionCoordinator");
-        AnyContentType refParameters = new AnyContentType();
-        refParameters.addReferenceValue(Constants.TRANSACTION_ID_PARAMETER, activityId);
-        refParameters.addReferenceValue(Constants.ENLISTMENT_ID_PARAMETER, enlistmentId);
-        epr.setReferenceParameters(refParameters);
-        return epr;
-    }
-    public EndpointReference get2PCParticipantEndpoint(String id) {
-        //TODO set this somehow reading the conf file
-        EndpointReference epr = new EndpointReference(
-                "http://localhost:8082/axis/services/AtomicTransactionParticipant");
-        AnyContentType refParameters = new AnyContentType();
-        refParameters.addReferenceValue(Constants.REQUESTER_ID_PARAMETER, id);
-        epr.setReferenceParameters(refParameters);
-        return epr;
-    }
-    //	public EndpointReferenceTypeImpl
-    // getEndpointReference(PortReferenceTypeImpl portType,
-    // ReferencePropertiesType referenceProperties) {
-    //		try {
-    //			EndpointReferenceTypeImpl endpointReference = new
-    // EndpointReferenceTypeImpl(SchemaTypeImpl.);
-    //			endpointReference.setPortTypesetPortType(portType);
-    //			endpointReference.setProperties(referenceProperties);
-    //			return endpointReference;
-    //		}
-    //		catch (Exception e) {
-    //			if (e instanceof RuntimeException)
-    //				throw (RuntimeException)e;
-    //			else
-    //				throw new RuntimeException(e);
-    //		}
-    //	}
+	}
+
+	public static EndpointReferenceFactory getInstance() {
+		if (instance == null)
+			instance = new EndpointReferenceFactory();
+		return instance;
+	}
+
+	public EndpointReference getRegistrationEndpoint(String id) {
+
+		EndpointReference epr = new EndpointReference(location
+				+ "/axis2/services/RegistrationCoordinator");
+		AnyContentType refParameters = new AnyContentType();
+		refParameters.addReferenceValue(Constants.TRANSACTION_ID_PARAMETER, id);
+		epr.setReferenceParameters(refParameters);
+		return epr;
+	}
+
+	public EndpointReference getCompletionParticipantEndpoint(String id)
+			throws IOException {
+		CompletionInitiatorServiceListener serviceListener = CompletionInitiatorServiceListener
+				.getInstance();
+		EndpointReference epr = serviceListener.getEpr();
+		AnyContentType refParameters = new AnyContentType();
+		refParameters.addReferenceValue(Constants.REQUESTER_ID_PARAMETER, id);
+		epr.setReferenceParameters(refParameters);
+		return epr;
+	}
+
+	public EndpointReference getCompletionEndpoint(String id) {
+
+		EndpointReference epr = new EndpointReference(location
+				+ "/axis2/services/CompletionCoordinator");
+		AnyContentType refParameters = new AnyContentType();
+		refParameters.addReferenceValue(Constants.TRANSACTION_ID_PARAMETER, id);
+		epr.setReferenceParameters(refParameters);
+		return epr;
+	}
+
+	public EndpointReference get2PCCoordinatorEndpoint(String activityId,
+			String enlistmentId) {
+
+		EndpointReference epr = new EndpointReference(location
+				+ "/axis2/services/AtomicTransactionCoordinator");
+		AnyContentType refParameters = new AnyContentType();
+		refParameters.addReferenceValue(Constants.TRANSACTION_ID_PARAMETER,
+				activityId);
+		refParameters.addReferenceValue(Constants.ENLISTMENT_ID_PARAMETER,
+				enlistmentId);
+		epr.setReferenceParameters(refParameters);
+		return epr;
+	}
+
+	public EndpointReference get2PCParticipantEndpoint(String id) {
+
+		EndpointReference epr = new EndpointReference(location
+				+ "/axis2/services/AtomicTransactionParticipant");
+		AnyContentType refParameters = new AnyContentType();
+		refParameters.addReferenceValue(Constants.REQUESTER_ID_PARAMETER, id);
+		epr.setReferenceParameters(refParameters);
+		return epr;
+	}
+	public String getPariticipantRepository()
+	{
+		return participantRepository;
+	}
 }
