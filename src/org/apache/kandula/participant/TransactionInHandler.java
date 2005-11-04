@@ -59,6 +59,8 @@ public class TransactionInHandler extends AbstractHandler {
         // business logic receives the message
         String resourceFile = (String) msgContext.getParameter(
                 Constants.KANDULA_RESOURCE).getValue();
+        String participantRepository = EndpointReferenceFactory.getInstance().getPariticipantRepository();
+        System.out.println(participantRepository);
         try {
             resource = (KandulaResource) Class.forName(resourceFile)
                     .newInstance();
@@ -74,8 +76,7 @@ public class TransactionInHandler extends AbstractHandler {
         ParticipantTransactionManager txManager = new ParticipantTransactionManager();
         try {
             RegistrationCoordinatorPortTypeRawXMLStub stub = new RegistrationCoordinatorPortTypeRawXMLStub(
-                    ".", coorContext.getRegistrationService());
-            // TODO: try to get the protocol through configuration parameter
+                    participantRepository, coorContext.getRegistrationService());
             EndpointReference participantProtocolService = EndpointReferenceFactory
                     .getInstance().get2PCParticipantEndpoint(id);
             stub.registerOperation(resource.getProtocol(),
