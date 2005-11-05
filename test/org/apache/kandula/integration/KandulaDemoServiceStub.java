@@ -18,23 +18,13 @@ package org.apache.kandula.integration;
 
 import java.io.IOException;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis2.addressing.AddressingConstants;
-import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.clientapi.MessageSender;
-import org.apache.axis2.description.InOnlyOperationDescription;
-import org.apache.axis2.description.OutInOperationDescription;
-import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.description.ServiceDescription;
+import org.apache.axis2.description.AxisOperation;
+import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
-import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
-import org.apache.kandula.Constants;
-import org.apache.kandula.utility.KandulaListener;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -45,19 +35,19 @@ public class KandulaDemoServiceStub extends
 
     public static final String AXIS2_HOME = ".";
 
-    protected static org.apache.axis2.description.OperationDescription[] operations;
+    protected static org.apache.axis2.description.AxisOperation[] operations;
 
     static {
 
         //creating the Service
-        _service = new org.apache.axis2.description.ServiceDescription(
+        _service = new AxisService(
                 new javax.xml.namespace.QName( "KandulaDemoService"));
 
         //creating the operations
-        org.apache.axis2.description.OperationDescription operationDesc;
-        operations = new org.apache.axis2.description.OperationDescription[1];
+        AxisOperation operationDesc;
+        operations = new org.apache.axis2.description.AxisOperation[1];
 
-        operationDesc = new OutInOperationDescription();
+        operationDesc = new OutInAxisOperation();
         operationDesc.setName(new javax.xml.namespace.QName("creditOperation"));
         operations[0] = operationDesc;
         _service.addOperation(operationDesc);
