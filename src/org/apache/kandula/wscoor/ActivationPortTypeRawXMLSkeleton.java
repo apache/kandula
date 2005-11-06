@@ -19,11 +19,13 @@ package org.apache.kandula.wscoor;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.kandula.Constants;
+import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.coordinator.Coordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
@@ -32,6 +34,10 @@ import org.apache.kandula.faults.AbstractKandulaException;
  */
 
 public class ActivationPortTypeRawXMLSkeleton {
+    private MessageContext msgContext;
+     public void init(MessageContext context) {
+        this.msgContext = context;
+    }
 
     /**
      * Auto generated method signature
@@ -42,7 +48,7 @@ public class ActivationPortTypeRawXMLSkeleton {
     public OMElement createCoordinationContextOperation(OMElement requestElement)
             throws AxisFault {
         AbstractContext context;
-
+        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
         /*
          * Extracting data from the incoming message
          */

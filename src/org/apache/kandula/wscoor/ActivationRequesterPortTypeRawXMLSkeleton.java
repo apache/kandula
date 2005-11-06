@@ -44,7 +44,7 @@ public class ActivationRequesterPortTypeRawXMLSkeleton {
             CoordinationContext coordinationContext = CoordinationContext.Factory
                     .newContext(response);
             AbstractContext context = (AbstractContext) StorageFactory
-                    .getInstance().getStore().get(requesterID);
+                    .getInstance().getInitiatorStore().get(requesterID);
             context.setCoordinationContext(coordinationContext);
         }
         return null;

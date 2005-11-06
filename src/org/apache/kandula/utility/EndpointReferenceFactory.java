@@ -44,7 +44,9 @@ public class EndpointReferenceFactory {
 	
 	static final String REPO = "PARTICIPANT_REPOSITORY";
 
-	private static EndpointReferenceFactory instance = null;
+   static final String LISTENER_PORT = "KANDULA_LISTENER_PORT";
+
+    private static EndpointReferenceFactory instance = null;
 
 	Properties properties = null;
 
@@ -52,7 +54,9 @@ public class EndpointReferenceFactory {
 	
 	String participantRepository =null;
 
-	private EndpointReferenceFactory() {
+    String kandulaListenerPort=null;
+
+    private EndpointReferenceFactory() {
 
 		String port = null;
 
@@ -66,12 +70,20 @@ public class EndpointReferenceFactory {
 			host = properties.getProperty(HOST_PROPERTY);
 			port = properties.getProperty(PORT_PROPERTY);
 			participantRepository = properties.getProperty(REPO);
-			if (participantRepository ==null)
+
+            if (participantRepository ==null)
 			{
 				participantRepository = ".";
 			}
-			
-			if (port == null) {
+
+            kandulaListenerPort = properties.getProperty(LISTENER_PORT);
+
+             if (kandulaListenerPort ==null)
+			{
+				kandulaListenerPort = "5059";
+			}
+
+            if (port == null) {
 				port = "8080";
 			}
 			if (host == null) {
@@ -80,7 +92,8 @@ public class EndpointReferenceFactory {
 			
 
 			location = "http://" + host + ":"+port;
-		} catch (Exception e) {
+            System.out.println(location);
+        } catch (Exception e) {
 			if (e instanceof RuntimeException)
 				throw (RuntimeException) e;
 			else
@@ -153,4 +166,9 @@ public class EndpointReferenceFactory {
 	{
 		return participantRepository;
 	}
+
+    public String getKadulaListenerPort()
+    {
+         return kandulaListenerPort;
+    }
 }

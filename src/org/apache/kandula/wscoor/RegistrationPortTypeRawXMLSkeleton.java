@@ -28,6 +28,7 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.kandula.Constants;
+import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.coordinator.Coordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.utility.KandulaUtils;
@@ -48,7 +49,7 @@ public class RegistrationPortTypeRawXMLSkeleton {
         String protocolIdentifier;
         EndpointReference participantEPR;
         String activityId;
-
+        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
         /*
          * Extracting data from the received message
          */

@@ -70,6 +70,7 @@ public class ActivationPortTypeRawXMLAsyncMessageReceiver extends
                 newMsgContext.setEnvelope(envelope);
                 newMsgContext
                         .setWSAAction(Constants.WS_COOR_CREATE_COORDINATIONCONTEXT_RESPONSE);
+                newMsgContext.setRelatesTo(null);
             }
         } catch (Exception e) {
             throw AxisFault.makeFault(e);

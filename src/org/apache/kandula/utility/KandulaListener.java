@@ -19,6 +19,7 @@ package org.apache.kandula.utility;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.net.BindException;
 import java.util.HashMap;
 
 import org.apache.axis2.AxisFault;
@@ -43,14 +44,25 @@ public class KandulaListener {
 
     private boolean serverStarted = false;
 
-    public static final int SERVER_PORT = 5059;
+    public int serverPort;
 
-    private KandulaListener() throws IOException {
+     private KandulaListener() throws IOException {
         responseConfigurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
                 .buildClientConfigurationContext(".");
-        receiver = new SimpleHTTPServer(responseConfigurationContext,
-                SERVER_PORT);
-
+        try{
+        serverPort = Integer.parseInt(EndpointReferenceFactory.getInstance().getKadulaListenerPort());
+        }catch (Exception e)
+         {
+              serverPort = 5059;
+         }
+        while (receiver == null) {
+            try {
+                receiver = new SimpleHTTPServer(responseConfigurationContext,
+                serverPort);
+            } catch (BindException e) {
+                serverPort++;
+            }
+        }
     }
 
     public static KandulaListener getInstance() throws IOException {
@@ -65,7 +77,7 @@ public class KandulaListener {
 
             receiver.start();
             serverStarted = true;
-            System.out.print("Server started on port " + SERVER_PORT + ".....");
+            System.out.print("Server started on port " + serverPort + ".....");
         }
 
     }
@@ -76,8 +88,7 @@ public class KandulaListener {
     }
 
     /**
-     * @param serviceName
-     * @param operationName
+     * @param service
      * @throws AxisFault
      *             To add services with only one operation, which is the
      *             frequent case in reponses
@@ -101,6 +112,6 @@ public class KandulaListener {
 
     public String getHost() throws UnknownHostException {
         return "http://" + InetAddress.getLocalHost().getHostAddress() + ":"
-                + (SERVER_PORT + 1) + "/axis2/services/";
+                + (serverPort) + "/axis2/services/";
     }
 }

@@ -43,6 +43,7 @@ public class TransactionInHandler extends AbstractHandler {
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         KandulaResource resource;
+        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
         ATParticipantContext context = new ATParticipantContext();
         SOAPHeader header = msgContext.getEnvelope().getHeader();
         OMElement coordinationElement = header.getFirstChildWithName(new QName(

@@ -49,7 +49,7 @@ public class TransactionManager {
         if (threadInfo.get() != null)
             throw new IllegalStateException();
         threadInfo.set(context.getProperty(ATActivityContext.REQUESTER_ID));
-        Store store = StorageFactory.getInstance().getStore();
+        Store store = StorageFactory.getInstance().getInitiatorStore();
         store.put(context.getProperty(ATActivityContext.REQUESTER_ID), context);
     }
 
@@ -119,7 +119,7 @@ public class TransactionManager {
     public static AbstractContext getTransaction() throws AbstractKandulaException {
         Object key = threadInfo.get();
         AbstractContext context = (AbstractContext) StorageFactory
-                .getInstance().getStore().get(key);
+                .getInstance().getInitiatorStore().get(key);
         if (context == null) {
             throw new InvalidStateException("No Activity Found");
         }

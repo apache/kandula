@@ -75,6 +75,8 @@ abstract public interface Constants {
     public static String KANDULA_RESOURCE = "KandulaResource";
     
     public static String KANDULA_PRE = "kand";
+
+    public static String KANDULA_STORE = "KandulaStore" ;
     
     public static final QName TRANSACTION_ID_PARAMETER = new QName(
             KANDULA_URI, "TransactionID",KANDULA_PRE);

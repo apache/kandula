@@ -35,7 +35,7 @@ public class CompletionInitiatorPortTypeRawXMLSkeleton {
     }
 
     public OMElement committedOperation(OMElement requestElement) {
-
+        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
         OMElement header = msgContext.getEnvelope().getHeader();
         String requesterID = header.getFirstChildWithName(
                 Constants.REQUESTER_ID_PARAMETER).getText();
@@ -46,7 +46,7 @@ public class CompletionInitiatorPortTypeRawXMLSkeleton {
     }
 
     public OMElement abortedOperation(OMElement requestElement) {
-        
+        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
         OMElement header = msgContext.getEnvelope().getHeader();
         String requesterID = header.getFirstChildWithName(
                 Constants.REQUESTER_ID_PARAMETER).getText();

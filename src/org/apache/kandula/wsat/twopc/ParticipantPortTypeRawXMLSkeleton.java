@@ -39,6 +39,7 @@ public class ParticipantPortTypeRawXMLSkeleton {
     }
 
     public OMElement prepareOperation(OMElement requestEle) throws AxisFault {
+        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
         OMElement header = msgContext.getEnvelope().getHeader();
         String requesterID = header.getFirstChildWithName(
                 Constants.REQUESTER_ID_PARAMETER).getText();
@@ -57,6 +58,7 @@ public class ParticipantPortTypeRawXMLSkeleton {
     }
 
     public OMElement commitOperation(OMElement requestEle) throws AxisFault {
+        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
         OMElement header = msgContext.getEnvelope().getHeader();
         String requesterID = header.getFirstChildWithName(
                 Constants.REQUESTER_ID_PARAMETER).getText();
@@ -73,6 +75,7 @@ public class ParticipantPortTypeRawXMLSkeleton {
     }
 
     public OMElement rollbackOperation(OMElement requestEle) throws AxisFault {
+        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
         OMElement header = msgContext.getEnvelope().getHeader();
         String requesterID = header.getFirstChildWithName(
                 Constants.REQUESTER_ID_PARAMETER).getText();

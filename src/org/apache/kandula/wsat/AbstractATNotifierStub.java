@@ -77,6 +77,8 @@ public abstract class AbstractATNotifierStub extends Stub {
             messageSender.setWsaAction(action);
             messageSender
                     .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
+            System.out.println(operations[opIndex]);
+            
             messageSender.send(operations[opIndex], messageContext);
         } catch (AxisFault e) {
             throw new KandulaGeneralException(e);

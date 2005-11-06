@@ -20,6 +20,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMElement;
 import org.apache.kandula.Constants;
+import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.coordinator.Coordinator;
 import org.apache.kandula.coordinator.at.ATCoordinator;
@@ -42,6 +43,7 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
         AbstractContext context;
         String activityId;
      //log.info("Visited Commit operation");
+        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
         OMElement header = msgContext.getEnvelope().getHeader();
         activityId = header.getFirstChildWithName(
                 Constants.TRANSACTION_ID_PARAMETER).getText();
@@ -61,6 +63,7 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
             throws AxisFault {
         AbstractContext context;
         String activityId;
+        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
       //log.info("Visited rollback operation");
         OMElement header = msgContext.getEnvelope().getHeader();
         activityId = header.getFirstChildWithName(
