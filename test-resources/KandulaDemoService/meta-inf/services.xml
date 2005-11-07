@@ -2,7 +2,7 @@
     <description>
         Participant 2PC Coordination service.
     </description>
-    <module ref="kandula"/>
+    <module ref="kandula-inflow"/>
    	<parameter name="ServiceClass" locked="xsd:false">org.apache.kandula.integration.KandulaDemoService</parameter>
     <parameter name="KandulaResource" locked="xsd:false">org.apache.kandula.integration.DummyResource</parameter>
     <operation name="creditOperation">
