@@ -15,14 +15,6 @@
 	<ant:mkdir dir="${basedir}/target/lib"/>
     	<deploy:copy-deps todir="${basedir}/target/lib"/>
 
-	<echo message="----------------Creating Kandula Module----------------"/>
-        <mkdir dir="target/module/META-INF"/>
-        <copy file="conf/module.xml"
-            tofile="target/module/META-INF/module.xml"/>
-        <jar jarfile="target/kandula.mar" basedir="target/module">
-            <include name="**"/>
-        </jar>
-
 	<echo message="----------------Creating ActivationCoordinator.aar----------------"/>
 	<mkdir dir="target/services/ActivationCoordinator/META-INF"/>
         <copy file="conf/ActivationCoordinator/META-INF/services.xml"
@@ -66,20 +58,62 @@
             <include name="**"/>
         </jar>
 
-
-	<mkdir dir="target/module/META-INF"/>
-        <copy file="conf/module.xml"
-            tofile="target/module/META-INF/module.xml"/>
-        <mkdir dir="target/modules"/>
-        <jar jarfile="target/kandula.mar" basedir="target/module">
+	<echo message="----------------Creating Kandula-inflow.mar----------------"/>
+	<mkdir dir="target/modules/kandula-inflow/META-INF"/>
+        <copy file="conf/inflow-module.xml"
+            tofile="target/modules/kandula-inflow/META-INF/module.xml"/>
+        <jar jarfile="target/kandula-inflow.mar" 	basedir="target/modules/kandula-inflow">
             <include name="**"/>
         </jar>
+
+	<echo message="----------------Creating Kandula-outflow.mar----------------"/>
+	<mkdir dir="target/modules/kandula-outflow/META-INF"/>
+        <copy file="conf/outflow-module.xml"
+            tofile="target/modules/kandula-outflow/META-INF/module.xml"/>
+        <jar jarfile="target/kandula-outflow.mar" 	basedir="target/modules/kandula-outflow">
+            <include name="**"/>
+        </jar>
+
+
+	<echo message="-----------Creating Coordinator+participant test repository----------"/>
+	<mkdir dir="target/testing-repository"/>
+        <copy file="target/ActivationCoordinator.aar"
+            tofile="target/testing-repository/services/ActivationCoordinator.aar"/>
+	 <copy file="target/RegistrationCoordinator.aar"
+            tofile="target/testing-repository/services/AtomicTransactionCoordinator.aar"/>
+	 <copy file="target/RegistrationCoordinator.aar"
+            tofile="target/testing-repository/services/AtomicTransactionParticipant.aar"/>
+	 <copy file="target/RegistrationCoordinator.aar"
+            tofile="target/testing-repository/services/CompletionCoordinator.aar"/>
+	 <copy file="target/RegistrationCoordinator.aar"
+            tofile="target/testing-repository/services/RegistrationCoordinator.aar"/>
+         <mkdir dir="target/testing-repository/modules"/>
+	 <copy file="target/kandula-inflow.mar"
+            tofile="target/testing-repository/modules/kandula-inflow.mar"/>
+	 <copy file="modules/addressing.mar"
+            tofile="target/testing-repository/modules/addressing.mar"/>
+	 <copy file="conf/participant-axis2.xml"
+            tofile="target/testing-repository/axis2.xml"/>
+
+	<echo message="----------------Creating KandulaDemoService.aar----------------"/>
+	<mkdir dir="target/services/KandulaDemoService/META-INF"/>
+        <copy file="test-resources/KandulaDemoService/META-INF/services.xml"
+            tofile="target/services/KandulaDemoService/META-INF/services.xml"/>
+        <jar jarfile="target/KandulaDemoService.aar" 									basedir="target/services/KandulaDemoService">
+            <include name="**"/>
+        </jar>
+	<copy file="target/KandulaDemoService.aar"
+            tofile="target/testing-repository/services/KandulaDemoService.aar"/>
         
-    	<mkdir dir="${basedir}/target/client-repo"/>
-        <copy file="${basedir}/test-resources/client-repo/client-axis2.xml"
-            tofile="${basedir}/target/test-resources/client-repo/axis2.xml"/>
-    	<mkdir dir="${basedir}/target/test-resources/client-repo/modules"/>
-       
+	<echo message="-----------Creating Initiator test repository----------"/>
+        <mkdir dir="target/initiator-repository"/>
+	<mkdir dir="target/initiator-repository/modules"/>
+	<copy file="target/kandula-outflow.mar"
+            tofile="target/initiator-repository/modules/kandula-outflow.mar"/>
+ 	<copy file="modules/addressing.mar"
+            tofile="target/initiator-repository/modules/addressing.mar"/>
+	 <copy file="conf/initiator-axis2.xml"
+            tofile="target/initiator-repository/axis2.xml"/>       
        
     </postGoal>
     

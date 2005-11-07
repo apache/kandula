@@ -216,12 +216,9 @@
 
         <unitTest>    
         	<excludes>
-        		<!--exclude>**/CoordinatorImplTest.java</exclude-->
+        		<exclude>**/*.java</exclude>
         	</excludes>           
-            <includes>
-                <include>**/*Test.java</include>
-            </includes>
-
+            
 <!--
             <resources>
                 <resource>
