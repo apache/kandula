@@ -45,7 +45,7 @@ public class DummyResource implements KandulaResource {
     }
 
     public Vote prepare() {
-       return Vote.PREPARED;
+       return Vote.ABORT;
     }
 
 

@@ -22,7 +22,6 @@ import org.apache.axis2.om.OMElement;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.faults.AbstractKandulaException;
-import org.apache.kandula.faults.InvalidStateException;
 import org.apache.kandula.participant.ParticipantTransactionManager;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;

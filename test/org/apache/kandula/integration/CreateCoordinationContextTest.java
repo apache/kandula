@@ -30,7 +30,6 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.kandula.Constants;
-import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.initiator.TransactionManager;
 
 public class CreateCoordinationContextTest extends TestCase {
@@ -62,7 +61,7 @@ public class CreateCoordinationContextTest extends TestCase {
         server = new SimpleHTTPServer(er, 8081);
 
         try {
-            server.start();
+           server.start();
             System.out.print("Server started on port " + 8081 + ".....");
         } finally {
 
@@ -84,11 +83,11 @@ public class CreateCoordinationContextTest extends TestCase {
         TransactionManager tm = new TransactionManager(
                 Constants.WS_AT,
                 new EndpointReference(
-                        "http://localhost:8082/axis/services/ActivationCoordinator"));
+                        "http://localhost:8082/axis2/services/ActivationCoordinator"));
 
         tm.begin();
         KandulaDemoServiceStub stub = new KandulaDemoServiceStub("test-resources/client-repo",new EndpointReference(
-        "http://localhost:8082/axis/services/KandulaDemoService"));
+        "http://localhost:8082/axis2/services/KandulaDemoService"));
         stub.creditOperation();
         tm.commit();
         Thread.sleep(3000);

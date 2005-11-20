@@ -21,25 +21,31 @@ import org.apache.axis2.addressing.MessageInformationHeaders;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.axis2.soap.SOAPHeader;
+import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.coordination.CoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 
 public class TransactionOutHandler extends AbstractHandler {
-
-    public void invoke(MessageContext msgContext) throws AxisFault {
-
-        AbstractContext context;
-        try {
-            context = TransactionManager.getTransaction();
-            MessageInformationHeaders messageInformationHeaders = msgContext
-                    .getMessageInformationHeaders();
-            SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
-            CoordinationContext coorContext = context.getCoordinationContext();
-            soapHeader.addChild(coorContext.toOM());
-        } catch (AbstractKandulaException e) {
-            throw new AxisFault(e);
-        }
-    }
+	
+	public void invoke(MessageContext msgContext) throws AxisFault {
+		
+		AbstractContext context;
+		try {
+			String wsaAction = msgContext.getWSAAction();
+			if ((wsaAction != Constants.WS_COOR_CREATE_COORDINATIONCONTEXT)
+					&& (wsaAction != Constants.WS_COOR_REGISTER)) {
+				context = TransactionManager.getTransaction();
+				MessageInformationHeaders messageInformationHeaders = msgContext
+				.getMessageInformationHeaders();
+				SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
+				CoordinationContext coorContext = context
+				.getCoordinationContext();
+				soapHeader.addChild(coorContext.toOM());
+			}
+		} catch (AbstractKandulaException e) {
+			throw new AxisFault(e);
+		} 
+	}
 }
 

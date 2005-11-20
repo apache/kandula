@@ -113,31 +113,31 @@
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-core</artifactId>
-            <version>0.92</version>
+            <version>0.93-dev</version>
         </dependency>
 
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-xml</artifactId>
-            <version>0.92</version>
+            <version>0.93-dev</version>
         </dependency>
 
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-wsdl</artifactId>
-            <version>0.92</version>
+            <version>0.93-dev</version>
         </dependency>
         
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-addressing</artifactId>
-            <version>0.92</version>
+            <version>0.93-dev</version>
         </dependency>
         
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-common</artifactId>
-            <version>0.92</version>
+            <version>0.93-dev</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>

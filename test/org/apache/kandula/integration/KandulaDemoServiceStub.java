@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.clientapi.MessageSender;
+import org.apache.axis2.client.MessageSender;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutInAxisOperation;
@@ -31,7 +31,7 @@ import org.apache.axis2.om.OMAbstractFactory;
  */
 
 public class KandulaDemoServiceStub extends
-        org.apache.axis2.clientapi.Stub {
+        org.apache.axis2.client.Stub {
 
     public static final String AXIS2_HOME = ".";
 

@@ -20,8 +20,8 @@ import java.io.IOException;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.clientapi.MessageSender;
-import org.apache.axis2.clientapi.Stub;
+import org.apache.axis2.client.MessageSender;
+import org.apache.axis2.client.Stub;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;

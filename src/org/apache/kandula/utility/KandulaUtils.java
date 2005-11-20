@@ -42,7 +42,7 @@ public class KandulaUtils {
             SOAPFactory factory) {
         OMNamespace wsAddressing = factory.createOMNamespace(
                 AddressingConstants.Submission.WSA_NAMESPACE,
-                AddressingConstants.WSA_DEFAULT_PRFIX);
+                AddressingConstants.WSA_DEFAULT_PREFIX);
         OMElement addressElement = factory.createOMElement("Address",
                 wsAddressing);
         addressElement.setText(epr.getAddress());
