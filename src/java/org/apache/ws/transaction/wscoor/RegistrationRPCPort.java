@@ -38,6 +38,7 @@ public class RegistrationRPCPort {
 			// FIXME: 
 			// the following line was added for interop testing against IBM endpoint  
 			url= url.replaceAll("wsi\\.alphaworks\\.ibm\\.com:8080", "localhost:8082");
+			System.out.print(url);
 			stub= new RegistrationPortTypeRPCBindingStub(new URL(url), new Service(epr));
 		}
 		catch (Exception e) {

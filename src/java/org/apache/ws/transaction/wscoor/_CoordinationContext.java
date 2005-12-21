@@ -35,17 +35,17 @@ import org.w3c.dom.NodeList;
 
 public class _CoordinationContext {
 	static final Name NAME_COORDINATION_CONTEXT=
-		new PrefixedQName("http://schemas.xmlsoap.org/ws/2003/09/wscoor", "CoordinationContext", "wscoor");
+		new PrefixedQName("http://schemas.xmlsoap.org/ws/2004/10/wscoor", "CoordinationContext", "wscoor");
 	static final Name NAME_IDENTIFIER=
 		new PrefixedQName("http://schemas.xmlsoap.org/ws/2002/07/utility", "Identifier", "wsu");
 	static final Name NAME_COORDINATION_TYPE=
-		new PrefixedQName("http://schemas.xmlsoap.org/ws/2003/09/wscoor", "CoordinationType", "wscoor");
+		new PrefixedQName("http://schemas.xmlsoap.org/ws/2004/10/wscoor", "CoordinationType", "wscoor");
 	static final Name NAME_REGISTRATION_SERVICE=
-		new PrefixedQName("http://schemas.xmlsoap.org/ws/2003/09/wscoor", "RegistrationService", "wscoor");
+		new PrefixedQName("http://schemas.xmlsoap.org/ws/2004/10/wscoor", "RegistrationService", "wscoor");
 	static final Name NAME_ADDRESS=
-		new PrefixedQName("http://schemas.xmlsoap.org/ws/2004/03/addressing", "Address", "wsa");
+		new PrefixedQName("http://schemas.xmlsoap.org/ws/2004/08/addressing", "Address", "wsa");
 	static final Name NAME_REFERENCE_PROPERTIES=
-		new PrefixedQName("http://schemas.xmlsoap.org/ws/2004/03/addressing", "ReferenceProperties", "wsa");
+		new PrefixedQName("http://schemas.xmlsoap.org/ws/2004/08/addressing", "ReferenceProperties", "wsa");
 
 	CoordinationContext ctx;
 
@@ -72,12 +72,20 @@ public class _CoordinationContext {
 		if (!is(el))
 			throw new IllegalArgumentException();
 		ctx= new CoordinationContext();
+		System.out.println("[_CoordinationContext] 1");
 		try {			
 			NodeList list=
 				el.getElementsByTagNameNS(NAME_IDENTIFIER.getURI(), NAME_IDENTIFIER.getLocalName());
+			System.out.println("[_CoordinationContext] 1.1");
 			Element node= (Element)list.item(0);
-			ctx.setIdentifier(new CoordinationContextTypeIdentifier(TextExtractor.getText(node)));
+			System.out.println("[_CoordinationContext] 1.2");
+			String s = TextExtractor.getText(node);
+			System.out.println("[_CoordinationContext] 1.3");
+			if (s == null || s.trim().equals(""))
+				s = "urn:unknown";
+			ctx.setIdentifier(new CoordinationContextTypeIdentifier(s));
 
+			System.out.println("[_CoordinationContext] 2");
 			list=
 				el.getElementsByTagNameNS(
 					NAME_COORDINATION_TYPE.getURI(),
@@ -85,13 +93,16 @@ public class _CoordinationContext {
 			node= (Element)list.item(0);
 			ctx.setCoordinationType(new URI(TextExtractor.getText(node)));
 
+			System.out.println("[_CoordinationContext] 3");
 			list=
 				el.getElementsByTagNameNS(
 					NAME_REGISTRATION_SERVICE.getURI(),
 					NAME_REGISTRATION_SERVICE.getLocalName());
 			node= (Element)list.item(0);
 
+			System.out.println("[_CoordinationContext] 4");
 			EndpointReference epr= new EndpointReference(node);
+			System.out.println("[_CoordinationContext] 5");
 			ctx.setRegistrationService(epr);
 		}
 		catch (Exception e) {

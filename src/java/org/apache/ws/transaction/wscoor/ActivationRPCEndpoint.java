@@ -24,7 +24,7 @@ import org.apache.ws.transaction.coordinator.Coordinator;
 
 
 public class ActivationRPCEndpoint implements ActivationPortTypeRPC {
-	public static PortType PORT_TYPE= new PortType("http://schemas.xmlsoap.org/ws/2003/09/wscoor", "ActivationPortTypeRPC");
+	public static PortType PORT_TYPE= new PortType("http://schemas.xmlsoap.org/ws/2004/10/wscoor", "ActivationPortTypeRPC");
 	
 	public CreateCoordinationContextResponseType createCoordinationContextOperation(CreateCoordinationContextType parameters)
 		throws RemoteException {

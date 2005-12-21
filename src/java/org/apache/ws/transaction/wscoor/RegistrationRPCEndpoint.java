@@ -31,7 +31,7 @@ import org.apache.ws.transaction.coordinator.Identifier;
 
 
 public class RegistrationRPCEndpoint implements RegistrationPortTypeRPC {
-	public static PortType PORT_TYPE= new PortType("http://schemas.xmlsoap.org/ws/2003/09/wscoor", "RegistrationPortTypeRPC"); 
+	public static PortType PORT_TYPE= new PortType("http://schemas.xmlsoap.org/ws/2004/10/wscoor", "RegistrationPortTypeRPC"); 
 	
 	public RegisterResponseType registerOperation(RegisterType parameters) throws RemoteException {
 		try {
