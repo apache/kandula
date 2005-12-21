@@ -30,7 +30,7 @@ import org.apache.ws.transaction.participant.j2ee.TransactionBridge;
 
 
 public class ParticipantRPCEndpoint implements ParticipantPortTypeRPC {
-	public static final PortType PORT_TYPE= new PortType("http://schemas.xmlsoap.org/ws/2003/09/wsat", "ParticipantPortTypeRPC");
+	public static final PortType PORT_TYPE= new PortType("http://schemas.xmlsoap.org/ws/2004/10/wsat", "ParticipantPortTypeRPC");
 	
 	public PrepareResponse prepareOperation(Notification parameters) throws java.rmi.RemoteException {
 		try {

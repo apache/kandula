@@ -31,7 +31,7 @@ import org.apache.ws.transaction.coordinator.at.XidImpl;
 
 public class CompletionRPCEndpoint implements CompletionPortTypeRPC {
 	public static PortType PORT_TYPE=
-		new PortType("http://schemas.xmlsoap.org/ws/2003/09/wsat", "CompletionPortTypeRPC");
+		new PortType("http://schemas.xmlsoap.org/ws/2004/10/wsat", "CompletionPortTypeRPC");
 
 	public Notification commitOperation(Notification parameters) throws java.rmi.RemoteException {
 		Identifier activityId= getXid().toActivityId();

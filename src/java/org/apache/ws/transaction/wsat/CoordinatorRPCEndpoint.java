@@ -31,7 +31,7 @@ import org.apache.ws.transaction.coordinator.at.XidImpl;
 
 public class CoordinatorRPCEndpoint implements CoordinatorPortTypeRPC {
 	public static PortType PORT_TYPE=
-		new PortType("http://schemas.xmlsoap.org/ws/2003/09/wsat", "CoordinatorPortTypeRPC");
+		new PortType("http://schemas.xmlsoap.org/ws/2004/10/wsat", "CoordinatorPortTypeRPC");
 
 	public ReplayResponse replayOperation(Notification parameters) throws java.rmi.RemoteException {
 		throw new UnsupportedOperationException();
