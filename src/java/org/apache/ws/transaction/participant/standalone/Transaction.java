@@ -27,7 +27,7 @@ import org.apache.ws.transaction.wscoor._CoordinationContext;
  * @author Dasarath Weeratunge
  */
 public class Transaction {
-	private static String COMPLETION_PROTOCOL = "http://schemas.xmlsoap.org/ws/2003/09/wsat#Completion";
+	private static String COMPLETION_PROTOCOL = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Completion";
 
 	private _CoordinationContext ctx;
 

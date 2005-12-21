@@ -39,9 +39,17 @@ public class TransactionHandler extends BasicHandler {
 	static private ThreadLocal threadInfo= new ThreadLocal();
 
 	public void invoke(MessageContext msgContext) throws AxisFault {
+		System.out.println("[TransactionHandler/invoke]");
+		System.out.println("---------------------------");
+		if (msgContext.getCurrentMessage() != null)
+			System.out.println(msgContext.getCurrentMessage().getSOAPEnvelope().toString());
+		else
+			System.out.println("if (msgContext.getCurrentMessage() == null)");
+		System.out.println("---------------------------");
 		try {
-			if (msgContext.isClient()) {
-				Transaction localTx= tm.getTransaction();
+			if (msgContext.isClient() && !msgContext.getPastPivot()) {
+				System.out.println("[TransactionHandler/invoke] isClient = true ");
+				Transaction localTx= tm.getTransaction();				
 				if (localTx != null) {
 					SOAPHeader header= msgContext.getCurrentMessage().getSOAPEnvelope().getHeader();
 					_CoordinationContext coordinationContext= bridge.exportJ2eeTransaction(localTx);
@@ -50,19 +58,23 @@ public class TransactionHandler extends BasicHandler {
 			}
 			else {
 				if (msgContext.getPastPivot()) {
+					System.out.println("[TransactionHandler/invoke] getPastPivot = true");
 					if (threadInfo.get() != null) {
 						tm.suspend();
 						threadInfo.set(null);
 					}
 				}
 				else {
+					System.out.println("[TransactionHandler/invoke] getPastPivot = false");
 					SOAPHeader header= msgContext.getCurrentMessage().getSOAPEnvelope().getHeader();
 					Iterator iter= header.getChildElements();
 					while (iter.hasNext()) {
 						SOAPElement e= (SOAPElement)iter.next();
 						if (_CoordinationContext.is(e)) {
+							System.out.println("[TransactionHandler/invoke] _CoordinationContext");
 							_CoordinationContext coordinationContext=
 								new _CoordinationContext(e);
+							System.out.println("[TransactionHandler/invoke] calling importWSTransaction");
 							Transaction localTx=
 								bridge.importWSTransaction(coordinationContext);
 							tm.resume(localTx);

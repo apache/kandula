@@ -48,9 +48,12 @@ public class TransactionBridge {
 	}
 
 	public Transaction importWSTransaction(_CoordinationContext ctx) {
+		System.out.println("[TransactionBridge/importWSTransaction] 1");
 		InterposedTransaction tx= (InterposedTransaction)byCtx.get(ctx.getActivityId());
+		System.out.println("[TransactionBridge/importWSTransaction] 2");
 		if (tx != null)
 			return tx.getLocalTransaction();
+		System.out.println("[TransactionBridge/importWSTransaction] 3");
 		tx= new ImportedTransaction(ctx);
 		byCtx.put(ctx.getActivityId(), tx);
 		Transaction localTx= tx.getLocalTransaction();

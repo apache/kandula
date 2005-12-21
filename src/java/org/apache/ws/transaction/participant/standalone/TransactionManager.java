@@ -26,7 +26,7 @@ import org.apache.ws.transaction.wscoor._CoordinationContext;
 
 
 public class TransactionManager {
-	private static String COORDINATION_TYPE= "http://schemas.xmlsoap.org/ws/2003/09/wsat";
+	private static String COORDINATION_TYPE= "http://schemas.xmlsoap.org/ws/2004/10/wsat";
 
 	private static TransactionManager instance= new TransactionManager();
 	private static ThreadLocal threadInfo= new ThreadLocal();

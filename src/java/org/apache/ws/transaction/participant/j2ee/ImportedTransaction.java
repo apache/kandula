@@ -30,7 +30,7 @@ import org.apache.ws.transaction.wsat.Vote;
 import org.apache.ws.transaction.wscoor._CoordinationContext;
 
 public class ImportedTransaction extends InterposedTransaction {
-	static final String DURABLE_2PC_PROTOCOL= "http://schemas.xmlsoap.org/ws/2003/09/wsat#Durable2PC";
+	static final String DURABLE_2PC_PROTOCOL= "http://schemas.xmlsoap.org/ws/2004/10/wsat/Durable2PC";
 	static XATerminator xaTerminator=
 		TransactionManagerGlueFactory.getInstance().getTransactionManagerGlue().getXATerminator();
 	EndpointReference coordinator;
@@ -38,6 +38,7 @@ public class ImportedTransaction extends InterposedTransaction {
 
 	public ImportedTransaction(_CoordinationContext ctx) {
 		super.ctx= ctx;
+		System.out.println("[ImportedTransaction]"+ctx.toCoordinationContext().getRegistrationService().getAddress().getHost());
 		try {
 			coordinator=
 				ctx.register(
