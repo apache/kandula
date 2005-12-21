@@ -23,7 +23,7 @@ import org.apache.ws.transaction.coordinator.Coordinator;
 
 
 public interface AtCoordinator extends Coordinator {
-	final String COORDINATION_TYPE= "http://schemas.xmlsoap.org/ws/2003/09/wsat";
+	final String COORDINATION_TYPE= "http://schemas.xmlsoap.org/ws/2004/10/wsat";
 	
 	void commit();
 	void rollback();

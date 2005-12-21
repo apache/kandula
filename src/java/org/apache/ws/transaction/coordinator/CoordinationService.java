@@ -41,6 +41,8 @@ public class CoordinationService {
 	}
 
 	public Coordinator coordinate(String coordinationType) throws UnknownCoordinationTypeException {
+		System.out.println("[CoordinationService/coordinate] "+coordinationType);
+		System.out.println("[CoordinationService/coordinate] "+AtCoordinator.COORDINATION_TYPE);
 		if (!AtCoordinator.COORDINATION_TYPE.equals(coordinationType))
 			throw new UnknownCoordinationTypeException(coordinationType);
 		Coordinator coordinator= new AtCoordinatorImpl(new XidImpl());

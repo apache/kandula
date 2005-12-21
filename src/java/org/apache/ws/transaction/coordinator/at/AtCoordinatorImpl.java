@@ -1,18 +1,18 @@
 /*
- * Copyright  2004 The Apache Software Foundation.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
+ * Copyright 2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ *  
  */
 package org.apache.ws.transaction.coordinator.at;
 
@@ -37,102 +37,105 @@ import org.apache.ws.transaction.wsat.ParticipantRPCPort;
 import org.apache.ws.transaction.wsat.Vote;
 
 public class AtCoordinatorImpl extends CoordinatorImpl implements AtCoordinator {
-	static final String COMPLETION_PROTOCOL= "Completion";
-	static final String VOLATILE_2PC_PROTOCOL= "Volatile2PC";
-	static final String DURABLE_2PC_PROTOCOL= "Durable2PC";
+	static final String COMPLETION_PROTOCOL = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Completion";
 
-	int status= Status.STATUS_NO_TRANSACTION;
-	private List participants= Collections.synchronizedList(new ArrayList());
+	static final String VOLATILE_2PC_PROTOCOL = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Volatile2PC";
+
+	static final String DURABLE_2PC_PROTOCOL = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Durable2PC";
+
+	int status = Status.STATUS_NO_TRANSACTION;
+
+	private List participants = Collections.synchronizedList(new ArrayList());
+
 	XidImpl xid;
 
 	public AtCoordinatorImpl(XidImpl xid) {
 		super(xid.toActivityId(), COORDINATION_TYPE);
-		this.xid= xid;
-		status= Status.STATUS_ACTIVE;
+		this.xid = xid;
+		status = Status.STATUS_ACTIVE;
 	}
 
 	public int getStatus() {
 		return status;
 	}
 
-	public EndpointReference registerParticipant(URI protocol, EndpointReference participant)
-		throws UnknownCoordinationTypeException, UnknownCoordinationProtocolException {
+	public EndpointReference registerParticipant(URI protocol,
+			EndpointReference participant)
+			throws UnknownCoordinationTypeException,
+			UnknownCoordinationProtocolException {
 		if (status != Status.STATUS_ACTIVE)
 			throw new IllegalStateException();
 		//	according to the specification we should continue to enlist
 		//	durable 2PC participants during the prepare phase of volatile participants
-		//	however we ignore this for the time being
-		String fragment= protocol.getFragment();
-		String type;
-		try {
-			URI _type= new URI(protocol);
-			_type.setFragment(null);
-			type= _type.toString();
-		}
-		catch (URI.MalformedURIException e) {
-			throw new IllegalArgumentException(e + "???" + protocol);
-		}
-		if (!type.equals(COORDINATION_TYPE))
-			throw new UnknownCoordinationTypeException(type);
+		//	however we ignore this for now
 
-		if (fragment.equals(COMPLETION_PROTOCOL))
+		String temp = protocol.toString();
+
+		if (temp.equals(COMPLETION_PROTOCOL))
 			return EndpointReferenceFactory.getInstance().getEndpointReference(
-				CompletionRPCEndpoint.PORT_TYPE,
-				xid.toReferencePropertiesType());
+					CompletionRPCEndpoint.PORT_TYPE,
+					xid.toReferencePropertiesType());
 		else {
-			XidImpl branch= xid.newBranch();
-			if (fragment.equals(VOLATILE_2PC_PROTOCOL))
-				participants.add(new RegisteredParticipant(branch, true, participant));
+			XidImpl branch = xid.newBranch();
+			if (temp.equals(VOLATILE_2PC_PROTOCOL))
+				participants.add(new RegisteredParticipant(branch, true,
+						participant));
+			else if (temp.equals(DURABLE_2PC_PROTOCOL))
+				participants.add(new RegisteredParticipant(branch, false,
+						participant));
 			else
-				if (fragment.equals(DURABLE_2PC_PROTOCOL))
-					participants.add(new RegisteredParticipant(branch, false, participant));
-				else
-					throw new UnknownCoordinationProtocolException(protocol.toString());
+				throw new UnknownCoordinationProtocolException(protocol
+						.toString());
+			
 			return EndpointReferenceFactory.getInstance().getEndpointReference(
-				CoordinatorRPCEndpoint.PORT_TYPE,
-				branch.toReferencePropertiesType());
+					CoordinatorRPCEndpoint.PORT_TYPE,
+					branch.toReferencePropertiesType());
 		}
+
 	}
 
 	public void commit() {
 		switch (status) {
-			case Status.STATUS_ACTIVE :
-				prepare();
-				//	fall through
-			case Status.STATUS_PREPARED :
-				break;
-			default :
-				throw new IllegalStateException();
+		case Status.STATUS_ACTIVE:
+			prepare();
+		//	fall through
+		case Status.STATUS_PREPARED:
+			break;
+		default:
+			throw new IllegalStateException();
 		}
 
 		lock();
 		if (status == Status.STATUS_PREPARED)
-			status= Status.STATUS_COMMITTING;
+			status = Status.STATUS_COMMITTING;
 		unlock();
 
-		RemoteException e= null;
+		RemoteException e = null;
 		if (status == Status.STATUS_MARKED_ROLLBACK)
 			rollback();
 		else {
-			Iterator iter= participants.iterator();
+			Iterator iter = participants.iterator();
 			while (iter.hasNext()) {
-				RegisteredParticipant participant= (RegisteredParticipant)iter.next();
-				//	if a participant abort we set the transaction to rollback, hence
-				//	we will not be here. so we do not have to check for aborted case below
+				RegisteredParticipant participant = (RegisteredParticipant) iter
+						.next();
+				//	if a participant abort we set the transaction to rollback,
+				// hence
+				//	we will not be here. so we do not have to check for aborted
+				// case below
 				if (!participant.readOnly)
 					try {
 						participant.commit();
-					}
-					catch (RemoteException _e) {
+					} catch (RemoteException _e) {
 						_e.printStackTrace();
 						//	FIXME ???
-						e= _e;
+						e = _e;
 					}
 			}
-			status= Status.STATUS_COMMITTED;
+			status = Status.STATUS_COMMITTED;
 			done();
 			if (e != null)
-				//	only the last exception caught is thrown; however if there was at least one
+				//	only the last exception caught is thrown; however if there
+				// was at least one
 				//	it will be thrown to upper layers
 				throw new RuntimeException(e);
 		}
@@ -142,33 +145,33 @@ public class AtCoordinatorImpl extends CoordinatorImpl implements AtCoordinator 
 		lock();
 
 		switch (status) {
-			case Status.STATUS_ACTIVE :
-			case Status.STATUS_MARKED_ROLLBACK :
-			case Status.STATUS_PREPARED :
-				break;
-			default :
-				throw new IllegalStateException();
+		case Status.STATUS_ACTIVE:
+		case Status.STATUS_MARKED_ROLLBACK:
+		case Status.STATUS_PREPARED:
+			break;
+		default:
+			throw new IllegalStateException();
 		}
-		status= Status.STATUS_ROLLING_BACK;
+		status = Status.STATUS_ROLLING_BACK;
 
 		unlock();
 
-		RemoteException e= null;
-		Iterator iter= participants.iterator();
+		RemoteException e = null;
+		Iterator iter = participants.iterator();
 		while (iter.hasNext()) {
-			RegisteredParticipant participant= (RegisteredParticipant)iter.next();
+			RegisteredParticipant participant = (RegisteredParticipant) iter
+					.next();
 			if (!(participant.readOnly || participant.aborted))
 				try {
 					participant.rollback();
-				}
-				catch (RemoteException _e) {
+				} catch (RemoteException _e) {
 					_e.printStackTrace();
 					//	FIXME ???
-					e= _e;
+					e = _e;
 				}
 		}
 
-		status= Status.STATUS_ROLLEDBACK;
+		status = Status.STATUS_ROLLEDBACK;
 		done();
 
 		if (e != null)
@@ -179,78 +182,75 @@ public class AtCoordinatorImpl extends CoordinatorImpl implements AtCoordinator 
 		lock();
 
 		switch (status) {
-			case Status.STATUS_ACTIVE :
-				break;
-			case Status.STATUS_MARKED_ROLLBACK :
-			case Status.STATUS_PREPARED :
-				return status;
-			default :
-				throw new IllegalStateException();
+		case Status.STATUS_ACTIVE:
+			break;
+		case Status.STATUS_MARKED_ROLLBACK:
+		case Status.STATUS_PREPARED:
+			return status;
+		default:
+			throw new IllegalStateException();
 		}
-		status= Status.STATUS_PREPARING;
+		status = Status.STATUS_PREPARING;
 
 		unlock();
 
-		boolean readOnly= true;
-		Iterator iter= participants.iterator();
+		boolean readOnly = true;
+		Iterator iter = participants.iterator();
 		while (iter.hasNext() && status == Status.STATUS_PREPARING) {
-			RegisteredParticipant participant= (RegisteredParticipant)iter.next();
+			RegisteredParticipant participant = (RegisteredParticipant) iter
+					.next();
 			if (!participant._volatile || participant.readOnly)
 				continue;
-			Vote vote= null;
+			Vote vote = null;
 			try {
-				vote= participant.prepare();
-			}
-			catch (RemoteException e) {
+				vote = participant.prepare();
+			} catch (RemoteException e) {
 				e.printStackTrace();
 				//	do we need lock/unlock here???
-				status= Status.STATUS_MARKED_ROLLBACK;
+				status = Status.STATUS_MARKED_ROLLBACK;
 				return status;
 			}
 			if (vote.equals(Vote.VoteReadOnly))
 				participant.readOnly();
-			else
-				if (readOnly && vote.equals(Vote.VoteCommit))
-					readOnly= false;
-				else
-					if (vote.equals(Vote.VoteRollback)) {
-						participant.abort();
-						status= Status.STATUS_MARKED_ROLLBACK;
-						return status;
-					}
+			else if (readOnly && vote.equals(Vote.VoteCommit))
+				readOnly = false;
+			else if (vote.equals(Vote.VoteRollback)) {
+				participant.abort();
+				status = Status.STATUS_MARKED_ROLLBACK;
+				return status;
+			}
 		}
 
-		iter= participants.iterator();
+		iter = participants.iterator();
 		while (iter.hasNext() && status == Status.STATUS_PREPARING) {
-			RegisteredParticipant participant= (RegisteredParticipant)iter.next();
+			RegisteredParticipant participant = (RegisteredParticipant) iter
+					.next();
 			if (participant._volatile || participant.readOnly)
 				continue;
-			Vote vote= null;
+			Vote vote = null;
 			try {
-				vote= participant.prepare();
-			}
-			catch (RemoteException e) {
+				vote = participant.prepare();
+			} catch (RemoteException e) {
 				e.printStackTrace();
-				status= Status.STATUS_MARKED_ROLLBACK;
+				status = Status.STATUS_MARKED_ROLLBACK;
 				return status;
 			}
 			if (vote.equals(Vote.VoteReadOnly))
 				participant.readOnly();
-			else
-				if (readOnly && vote.equals(Vote.VoteCommit))
-					readOnly= false;
-				else
-					if (vote.equals(Vote.VoteRollback)) {
-						participant.abort();
-						status= Status.STATUS_MARKED_ROLLBACK;
-						return status;
-					}
+			else if (readOnly && vote.equals(Vote.VoteCommit))
+				readOnly = false;
+			else if (vote.equals(Vote.VoteRollback)) {
+				participant.abort();
+				status = Status.STATUS_MARKED_ROLLBACK;
+				return status;
+			}
 
 		}
 
 		lock();
 		if (status == Status.STATUS_PREPARING)
-			status= readOnly ? Status.STATUS_COMMITTED : Status.STATUS_PREPARED;
+			status = readOnly ? Status.STATUS_COMMITTED
+					: Status.STATUS_PREPARED;
 		unlock();
 
 		return status;
@@ -260,18 +260,17 @@ public class AtCoordinatorImpl extends CoordinatorImpl implements AtCoordinator 
 		lock();
 		try {
 			switch (status) {
-				case Status.STATUS_COMMITTED :
-				case Status.STATUS_ROLLEDBACK :
-					//	no harm done
-					return;
-				case Status.STATUS_UNKNOWN :
-				case Status.STATUS_NO_TRANSACTION :
-					throw new IllegalStateException();
-				default :
-					getParticipant(branch).readOnly();
+			case Status.STATUS_COMMITTED:
+			case Status.STATUS_ROLLEDBACK:
+				//	no harm done
+				return;
+			case Status.STATUS_UNKNOWN:
+			case Status.STATUS_NO_TRANSACTION:
+				throw new IllegalStateException();
+			default:
+				getParticipant(branch).readOnly();
 			}
-		}
-		finally {
+		} finally {
 			unlock();
 		}
 	}
@@ -280,24 +279,23 @@ public class AtCoordinatorImpl extends CoordinatorImpl implements AtCoordinator 
 		lock();
 		try {
 			switch (status) {
-				case Status.STATUS_ROLLEDBACK :
-					return;
-				case Status.STATUS_ACTIVE :
-				case Status.STATUS_PREPARING :
-				case Status.STATUS_PREPARED :
-					status= Status.STATUS_MARKED_ROLLBACK;
-					//	fall through
-				case Status.STATUS_MARKED_ROLLBACK :
-				case Status.STATUS_ROLLING_BACK :
-					//	the participant may get a rollback in the latter case
-					break;
-				default :
-					throw new IllegalStateException();
+			case Status.STATUS_ROLLEDBACK:
+				return;
+			case Status.STATUS_ACTIVE:
+			case Status.STATUS_PREPARING:
+			case Status.STATUS_PREPARED:
+				status = Status.STATUS_MARKED_ROLLBACK;
+			//	fall through
+			case Status.STATUS_MARKED_ROLLBACK:
+			case Status.STATUS_ROLLING_BACK:
+				//	the participant may get a rollback in the latter case
+				break;
+			default:
+				throw new IllegalStateException();
 			}
 
 			getParticipant(branch).abort();
-		}
-		finally {
+		} finally {
 			unlock();
 		}
 	}
@@ -307,9 +305,10 @@ public class AtCoordinatorImpl extends CoordinatorImpl implements AtCoordinator 
 	}
 
 	private RegisteredParticipant getParticipant(Xid branch) {
-		Iterator iter= participants.iterator();
+		Iterator iter = participants.iterator();
 		while (iter.hasNext()) {
-			RegisteredParticipant participant= (RegisteredParticipant)iter.next();
+			RegisteredParticipant participant = (RegisteredParticipant) iter
+					.next();
 			if (branch.equals(participant.branch))
 				return participant;
 		}
@@ -320,32 +319,38 @@ public class AtCoordinatorImpl extends CoordinatorImpl implements AtCoordinator 
 
 class RegisteredParticipant {
 	public boolean _volatile;
+
 	public boolean readOnly;
+
 	public boolean aborted;
+
 	public XidImpl branch;
+
 	EndpointReference epr;
+
 	ParticipantRPCPort port;
 
-	public RegisteredParticipant(XidImpl branch, boolean _volatile, EndpointReference epr) {
-		this.branch= branch;
-		this._volatile= _volatile;
-		this.epr= epr;
-		aborted= false;
-		readOnly= false;
+	public RegisteredParticipant(XidImpl branch, boolean _volatile,
+			EndpointReference epr) {
+		this.branch = branch;
+		this._volatile = _volatile;
+		this.epr = epr;
+		aborted = false;
+		readOnly = false;
 	}
 
 	public void abort() {
-		aborted= true;
+		aborted = true;
 	}
 
 	public void readOnly() {
-		readOnly= true;
+		readOnly = true;
 	}
 
 	public Vote prepare() throws RemoteException {
-		port= new ParticipantRPCPort(epr);
+		port = new ParticipantRPCPort(epr);
 		return port.prepare();
-		//	keep the stub for commit or rollback			
+		//	keep the stub for commit or rollback
 	}
 
 	public void commit() throws RemoteException {
@@ -353,13 +358,13 @@ class RegisteredParticipant {
 		//	prepare is always called before commit
 		port.commit();
 		//	stub is no longer required
-		port= null;
+		port = null;
 	}
 
 	public void rollback() throws RemoteException {
 		if (port == null)
-			port= new ParticipantRPCPort(epr);
+			port = new ParticipantRPCPort(epr);
 		port.rollback();
-		port= null;
+		port = null;
 	}
 }
