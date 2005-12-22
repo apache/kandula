@@ -10,7 +10,7 @@
         
         <requestFlow>
 		<handler type="java:org.apache.axis.message.addressing.handler.AddressingHandler" />
-		<!-- use this handler for j2ee clients, e.g. inside Catalina -->
+		<!-- use this handler for j2ee clients, e.g. inside Catalina 
 		
 			<handler type="java:org.apache.ws.transaction.participant.j2ee.handler.TransactionHandler"/>
 		-->
