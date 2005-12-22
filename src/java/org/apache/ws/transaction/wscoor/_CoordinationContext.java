@@ -37,7 +37,7 @@ public class _CoordinationContext {
 	static final Name NAME_COORDINATION_CONTEXT=
 		new PrefixedQName("http://schemas.xmlsoap.org/ws/2004/10/wscoor", "CoordinationContext", "wscoor");
 	static final Name NAME_IDENTIFIER=
-		new PrefixedQName("http://schemas.xmlsoap.org/ws/2002/07/utility", "Identifier", "wsu");
+		new PrefixedQName("http://schemas.xmlsoap.org/ws/2004/10/wscoor", "Identifier", "wscoor");
 	static final Name NAME_COORDINATION_TYPE=
 		new PrefixedQName("http://schemas.xmlsoap.org/ws/2004/10/wscoor", "CoordinationType", "wscoor");
 	static final Name NAME_REGISTRATION_SERVICE=
@@ -81,8 +81,6 @@ public class _CoordinationContext {
 			System.out.println("[_CoordinationContext] 1.2");
 			String s = TextExtractor.getText(node);
 			System.out.println("[_CoordinationContext] 1.3");
-			if (s == null || s.trim().equals(""))
-				s = "urn:unknown";
 			ctx.setIdentifier(new CoordinationContextTypeIdentifier(s));
 
 			System.out.println("[_CoordinationContext] 2");
