@@ -20,12 +20,14 @@ import javax.transaction.xa.Xid;
 
 public class DummyXAResource implements XAResource {
 	int timeout= 1000;
-	boolean prepare= false;
+	boolean failOnPrepare= false;
 	boolean readOnly= false;
 
-	public DummyXAResource(boolean prepare, boolean readOnly) {
-		this.prepare= prepare;
-		this.readOnly= readOnly;
+	public DummyXAResource(boolean failOnPrepare, boolean readOnly) {
+		if (this.readOnly = readOnly)
+			this.failOnPrepare = false;
+		else
+			this.failOnPrepare= failOnPrepare;		
 	}
 
 	public void commit(Xid xid, boolean onePhase) throws XAException {
@@ -52,7 +54,7 @@ public class DummyXAResource implements XAResource {
 
 	public int prepare(Xid xid) throws XAException {
 		System.out.print("[DummyXAResource] prepare ");
-		if (!prepare) {
+		if (failOnPrepare) {
 			System.out.println("throw new XAException(XAException.XAER_RMERR)");
 			throw new XAException(XAException.XAER_RMERR);
 		}
