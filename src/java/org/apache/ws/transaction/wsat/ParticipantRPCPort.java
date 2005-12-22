@@ -33,7 +33,7 @@ public class ParticipantRPCPort {
 
 	public ParticipantRPCPort(org.apache.axis.message.addressing.EndpointReference epr) {
 		try {
-			stub= new ParticipantPortTypeRPCBindingStub(new URL(epr.getAddress().toString()), new Service(epr));
+			stub= new ParticipantRPCStub(new URL(epr.getAddress().toString()), new Service(epr));
 		}
 		catch (Exception e) {
 			throw new IllegalArgumentException(e.toString());

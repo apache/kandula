@@ -32,7 +32,7 @@ public class CompletionRPCPort {
 
 	public CompletionRPCPort(org.apache.axis.message.addressing.EndpointReference epr) {
 		try {
-			stub= new CompletionPortTypeRPCBindingStub(new URL(epr.getAddress().toString()), new Service(epr));
+			stub= new CompletionRPCStub(new URL(epr.getAddress().toString()), new Service(epr));
 		}
 		catch (Exception e) {
 			throw new IllegalArgumentException(e.toString());

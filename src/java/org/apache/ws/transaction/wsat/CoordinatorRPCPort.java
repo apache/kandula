@@ -31,7 +31,7 @@ public class CoordinatorRPCPort {
 
 	public CoordinatorRPCPort(org.apache.axis.message.addressing.EndpointReference epr) {
 		try {
-			stub= new CoordinatorPortTypeRPCBindingStub(new URL(epr.getAddress().toString()), new Service(epr));
+			stub= new CoordinatorRPCStub(new URL(epr.getAddress().toString()), new Service(epr));
 		}
 		catch (Exception e) {
 			throw new IllegalArgumentException(e.toString());
