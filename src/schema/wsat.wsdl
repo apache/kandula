@@ -20,8 +20,10 @@ No other rights are granted by implication, estoppel or otherwise.
                 namespace='http://schemas.xmlsoap.org/ws/2004/10/wsat'
                 schemaLocation='wsat.xsd' />
           </xs:schema>
-        </wsdl:types> 
+        </wsdl:types>
+        
 	<!-- Messages -->
+	
 	<wsdl:message name="Prepare">
 		<wsdl:part name="parameters" element="wsat:Prepare"/>
 	</wsdl:message>
@@ -52,7 +54,9 @@ No other rights are granted by implication, estoppel or otherwise.
 	<wsdl:message name="ReplayResponse">
 		<wsdl:part name="parameters" element="wsat:ReplayResponse"/>
 	</wsdl:message>
+	
 	<!-- Mandatory Asynchronous Messaging PortTypes -->
+	
 	<wsdl:portType name="CompletionCoordinatorPortType">
 		<wsdl:operation name="CommitOperation">
 			<wsdl:input message="wsat:Commit"
@@ -62,17 +66,51 @@ No other rights are granted by implication, estoppel or otherwise.
 			<wsdl:input message="wsat:Rollback"
 			  wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wsat/Rollback"/>
 		</wsdl:operation>
-	</wsdl:portType>
+	</wsdl:portType>	
+	
+	<wsdl:binding name="CompletionCoordinator" type="wsat:CompletionCoordinatorPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="CommitOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Commit" />
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+		<wsdl:operation name="RollbackOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Rollback" />
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>	
+	
 	<wsdl:portType name="CompletionInitiatorPortType">
 		<wsdl:operation name="CommittedOperation">
 			<wsdl:input message="wsat:Committed"
-			  wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wsat/Committed"/>
+			  wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wsat/Committed" />
 		</wsdl:operation>
 		<wsdl:operation name="AbortedOperation">
 			<wsdl:input message="wsat:Aborted"
-			  wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wsat/Aborted"/>
+			  wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wsat/Aborted" />
 		</wsdl:operation>
 	</wsdl:portType>
+
+	<wsdl:binding name="CompletionInitiator" type="wsat:CompletionInitiatorPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="CommittedOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Committed" />
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+		<wsdl:operation name="AbortedOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Aborted" />
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>	
+	
 	<wsdl:portType name="CoordinatorPortType">
 		<wsdl:operation name="PreparedOperation">
 			<wsdl:input message="wsat:Prepared"
@@ -84,7 +122,7 @@ No other rights are granted by implication, estoppel or otherwise.
 		</wsdl:operation>
 		<wsdl:operation name="ReadOnlyOperation">
 			<wsdl:input message="wsat:ReadOnly"
-			  wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wsatReadOnly"/>
+			  wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wsat/ReadOnly"/>
 		</wsdl:operation>
 		<wsdl:operation name="CommittedOperation">
 			<wsdl:input message="wsat:Committed"
@@ -94,7 +132,42 @@ No other rights are granted by implication, estoppel or otherwise.
 			<wsdl:input message="wsat:Replay"
 			  wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wsat/Replay"/>
 		</wsdl:operation>
-	</wsdl:portType>
+	</wsdl:portType>	
+	
+	<wsdl:binding name="Coordinator" type="wsat:CoordinatorPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="ReplayOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Replay"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+		<wsdl:operation name="AbortedOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Aborted"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+		<wsdl:operation name="ReadOnlyOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/ReadOnly"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+		<wsdl:operation name="PreparedOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Prepared"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+		<wsdl:operation name="CommittedOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Committed" />
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>	
+	
 	<wsdl:portType name="ParticipantPortType">
 		<wsdl:operation name="PrepareOperation">
 			<wsdl:input message="wsat:Prepare"
@@ -108,8 +181,32 @@ No other rights are granted by implication, estoppel or otherwise.
 			<wsdl:input message="wsat:Rollback"
 			  wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wsat/Rollback"/>
 		</wsdl:operation>
-	</wsdl:portType>
+	</wsdl:portType>	
+	
+	<wsdl:binding name="Participant" type="wsat:ParticipantPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="PrepareOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Prepare"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+		<wsdl:operation name="CommitOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Commit"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+		<wsdl:operation name="RollbackOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Rollback"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>	
+	
 	<!-- Optional Syncronous RPC Port Types -->
+	
 	<wsdl:portType name="CompletionPortTypeRPC">
 		<wsdl:operation name="CommitOperation">
 			<wsdl:input message="wsat:Commit"
@@ -124,6 +221,29 @@ No other rights are granted by implication, estoppel or otherwise.
 			  wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wsat/Aborted"/>
 		</wsdl:operation>
 	</wsdl:portType>
+	
+	<wsdl:binding name="CompletionRPC" type="wsat:CompletionPortTypeRPC">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="CommitOperation">
+			<soap:operation soapAction="http://foo"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="RollbackOperation">
+			<soap:operation soapAction="http://foo"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>	
+	
 	<wsdl:portType name="ParticipantPortTypeRPC">
 		<wsdl:operation name="PrepareOperation">
 			<wsdl:input message="wsat:Prepare"
@@ -144,6 +264,39 @@ No other rights are granted by implication, estoppel or otherwise.
 			  wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wsat/Aborted"/>
 		</wsdl:operation>
 	</wsdl:portType>
+
+	<wsdl:binding name="ParticipantRPC" type="wsat:ParticipantPortTypeRPC">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="PrepareOperation">
+			<soap:operation soapAction="http://foo"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="CommitOperation">
+			<soap:operation soapAction="http://foo"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="RollbackOperation">
+			<soap:operation soapAction="http://foo"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	
+	
 	<wsdl:portType name="CoordinatorPortTypeRPC">
 		<wsdl:operation name="ReplayOperation">
 			<wsdl:input message="wsat:Replay"
@@ -162,33 +315,10 @@ No other rights are granted by implication, estoppel or otherwise.
 	</wsdl:portType>
 
 
-
-<wsdl:binding name="CompletionPortTypeRPCBinding" type="wsat:CompletionPortTypeRPC">
-		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-		<wsdl:operation name="CommitOperation">
-			<soap:operation soapAction="http://xxx"/>
-			<wsdl:input>
-				<soap:body use="literal"/>
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal"/>
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="RollbackOperation">
-			<soap:operation soapAction="http://xxx"/>
-			<wsdl:input>
-				<soap:body use="literal"/>
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal"/>
-			</wsdl:output>
-		</wsdl:operation>
-</wsdl:binding>
-
-<wsdl:binding name="CoordinatorPortTypeRPCBinding" type="wsat:CoordinatorPortTypeRPC">
+	<wsdl:binding name="CoordinatorRPC" type="wsat:CoordinatorPortTypeRPC">
 		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
 		<wsdl:operation name="ReplayOperation">
-			<soap:operation soapAction="http://xxx"/>
+			<soap:operation soapAction="http://foo"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -197,7 +327,7 @@ No other rights are granted by implication, estoppel or otherwise.
 			</wsdl:output>
 		</wsdl:operation>
 		<wsdl:operation name="AbortedOperation">
-			<soap:operation soapAction="http://xxx"/>
+			<soap:operation soapAction="http://foo"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -206,7 +336,7 @@ No other rights are granted by implication, estoppel or otherwise.
 			</wsdl:output>
 		</wsdl:operation>
 		<wsdl:operation name="ReadOnlyOperation">
-			<soap:operation soapAction="http://xxx"/>
+			<soap:operation soapAction="http://foo"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -214,55 +344,31 @@ No other rights are granted by implication, estoppel or otherwise.
 				<soap:body use="literal"/>
 			</wsdl:output>
 		</wsdl:operation>
-</wsdl:binding>
+	</wsdl:binding>
 
-<wsdl:binding name="ParticipantPortTypeRPCBinding" type="wsat:ParticipantPortTypeRPC">
-		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-		<wsdl:operation name="PrepareOperation">
-			<soap:operation soapAction="http://xxx"/>
-			<wsdl:input>
-				<soap:body use="literal"/>
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal"/>
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="CommitOperation">
-			<soap:operation soapAction="http://xxx"/>
-			<wsdl:input>
-				<soap:body use="literal"/>
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal"/>
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="RollbackOperation">
-			<soap:operation soapAction="http://xxx"/>
-			<wsdl:input>
-				<soap:body use="literal"/>
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="literal"/>
-			</wsdl:output>
-		</wsdl:operation>
-</wsdl:binding>
-
-
-
-<wsdl:service name="xxx">		
-		<wsdl:port binding="wsat:ParticipantPortTypeRPCBinding" name="ParticipantRPC">
+	<wsdl:service name="foo">
+		<wsdl:port binding="wsat:Participant" name="Participant">
+      			<soap:address location="http://localhost:8081/axis/services/Participant"/>
+   		</wsdl:port>
+		<wsdl:port binding="wsat:Coordinator" name="Coordinator">
+      			<soap:address location="http://localhost:8081/axis/services/Coordinator"/>
+   		</wsdl:port>
+		<wsdl:port binding="wsat:CompletionInitiator" name="CompletionInitiator">
+   			<soap:address location="http://localhost:8081/axis/services/CompletionInitiator"/>
+   		</wsdl:port>
+		<wsdl:port binding="wsat:CompletionCoordinator" name="CompletionCoordinator">
+   			<soap:address location="http://localhost:8081/axis/services/CompletionCoordinator"/>
+   		</wsdl:port>   					
+		<wsdl:port binding="wsat:ParticipantRPC" name="ParticipantRPC">
       			<soap:address location="http://localhost:8081/axis/services/ParticipantRPC"/>
    		</wsdl:port>
-		<wsdl:port binding="wsat:CoordinatorPortTypeRPCBinding" name="CoordinatorRPC">
+		<wsdl:port binding="wsat:CoordinatorRPC" name="CoordinatorRPC">
       			<soap:address location="http://localhost:8081/axis/services/CoordinatorRPC"/>
    		</wsdl:port>
-		<wsdl:port binding="wsat:CompletionPortTypeRPCBinding" name="CompletionRPC">
+		<wsdl:port binding="wsat:CompletionRPC" name="CompletionRPC">
    			<soap:address location="http://localhost:8081/axis/services/CompletionRPC"/>
    		</wsdl:port>
-</wsdl:service>
-
-
-
+	</wsdl:service>
 
 </wsdl:definitions>
 
