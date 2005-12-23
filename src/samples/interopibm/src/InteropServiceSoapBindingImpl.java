@@ -36,8 +36,15 @@ public class InteropServiceSoapBindingImpl implements InteropService_PortType {
 		return null;
 	}
 
-	public java.lang.String completionRollback(java.lang.String part)
+	public java.lang.String completionRollback(java.lang.String coord)
 			throws java.rmi.RemoteException {
+		try {
+			EndpointReference epr = new EndpointReference(coord);
+			tm.begin(epr);
+			tm.rollback();
+		} catch (Exception e) {
+			throw new RemoteException(e.getMessage());
+		}
 		return null;
 	}
 	
