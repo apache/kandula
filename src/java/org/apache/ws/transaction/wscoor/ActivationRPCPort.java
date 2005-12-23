@@ -32,7 +32,12 @@ public class ActivationRPCPort {
 
 	public ActivationRPCPort(org.apache.axis.message.addressing.EndpointReference epr) {
 		try {
-			stub= new ActivationPortTypeRPCBindingStub(new URL(epr.getAddress().toString()), new Service(epr));
+			String url = epr.getAddress().toString();
+			// FIXME: 
+			// the following line was added for interop testing against IBM endpoint  
+			url= url.replaceAll("wsi\\.alphaworks\\.ibm\\.com:8080", "localhost:8082");
+			System.out.print(url);
+			stub= new ActivationPortTypeRPCBindingStub(new URL(url), new Service(epr));
 		}
 		catch (Exception e) {
 			throw new IllegalArgumentException(e.toString());
