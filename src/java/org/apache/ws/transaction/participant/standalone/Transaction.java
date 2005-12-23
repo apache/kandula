@@ -19,8 +19,8 @@ package org.apache.ws.transaction.participant.standalone;
 import java.rmi.RemoteException;
 
 import org.apache.ws.transaction.utility.EndpointReferenceFactory;
+import org.apache.ws.transaction.wsat.CompletionInitiatorEndpoint;
 import org.apache.ws.transaction.wsat.CompletionRPCPort;
-import org.apache.ws.transaction.wsat.ParticipantRPCEndpoint;
 import org.apache.ws.transaction.wscoor._CoordinationContext;
 
 /**
@@ -35,10 +35,9 @@ public class Transaction {
 
 	public Transaction(_CoordinationContext ctx) throws RemoteException {
 		this.ctx = ctx;
-		// FIXME: 
 		compPort = new CompletionRPCPort(ctx.register(COMPLETION_PROTOCOL,
 				EndpointReferenceFactory.getInstance().getEndpointReference(
-						ParticipantRPCEndpoint.PORT_TYPE, null)));
+						CompletionInitiatorEndpoint.PORT_TYPE, null)));
 	}
 
 	public _CoordinationContext getCoordinationContex() {
