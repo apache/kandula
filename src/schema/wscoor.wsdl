@@ -34,31 +34,82 @@ No other rights are granted by implication, estoppel or otherwise.
   <wsdl:message name="RegisterResponse">
     <wsdl:part name="parameters" element="wscoor:RegisterResponse"/>
   </wsdl:message>
+  
   <!-- Manditory Asyncronous PortTypes -->
+  
   <wsdl:portType name="ActivationCoordinatorPortType">
     <wsdl:operation name="CreateCoordinationContextOperation">
       <wsdl:input message="wscoor:CreateCoordinationContext"
         wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wscoor/CreateCoordinationContext"/>
     </wsdl:operation>
   </wsdl:portType>
+  
+  <wsdl:binding name="ActivationCoordinatorBinding" type="wscoor:ActivationCoordinatorPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="CreateCoordinationContextOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wscoor/CreateCoordinationContext"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>
+  
   <wsdl:portType name="ActivationRequesterPortType">
     <wsdl:operation name="CreateCoordinationContextResponseOperation">
       <wsdl:input message="wscoor:CreateCoordinationContextResponse"
         wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wscoor/CreateCoordinationContextResponse"/>
     </wsdl:operation>
   </wsdl:portType>
+  
+    <wsdl:binding name="ActivationRequesterBinding" type="wscoor:ActivationRequesterPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="CreateCoordinationContextResponseOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wscoor/CreateCoordinationContextResponse"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>
+    
   <wsdl:portType name="RegistrationCoordinatorPortType">
     <wsdl:operation name="RegisterOperation">
       <wsdl:input message="wscoor:Register"
         wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wscoor/Register"/>
     </wsdl:operation>
   </wsdl:portType>
+  
+    <wsdl:binding name="RegistrationCoordinatorBinding" type="wscoor:RegistrationCoordinatorPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="RegisterOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wscoor/Register"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>
+    
+  
   <wsdl:portType name="RegistrationRequesterPortType">
     <wsdl:operation name="RegisterResponseOperation">
       <wsdl:input message="wscoor:RegisterResponse"
         wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wscoor/RegisterResponse"/>
     </wsdl:operation>
   </wsdl:portType>
+  
+    <wsdl:binding name="RegistrationRequesterBinding" type="wscoor:RegistrationRequesterPortType">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+		<wsdl:operation name="RegisterResponseOperation">
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wscoor/RegisterResponse"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+		</wsdl:operation>
+	</wsdl:binding>
+    
+  
+  
+  
+  
   <!-- Optional Syncronous RPC Port Types -->
   <wsdl:portType name="ActivationPortTypeRPC">
     <wsdl:operation name="CreateCoordinationContextOperation">
@@ -105,6 +156,18 @@ No other rights are granted by implication, estoppel or otherwise.
 </wsdl:binding>
 
 <wsdl:service name="xxx">
+		<wsdl:port binding="wscoor:ActivationCoordinatorBinding" name="ActivationCoordinator">
+      			<soap:address location="http://localhost:8081/axis/services/ActivationCoordinator"/>
+   		</wsdl:port>
+		<wsdl:port binding="wscoor:ActivationRequesterBinding" name="ActivationRequester">
+      			<soap:address location="http://localhost:8081/axis/services/ActivationRequester"/>
+   		</wsdl:port>
+   				<wsdl:port binding="wscoor:RegistrationCoordinatorBinding" name="RegistrationCoordinator">
+      			<soap:address location="http://localhost:8081/axis/services/RegistrationCoordinator"/>
+   		</wsdl:port>
+		<wsdl:port binding="wscoor:RegistrationRequesterBinding" name="RegistrationRequester">
+      			<soap:address location="http://localhost:8081/axis/services/RegistrationRequester"/>
+   		</wsdl:port>
 		<wsdl:port binding="wscoor:ActivationPortTypeRPCBinding" name="ActivationRPC">
       			<soap:address location="http://localhost:8081/axis/services/ActivationRPC"/>
    		</wsdl:port>
