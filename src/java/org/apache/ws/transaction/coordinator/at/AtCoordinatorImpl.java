@@ -37,17 +37,12 @@ import org.apache.ws.transaction.wsat.ParticipantRPCPort;
 import org.apache.ws.transaction.wsat.Vote;
 
 public class AtCoordinatorImpl extends CoordinatorImpl implements AtCoordinator {
-	static final String COMPLETION_PROTOCOL = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Completion";
-
-	static final String VOLATILE_2PC_PROTOCOL = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Volatile2PC";
-
-	static final String DURABLE_2PC_PROTOCOL = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Durable2PC";
 
 	int status = Status.STATUS_NO_TRANSACTION;
 
 	private List participants = Collections.synchronizedList(new ArrayList());
 
-	XidImpl xid;
+	private XidImpl xid;
 
 	public AtCoordinatorImpl(XidImpl xid) {
 		super(xid.toActivityId(), COORDINATION_TYPE);
@@ -66,27 +61,28 @@ public class AtCoordinatorImpl extends CoordinatorImpl implements AtCoordinator 
 		if (status != Status.STATUS_ACTIVE)
 			throw new IllegalStateException();
 		//	according to the specification we should continue to enlist
-		//	durable 2PC participants during the prepare phase of volatile participants
+		//	durable 2PC participants during the prepare phase of volatile
+		// participants
 		//	however we ignore this for now
 
 		String temp = protocol.toString();
 
-		if (temp.equals(COMPLETION_PROTOCOL))
+		if (temp.equals(PROTOCOL_ID_COMPLETION))
 			return EndpointReferenceFactory.getInstance().getEndpointReference(
 					CompletionRPCEndpoint.PORT_TYPE,
 					xid.toReferencePropertiesType());
 		else {
 			XidImpl branch = xid.newBranch();
-			if (temp.equals(VOLATILE_2PC_PROTOCOL))
+			if (temp.equals(PROTOCOL_ID_VOLATILE_2PC))
 				participants.add(new RegisteredParticipant(branch, true,
 						participant));
-			else if (temp.equals(DURABLE_2PC_PROTOCOL))
+			else if (temp.equals(PROTOCOL_ID_DURABLE_2PC))
 				participants.add(new RegisteredParticipant(branch, false,
 						participant));
 			else
 				throw new UnknownCoordinationProtocolException(protocol
 						.toString());
-			
+
 			return EndpointReferenceFactory.getInstance().getEndpointReference(
 					CoordinatorRPCEndpoint.PORT_TYPE,
 					branch.toReferencePropertiesType());
@@ -179,6 +175,7 @@ public class AtCoordinatorImpl extends CoordinatorImpl implements AtCoordinator 
 	}
 
 	protected int prepare() {
+		System.out.println("\nAAAAAAAAAAA1");
 		lock();
 
 		switch (status) {
@@ -193,10 +190,11 @@ public class AtCoordinatorImpl extends CoordinatorImpl implements AtCoordinator 
 		status = Status.STATUS_PREPARING;
 
 		unlock();
-
+		System.out.println("\nAAAAAAAAAAA2");
 		boolean readOnly = true;
 		Iterator iter = participants.iterator();
 		while (iter.hasNext() && status == Status.STATUS_PREPARING) {
+			System.out.println("\nAAAAAAAAAAA3");
 			RegisteredParticipant participant = (RegisteredParticipant) iter
 					.next();
 			if (!participant._volatile || participant.readOnly)
@@ -220,9 +218,10 @@ public class AtCoordinatorImpl extends CoordinatorImpl implements AtCoordinator 
 				return status;
 			}
 		}
-
+		System.out.println("\nAAAAAAAAAAA4");
 		iter = participants.iterator();
 		while (iter.hasNext() && status == Status.STATUS_PREPARING) {
+			System.out.println("\nAAAAAAAAAAA5");
 			RegisteredParticipant participant = (RegisteredParticipant) iter
 					.next();
 			if (participant._volatile || participant.readOnly)
@@ -246,13 +245,13 @@ public class AtCoordinatorImpl extends CoordinatorImpl implements AtCoordinator 
 			}
 
 		}
-
+		System.out.println("\nAAAAAAAAAAA6");
 		lock();
 		if (status == Status.STATUS_PREPARING)
 			status = readOnly ? Status.STATUS_COMMITTED
 					: Status.STATUS_PREPARED;
 		unlock();
-
+		System.out.println("\nAAAAAAAAAAA7");
 		return status;
 	}
 
