@@ -26,5 +26,5 @@ import org.apache.ws.transaction.wscoor._CoordinationContext;
 public interface Coordinator {
 	Identifier getActivityId();
 	_CoordinationContext getCoordinationContext();
-	EndpointReference registerParticipant(URI protocol, EndpointReference participant);
+	EndpointReference registerParticipant(URI protocol, EndpointReference participant) throws InvalidCoordinationProtocolException;
 }
