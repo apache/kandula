@@ -22,6 +22,8 @@ import java.util.Map;
 
 import javax.transaction.Transaction;
 
+import org.apache.axis.message.addressing.EndpointReference;
+import org.apache.axis.message.addressing.ReferencePropertiesType;
 import org.apache.ws.transaction.coordinator.at.AtCoordinator;
 import org.apache.ws.transaction.coordinator.at.AtCoordinatorImpl;
 import org.apache.ws.transaction.coordinator.at.AtSubCoordinator;
@@ -71,5 +73,25 @@ public class CoordinationService {
 		Coordinator coordinator= (Coordinator)coordinators.remove(activityId);
 		if (coordinator == null)
 			throw new UnknownActivityException(activityId);
+	}
+	
+	public EndpointReference getRegistrationService() {
+		// TODO
+		return null;
+	}
+	
+	public EndpointReference getCompletionCoordinatorService() {
+		// TODO
+		return null;
+	}
+	
+	public EndpointReference getCoordinatorService() {
+		// TODO
+		return null;
+	}
+	
+	public ReferencePropertiesType getReferenceProperties(MsgCoordinator coord, String param){
+		// TODO
+		return null;
 	}
 }
