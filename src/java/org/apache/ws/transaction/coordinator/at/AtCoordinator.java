@@ -25,6 +25,12 @@ import org.apache.ws.transaction.coordinator.Coordinator;
 public interface AtCoordinator extends Coordinator {
 	final String COORDINATION_TYPE= "http://schemas.xmlsoap.org/ws/2004/10/wsat";
 	
+	final String PROTOCOL_ID_COMPLETION = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Completion";
+
+	final String PROTOCOL_ID_VOLATILE_2PC = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Volatile2PC";
+
+	final String PROTOCOL_ID_DURABLE_2PC = "http://schemas.xmlsoap.org/ws/2004/10/wsat/Durable2PC";
+	
 	void commit();
 	void rollback();
 	void readOnly(Xid branch);
