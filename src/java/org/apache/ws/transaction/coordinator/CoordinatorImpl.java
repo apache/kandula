@@ -16,6 +16,7 @@
  */
 package org.apache.ws.transaction.coordinator;
 
+import org.apache.axis.message.addressing.ReferencePropertiesType;
 import org.apache.ws.transaction.utility.EndpointReferenceFactory;
 import org.apache.ws.transaction.wscoor.RegistrationRPCEndpoint;
 import org.apache.ws.transaction.wscoor._CoordinationContext;
@@ -29,7 +30,7 @@ public abstract class CoordinatorImpl implements Coordinator {
 		this.activityId= activityId;
 		coordinationContext=
 			new _CoordinationContext(
-				activityId,
+				activityId.toString(),
 				coordinationType,
 				EndpointReferenceFactory.getInstance().getEndpointReference(
 					RegistrationRPCEndpoint.PORT_TYPE,
