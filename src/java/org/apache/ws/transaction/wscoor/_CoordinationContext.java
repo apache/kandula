@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
 public class _CoordinationContext {
 	static final Name NAME_COORDINATION_CONTEXT=
 		new PrefixedQName("http://schemas.xmlsoap.org/ws/2004/10/wscoor", "CoordinationContext", "wscoor");
-	static final Name NAME_IDENTIFIER=
+	public static final Name QNAME_IDENTIFIER=
 		new PrefixedQName("http://schemas.xmlsoap.org/ws/2004/10/wscoor", "Identifier", "wscoor");
 	static final Name NAME_COORDINATION_TYPE=
 		new PrefixedQName("http://schemas.xmlsoap.org/ws/2004/10/wscoor", "CoordinationType", "wscoor");
@@ -54,11 +54,11 @@ public class _CoordinationContext {
 	}
 
 	public _CoordinationContext(
-		Identifier identifier,
+		String id,
 		String coordinationType,
 		EndpointReference registrationServiceEndpoint) {
 		ctx= new CoordinationContext();
-		ctx.setIdentifier(new CoordinationContextTypeIdentifier(identifier.toString()));
+		ctx.setIdentifier(new CoordinationContextTypeIdentifier(id));
 		ctx.setRegistrationService(registrationServiceEndpoint);
 		try {
 			ctx.setCoordinationType(new URI(coordinationType));
@@ -75,7 +75,7 @@ public class _CoordinationContext {
 		System.out.println("[_CoordinationContext] 1");
 		try {			
 			NodeList list=
-				el.getElementsByTagNameNS(NAME_IDENTIFIER.getURI(), NAME_IDENTIFIER.getLocalName());
+				el.getElementsByTagNameNS(QNAME_IDENTIFIER.getURI(), QNAME_IDENTIFIER.getLocalName());
 			System.out.println("[_CoordinationContext] 1.1");
 			Element node= (Element)list.item(0);
 			System.out.println("[_CoordinationContext] 1.2");
@@ -119,7 +119,7 @@ public class _CoordinationContext {
 	public void toSOAPHeaderElement(SOAPHeader header) {
 		try {
 			SOAPHeaderElement e= header.addHeaderElement(NAME_COORDINATION_CONTEXT);
-			e.addChildElement(NAME_IDENTIFIER).addTextNode(ctx.getIdentifier().toString());
+			e.addChildElement(QNAME_IDENTIFIER).addTextNode(ctx.getIdentifier().toString());
 			e.addChildElement(NAME_COORDINATION_TYPE).addTextNode(ctx.getCoordinationType().toString());
 			SOAPElement e1= e.addChildElement(NAME_REGISTRATION_SERVICE);
 			org.apache.axis.message.addressing.EndpointReferenceType registrationEndpoint=
