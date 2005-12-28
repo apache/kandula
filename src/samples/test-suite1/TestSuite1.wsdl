@@ -1,0 +1,638 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:test" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:impl" xmlns:intf="urn:test" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.3
+Built on Oct 05, 2005 (05:23:37 EDT)-->
+
+   <wsdl:message name="testReadonlyRollbackResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="testPrepareRollbackResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="testRollbackFailureResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="testRollbackResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="testMarkedRollbackCommitRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="testEarlyRollbackRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="testPrepareCommitResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="testEarlyCommitRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="testCommitFailureResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="testPrepareRollbackRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="enlistXA_OKOnPrepareResourceOperationResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="testReadonlyCommitResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="testCommitFailureRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="justReturnOperationRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="markTransactionForRollbackOperationRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="testReadonlyCommitRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="rollbackTransactionOperationResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="testPrepareCommitRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="testMarkedRollbackCommitResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="testRollbackFailureRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="justReturnOperationResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="testEarlyRollbackResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="commitTransactionOperationResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="enlistXAExceptionOnCommitRollbackResourceOperationRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="testRollbackRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="rollbackTransactionOperationRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="commitTransactionOperationRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="enlistXAExceptionOnPrepareResourceOperationRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="enlistXA_OKOnPrepareResourceOperationRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="markTransactionForRollbackOperationResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="testEarlyCommitResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="testMarkedRollbackRollbackRequest">
+
+   </wsdl:message>
+
+   <wsdl:message name="testMarkedRollbackRollbackResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="enlistXAExceptionOnCommitRollbackResourceOperationResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="enlistXAExceptionOnPrepareResourceOperationResponse">
+
+   </wsdl:message>
+
+   <wsdl:message name="testReadonlyRollbackRequest">
+
+   </wsdl:message>
+
+   <wsdl:portType name="TestSuite1PortType">
+
+      <wsdl:operation name="testReadonlyCommit">
+
+         <wsdl:input message="intf:testReadonlyCommitRequest" name="testReadonlyCommitRequest"/>
+
+         <wsdl:output message="intf:testReadonlyCommitResponse" name="testReadonlyCommitResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testReadonlyRollback">
+
+         <wsdl:input message="intf:testReadonlyRollbackRequest" name="testReadonlyRollbackRequest"/>
+
+         <wsdl:output message="intf:testReadonlyRollbackResponse" name="testReadonlyRollbackResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testRollback">
+
+         <wsdl:input message="intf:testRollbackRequest" name="testRollbackRequest"/>
+
+         <wsdl:output message="intf:testRollbackResponse" name="testRollbackResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testPrepareCommit">
+
+         <wsdl:input message="intf:testPrepareCommitRequest" name="testPrepareCommitRequest"/>
+
+         <wsdl:output message="intf:testPrepareCommitResponse" name="testPrepareCommitResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testPrepareRollback">
+
+         <wsdl:input message="intf:testPrepareRollbackRequest" name="testPrepareRollbackRequest"/>
+
+         <wsdl:output message="intf:testPrepareRollbackResponse" name="testPrepareRollbackResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testEarlyCommit">
+
+         <wsdl:input message="intf:testEarlyCommitRequest" name="testEarlyCommitRequest"/>
+
+         <wsdl:output message="intf:testEarlyCommitResponse" name="testEarlyCommitResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testEarlyRollback">
+
+         <wsdl:input message="intf:testEarlyRollbackRequest" name="testEarlyRollbackRequest"/>
+
+         <wsdl:output message="intf:testEarlyRollbackResponse" name="testEarlyRollbackResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testMarkedRollbackCommit">
+
+         <wsdl:input message="intf:testMarkedRollbackCommitRequest" name="testMarkedRollbackCommitRequest"/>
+
+         <wsdl:output message="intf:testMarkedRollbackCommitResponse" name="testMarkedRollbackCommitResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testMarkedRollbackRollback">
+
+         <wsdl:input message="intf:testMarkedRollbackRollbackRequest" name="testMarkedRollbackRollbackRequest"/>
+
+         <wsdl:output message="intf:testMarkedRollbackRollbackResponse" name="testMarkedRollbackRollbackResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testCommitFailure">
+
+         <wsdl:input message="intf:testCommitFailureRequest" name="testCommitFailureRequest"/>
+
+         <wsdl:output message="intf:testCommitFailureResponse" name="testCommitFailureResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testRollbackFailure">
+
+         <wsdl:input message="intf:testRollbackFailureRequest" name="testRollbackFailureRequest"/>
+
+         <wsdl:output message="intf:testRollbackFailureResponse" name="testRollbackFailureResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="justReturnOperation">
+
+         <wsdl:input message="intf:justReturnOperationRequest" name="justReturnOperationRequest"/>
+
+         <wsdl:output message="intf:justReturnOperationResponse" name="justReturnOperationResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="enlistXA_OKOnPrepareResourceOperation">
+
+         <wsdl:input message="intf:enlistXA_OKOnPrepareResourceOperationRequest" name="enlistXA_OKOnPrepareResourceOperationRequest"/>
+
+         <wsdl:output message="intf:enlistXA_OKOnPrepareResourceOperationResponse" name="enlistXA_OKOnPrepareResourceOperationResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="enlistXAExceptionOnPrepareResourceOperation">
+
+         <wsdl:input message="intf:enlistXAExceptionOnPrepareResourceOperationRequest" name="enlistXAExceptionOnPrepareResourceOperationRequest"/>
+
+         <wsdl:output message="intf:enlistXAExceptionOnPrepareResourceOperationResponse" name="enlistXAExceptionOnPrepareResourceOperationResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="markTransactionForRollbackOperation">
+
+         <wsdl:input message="intf:markTransactionForRollbackOperationRequest" name="markTransactionForRollbackOperationRequest"/>
+
+         <wsdl:output message="intf:markTransactionForRollbackOperationResponse" name="markTransactionForRollbackOperationResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="commitTransactionOperation">
+
+         <wsdl:input message="intf:commitTransactionOperationRequest" name="commitTransactionOperationRequest"/>
+
+         <wsdl:output message="intf:commitTransactionOperationResponse" name="commitTransactionOperationResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="rollbackTransactionOperation">
+
+         <wsdl:input message="intf:rollbackTransactionOperationRequest" name="rollbackTransactionOperationRequest"/>
+
+         <wsdl:output message="intf:rollbackTransactionOperationResponse" name="rollbackTransactionOperationResponse"/>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="enlistXAExceptionOnCommitRollbackResourceOperation">
+
+         <wsdl:input message="intf:enlistXAExceptionOnCommitRollbackResourceOperationRequest" name="enlistXAExceptionOnCommitRollbackResourceOperationRequest"/>
+
+         <wsdl:output message="intf:enlistXAExceptionOnCommitRollbackResourceOperationResponse" name="enlistXAExceptionOnCommitRollbackResourceOperationResponse"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="TestSuite1SoapBinding" type="intf:TestSuite1PortType">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="testReadonlyCommit">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="testReadonlyCommitRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="testReadonlyCommitResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testReadonlyRollback">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="testReadonlyRollbackRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="testReadonlyRollbackResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testRollback">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="testRollbackRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="testRollbackResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testPrepareCommit">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="testPrepareCommitRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="testPrepareCommitResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testPrepareRollback">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="testPrepareRollbackRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="testPrepareRollbackResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testEarlyCommit">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="testEarlyCommitRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="testEarlyCommitResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testEarlyRollback">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="testEarlyRollbackRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="testEarlyRollbackResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testMarkedRollbackCommit">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="testMarkedRollbackCommitRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="testMarkedRollbackCommitResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testMarkedRollbackRollback">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="testMarkedRollbackRollbackRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="testMarkedRollbackRollbackResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testCommitFailure">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="testCommitFailureRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="testCommitFailureResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="testRollbackFailure">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="testRollbackFailureRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="testRollbackFailureResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="justReturnOperation">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="justReturnOperationRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="justReturnOperationResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="enlistXA_OKOnPrepareResourceOperation">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="enlistXA_OKOnPrepareResourceOperationRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="enlistXA_OKOnPrepareResourceOperationResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="enlistXAExceptionOnPrepareResourceOperation">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="enlistXAExceptionOnPrepareResourceOperationRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="enlistXAExceptionOnPrepareResourceOperationResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="markTransactionForRollbackOperation">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="markTransactionForRollbackOperationRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="markTransactionForRollbackOperationResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="commitTransactionOperation">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="commitTransactionOperationRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="commitTransactionOperationResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="rollbackTransactionOperation">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="rollbackTransactionOperationRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="rollbackTransactionOperationResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+      <wsdl:operation name="enlistXAExceptionOnCommitRollbackResourceOperation">
+
+         <wsdlsoap:operation soapAction="http://foo"/>
+
+         <wsdl:input name="enlistXAExceptionOnCommitRollbackResourceOperationRequest">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="enlistXAExceptionOnCommitRollbackResourceOperationResponse">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="TestSuite1PortTypeService">
+
+      <wsdl:port binding="intf:TestSuite1SoapBinding" name="TestSuite1">
+
+         <wsdlsoap:address location="http://localhost:8081/axis/services/TestSuite1"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

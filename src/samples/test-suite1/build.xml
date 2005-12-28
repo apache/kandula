@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<project name="kandula"
+	 default="compile"
+	 basedir=".">
+
+	 <property name="src.dir" value="src" />	 
+ 	 <property name="build.dir" value="build" />
+ 	 <property name="home.dir" value="../../.." />
+  	 
+	 <property file="${home.dir}/build.properties" />  	  	 
+	 
+	 <path id="base.classpath">
+	 	<fileset dir="${home.dir}/target/lib" >
+	 		<include name="**/*.jar" />
+		</fileset>
+	 	<fileset dir="${home.dir}/target" >
+		 	<include name="**/*.jar" />
+		</fileset>		
+	 </path>
+	 
+	 <taskdef resource="axis-tasks.properties"  classpathref="base.classpath" />
+	 
+	 <target name="compile" depends="wsdl2java" >
+	 	<javac srcdir="${src.dir};${build.dir}/src" destdir="${build.dir}">
+	 		<classpath refid="base.classpath" />
+	 	</javac>
+	 </target>
+	 
+	 <target name="clean" >
+	 	<delete dir="${build.dir}" /> 	
+	 </target> 
+
+	 <target name="init" >
+	 	<mkdir dir="${build.dir}" />
+	 	<mkdir dir="${build.dir}/src" />
+	 </target>
+	 
+	 <target name="wsdl2java" depends="init">
+		 <axis-wsdl2java
+		 	output="${build.dir}/src"
+		 	serverside = "false"
+		 	testcase = "false"
+		 	url= "TestSuite1.wsdl" >
+	 		<mapping namespace="urn:test" package="" />
+		 </axis-wsdl2java>
+	</target>
+	
+	 <target name="java2wsdl" > 		 		
+		 <axis-java2wsdl
+		 	output="TestSuite1.wsdl"		 	
+	 		classname = "TestSuite1PortType" 
+		 	location = "http://localhost:8081/axis/services/TestSuite1"
+	 	    soapaction = "http://ws.apache.org/kandula/test"
+	 		namespace ="urn:test" 
+		 	namespaceimpl = "urn:impl"
+		 	style = "document" >
+		 	<classpath >
+		 		<pathelement location = "${basedir}"/>
+		 	</classpath>
+	 	</axis-java2wsdl>
+	</target>
+
+	<!--
+	 <target name="temp" depends="init">
+		 <axis-wsdl2java
+		 	output="temp"
+		 	verbose="true"
+		 	serverside="true"
+		 	url="${basedir}/../../schema/wscoor.wsdl" >
+    		<mapping namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" package="org.apache.axis.message.addressing"/>
+    		<mapping namespace="http://schemas.xmlsoap.org/ws/2004/10/wsat" package="org.apache.ws.transaction.wsat"/>
+    		<mapping namespace="http://schemas.xmlsoap.org/ws/2004/10/wscoor" package="org.apache.ws.transaction.wscoor"/>    
+		 </axis-wsdl2java>
+	</target>
+-->
+	<target name="dist" depends="compile">
+		<jar jarfile="${build.dir}/test-suite1.jar">
+			<fileset dir="${build.dir}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+	</target>
+	
+	<target name="test" >
+	 	<junit printsummary="withOutAndErr" >
+	 		<formatter type="plain"/>
+	 		<classpath>	 			
+		 		<path refid="base.classpath" />
+	 			<fileset dir="${basedir}/build" includes="*.jar" />
+		 		<pathelement location="${ws-tx.dir}/conf" />
+		 	</classpath>
+	 		<test name="TestSuite1PortTypeServiceTestCase" />
+		</junit>
+	 </target>
+</project>
