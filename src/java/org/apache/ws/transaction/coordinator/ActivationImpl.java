@@ -18,7 +18,6 @@ package org.apache.ws.transaction.coordinator;
 
 import java.rmi.RemoteException;
 
-import org.apache.axis.types.URI.MalformedURIException;
 import org.apache.ws.transaction.wscoor.ActivationPortTypeRPC;
 import org.apache.ws.transaction.wscoor.CreateCoordinationContextResponseType;
 import org.apache.ws.transaction.wscoor.CreateCoordinationContextType;
@@ -26,22 +25,8 @@ import org.apache.ws.transaction.wscoor.CreateCoordinationContextType;
 public class ActivationImpl implements ActivationPortTypeRPC {
 
 	public CreateCoordinationContextResponseType createCoordinationContextOperation(
-			CreateCoordinationContextType parameters) throws RemoteException {
-
-		String t = parameters.getCoordinationType().toString();
-		CoordinationContext ctx;
-		try {
-			ctx = CoordinationService.getInstance().createCoordinationContext(t);
-		} catch (MalformedURIException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		} catch (UnsupportedCoordinationTypeException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-		CreateCoordinationContextResponseType r = new CreateCoordinationContextResponseType();
-		r.setCoordinationContext(ctx);
-		return r;
-
+			CreateCoordinationContextType params) throws RemoteException {
+		return CoordinationService.getInstance().createCoordinationContextOperation(
+			params);
 	}
 }

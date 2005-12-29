@@ -41,7 +41,7 @@ public abstract class CoordinatorImpl implements Coordinator {
 	public abstract EndpointReference register(String prot,
 			EndpointReference pps) throws InvalidCoordinationProtocolException;
 
-	public RegisterResponseType registerOperation(RegisterType params)
+	public synchronized RegisterResponseType registerOperation(RegisterType params)
 			throws RemoteException {
 		EndpointReference epr = null;
 		try {

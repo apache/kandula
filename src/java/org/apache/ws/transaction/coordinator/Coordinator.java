@@ -14,4 +14,6 @@ public interface Coordinator extends RegistrationPortTypeRPC {
 	String getID();
 
 	CoordinationContext getCoordinationContext();
+
+	void timeout();
 }

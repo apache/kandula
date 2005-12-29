@@ -4,6 +4,10 @@
  */
 package org.apache.ws.transaction.coordinator;
 
+import java.rmi.RemoteException;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.addressing.EndpointReference;
 import org.apache.axis.message.addressing.PortType;
@@ -13,12 +17,16 @@ import org.apache.ws.transaction.coordinator.at.ATCoordinator;
 import org.apache.ws.transaction.coordinator.at.ATCoordinatorImpl;
 import org.apache.ws.transaction.utility.CallbackRegistry;
 import org.apache.ws.transaction.utility.EndpointReferenceFactory;
+import org.apache.ws.transaction.wscoor.ActivationPortTypeRPC;
+import org.apache.ws.transaction.wscoor.CreateCoordinationContextResponseType;
+import org.apache.ws.transaction.wscoor.CreateCoordinationContextType;
+import org.apache.ws.transaction.wscoor.Expires;
 
 /**
  * @author Dasarath Weeratunge
  *  
  */
-public class CoordinationService {
+public class CoordinationService implements ActivationPortTypeRPC {
 	public static PortType ACTIVATION_SERVICE = new PortType(
 			"http://schemas.xmlsoap.org/ws/2004/10/wscoor",
 			"ActivationPortTypeRPC");
@@ -36,6 +44,10 @@ public class CoordinationService {
 			"http://schemas.xmlsoap.org/ws/2004/10/wscoor",
 			"RegistrationPortTypeRPC");
 
+	public static final long DEFAULT_TIMEOUT_MILLIS = 60 * 60 * 1000;
+
+	private Timer timer = new Timer();
+
 	public static CoordinationService getInstance() {
 		return instance;
 	}
@@ -43,12 +55,18 @@ public class CoordinationService {
 	private CoordinationService() {
 	}
 
-	public CoordinationContext createCoordinationContext(String coordinationType)
+	private CoordinationContext createCoordinationContext(
+			String coordinationType, long timeout)
 			throws UnsupportedCoordinationTypeException, MalformedURIException {
 		if (!ATCoordinator.COORDINATION_TYPE_ID.equals(coordinationType))
 			throw new UnsupportedCoordinationTypeException();
-		Coordinator c = new ATCoordinatorImpl();
+		final Coordinator c = new ATCoordinatorImpl();
 		CallbackRegistry.getInstance().registerCallback(c.getID(), c);
+		timer.schedule(new TimerTask() {
+			public void run() {
+				c.timeout();
+			}
+		}, timeout);
 		return c.getCoordinationContext();
 	}
 
@@ -77,5 +95,29 @@ public class CoordinationService {
 		r.add(new MessageElement(CallbackRegistry.COORDINATOR_REF, c.getID()));
 		return EndpointReferenceFactory.getInstance().getEndpointReference(
 			REGISTRATION_SERVICE, r);
+	}
+
+	public CreateCoordinationContextResponseType createCoordinationContextOperation(
+			CreateCoordinationContextType parameters) throws RemoteException {
+		String t = parameters.getCoordinationType().toString();
+		Expires ex = parameters.getExpires();
+		long timeout;
+		if (ex == null)
+			timeout = DEFAULT_TIMEOUT_MILLIS;
+		else
+			timeout = ex.get_value().longValue() * 1000;
+		CoordinationContext ctx;
+		try {
+			ctx = createCoordinationContext(t, timeout);
+		} catch (MalformedURIException e) {
+			e.printStackTrace();
+			throw new RemoteException(e.toString());
+		} catch (UnsupportedCoordinationTypeException e) {
+			e.printStackTrace();
+			throw new RemoteException(e.toString());
+		}
+		CreateCoordinationContextResponseType r = new CreateCoordinationContextResponseType();
+		r.setCoordinationContext(ctx);
+		return r;
 	}
 }
