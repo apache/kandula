@@ -58,7 +58,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			participants2PC[i] = Collections.synchronizedMap(new HashMap());
 	}
 
-	public synchronized EndpointReference register(String prot,
+	public EndpointReference register(String prot,
 			EndpointReference pps) throws InvalidCoordinationProtocolException {
 		if (!(status == AT2PCStatus.ACTIVE || status == AT2PCStatus.PREPARING_VOLATILE))
 			throw new IllegalStateException();
@@ -399,6 +399,10 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 
 	public synchronized void rollbackOperation(Notification parameters)
 			throws RemoteException {
+		rollback();
+	}
+
+	public synchronized void timeout() {
 		rollback();
 	}
 }
