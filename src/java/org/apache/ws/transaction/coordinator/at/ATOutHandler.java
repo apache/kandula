@@ -24,22 +24,19 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.ws.transaction.coordinator.at.AT;
 import org.apache.ws.transaction.coordinator.at.ATManager;
 
-
-
 /**
  * @author Dasarath Weeratunge
  */
 public class ATOutHandler extends BasicHandler {
-	ATManager tm= ATManager.getInstance();
-	
+	ATManager tm = ATManager.getInstance();
+
 	public void invoke(MessageContext msgContext) throws AxisFault {
-		AT tx= tm.getTransaction();
+		AT tx = tm.getTransaction();
 		if (tx != null) {
 			try {
-				SOAPHeader header= msgContext.getCurrentMessage().getSOAPEnvelope().getHeader();
+				SOAPHeader header = msgContext.getCurrentMessage().getSOAPEnvelope().getHeader();
 				tx.getCoordinationContex().toSOAPHeaderElement(header);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				throw AxisFault.makeFault(e);
 			}
 		}
