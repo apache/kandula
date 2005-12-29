@@ -43,13 +43,21 @@ public class CallbackRegistry {
 	}
 
 	public synchronized Object correlateMessage(QName q, boolean terminal) {
-		return callbacks.get(getRef(q));
+		String s = getRef(q);
+		if (s == null)
+			return null;
+		else
+			return callbacks.get(s);
 	}
 
 	private String getRef(QName q) {
 		AddressingHeaders header = (AddressingHeaders) MessageContext.getCurrentContext().getProperty(
 			Constants.ENV_ADDRESSING_REQUEST_HEADERS);
-		return header.getReferenceProperties().get(q).getValue();
+		try {
+			return header.getReferenceProperties().get(q).getValue();
+		} catch (NullPointerException e) {
+			return null;
+		}
 	}
 
 	public synchronized void remove(Object callback) {
