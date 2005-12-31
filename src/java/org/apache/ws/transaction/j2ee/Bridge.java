@@ -24,7 +24,7 @@ public class Bridge {
 
 	private static Bridge instance = new Bridge();
 
-	private static final int TIMEOUT = 60 * 60;
+	private static final int TIMEOUT_S = 60 * 60;
 
 	public static Bridge getInstance() {
 		return instance;
@@ -36,7 +36,7 @@ public class Bridge {
 
 	private Bridge() {
 		try {
-			tm = new TransactionManagerImpl(TIMEOUT, null, null);
+			tm = new TransactionManagerImpl(TIMEOUT_S, null, null);
 		} catch (XAException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -79,9 +79,5 @@ public class Bridge {
 
 	public void forget(String id) {
 		inM.remove(id);
-	}
-
-	public boolean isMapped(String id) {
-		return inM.containsKey(id);
 	}
 }

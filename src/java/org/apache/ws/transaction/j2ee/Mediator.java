@@ -7,26 +7,23 @@ package org.apache.ws.transaction.j2ee;
 import java.rmi.RemoteException;
 
 import javax.transaction.Status;
+import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import org.apache.axis.message.addressing.EndpointReference;
 import org.apache.geronimo.transaction.manager.NamedXAResource;
 import org.apache.geronimo.transaction.manager.TransactionManagerImpl;
 import org.apache.ws.transaction.coordinator.CoordinationContext;
-import org.apache.ws.transaction.coordinator.ParticipantService;
-import org.apache.ws.transaction.coordinator.at.ATCoordinator;
-import org.apache.ws.transaction.coordinator.at.CoordinatorStub;
-import org.apache.ws.transaction.wsat.Notification;
-import org.apache.ws.transaction.wsat.ParticipantPortType;
+import org.apache.ws.transaction.coordinator.at.AT2PCStatus;
+import org.apache.ws.transaction.coordinator.at.BasicParticipant;
 
 /**
  * @author Dasarath Weeratunge
  *  
  */
-public class Mediator implements ParticipantPortType, NamedXAResource {
+public class Mediator extends BasicParticipant implements NamedXAResource {
 
 	private int timeout = Integer.MAX_VALUE;
 
@@ -34,19 +31,17 @@ public class Mediator implements ParticipantPortType, NamedXAResource {
 
 	private Transaction tx;
 
-	private EndpointReference c;
-
 	private Bridge bridge = Bridge.getInstance();
 
 	private TransactionManagerImpl tm = (TransactionManagerImpl) bridge.getTM();
 
+	private boolean bridged = true;
+
 	public Mediator(Transaction tx, CoordinationContext ctx)
 			throws RemoteException {
+		super(true, ctx);
 		id = ctx.getIdentifier().toString();
 		this.tx = tx;
-		EndpointReference epr = ParticipantService.getInstance().getParticipantService(
-			this);
-		c = ctx.register(ATCoordinator.PROTOCOL_ID_DURABLE_2PC, epr);
 		try {
 			tx.enlistResource(this);
 		} catch (Exception e) {
@@ -55,11 +50,13 @@ public class Mediator implements ParticipantPortType, NamedXAResource {
 	}
 
 	public void commit(Xid arg0, boolean arg1) throws XAException {
-		if (bridge.isMapped(id))
+		if (bridged) {
+			forget();
 			try {
-				new CoordinatorStub(c).committedOperation(null);
+				getCoordinator().committedOperation(null);
 			} catch (Exception e) {
 			}
+		}
 	}
 
 	public void end(Xid arg0, int arg1) throws XAException {
@@ -76,14 +73,15 @@ public class Mediator implements ParticipantPortType, NamedXAResource {
 		return timeout;
 	}
 
-	public boolean isSameRM(XAResource arg0) throws XAException {
-		return this == arg0;
+	public boolean isSameRM(XAResource rm) throws XAException {
+		return this == rm;
 	}
 
 	public int prepare(Xid arg0) throws XAException {
-		if (bridge.isMapped(id)) {
+		if (bridged) {
+			forget();
 			try {
-				new CoordinatorStub(c).abortedOperation(null);
+				getCoordinator().abortedOperation(null);
 			} catch (Exception e) {
 			}
 			throw new XAException();
@@ -96,111 +94,74 @@ public class Mediator implements ParticipantPortType, NamedXAResource {
 	}
 
 	public void rollback(Xid arg0) throws XAException {
-		if (bridge.isMapped(id))
+		if (bridged) {
+			forget();
 			try {
-				new CoordinatorStub(c).abortedOperation(null);
+				getCoordinator().abortedOperation(null);
 			} catch (Exception e) {
 			}
+		}
 	}
 
-	public boolean setTransactionTimeout(int arg0) throws XAException {
-		timeout = arg0;
-		return false;
+	public boolean setTransactionTimeout(int timeout) throws XAException {
+		this.timeout = timeout;
+		return true;
 	}
 
 	public void start(Xid arg0, int arg1) throws XAException {
 	}
 
-	public synchronized void commitOperation(Notification parameters)
-			throws RemoteException {
-		done();
-		try {
-			tm.commit(tx, false);
-			new CoordinatorStub(c).committedOperation(null);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RemoteException(e.getMessage());
+	protected int prepare() throws XAException {
+		forget();
+		return tm.prepare(tx);
+	}
+
+	protected void commit() throws XAException {
+		tm.commit(tx, false);
+	}
+
+	protected void rollback() throws XAException {
+		tm.rollback(tx);
+	}
+
+	protected void forget() {
+		if (bridged) {
+			bridge.forget(id);
+			bridged = false;
 		}
 	}
 
-	private void done() {
-		ParticipantService.getInstance().forget(this);
-	}
-
-	public synchronized void prepareOperation(Notification parameters)
-			throws RemoteException {
+	protected int getStatus() {
 		try {
-			bridge.forget(id);
-			CoordinatorStub p = new CoordinatorStub(c);
-			int status = tx.getStatus();
-			switch (status) {
+			switch (tm.getStatus()) {
 			case Status.STATUS_ACTIVE:
-				try {
-					if (tm.prepare(tx) == XAResource.XA_RDONLY) {
-						done();
-						p.readOnlyOperation(null);
-					} else
-						p.preparedOperation(null);
-					return;
-				} catch (XAException e) {
-					done();
-					p.abortedOperation(null);
-					return;
-				}
-
-			case Status.STATUS_COMMITTED:
-			case Status.STATUS_COMMITTING:
-				p.committedOperation(null);
-				return;
-
 			case Status.STATUS_MARKED_ROLLBACK:
-				done();
-				p.abortedOperation(null);
-				tx.rollback();
-				return;
-
-			case Status.STATUS_ROLLEDBACK:
-			case Status.STATUS_ROLLING_BACK:
-				done();
-				p.abortedOperation(null);
-				return;
-
-			case Status.STATUS_PREPARED:
-				p.preparedOperation(null);
-				return;
+				return AT2PCStatus.ACTIVE;
 
 			case Status.STATUS_PREPARING:
-				return;
+				return AT2PCStatus.PREPARING;
+
+			case Status.STATUS_ROLLING_BACK:
+			case Status.STATUS_ROLLEDBACK:
+				return AT2PCStatus.ABORTING;
+
+			case Status.STATUS_PREPARED:
+				return AT2PCStatus.PREPARED;
+
+			case Status.STATUS_COMMITTING:
+			case Status.STATUS_COMMITTED:
+				return AT2PCStatus.COMMITTING;
 
 			case Status.STATUS_NO_TRANSACTION:
+				return AT2PCStatus.NONE;
+
 			case Status.STATUS_UNKNOWN:
-				done();
-				p.abortedOperation(null);
-				return;
+			default:
+				throw new RuntimeException();
 			}
-		} catch (Exception e) {
+		} catch (SystemException e) {
 			e.printStackTrace();
-			throw new RemoteException(e.getMessage());
+			throw new RuntimeException(e);
 		}
 	}
-
-	public synchronized void rollbackOperation(Notification parameters)
-			throws RemoteException {
-		bridge.forget(id);
-		done();
-		try {
-			tx.rollback();
-			new CoordinatorStub(c).abortedOperation(null);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-			throw e;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RemoteException(e.getMessage());
-		}
-	}
-
 }
