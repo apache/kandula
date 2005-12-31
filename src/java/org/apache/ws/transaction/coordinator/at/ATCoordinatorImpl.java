@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.namespace.QName;
+
+import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
@@ -46,9 +49,9 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 
 	List participantsComp = Collections.synchronizedList(new ArrayList());
 
-	public static final int MAX_RETRIES = 3;
+	public static final int MAX_RETRIES = 10;
 
-	public static final int RETRY_DELAY_MILLIS = 15 * 1000;
+	public static final int RETRY_DELAY_MILLIS = 20 * 1000;
 
 	public static final int RESPONSE_DELAY_MILLIS = 3 * 1000;
 
@@ -205,20 +208,16 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			return;
 
 		case AT2PCStatus.ABORTING:
-			epr = getEpr(ref);
-			try {
-				new ParticipantStub(epr).rollbackOperation(null);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			forget2PC(ref);
-			return;
-
 		case AT2PCStatus.NONE:
 			epr = (EndpointReference) participants2PC[VOLATILE].get(ref);
-			if (epr != null)
+			if (epr != null) {
+				if (status == AT2PCStatus.ABORTING)
+					forget2PC(ref);
 				throw new IllegalStateException();
+			}
 			epr = (EndpointReference) participants2PC[DURABLE].get(ref);
+			if (status == AT2PCStatus.ABORTING)
+				forget2PC(ref);
 			try {
 				new ParticipantStub(epr).rollbackOperation(null);
 			} catch (Exception e) {
@@ -365,9 +364,20 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 		status = AT2PCStatus.NONE;
 	}
 
+	private AxisFault getInvalidStateSoapFault() {
+		QName subcode = new QName(
+				"http://schemas.xmlsoap.org/ws/2004/10/wscoor", "InvalidState");
+		String faultString = "The message was invalid for the current state of the activity.";
+		return new AxisFault(subcode, faultString, null, null);
+	}
+
 	public synchronized void preparedOperation(Notification parameters)
 			throws RemoteException {
-		prepared(getParticipantRef());
+		try {
+			prepared(getParticipantRef());
+		} catch (IllegalStateException e) {
+			throw getInvalidStateSoapFault();
+		}
 	}
 
 	public synchronized void abortedOperation(Notification parameters)
@@ -408,10 +418,11 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 	}
 
 	public synchronized void timeout() {
-		System.out.println("[ATCoordinatorImpl] timeout " + AT2PCStatus.getStatusName(status));
+		System.out.println("[ATCoordinatorImpl] timeout "
+				+ AT2PCStatus.getStatusName(status));
 		if (status == AT2PCStatus.NONE)
 			return;
 		rollback();
-		throw new TimedOutException();		
+		throw new TimedOutException();
 	}
 }
