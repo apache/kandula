@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.xml.namespace.QName;
 
@@ -27,6 +29,13 @@ public class CallbackRegistry {
 	public static final QName COORDINATOR_REF = new QName(
 			"http://ws.apache.org/kandula", "CoordinatorRef");
 
+	public static final int DEFAULT_TIMEOUT_MILLIS = 90 * 1000; // the value is
+
+	// for testing
+	// only...
+
+	private Timer timer = new Timer();
+
 	private static final CallbackRegistry instance = new CallbackRegistry();
 
 	private Map callbacks = new HashMap();
@@ -40,6 +49,21 @@ public class CallbackRegistry {
 
 	public synchronized void registerCallback(String ref, Object callback) {
 		callbacks.put(ref, callback);
+	}
+
+	public synchronized void registerCallback(String ref,
+			final Callback callback, long timeout) {
+		callbacks.put(ref, callback);
+		if (timeout == 0)
+			timeout = DEFAULT_TIMEOUT_MILLIS;
+		System.out.println("[CallbackRegistry] registerCallback: timeout= "
+				+ timeout);
+		timer.schedule(new TimerTask() {
+			public void run() {
+				callbacks.remove(callback);
+				callback.timeout();
+			}
+		}, timeout);
 	}
 
 	public synchronized Object correlateMessage(QName q, boolean terminal) {
