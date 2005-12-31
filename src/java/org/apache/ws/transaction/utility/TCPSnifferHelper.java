@@ -4,6 +4,7 @@
  */
 package org.apache.ws.transaction.utility;
 
+
 /**
  * @author Dasarath Weeratunge
  *  
@@ -14,5 +15,5 @@ public class TCPSnifferHelper {
 		return url.replaceAll("wsi\\.alphaworks\\.ibm\\.com:8080",
 				"localhost:8082");
 	}
-
+	
 }
