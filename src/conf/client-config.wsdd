@@ -11,7 +11,7 @@
         <requestFlow>
 		<handler type="java:org.apache.axis.message.addressing.handler.AddressingHandler" />
 		
-     <handler type="java:org.apache.ws.transaction.coordinator.at.ATOutHandler" />		
+     <handler type="java:org.apache.ws.transaction.utility.TxHandler" />		
 
 
 		
