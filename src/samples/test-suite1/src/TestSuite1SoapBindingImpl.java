@@ -405,17 +405,15 @@ public class TestSuite1SoapBindingImpl implements TestSuite1PortType {
 	private static Field[] flds = Status.class.getDeclaredFields();
 
 	public static String getStatusName(int status) {
-		String statusName = null;
-
 		try {
 			for (int i = 0; i < flds.length; i++) {
 				if (flds[i].getInt(null) == status)
-					statusName = flds[i].getName();
+					return flds[i].getName();
 			}
 		} catch (Exception e) {
-			statusName = "invalid status value!";
+			e.printStackTrace();
 		}
-		return statusName;
+		throw new IllegalArgumentException();
 	}
 
 }
