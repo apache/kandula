@@ -25,6 +25,7 @@ import org.apache.axis.types.URI.MalformedURIException;
 import org.apache.ws.transaction.coordinator.CoordinationService;
 import org.apache.ws.transaction.coordinator.CoordinatorImpl;
 import org.apache.ws.transaction.coordinator.InvalidCoordinationProtocolException;
+import org.apache.ws.transaction.coordinator.TimedOutException;
 import org.apache.ws.transaction.wsat.Notification;
 
 /**
@@ -35,9 +36,9 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 
 	int status = AT2PCStatus.NONE;
 
-	private static final int VOLATILE_2PC = 0;
+	private static final int VOLATILE = 0;
 
-	private static final int DURABLE_2PC = 1;
+	private static final int DURABLE = 1;
 
 	Map participants2PC[] = new Map[2];
 
@@ -45,11 +46,11 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 
 	List participantsComp = Collections.synchronizedList(new ArrayList());
 
-	public static final int MAX_ITERS = 3;
+	public static final int MAX_RETRIES = 3;
 
-	public static final int ITER_DELAY = 15 * 1000;
+	public static final int RETRY_DELAY_MILLIS = 15 * 1000;
 
-	public static final int RESPONSE_DELAY = 3 * 1000;
+	public static final int RESPONSE_DELAY_MILLIS = 3 * 1000;
 
 	public ATCoordinatorImpl() throws MalformedURIException {
 		super(COORDINATION_TYPE_ID);
@@ -58,8 +59,8 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			participants2PC[i] = Collections.synchronizedMap(new HashMap());
 	}
 
-	public EndpointReference register(String prot,
-			EndpointReference pps) throws InvalidCoordinationProtocolException {
+	public EndpointReference register(String prot, EndpointReference pps)
+			throws InvalidCoordinationProtocolException {
 		if (!(status == AT2PCStatus.ACTIVE || status == AT2PCStatus.PREPARING_VOLATILE))
 			throw new IllegalStateException();
 		CoordinationService cs = CoordinationService.getInstance();
@@ -75,9 +76,9 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			UUIDGen gen = UUIDGenFactory.getUUIDGen();
 			ref = "uuid:" + gen.nextUUID();
 			if (prot.equals(PROTOCOL_ID_VOLATILE_2PC))
-				participants2PC[VOLATILE_2PC].put(ref, pps);
+				participants2PC[VOLATILE].put(ref, pps);
 			else if (prot.equals(PROTOCOL_ID_DURABLE_2PC))
-				participants2PC[DURABLE_2PC].put(ref, pps);
+				participants2PC[DURABLE].put(ref, pps);
 			else
 				throw new InvalidCoordinationProtocolException();
 			epr = cs.getCoordinatorService(this, ref);
@@ -86,8 +87,8 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 	}
 
 	public void forget2PC(String ref) {
-		if (participants2PC[VOLATILE_2PC].remove(ref) == null)
-			participants2PC[DURABLE_2PC].remove(ref);
+		if (participants2PC[VOLATILE].remove(ref) == null)
+			participants2PC[DURABLE].remove(ref);
 	}
 
 	public void rollback() {
@@ -101,7 +102,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 
 		case AT2PCStatus.COMMITTING:
 		case AT2PCStatus.ABORTING:
-		case AT2PCStatus.ENDED:
+		case AT2PCStatus.NONE:
 		}
 	}
 
@@ -121,8 +122,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			forget2PC(ref);
 			return;
 
-		case AT2PCStatus.ENDED:
-			return;
+		case AT2PCStatus.NONE:
 		}
 	}
 
@@ -141,8 +141,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			forget2PC(ref);
 			return;
 
-		case AT2PCStatus.ENDED:
-			return;
+		case AT2PCStatus.NONE:
 		}
 	}
 
@@ -155,27 +154,33 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			return;
 
 		case AT2PCStatus.COMMITTING:
-			EndpointReference epr = get2PCEndpointReference(ref);
+			EndpointReference epr = getEpr(ref);
 			try {
 				new ParticipantStub(epr).commitOperation(null);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return;
 
 		case AT2PCStatus.ABORTING:
-			epr = get2PCEndpointReference(ref);
+			epr = getEpr(ref);
 			try {
 				new ParticipantStub(epr).rollbackOperation(null);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return;
 
-		case AT2PCStatus.ENDED:
-			return;
+		case AT2PCStatus.NONE:
+			epr = (EndpointReference) participants2PC[VOLATILE].get(ref);
+			if (epr != null)
+				throw new IllegalStateException();
+			epr = (EndpointReference) participants2PC[DURABLE].get(ref);
+			try {
+				new ParticipantStub(epr).rollbackOperation(null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -191,28 +196,34 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			return;
 
 		case AT2PCStatus.COMMITTING:
-			EndpointReference epr = get2PCEndpointReference(ref);
+			EndpointReference epr = getEpr(ref);
 			try {
 				new ParticipantStub(epr).commitOperation(null);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return;
 
 		case AT2PCStatus.ABORTING:
-			epr = get2PCEndpointReference(ref);
+			epr = getEpr(ref);
 			try {
 				new ParticipantStub(epr).rollbackOperation(null);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			forget2PC(ref);
 			return;
 
-		case AT2PCStatus.ENDED:
-			return;
+		case AT2PCStatus.NONE:
+			epr = (EndpointReference) participants2PC[VOLATILE].get(ref);
+			if (epr != null)
+				throw new IllegalStateException();
+			epr = (EndpointReference) participants2PC[DURABLE].get(ref);
+			try {
+				new ParticipantStub(epr).rollbackOperation(null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -231,15 +242,14 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 		case AT2PCStatus.ABORTING:
 			throw new IllegalStateException();
 
-		case AT2PCStatus.ENDED:
-			return;
+		case AT2PCStatus.NONE:
 		}
 	}
 
-	private EndpointReference get2PCEndpointReference(String ref) {
-		EndpointReference epr = (EndpointReference) participants2PC[VOLATILE_2PC].get(ref);
+	private EndpointReference getEpr(String ref) {
+		EndpointReference epr = (EndpointReference) participants2PC[VOLATILE].get(ref);
 		if (epr == null)
-			epr = (EndpointReference) participants2PC[DURABLE_2PC].get(ref);
+			epr = (EndpointReference) participants2PC[DURABLE].get(ref);
 		return epr;
 	}
 
@@ -247,9 +257,9 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 		int iters = 0;
 		int status_old = status;
 
-		while (iters < MAX_ITERS) {
+		while (iters < MAX_RETRIES) {
 			if (iters++ > 0)
-				pause(ITER_DELAY - RESPONSE_DELAY);
+				pause(RETRY_DELAY_MILLIS - RESPONSE_DELAY_MILLIS);
 
 			Iterator iter = participants2PC[prot].values().iterator();
 			while (iter.hasNext()) {
@@ -258,12 +268,11 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 				try {
 					new ParticipantStub((EndpointReference) iter.next()).prepareOperation(null);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 
-			pause(RESPONSE_DELAY);
+			pause(RESPONSE_DELAY_MILLIS);
 
 			if (prepared.containsAll(participants2PC[prot].keySet()))
 				return status == status_old;
@@ -274,11 +283,11 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 
 	private boolean prepare() {
 		status = AT2PCStatus.PREPARING_VOLATILE;
-		if (!prepare(VOLATILE_2PC))
+		if (!prepare(VOLATILE))
 			return false;
 
 		status = AT2PCStatus.PREPARING_DURABLE;
-		return prepare(DURABLE_2PC);
+		return prepare(DURABLE);
 	}
 
 	public void commit() {
@@ -290,7 +299,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 		case AT2PCStatus.PREPARING_DURABLE:
 		case AT2PCStatus.COMMITTING:
 		case AT2PCStatus.ABORTING:
-		case AT2PCStatus.ENDED:
+		case AT2PCStatus.NONE:
 			return;
 		}
 
@@ -313,13 +322,12 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 
 	private void terminate() {
 		int iters = 0;
-		while (iters < MAX_ITERS
-				&& !(participants2PC[VOLATILE_2PC].isEmpty() && participants2PC[DURABLE_2PC].isEmpty())) {
+		while (iters < MAX_RETRIES
+				&& !(participants2PC[VOLATILE].isEmpty() && participants2PC[DURABLE].isEmpty())) {
 			if (iters++ > 0)
-				pause(ITER_DELAY - RESPONSE_DELAY);
+				pause(RETRY_DELAY_MILLIS - RESPONSE_DELAY_MILLIS);
 
-			for (int prot = VOLATILE_2PC; prot == VOLATILE_2PC
-					|| prot == DURABLE_2PC; prot = prot == VOLATILE_2PC ? DURABLE_2PC
+			for (int prot = VOLATILE; prot == VOLATILE || prot == DURABLE; prot = prot == VOLATILE ? DURABLE
 					: -1) {
 				Iterator iter = participants2PC[prot].values().iterator();
 				while (iter.hasNext())
@@ -330,18 +338,16 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 							p.rollbackOperation(null);
 						else
 							p.commitOperation(null);
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-
 			}
 
-			pause(RESPONSE_DELAY);
+			pause(RESPONSE_DELAY_MILLIS);
 		}
 
-		if (participants2PC[VOLATILE_2PC].isEmpty()
-				&& participants2PC[DURABLE_2PC].isEmpty()) {
+		if (participants2PC[VOLATILE].isEmpty()
+				&& participants2PC[DURABLE].isEmpty()) {
 			Iterator iter = participantsComp.iterator();
 			while (iter.hasNext())
 				try {
@@ -352,12 +358,11 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 					else
 						p.committedOperation(null);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		}
 
-		status = AT2PCStatus.ENDED;
+		status = AT2PCStatus.NONE;
 	}
 
 	public synchronized void preparedOperation(Notification parameters)
@@ -403,6 +408,10 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 	}
 
 	public synchronized void timeout() {
+		System.out.println("[ATCoordinatorImpl] timeout " + AT2PCStatus.getStatusName(status));
+		if (status == AT2PCStatus.NONE)
+			return;
 		rollback();
+		throw new TimedOutException();		
 	}
 }

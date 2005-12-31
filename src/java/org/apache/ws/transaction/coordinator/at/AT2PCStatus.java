@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 
 /**
  * @author Dasarath Weeratunge
- * 
+ *  
  */
 public class AT2PCStatus {
 	public static final int NONE = 0;
@@ -16,28 +16,32 @@ public class AT2PCStatus {
 	public static final int ACTIVE = 1;
 
 	public static final int PREPARING_VOLATILE = 2;
-	
+
 	public static final int PREPARING_DURABLE = 3;
 
-	public static final int COMMITTING = 5;
+	public static final int PREPARING = 4;
 
-	public static final int ABORTING = 6;
+	public static final int PREPARED = 5;
 
-	public static final int ENDED = 7;
-	
+	public static final int COMMITTING = 6;
+
+	public static final int ABORTING = 7;
+
 	private static Field[] flds = AT2PCStatus.class.getDeclaredFields();
 
 	public static String getStatusName(int status) {
-		String statusName = null;
-
 		try {
 			for (int i = 0; i < flds.length; i++) {
+				System.out.println(flds[i].getName() + " "
+						+ flds[i].getInt(null) + " " + status);
 				if (flds[i].getInt(null) == status)
-					statusName = flds[i].getName();
+					return flds[i].getName();
 			}
+		} catch (IllegalArgumentException e) {
+			throw e;
 		} catch (Exception e) {
-			statusName = null;
+			e.printStackTrace();
 		}
-		return statusName;
+		throw new IllegalArgumentException();
 	}
 }
