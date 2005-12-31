@@ -31,14 +31,10 @@ public class AT2PCStatus {
 
 	public static String getStatusName(int status) {
 		try {
-			for (int i = 0; i < flds.length; i++) {
-				System.out.println(flds[i].getName() + " "
-						+ flds[i].getInt(null) + " " + status);
+			for (int i = 0; i < flds.length; i++) {				
 				if (flds[i].getInt(null) == status)
 					return flds[i].getName();
 			}
-		} catch (IllegalArgumentException e) {
-			throw e;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
