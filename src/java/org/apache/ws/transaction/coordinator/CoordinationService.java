@@ -5,8 +5,6 @@
 package org.apache.ws.transaction.coordinator;
 
 import java.rmi.RemoteException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.addressing.EndpointReference;
@@ -44,10 +42,6 @@ public class CoordinationService implements ActivationPortTypeRPC {
 			"http://schemas.xmlsoap.org/ws/2004/10/wscoor",
 			"RegistrationPortTypeRPC");
 
-	public static final long DEFAULT_TIMEOUT_MILLIS = 60 * 60 * 1000;
-
-	private Timer timer = new Timer();
-
 	public static CoordinationService getInstance() {
 		return instance;
 	}
@@ -61,12 +55,8 @@ public class CoordinationService implements ActivationPortTypeRPC {
 		if (!ATCoordinator.COORDINATION_TYPE_ID.equals(coordinationType))
 			throw new UnsupportedCoordinationTypeException();
 		final Coordinator c = new ATCoordinatorImpl();
-		CallbackRegistry.getInstance().registerCallback(c.getID(), c);
-		timer.schedule(new TimerTask() {
-			public void run() {
-				c.timeout();
-			}
-		}, timeout);
+		System.out.println(timeout);
+		CallbackRegistry.getInstance().registerCallback(c.getID(), c, timeout);
 		return c.getCoordinationContext();
 	}
 
@@ -101,10 +91,8 @@ public class CoordinationService implements ActivationPortTypeRPC {
 			CreateCoordinationContextType parameters) throws RemoteException {
 		String t = parameters.getCoordinationType().toString();
 		Expires ex = parameters.getExpires();
-		long timeout;
-		if (ex == null)
-			timeout = DEFAULT_TIMEOUT_MILLIS;
-		else
+		long timeout = 0;
+		if (ex != null)
 			timeout = ex.get_value().longValue() * 1000;
 		CoordinationContext ctx;
 		try {

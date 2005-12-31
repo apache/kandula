@@ -4,16 +4,15 @@
  */
 package org.apache.ws.transaction.coordinator;
 
+import org.apache.ws.transaction.utility.Callback;
 import org.apache.ws.transaction.wscoor.RegistrationPortTypeRPC;
 
 /**
  * @author Dasarath Weeratunge
  *  
  */
-public interface Coordinator extends RegistrationPortTypeRPC {
+public interface Coordinator extends RegistrationPortTypeRPC, Callback {
 	String getID();
 
 	CoordinationContext getCoordinationContext();
-
-	void timeout();
 }

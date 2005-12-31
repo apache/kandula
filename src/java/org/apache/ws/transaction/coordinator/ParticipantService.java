@@ -9,10 +9,10 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.addressing.EndpointReference;
 import org.apache.axis.message.addressing.PortType;
 import org.apache.axis.message.addressing.ReferencePropertiesType;
+import org.apache.ws.transaction.coordinator.at.BasicParticipant;
+import org.apache.ws.transaction.utility.Callback;
 import org.apache.ws.transaction.utility.CallbackRegistry;
 import org.apache.ws.transaction.utility.EndpointReferenceFactory;
-import org.apache.ws.transaction.wsat.CompletionInitiatorPortType;
-import org.apache.ws.transaction.wsat.ParticipantPortType;
 
 /**
  * @author Dasarath Weeratunge
@@ -35,26 +35,27 @@ public class ParticipantService {
 		return instance;
 	}
 
-	public EndpointReference getCompletionInitiatorService(
-			CompletionInitiatorPortType callback) {
+	public EndpointReference getCompletionInitiatorService(Callback callback,
+			long timeout) {
 		String urn = "uuid" + UUIDGenFactory.getUUIDGen().nextUUID();
-		CallbackRegistry.getInstance().registerCallback(urn, callback);
+		CallbackRegistry.getInstance().registerCallback(urn, callback, timeout);
 		ReferencePropertiesType r = new ReferencePropertiesType();
 		r.add(new MessageElement(CallbackRegistry.CALLBACK_REF, urn));
 		return EndpointReferenceFactory.getInstance().getEndpointReference(
 			COMPLETION_INITIATOR_SERVICE, r);
 	}
 
-	public EndpointReference getParticipantService(ParticipantPortType callback) {
+	public EndpointReference getParticipantService(
+			final BasicParticipant callback, long timeout) {
 		String urn = "uuid" + UUIDGenFactory.getUUIDGen().nextUUID();
-		CallbackRegistry.getInstance().registerCallback(urn, callback);
+		CallbackRegistry.getInstance().registerCallback(urn, callback, timeout);
 		ReferencePropertiesType r = new ReferencePropertiesType();
 		r.add(new MessageElement(CallbackRegistry.CALLBACK_REF, urn));
 		return EndpointReferenceFactory.getInstance().getEndpointReference(
 			PARTICIPANT_SERVICE, r);
 	}
 
-	public void forget(Object callback) {
+	private void forget(Object callback) {
 		CallbackRegistry.getInstance().remove(callback);
 	}
 
