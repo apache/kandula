@@ -191,7 +191,7 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 		}
 	}
 
-	public void timeout() throws TimedOutException {
+	public synchronized void timeout() throws TimedOutException {
 		System.out.println("[AbstractParticipant] timeout "
 				+ AT2PCStatus.getStatusName(getStatus()));
 		if (getStatus() == AT2PCStatus.NONE)
