@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<project name="kandula"
+	 default="compile"
+	 basedir=".">
+
+	 <property name="src.dir" value="src" />	 
+ 	 <property name="build.dir" value="build" />
+ 	 <property name="home.dir" value="../../.." />
+  	 
+	 <property file="${home.dir}/build.properties" />  	  	 
+	 
+	 <path id="base.classpath">
+	 	<fileset dir="${home.dir}/target/lib" >
+	 		<include name="**/*.jar" />
+		</fileset>
+	 	<fileset dir="${home.dir}/target" >
+		 	<include name="**/*.jar" />
+		</fileset>		
+	 </path>
+	 
+	 <taskdef resource="axis-tasks.properties"  classpathref="base.classpath" />
+	 
+	 <target name="compile" depends="wsdl2java" >
+	 	<javac srcdir="${src.dir};${build.dir}/src" destdir="${build.dir}">
+	 		<classpath refid="base.classpath" />
+	 	</javac>
+	 </target>
+	 
+	 <target name="clean" >
+	 	<delete dir="${build.dir}" /> 	
+	 </target> 
+
+	 <target name="init" >
+	 	<mkdir dir="${build.dir}" />
+	 	<mkdir dir="${build.dir}/src" />
+	 </target>
+	 
+	 <target name="wsdl2java" depends="init">
+		 <axis-wsdl2java
+		 	output="${build.dir}/src"
+		 	serverside = "false"
+		 	testcase = "false"
+		 	url= "InteropService.wsdl" >		 	
+	 		<mapping namespace="http://localhost:8989/wstx/services/InteropService" package="" />
+		 </axis-wsdl2java>
+	</target>
+	
+	<target name="dist" depends="compile">
+		<jar jarfile="${build.dir}/interop-ibm.jar">
+			<fileset dir="${build.dir}">
+				<include name="**/*.class" />
+			</fileset>
+		</jar>
+	</target>
+	
+	<target name="test" >
+	 	<junit printsummary="withOutAndErr" >
+	 		<formatter type="plain"/>
+	 		<classpath>	 			
+		 		<path refid="base.classpath" />
+	 			<fileset dir="${basedir}/build" includes="*.jar" />
+		 		<pathelement location="${ws-tx.dir}/conf" />
+		 	</classpath>
+	 		<test name="InteropServiceTestCase" />
+		</junit>
+	 </target>
+</project>
