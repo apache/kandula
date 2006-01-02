@@ -13,6 +13,7 @@ import javax.transaction.xa.XAResource;
 
 import org.apache.axis.message.addressing.EndpointReference;
 import org.apache.ws.transaction.coordinator.CoordinationContext;
+import org.apache.ws.transaction.coordinator.Coordinator;
 import org.apache.ws.transaction.coordinator.ParticipantService;
 import org.apache.ws.transaction.coordinator.TimedOutException;
 import org.apache.ws.transaction.utility.Callback;
@@ -25,33 +26,14 @@ import org.apache.ws.transaction.wscoor.Expires;
  * @author Dasarath Weeratunge
  *  
  */
-public abstract class BasicParticipant implements ParticipantPortType, Callback {
+public abstract class AbstractParticipant implements ParticipantPortType,
+		Callback {
+
 	private static Timer timer = new Timer();
 
 	public static final int RETRY_DELAY_MILLIS = 10 * 1000;
 
-	private EndpointReference c;
-
-	protected BasicParticipant(boolean durable, CoordinationContext ctx)
-			throws RemoteException {
-		long timeout = 0;
-		Expires ex = ctx.getExpires();
-		if (ex != null)
-			timeout = ex.get_value().longValue();
-		EndpointReference epr = ParticipantService.getInstance().getParticipantService(
-			this, timeout);
-		c = ctx.register(durable ? ATCoordinator.PROTOCOL_ID_DURABLE_2PC
-				: ATCoordinator.PROTOCOL_ID_VOLATILE_2PC, epr);
-	}
-
-	protected CoordinatorPortType getCoordinator() {
-		try {
-			return new CoordinatorStub(c);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-	}
+	private EndpointReference eprOfCoordinator;
 
 	protected abstract int prepare() throws XAException;
 
@@ -62,6 +44,28 @@ public abstract class BasicParticipant implements ParticipantPortType, Callback 
 	protected abstract void forget();
 
 	protected abstract int getStatus();
+
+	protected void register(boolean durable, CoordinationContext ctx)
+			throws RemoteException {
+		long timeout = 0;
+		Expires ex = ctx.getExpires();
+		if (ex != null)
+			timeout = ex.get_value().longValue();
+		EndpointReference epr = ParticipantService.getInstance().getParticipantService(
+			this, timeout);
+		eprOfCoordinator = ctx.register(
+			durable ? ATCoordinator.PROTOCOL_ID_DURABLE_2PC
+					: ATCoordinator.PROTOCOL_ID_VOLATILE_2PC, epr);
+	}
+
+	protected CoordinatorPortType getCoordinator() {
+		try {
+			return new CoordinatorStub(eprOfCoordinator);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
 
 	public synchronized void prepareOperation(Notification parameters)
 			throws RemoteException {
@@ -93,7 +97,9 @@ public abstract class BasicParticipant implements ParticipantPortType, Callback 
 								try {
 									p.preparedOperation(null);
 								} catch (RemoteException e) {
-									e.printStackTrace();
+									// TODO:
+									// identify wscoor:InvalidState Soap fault and stop
+									e.printStackTrace();								
 								}
 							}
 						}
@@ -150,7 +156,7 @@ public abstract class BasicParticipant implements ParticipantPortType, Callback 
 			return;
 
 		case AT2PCStatus.ABORTING:
-			throw new IllegalStateException();
+			throw Coordinator.INVALID_STATE_SOAP_FAULT;
 
 		case AT2PCStatus.COMMITTING:
 		}
@@ -181,12 +187,12 @@ public abstract class BasicParticipant implements ParticipantPortType, Callback 
 			return;
 
 		case AT2PCStatus.COMMITTING:
-			throw new IllegalStateException();
+			throw Coordinator.INVALID_STATE_SOAP_FAULT;
 		}
 	}
 
-	public void timeout() {
-		System.out.println("[BasicParticipant] timeout "
+	public void timeout() throws TimedOutException {
+		System.out.println("[AbstractParticipant] timeout "
 				+ AT2PCStatus.getStatusName(getStatus()));
 		if (getStatus() == AT2PCStatus.NONE)
 			return;
