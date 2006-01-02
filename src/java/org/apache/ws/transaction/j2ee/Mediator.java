@@ -17,13 +17,13 @@ import org.apache.geronimo.transaction.manager.NamedXAResource;
 import org.apache.geronimo.transaction.manager.TransactionManagerImpl;
 import org.apache.ws.transaction.coordinator.CoordinationContext;
 import org.apache.ws.transaction.coordinator.at.AT2PCStatus;
-import org.apache.ws.transaction.coordinator.at.BasicParticipant;
+import org.apache.ws.transaction.coordinator.at.AbstractParticipant;
 
 /**
  * @author Dasarath Weeratunge
  *  
  */
-public class Mediator extends BasicParticipant implements NamedXAResource {
+public class Mediator extends AbstractParticipant implements NamedXAResource {
 
 	private int timeout = Integer.MAX_VALUE;
 
@@ -31,15 +31,15 @@ public class Mediator extends BasicParticipant implements NamedXAResource {
 
 	private Transaction tx;
 
-	private Bridge bridge = Bridge.getInstance();
+	private static Bridge bridge = Bridge.getInstance();
 
-	private TransactionManagerImpl tm = (TransactionManagerImpl) bridge.getTM();
+	private static TransactionManagerImpl tm = (TransactionManagerImpl) bridge.getTM();
 
 	private boolean bridged = true;
 
 	public Mediator(Transaction tx, CoordinationContext ctx)
 			throws RemoteException {
-		super(true, ctx);
+		register(true, ctx);
 		id = ctx.getIdentifier().toString();
 		this.tx = tx;
 		try {
@@ -111,27 +111,27 @@ public class Mediator extends BasicParticipant implements NamedXAResource {
 	public void start(Xid arg0, int arg1) throws XAException {
 	}
 
-	protected int prepare() throws XAException {
+	public int prepare() throws XAException {
 		forget();
 		return tm.prepare(tx);
 	}
 
-	protected void commit() throws XAException {
+	public void commit() throws XAException {
 		tm.commit(tx, false);
 	}
 
-	protected void rollback() throws XAException {
+	public void rollback() throws XAException {
 		tm.rollback(tx);
 	}
 
-	protected void forget() {
+	public void forget() {
 		if (bridged) {
 			bridge.forget(id);
 			bridged = false;
 		}
 	}
 
-	protected int getStatus() {
+	public int getStatus() {
 		try {
 			switch (tm.getStatus()) {
 			case Status.STATUS_ACTIVE:
@@ -164,4 +164,5 @@ public class Mediator extends BasicParticipant implements NamedXAResource {
 			throw new RuntimeException(e);
 		}
 	}
+
 }
