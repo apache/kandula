@@ -9,7 +9,7 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.addressing.EndpointReference;
 import org.apache.axis.message.addressing.PortType;
 import org.apache.axis.message.addressing.ReferencePropertiesType;
-import org.apache.ws.transaction.coordinator.at.BasicParticipant;
+import org.apache.ws.transaction.coordinator.at.AbstractParticipant;
 import org.apache.ws.transaction.utility.Callback;
 import org.apache.ws.transaction.utility.CallbackRegistry;
 import org.apache.ws.transaction.utility.EndpointReferenceFactory;
@@ -37,7 +37,7 @@ public class ParticipantService {
 
 	public EndpointReference getCompletionInitiatorService(Callback callback,
 			long timeout) {
-		String urn = "uuid" + UUIDGenFactory.getUUIDGen().nextUUID();
+		String urn = "uuid:" + UUIDGenFactory.getUUIDGen().nextUUID();
 		CallbackRegistry.getInstance().registerCallback(urn, callback, timeout);
 		ReferencePropertiesType r = new ReferencePropertiesType();
 		r.add(new MessageElement(CallbackRegistry.CALLBACK_REF, urn));
@@ -46,8 +46,8 @@ public class ParticipantService {
 	}
 
 	public EndpointReference getParticipantService(
-			final BasicParticipant callback, long timeout) {
-		String urn = "uuid" + UUIDGenFactory.getUUIDGen().nextUUID();
+			final AbstractParticipant callback, long timeout) {
+		String urn = "uuid:" + UUIDGenFactory.getUUIDGen().nextUUID();
 		CallbackRegistry.getInstance().registerCallback(urn, callback, timeout);
 		ReferencePropertiesType r = new ReferencePropertiesType();
 		r.add(new MessageElement(CallbackRegistry.CALLBACK_REF, urn));
