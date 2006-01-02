@@ -55,7 +55,6 @@ public class CoordinationService implements ActivationPortTypeRPC {
 		if (!ATCoordinator.COORDINATION_TYPE_ID.equals(coordinationType))
 			throw new UnsupportedCoordinationTypeException();
 		final Coordinator c = new ATCoordinatorImpl();
-		System.out.println(timeout);
 		CallbackRegistry.getInstance().registerCallback(c.getID(), c, timeout);
 		return c.getCoordinationContext();
 	}

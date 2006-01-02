@@ -8,6 +8,6 @@ package org.apache.ws.transaction.coordinator;
  * @author Dasarath Weeratunge
  *
  */
-public class TimedOutException extends RuntimeException {
+public class TimedOutException extends Exception {
 
 }
