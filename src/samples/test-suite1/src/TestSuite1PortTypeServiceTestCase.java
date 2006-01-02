@@ -1,10 +1,11 @@
+
 /**
  * TestSuite1PortTypeServiceTestCase.java
  *  
  */
 
 public class TestSuite1PortTypeServiceTestCase extends junit.framework.TestCase {
-	public TestSuite1PortTypeServiceTestCase(java.lang.String name) {
+/*	public TestSuite1PortTypeServiceTestCase(java.lang.String name) {
 		super(name);
 	}
 
@@ -117,7 +118,7 @@ public class TestSuite1PortTypeServiceTestCase extends junit.framework.TestCase 
 		binding.testPrepareRollback();
 		// TBD - validate results
 	}
-
+*/
 	public void test6TestSuite1TestEarlyCommit() throws Exception {
 		TestSuite1SoapBindingStub binding;
 		try {
@@ -137,7 +138,7 @@ public class TestSuite1PortTypeServiceTestCase extends junit.framework.TestCase 
 		binding.testEarlyCommit();
 		// TBD - validate results
 	}
-
+/*
 	public void test7TestSuite1TestEarlyRollback() throws Exception {
 		TestSuite1SoapBindingStub binding;
 		try {
@@ -237,5 +238,8 @@ public class TestSuite1PortTypeServiceTestCase extends junit.framework.TestCase 
 		binding.testRollbackFailure();
 		// TBD - validate results
 	}
+*/
 
+	public static void main(String[] args){
+	}
 }
