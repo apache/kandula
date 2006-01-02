@@ -17,12 +17,14 @@ import javax.xml.namespace.QName;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.addressing.AddressingHeaders;
 import org.apache.axis.message.addressing.Constants;
+import org.apache.ws.transaction.coordinator.TimedOutException;
 
 /**
  * @author Dasarath Weeratunge
  *  
  */
 public class CallbackRegistry {
+	
 	public static final QName CALLBACK_REF = new QName(
 			"http://ws.apache.org/kandula", "CallbackRef");
 
@@ -34,7 +36,7 @@ public class CallbackRegistry {
 	// for testing
 	// only...
 
-	private Timer timer = new Timer();
+	private static Timer timer = new Timer();
 
 	private static final CallbackRegistry instance = new CallbackRegistry();
 
@@ -61,7 +63,12 @@ public class CallbackRegistry {
 		timer.schedule(new TimerTask() {
 			public void run() {
 				callbacks.remove(callback);
-				callback.timeout();
+				try {
+					callback.timeout();
+				}
+				catch (TimedOutException e){
+					e.printStackTrace();
+				}
 			}
 		}, timeout);
 	}

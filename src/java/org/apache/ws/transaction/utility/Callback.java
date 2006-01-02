@@ -4,12 +4,14 @@
  */
 package org.apache.ws.transaction.utility;
 
+import org.apache.ws.transaction.coordinator.TimedOutException;
+
 /**
  * @author Dasarath Weeratunge
  *  
  */
 public interface Callback {
 
-	void timeout();
+	void timeout() throws TimedOutException;
 
 }
