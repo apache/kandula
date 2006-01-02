@@ -6,6 +6,7 @@ package org.apache.ws.transaction.coordinator;
 
 import java.rmi.RemoteException;
 
+import org.apache.axis.AxisFault;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.message.addressing.EndpointReference;
@@ -22,7 +23,8 @@ public abstract class CoordinatorImpl implements Coordinator {
 
 	private CoordinationContext ctx;
 
-	public CoordinatorImpl(String coordinationType) throws MalformedURIException {
+	public CoordinatorImpl(String coordinationType)
+			throws MalformedURIException {
 		UUIDGen gen = UUIDGenFactory.getUUIDGen();
 		id = "uuid:" + gen.nextUUID();
 		CoordinationService cs = CoordinationService.getInstance();
@@ -39,20 +41,16 @@ public abstract class CoordinatorImpl implements Coordinator {
 	}
 
 	public abstract EndpointReference register(String prot,
-			EndpointReference pps) throws InvalidCoordinationProtocolException;
+			EndpointReference pps) throws AxisFault;
 
-	public synchronized RegisterResponseType registerOperation(RegisterType params)
-			throws RemoteException {
+	public synchronized RegisterResponseType registerOperation(
+			RegisterType params) throws RemoteException {
 		EndpointReference epr = null;
-		try {
-			epr = register(params.getProtocolIdentifier().toString(),
-				new EndpointReference(params.getParticipantProtocolService()));
-		} catch (InvalidCoordinationProtocolException e) {
-			e.printStackTrace();
-			throw new RemoteException(e.getMessage());
-		}
+		epr = register(params.getProtocolIdentifier().toString(),
+			new EndpointReference(params.getParticipantProtocolService()));
 		RegisterResponseType r = new RegisterResponseType();
 		r.setCoordinatorProtocolService(epr);
 		return r;
 	}
+
 }
