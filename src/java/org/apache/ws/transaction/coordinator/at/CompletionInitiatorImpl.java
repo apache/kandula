@@ -1,6 +1,6 @@
 package org.apache.ws.transaction.coordinator.at;
 
-import org.apache.ws.transaction.utility.CallbackRegistry;
+import org.apache.ws.transaction.coordinator.CallbackRegistry;
 import org.apache.ws.transaction.wsat.CompletionInitiatorPortType;
 
 public class CompletionInitiatorImpl implements CompletionInitiatorPortType {

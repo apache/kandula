@@ -10,13 +10,15 @@ import java.util.TimerTask;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
+import javax.xml.soap.Name;
 
+import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.message.addressing.EndpointReference;
+import org.apache.ws.transaction.coordinator.Callback;
 import org.apache.ws.transaction.coordinator.CoordinationContext;
+import org.apache.ws.transaction.coordinator.CoordinationService;
 import org.apache.ws.transaction.coordinator.Coordinator;
-import org.apache.ws.transaction.coordinator.ParticipantService;
 import org.apache.ws.transaction.coordinator.TimedOutException;
-import org.apache.ws.transaction.utility.Callback;
 import org.apache.ws.transaction.wsat.CoordinatorPortType;
 import org.apache.ws.transaction.wsat.Notification;
 import org.apache.ws.transaction.wsat.ParticipantPortType;
@@ -28,6 +30,10 @@ import org.apache.ws.transaction.wscoor.Expires;
  */
 public abstract class AbstractParticipant implements ParticipantPortType,
 		Callback {
+
+	private String id;
+
+	private EndpointReference epr;
 
 	private static Timer timer = new Timer();
 
@@ -45,14 +51,22 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 
 	protected abstract int getStatus();
 
+	protected AbstractParticipant() {
+		id = "uuid:" + UUIDGenFactory.getUUIDGen().nextUUID();
+	}
+
+	public String getID() {
+		return id;
+	}
+
 	protected void register(boolean durable, CoordinationContext ctx)
 			throws RemoteException {
 		long timeout = 0;
 		Expires ex = ctx.getExpires();
 		if (ex != null)
 			timeout = ex.get_value().longValue();
-		EndpointReference epr = ParticipantService.getInstance().getParticipantService(
-			this, timeout);
+		epr = CoordinationService.getInstance().getParticipantService(this,
+			timeout);
 		eprOfCoordinator = ctx.register(
 			durable ? ATCoordinator.PROTOCOL_ID_DURABLE_2PC
 					: ATCoordinator.PROTOCOL_ID_VOLATILE_2PC, epr);
@@ -60,7 +74,7 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 
 	protected CoordinatorPortType getCoordinator() {
 		try {
-			return new CoordinatorStub(eprOfCoordinator);
+			return new CoordinatorStub(this, eprOfCoordinator);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -98,8 +112,9 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 									p.preparedOperation(null);
 								} catch (RemoteException e) {
 									// TODO:
-									// identify wscoor:InvalidState Soap fault and stop
-									e.printStackTrace();								
+									// identify wscoor:InvalidState Soap fault
+									// and stop
+									e.printStackTrace();
 								}
 							}
 						}
@@ -194,6 +209,7 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 	public synchronized void timeout() throws TimedOutException {
 		System.out.println("[AbstractParticipant] timeout "
 				+ AT2PCStatus.getStatusName(getStatus()));
+
 		if (getStatus() == AT2PCStatus.NONE)
 			return;
 		try {
@@ -204,5 +220,22 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 			e.printStackTrace();
 		}
 		throw new TimedOutException();
+	}
+
+	public synchronized void onFault(Name code) {
+		System.out.println("[AbstractParticipant] onFault: " + code);
+
+		// FIXME:
+		try {
+			rollback();
+			forget();
+		} catch (XAException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public EndpointReference getEndpointReference() {
+		return epr;
 	}
 }
