@@ -24,6 +24,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.message.addressing.EndpointReference;
 import org.apache.axis.types.URI;
 import org.apache.axis.types.URI.MalformedURIException;
+import org.apache.ws.transaction.utility.AddressingHeaders;
 import org.apache.ws.transaction.utility.Service;
 import org.apache.ws.transaction.utility.TCPSnifferHelper;
 import org.apache.ws.transaction.wscoor.ActivationPortTypeRPCBindingStub;
@@ -40,7 +41,9 @@ public class ActivationStub extends ActivationPortTypeRPCBindingStub {
 	public ActivationStub(EndpointReference epr) throws AxisFault,
 			MalformedURLException {
 		super(new URL(TCPSnifferHelper.redirect(epr.getAddress().toString())),
-				new Service(epr));
+				new Service());
+		AddressingHeaders headers = new AddressingHeaders(epr, null);
+		((Service) service).setAddressingHeaders(headers);
 	}
 
 	public CoordinationContext createCoordinationContext(String coordinationType)

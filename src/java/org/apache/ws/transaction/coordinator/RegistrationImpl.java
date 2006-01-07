@@ -18,7 +18,6 @@ package org.apache.ws.transaction.coordinator;
 
 import java.rmi.RemoteException;
 
-import org.apache.ws.transaction.utility.CallbackRegistry;
 import org.apache.ws.transaction.wscoor.RegisterResponseType;
 import org.apache.ws.transaction.wscoor.RegisterType;
 import org.apache.ws.transaction.wscoor.RegistrationPortTypeRPC;
@@ -28,7 +27,7 @@ public class RegistrationImpl implements RegistrationPortTypeRPC {
 	public RegisterResponseType registerOperation(RegisterType params)
 			throws RemoteException {
 		Coordinator c = (Coordinator) CallbackRegistry.getInstance().correlateMessage(
-			CallbackRegistry.COORDINATOR_REF, false);
+			CallbackRegistry.CALLBACK_REF, false);
 		return c.registerOperation(params);
 	}
 }
