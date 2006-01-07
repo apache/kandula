@@ -16,64 +16,68 @@
  */
 package org.apache.ws.transaction.utility;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.namespace.QName;
 import javax.xml.rpc.Call;
 import javax.xml.rpc.ServiceException;
 
-import org.apache.axis.components.uuid.UUIDGenFactory;
-import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.addressing.AddressingHeaders;
 import org.apache.axis.message.addressing.Constants;
-import org.apache.axis.message.addressing.EndpointReference;
-import org.apache.axis.message.addressing.MessageID;
-import org.apache.axis.message.addressing.RelatesTo;
-import org.apache.axis.message.addressing.RelationshipTypeValues;
-import org.apache.axis.types.URI;
-import org.apache.axis.types.URI.MalformedURIException;
 
 public class Service extends org.apache.axis.client.Service {
 	AddressingHeaders headers;
 
-	Object callback;
+	//	Callback callback;
 
-	public Service(EndpointReference epr) {
-		headers = new AddressingHeaders(epr);
+	public Service() {
 	}
-	
-	public Service(EndpointReference epr, EndpointReference replyTo) {
-		headers = new AddressingHeaders(epr);
-		headers.setReplyTo(replyTo);
+
+	//	public Service(EndpointReference to) {
+	//		headers = new AddressingHeaders(to);
+	//	}
+	//
+	//	public Service(EndpointReference to, Callback callback) {
+	//		headers = new AddressingHeaders(to);
+	//		setCallback(callback);
+	//	}
+	//
+	//	public Service(EndpointReference to, EndpointReference replyTo,
+	//			Callback callback) {
+	//		headers = new AddressingHeaders(to);
+	//		headers.setReplyTo(replyTo);
+	//	}
+	//
+	//	public void setCallback(Callback callback) {
+	//		this.callback = callback;
+	//		CoordinationService cs = CoordinationService.getInstance();
+	//		headers.setFaultTo(cs.getFaultDispatcherService(callback));
+	//	}
+	//
+	//	public void setRelatesTo(MessageID id) {
+	//		List l = new ArrayList(1);
+	//		l.add(new RelatesTo(id, RelationshipTypeValues.RESPONSE));
+	//		headers.setRelatesTo(l);
+	//	}
+
+	public void setAddressingHeaders(AddressingHeaders headers) {
+		this.headers = headers;
 	}
-	
-	public void setCallback(Object callback) {
-		this.callback = callback;
-	}
-	
-	public void setRelatesTo(MessageID id){
-		List l = new ArrayList(1);
-		l.add(new RelatesTo(id, RelationshipTypeValues.RESPONSE));
-		headers.setRelatesTo(l);
-	}
-	
+
 	public Call createCall() throws ServiceException {
 		Call call = super.createCall();
-		if (callback != null) {
-			try {
-				MessageID id = new MessageID(new URI("uuid:"
-						+ UUIDGenFactory.getUUIDGen().nextUUID()));
-				headers.setMessageID(id);
-				String ref = id.toString();
-				CallbackRegistry.getInstance().registerCallback(ref, callback);
-				MessageElement e = new MessageElement(
-						CallbackRegistry.CALLBACK_REF, ref);
-				headers.getReplyTo().getProperties().add(e);
-			} catch (MalformedURIException e) {
-				throw new ServiceException(e.getMessage());
-			}
-		}
+		//		if (callback != null) {
+		//			try {
+		//				MessageID id = new MessageID(new URI("uuid:"
+		//						+ UUIDGenFactory.getUUIDGen().nextUUID()));
+		//				headers.setMessageID(id);
+		//				String ref = id.toString();
+		//				CallbackRegistry.getInstance().registerCallback(ref, callback);
+		//				MessageElement e = new MessageElement(
+		//						CallbackRegistry.CALLBACK_REF, ref);
+		//				headers.getReplyTo().getProperties().add(e);
+		//			} catch (MalformedURIException e) {
+		//				throw new ServiceException(e.getMessage());
+		//			}
+		//		}
 		call.setProperty(Constants.ENV_ADDRESSING_REQUEST_HEADERS, headers);
 		return call;
 	}
