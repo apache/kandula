@@ -37,7 +37,7 @@ public class TransactionManagerImpl {
 	}
 
 	public void begin() throws RemoteException {
-		begin(CoordinationService.getInstance().getActivationService());
+		begin(CoordinationService.getInstance().getActivationCoordinatorService());
 	}
 
 	public void begin(EndpointReference epr) throws RemoteException {

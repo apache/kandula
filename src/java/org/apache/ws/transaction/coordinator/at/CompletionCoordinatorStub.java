@@ -20,6 +20,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.message.addressing.EndpointReference;
+import org.apache.ws.transaction.coordinator.Callback;
+import org.apache.ws.transaction.coordinator.CoordinationService;
+import org.apache.ws.transaction.utility.AddressingHeaders;
 import org.apache.ws.transaction.utility.Service;
 import org.apache.ws.transaction.utility.TCPSnifferHelper;
 import org.apache.ws.transaction.wsat.CompletionCoordinatorBindingStub;
@@ -31,10 +35,17 @@ import org.apache.ws.transaction.wsat.CompletionCoordinatorBindingStub;
  */
 public class CompletionCoordinatorStub extends CompletionCoordinatorBindingStub {
 
-	public CompletionCoordinatorStub(
-			org.apache.axis.message.addressing.EndpointReference epr)
+	public CompletionCoordinatorStub(Callback callback, EndpointReference epr)
 			throws AxisFault, MalformedURLException {
 		super(new URL(TCPSnifferHelper.redirect(epr.getAddress().toString())),
-				new Service(epr));
+				new Service());
+
+		CoordinationService cs = CoordinationService.getInstance();
+
+		AddressingHeaders headers = new AddressingHeaders(epr,
+				callback.getEndpointReference());
+		headers.setFaultTo(cs.getFaultDispatcherService(callback));
+		((Service) service).setAddressingHeaders(headers);
+
 	}
 }

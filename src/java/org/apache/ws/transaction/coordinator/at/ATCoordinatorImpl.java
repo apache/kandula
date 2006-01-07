@@ -4,6 +4,7 @@
  */
 package org.apache.ws.transaction.coordinator.at;
 
+import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,17 +14,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.soap.Name;
+
 import org.apache.axis.AxisFault;
-import org.apache.axis.MessageContext;
 import org.apache.axis.components.uuid.UUIDGen;
 import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.addressing.AddressingHeaders;
-import org.apache.axis.message.addressing.Constants;
 import org.apache.axis.message.addressing.EndpointReference;
 import org.apache.axis.types.URI.MalformedURIException;
 import org.apache.ws.transaction.coordinator.CoordinationService;
 import org.apache.ws.transaction.coordinator.CoordinatorImpl;
+import org.apache.ws.transaction.coordinator.InvalidCoordinationProtocolException;
 import org.apache.ws.transaction.coordinator.TimedOutException;
 import org.apache.ws.transaction.wsat.Notification;
 
@@ -53,36 +55,47 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 		super(COORDINATION_TYPE_ID);
 	}
 
-	public EndpointReference register(String prot, EndpointReference pps)
-			throws AxisFault {
+	public EndpointReference register(String protocol,
+			EndpointReference participantProtocolService)
+			throws InvalidCoordinationProtocolException {
+
 		if (!(status == AT2PCStatus.ACTIVE || status == AT2PCStatus.PREPARING_VOLATILE))
 			throw new IllegalStateException();
+
 		CoordinationService cs = CoordinationService.getInstance();
-		String ref = null;
+		String participantRef = null;
 		EndpointReference epr = null;
-		if (prot.equals(PROTOCOL_ID_COMPLETION)) {
-			if (pps != null)
-				completionParticipants.add(pps);
+
+		if (protocol.equals(PROTOCOL_ID_COMPLETION)) {
+			if (participantProtocolService != null)
+				completionParticipants.add(participantProtocolService);
+
 			epr = cs.getCompletionCoordinatorService(this);
 		} else {
-			if (pps == null)
+			if (participantProtocolService == null)
 				throw new IllegalArgumentException();
+
 			UUIDGen gen = UUIDGenFactory.getUUIDGen();
-			ref = "uuid:" + gen.nextUUID();
-			if (prot.equals(PROTOCOL_ID_VOLATILE_2PC))
-				volatile2PCParticipants.put(ref, pps);
-			else if (prot.equals(PROTOCOL_ID_DURABLE_2PC))
-				durable2PCParticipants.put(ref, pps);
+			participantRef = "uuid:" + gen.nextUUID();
+
+			if (protocol.equals(PROTOCOL_ID_VOLATILE_2PC))
+				volatile2PCParticipants.put(participantRef,
+					participantProtocolService);
+			else if (protocol.equals(PROTOCOL_ID_DURABLE_2PC))
+				durable2PCParticipants.put(participantRef,
+					participantProtocolService);
 			else
-				throw INVALID_PROTOCOL_SOAP_FAULT;
-			epr = cs.getCoordinatorService(this, ref);
+				throw new InvalidCoordinationProtocolException();
+
+			epr = cs.getCoordinatorService(this, participantRef);
 		}
+
 		return epr;
 	}
 
-	public void forget2PC(String ref) {
-		if (volatile2PCParticipants.remove(ref) == null)
-			durable2PCParticipants.remove(ref);
+	public void forget2PC(String participantRef) {
+		if (volatile2PCParticipants.remove(participantRef) == null)
+			durable2PCParticipants.remove(participantRef);
 	}
 
 	public void rollback() {
@@ -100,46 +113,53 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 		}
 	}
 
-	public void aborted(String ref) throws AxisFault {
+	public void aborted(String participantRef) throws AxisFault {
 		switch (status) {
 		case AT2PCStatus.ACTIVE:
 		case AT2PCStatus.PREPARING_VOLATILE:
 		case AT2PCStatus.PREPARING_DURABLE:
-			forget2PC(ref);
+			forget2PC(participantRef);
 			rollback();
 			return;
 
 		case AT2PCStatus.COMMITTING:
-			throw INVALID_STATE_SOAP_FAULT;
+			throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+			return;
 
 		case AT2PCStatus.ABORTING:
-			forget2PC(ref);
+			forget2PC(participantRef);
 			return;
 
 		case AT2PCStatus.NONE:
 		}
 	}
 
-	public void readOnly(String ref) throws AxisFault {
+	public void readOnly(String participantRef) throws AxisFault {
 		switch (status) {
 		case AT2PCStatus.ACTIVE:
 		case AT2PCStatus.PREPARING_VOLATILE:
 		case AT2PCStatus.PREPARING_DURABLE:
-			forget2PC(ref);
+			forget2PC(participantRef);
 			return;
 
 		case AT2PCStatus.COMMITTING:
-			throw INVALID_STATE_SOAP_FAULT;
+			throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+			return;
 
 		case AT2PCStatus.ABORTING:
-			forget2PC(ref);
+			forget2PC(participantRef);
 			return;
 
 		case AT2PCStatus.NONE:
 		}
 	}
 
-	public void replay(String ref) throws AxisFault {
+	private ParticipantStub getParticipantStub(String participantRef,
+			EndpointReference epr) throws AxisFault, MalformedURLException {
+		return new ParticipantStub(this, participantRef, epr);
+	}
+
+	public void replay(String participantRef) throws AxisFault {
 		switch (status) {
 		case AT2PCStatus.ACTIVE:
 		case AT2PCStatus.PREPARING_VOLATILE:
@@ -148,109 +168,129 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			return;
 
 		case AT2PCStatus.COMMITTING:
-			EndpointReference epr = getEprOf2PCParticipant(ref);
+			EndpointReference epr = getEprToRespond(participantRef);
 			if (epr != null)
 				try {
-					new ParticipantStub(epr).commitOperation(null);
+					getParticipantStub(participantRef, epr).commitOperation(
+						null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			return;
 
 		case AT2PCStatus.ABORTING:
-			epr = getEprOf2PCParticipant(ref);
+			epr = getEprToRespond(participantRef);
 			if (epr != null)
 				try {
-					new ParticipantStub(epr).rollbackOperation(null);
+					getParticipantStub(participantRef, epr).rollbackOperation(
+						null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			return;
 
 		case AT2PCStatus.NONE:
-			if (volatile2PCParticipants.containsKey(ref))
-				throw INVALID_STATE_SOAP_FAULT;
-			epr = (EndpointReference) durable2PCParticipants.get(ref);
-			if (epr != null)
-				try {
-					new ParticipantStub(epr).rollbackOperation(null);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			if (volatile2PCParticipants.containsKey(participantRef))
+				throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+			else {
+				epr = (EndpointReference) durable2PCParticipants.get(participantRef);
+				if (epr == null)
+					epr = getReplyToEpr();
+				if (epr != null)
+					try {
+						getParticipantStub(participantRef, epr).rollbackOperation(
+							null);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+			}
 		}
 	}
 
-	public void prepared(String ref) throws AxisFault {
+	public void prepared(String participantRef) throws AxisFault {
 		switch (status) {
 		case AT2PCStatus.ACTIVE:
-			rollback();
-			throw INVALID_STATE_SOAP_FAULT;
+			try {
+				throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+			} finally {
+				rollback();
+			}
+			return;
 
 		case AT2PCStatus.PREPARING_VOLATILE:
 		case AT2PCStatus.PREPARING_DURABLE:
-			preparedParticipants.add(ref);
+			preparedParticipants.add(participantRef);
 			return;
 
 		case AT2PCStatus.COMMITTING:
-			EndpointReference epr = getEprOf2PCParticipant(ref);
+			EndpointReference epr = getEprToRespond(participantRef);
 			if (epr != null)
 				try {
-					new ParticipantStub(epr).commitOperation(null);
+					getParticipantStub(participantRef, epr).commitOperation(
+						null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			return;
 
 		case AT2PCStatus.ABORTING:
-			if (volatile2PCParticipants.remove(ref) != null) 
-				throw INVALID_STATE_SOAP_FAULT;
-			epr = (EndpointReference) durable2PCParticipants.remove(ref);
-			if (epr != null) {
-				try {
-					new ParticipantStub(epr).rollbackOperation(null);
-				} catch (Exception e) {
-					e.printStackTrace();
+			if (volatile2PCParticipants.remove(participantRef) != null)
+				throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+			else {
+				epr = (EndpointReference) durable2PCParticipants.remove(participantRef);
+				if (epr == null)
+					epr = getReplyToEpr();
+				if (epr != null) {
+					try {
+						getParticipantStub(participantRef, epr).rollbackOperation(
+							null);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
 			return;
 
 		case AT2PCStatus.NONE:
-			if (volatile2PCParticipants.containsKey(ref))
-				throw INVALID_STATE_SOAP_FAULT;
-			epr = (EndpointReference) durable2PCParticipants.get(ref);
-			if (epr != null)
-				try {
-					new ParticipantStub(epr).rollbackOperation(null);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			if (volatile2PCParticipants.containsKey(participantRef))
+				throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+			else {
+				epr = (EndpointReference) durable2PCParticipants.get(participantRef);
+				if (epr == null)
+					epr = getReplyToEpr();
+				if (epr != null)
+					try {
+						getParticipantStub(participantRef, epr).rollbackOperation(
+							null);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+			}
 		}
 	}
 
-	public void committed(String ref) throws AxisFault {
+	public void committed(String participantRef) throws AxisFault {
 		switch (status) {
 		case AT2PCStatus.ACTIVE:
 		case AT2PCStatus.PREPARING_VOLATILE:
 		case AT2PCStatus.PREPARING_DURABLE:
-			rollback();
-			throw INVALID_STATE_SOAP_FAULT;
+			try {
+				throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+			} finally {
+				rollback();
+			}
+			return;
 
 		case AT2PCStatus.COMMITTING:
-			forget2PC(ref);
+			forget2PC(participantRef);
 			return;
 
 		case AT2PCStatus.ABORTING:
-			throw INVALID_STATE_SOAP_FAULT;
+			throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+			return;
 
 		case AT2PCStatus.NONE:
 		}
-	}
-
-	private EndpointReference getEprOf2PCParticipant(String ref) {
-		EndpointReference epr = (EndpointReference) volatile2PCParticipants.get(ref);
-		if (epr != null)
-			return epr;
-		return (EndpointReference) durable2PCParticipants.get(ref);
 	}
 
 	private boolean prepare(Map participants) {
@@ -261,12 +301,15 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			if (iters++ > 0)
 				pause(RETRY_DELAY_MILLIS - RESPONSE_DELAY_MILLIS);
 
-			Iterator iter = participants.values().iterator();
+			Iterator iter = participants.keySet().iterator();
 			while (iter.hasNext()) {
 				if (status == AT2PCStatus.ABORTING)
 					return false;
 				try {
-					new ParticipantStub((EndpointReference) iter.next()).prepareOperation(null);
+					String participantRef = (String) iter.next();
+					getParticipantStub(participantRef,
+						(EndpointReference) participants.get(participantRef)).prepareOperation(
+						null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -334,11 +377,13 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 
 			Map participants = volatile2PCParticipants;
 			while (true) {
-				Iterator iter = participants.values().iterator();
+				Iterator iter = participants.keySet().iterator();
 				while (iter.hasNext())
 					try {
-						ParticipantStub p = new ParticipantStub(
-								(EndpointReference) iter.next());
+						String participantRef = (String) iter.next();
+						ParticipantStub p = getParticipantStub(
+							participantRef,
+							(EndpointReference) participants.get(participantRef));
 						if (status == AT2PCStatus.ABORTING)
 							p.rollbackOperation(null);
 						else
@@ -399,9 +444,21 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 		replay(getParticipantRef());
 	}
 
-	private AddressingHeaders getAddressingHeaders() {
-		return (AddressingHeaders) MessageContext.getCurrentContext().getProperty(
-			Constants.ENV_ADDRESSING_REQUEST_HEADERS);
+	private EndpointReference getEprToSendFault(String participantRef) {
+		EndpointReference epr = getFaultToEpr();
+		if (epr != null)
+			return epr;
+		return getEprToRespond(participantRef);
+	}
+
+	private EndpointReference getEprToRespond(String participantRef) {
+		EndpointReference epr = (EndpointReference) volatile2PCParticipants.get(participantRef);
+		if (epr != null)
+			return epr;
+		epr = (EndpointReference) durable2PCParticipants.get(participantRef);
+		if (epr != null)
+			return epr;
+		return getReplyToEpr();
 	}
 
 	private String getParticipantRef() {
@@ -423,10 +480,31 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 	public synchronized void timeout() throws TimedOutException {
 		System.out.println("[ATCoordinatorImpl] timeout "
 				+ AT2PCStatus.getStatusName(status));
+
 		if (status != AT2PCStatus.NONE) {
 			maxRetries = 3;
 			rollback();
 			throw new TimedOutException();
 		}
 	}
+
+	private void throwFault(String participantRef, AxisFault fault)
+			throws AxisFault {
+		throwFault(getEprToSendFault(participantRef), fault);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.ws.transaction.coordinator.Callback#onFault(javax.xml.soap.Name)
+	 */
+	public synchronized void onFault(Name code) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public EndpointReference getEndpointReference() {
+		throw new UnsupportedOperationException();
+	}
+
 }
