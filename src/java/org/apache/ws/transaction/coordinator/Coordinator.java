@@ -7,7 +7,6 @@ package org.apache.ws.transaction.coordinator;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.AxisFault;
-import org.apache.ws.transaction.utility.Callback;
 import org.apache.ws.transaction.wscoor.RegistrationPortTypeRPC;
 
 /**
@@ -32,7 +31,11 @@ public interface Coordinator extends RegistrationPortTypeRPC, Callback {
 			"The message was invalid for the current state of the activity.",
 			null, null);
 
-	String getID();
+	AxisFault INVALID_PARAMETERS_SOAP_FAULT = new AxisFault(
+			new QName("http://schemas.xmlsoap.org/ws/2004/10/wscoor",
+					"InvalidParameters"),
+			"The message contained invalid parameters and could not be processed.",
+			null, null);
 
 	CoordinationContext getCoordinationContext();
 
