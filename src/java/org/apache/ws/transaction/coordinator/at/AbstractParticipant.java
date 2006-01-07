@@ -37,7 +37,7 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 
 	private static Timer timer = new Timer();
 
-	public static final int RETRY_DELAY_MILLIS = 10 * 1000;
+	public static final int RETRY_DELAY_MILLIS = 3 * 1000;
 
 	private EndpointReference eprOfCoordinator;
 
@@ -227,8 +227,8 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 
 		// FIXME:
 		try {
-			rollback();
 			forget();
+			rollback();			
 		} catch (XAException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
