@@ -6,7 +6,7 @@ package org.apache.ws.transaction.coordinator.at;
 
 import java.rmi.RemoteException;
 
-import org.apache.ws.transaction.utility.CallbackRegistry;
+import org.apache.ws.transaction.coordinator.CallbackRegistry;
 import org.apache.ws.transaction.wsat.Notification;
 import org.apache.ws.transaction.wsat.ParticipantPortType;
 

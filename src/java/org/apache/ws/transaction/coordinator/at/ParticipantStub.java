@@ -20,6 +20,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.message.addressing.EndpointReference;
+import org.apache.ws.transaction.coordinator.CoordinationService;
+import org.apache.ws.transaction.utility.AddressingHeaders;
 import org.apache.ws.transaction.utility.Service;
 import org.apache.ws.transaction.utility.TCPSnifferHelper;
 import org.apache.ws.transaction.wsat.ParticipantBindingStub;
@@ -31,11 +34,19 @@ import org.apache.ws.transaction.wsat.ParticipantBindingStub;
  */
 public class ParticipantStub extends ParticipantBindingStub {
 
-	public ParticipantStub(
-			org.apache.axis.message.addressing.EndpointReference epr)
-			throws AxisFault, MalformedURLException {
+	public ParticipantStub(ATCoordinator coordinator, String participantRef,
+			EndpointReference epr) throws AxisFault, MalformedURLException {
 		super(new URL(TCPSnifferHelper.redirect(epr.getAddress().toString())),
-				new Service(epr));
+				new Service());
+
+		CoordinationService cs = CoordinationService.getInstance();
+
+		AddressingHeaders headers = new AddressingHeaders(epr,
+				cs.getCoordinatorService(coordinator, participantRef));
+		headers.setFaultTo(cs.getFaultDispatcherService(coordinator,
+			participantRef));
+		((Service) service).setAddressingHeaders(headers);
+
 	}
 
 }

@@ -24,6 +24,7 @@ import org.apache.ws.transaction.wsat.CoordinatorPortType;
 
 public interface ATCoordinator extends Coordinator, CoordinatorPortType,
 		CompletionCoordinatorPortType {
+
 	final QName PARTICIPANT_REF = new QName("http://ws.apache.org/kandula",
 			"ParticipantRef");
 

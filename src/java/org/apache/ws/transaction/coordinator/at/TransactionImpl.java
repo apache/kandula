@@ -16,15 +16,19 @@
  */
 package org.apache.ws.transaction.coordinator.at;
 
+import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 
 import javax.transaction.RollbackException;
+import javax.xml.soap.Name;
 
+import org.apache.axis.AxisFault;
+import org.apache.axis.components.uuid.UUIDGenFactory;
 import org.apache.axis.message.addressing.EndpointReference;
+import org.apache.ws.transaction.coordinator.Callback;
 import org.apache.ws.transaction.coordinator.CoordinationContext;
-import org.apache.ws.transaction.coordinator.ParticipantService;
+import org.apache.ws.transaction.coordinator.CoordinationService;
 import org.apache.ws.transaction.coordinator.TimedOutException;
-import org.apache.ws.transaction.utility.Callback;
 import org.apache.ws.transaction.wsat.CompletionInitiatorPortType;
 import org.apache.ws.transaction.wsat.Notification;
 import org.apache.ws.transaction.wscoor.Expires;
@@ -58,23 +62,31 @@ public class TransactionImpl {
 		if (ex != null)
 			timeout = ex.get_value().longValue();
 		callback = new CompletionInitiatorCallback();
+		EndpointReference epr = CoordinationService.getInstance().getCompletionInitiatorService(
+			callback, timeout);
+		callback.setEndpointReference(epr);
 		eprOfCompletionCoordinator = ctx.register(
-			ATCoordinator.PROTOCOL_ID_COMPLETION,
-			ParticipantService.getInstance().getCompletionInitiatorService(
-				callback, timeout));
+			ATCoordinator.PROTOCOL_ID_COMPLETION, epr);
 		canInitiateCompletion = true;
 	}
 
 	private class CompletionInitiatorCallback implements
 			CompletionInitiatorPortType, Callback {
-		public synchronized void committedOperation(Notification parameters)
-				throws RemoteException {
+		
+		private String id;
+
+		private EndpointReference epr;
+
+		public CompletionInitiatorCallback() {
+			id = "uuid:" + UUIDGenFactory.getUUIDGen().nextUUID();
+		}
+
+		public synchronized void committedOperation(Notification parameters) {
 			committed = true;
 			notify();
 		}
 
-		public synchronized void abortedOperation(Notification parameters)
-				throws RemoteException {
+		public synchronized void abortedOperation(Notification parameters) {
 			aborted = true;
 			notify();
 		}
@@ -82,6 +94,22 @@ public class TransactionImpl {
 		public synchronized void timeout() {
 			timedOut = true;
 			notify();
+		}
+
+		public synchronized void onFault(Name code) {
+			notify();
+		}
+
+		public String getID() {
+			return id;
+		}
+
+		public void setEndpointReference(EndpointReference epr) {
+			this.epr = epr;
+		}
+
+		public EndpointReference getEndpointReference() {
+			return epr;
 		}
 	}
 
@@ -112,7 +140,7 @@ public class TransactionImpl {
 				if (!aborted) {
 					if (committed)
 						throw new IllegalStateException();
-					new CompletionCoordinatorStub(eprOfCompletionCoordinator).rollbackOperation(null);
+					getCompletionCoordinatorStub().rollbackOperation(null);
 					callback.wait();
 				}
 			}
@@ -120,7 +148,7 @@ public class TransactionImpl {
 				throw new TimedOutException();
 			if (!aborted)
 				throw new RollbackException();
-		} catch (RemoteException e) {			
+		} catch (RemoteException e) {
 			throw e;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -128,6 +156,12 @@ public class TransactionImpl {
 		} finally {
 			tm.resume(tx);
 		}
+	}
+
+	private CompletionCoordinatorStub getCompletionCoordinatorStub()
+			throws AxisFault, MalformedURLException {
+		return new CompletionCoordinatorStub(callback,
+				eprOfCompletionCoordinator);
 	}
 
 	public void commit() throws RemoteException {
@@ -142,7 +176,7 @@ public class TransactionImpl {
 				if (!committed) {
 					if (aborted)
 						throw new IllegalStateException();
-					new CompletionCoordinatorStub(eprOfCompletionCoordinator).commitOperation(null);
+					getCompletionCoordinatorStub().commitOperation(null);
 					callback.wait();
 				}
 			}
