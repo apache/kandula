@@ -167,11 +167,14 @@ public class ManInTheMiddle {
 			if (stage == 6) {
 				stage = 7;
 				return false;
-			}
-			// TODO:
-			// requires further verification using a TCP sniffer since the
-			// 2 Prepared messages may not be received before the 3rd Rollback is issued.
-			return !(stage > 10);
+			} else if (stage == 11) {
+				stage = 12;
+				return false;
+			} else if (stage == 12) {
+				stage = 13;
+				return false;
+			} else
+				return true;
 		}
 
 		public synchronized boolean onRollbackMsg(String msg) {
@@ -182,7 +185,7 @@ public class ManInTheMiddle {
 				stage = 11;
 				return true;
 			}
-			return false;
+			return stage < 13;
 		}
 	}
 
@@ -355,7 +358,7 @@ public class ManInTheMiddle {
 		ManInTheMiddle middleMan = new ManInTheMiddle(
 				new ManInTheMiddle.PreparedAfterTimeoutTestOrchestratorImpl());
 		middleMan.forward(8081, 8083);
-		//	middleMan.forward(8082, 8084);
+		middleMan.forward(8082, 8084);
 
 	}
 

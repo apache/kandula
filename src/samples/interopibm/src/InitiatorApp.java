@@ -1,9 +1,13 @@
 
 import java.net.URL;
 
+import javax.xml.soap.Name;
+
 import org.apache.axis.message.addressing.EndpointReference;
 import org.apache.ws.transaction.coordinator.ActivationStub;
+import org.apache.ws.transaction.coordinator.Callback;
 import org.apache.ws.transaction.coordinator.CoordinationContext;
+import org.apache.ws.transaction.coordinator.TimedOutException;
 import org.apache.ws.transaction.coordinator.at.ATCoordinator;
 import org.apache.ws.transaction.coordinator.at.CompletionCoordinatorStub;
 import org.apache.ws.transaction.utility.TCPSnifferHelper;
@@ -18,14 +22,14 @@ import org.apache.ws.transaction.utility.TCPSnifferHelper;
  *  
  */
 public class InitiatorApp {
-	
+
 	private final String IBM_INTEROP_SERVICE = "http://wsi.alphaworks.ibm.com:8080/wstx/services/InteropService";
-	
+
 	private final String KANDULA_INTEROP_SERVICE = "http://localhost:8081/axis/services/InteropService";
 
-	private final String KANDULA_ACTIVATION_SERVICE = "http://localhost:8081/axis/services/Activation";
-	
-	private String eprOfInteropService = KANDULA_INTEROP_SERVICE;
+	private final String KANDULA_ACTIVATION_SERVICE = "http://localhost:8081/axis/services/activationCoordinator";
+
+	private String eprOfInteropService = IBM_INTEROP_SERVICE;
 
 	private InteropService_PortType getInteropService() throws Exception {
 		return new InteropServiceServiceLocator().getInteropService(new URL(
@@ -139,21 +143,63 @@ public class InitiatorApp {
 
 	public void begin() throws Exception {
 		ActivationStub stub = new ActivationStub(new EndpointReference(
-				"http://localhost:8081/axis/services/Activation"));
+				"http://localhost:8081/axis/services/activationCoordinator"));
 		ctx = stub.createCoordinationContext(ATCoordinator.COORDINATION_TYPE_ID);
 		cps = ctx.register(ATCoordinator.PROTOCOL_ID_COMPLETION,
 			new EndpointReference(
-					"http://localhost:8081/axis/services/CompletionInitiator"));
+					"http://localhost:8081/axis/services/completionInitiator"));
 		SetCoordCtxHandler.setCtx(ctx);
+	}
+
+	private class CallbackImpl implements Callback {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.apache.ws.transaction.coordinator.Callback#getID()
+		 */
+		public String getID() {
+			return "urn:foo";
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.apache.ws.transaction.coordinator.Callback#onFault(javax.xml.soap.Name)
+		 */
+		public void onFault(Name code) {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.apache.ws.transaction.coordinator.Callback#timeout()
+		 */
+		public void timeout() throws TimedOutException {
+			// TODO Auto-generated method stub
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.apache.ws.transaction.coordinator.Callback#getEndpointReference()
+		 */
+		public EndpointReference getEndpointReference() {
+			return null;
+		}
+
 	}
 
 	public void commit() throws Exception {
 		SetCoordCtxHandler.setCtx(null);
-		new CompletionCoordinatorStub(cps).commitOperation(null);
+		new CompletionCoordinatorStub(new CallbackImpl(), cps).commitOperation(null);
 	}
 
 	public void rollback() throws Exception {
 		SetCoordCtxHandler.setCtx(null);
-		new CompletionCoordinatorStub(cps).rollbackOperation(null);
+		new CompletionCoordinatorStub(new CallbackImpl(), cps).rollbackOperation(null);
 	}
 }
