@@ -23,8 +23,7 @@
 		{http://ws.apache.org/kandula}CallbackRef"/>
      </handler>
 
-     <handler type="java:org.apache.ws.transaction.j2ee.TxHandler" />
-
+     <handler type="java:org.apache.ws.transaction.coordinator.at.TxHandler" />
    </requestFlow>
    <!-- uncomment this if you want the SOAP monitor -->
 
@@ -39,7 +38,7 @@
 		{http://ws.apache.org/kandula}CallbackRef"/>
      </handler>
 
-     <handler type="java:org.apache.ws.transaction.j2ee.TxHandler" />
+     <handler type="java:org.apache.ws.transaction.coordinator.at.TxHandler" />
 
    </responseFlow>
 
@@ -121,7 +120,7 @@
       type="java:org.apache.axis.message.addressing.ServiceNameType" />
       
 
-  <service name="Registration" provider="java:RPC" style="document" use="literal">
+  <service name="registrationCoordinator" provider="java:RPC" style="document" use="literal">
       <parameter name="wsdlTargetNamespace" value="http://schemas.xmlsoap.org/ws/2004/10/wscoor"/>
       <parameter name="wsdlServiceElement" value="xxx"/>
       <parameter name="schemaQualified" value="http://schemas.xmlsoap.org/ws/2004/08/addressing,http://schemas.xmlsoap.org/ws/2004/10/wscoor"/>
@@ -281,7 +280,7 @@
       />
   </service>
 
-  <service name="Activation" provider="java:RPC" style="document" use="literal">
+  <service name="activationCoordinator" provider="java:RPC" style="document" use="literal">
       <parameter name="wsdlTargetNamespace" value="http://schemas.xmlsoap.org/ws/2004/10/wscoor"/>
       <parameter name="wsdlServiceElement" value="xxx"/>
       <parameter name="schemaQualified" value="http://schemas.xmlsoap.org/ws/2004/08/addressing,http://schemas.xmlsoap.org/ws/2004/10/wscoor"/>
@@ -442,7 +441,7 @@
   </service>
 
 
-<service name="Participant" provider="java:RPC" style="document" use="literal">
+<service name="participant" provider="java:RPC" style="document" use="literal">
       <parameter name="wsdlTargetNamespace" value="http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
       <parameter name="wsdlServiceElement" value="foo"/>
       <parameter name="schemaQualified" value="http://schemas.xmlsoap.org/ws/2004/08/addressing,http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
@@ -608,7 +607,7 @@
   </service>
 
 
-<service name="CompletionInitiator" provider="java:RPC" style="document" use="literal">
+<service name="completionInitiator" provider="java:RPC" style="document" use="literal">
       <parameter name="wsdlTargetNamespace" value="http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
       <parameter name="wsdlServiceElement" value="foo"/>
       <parameter name="schemaQualified" value="http://schemas.xmlsoap.org/ws/2004/08/addressing,http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
@@ -770,7 +769,7 @@
       />
   </service>
 
- <service name="Coordinator" provider="java:RPC" style="document" use="literal">
+ <service name="coordinator" provider="java:RPC" style="document" use="literal">
       <parameter name="wsdlTargetNamespace" value="http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
       <parameter name="wsdlServiceElement" value="foo"/>
       <parameter name="schemaQualified" value="http://schemas.xmlsoap.org/ws/2004/08/addressing,http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
@@ -941,7 +940,7 @@
       />
   </service>
 
-<service name="CompletionCoordinator" provider="java:RPC" style="document" use="literal">
+<service name="completionCoordinator" provider="java:RPC" style="document" use="literal">
       <parameter name="wsdlTargetNamespace" value="http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
       <parameter name="wsdlServiceElement" value="foo"/>
       <parameter name="schemaQualified" value="http://schemas.xmlsoap.org/ws/2004/08/addressing,http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
@@ -1152,5 +1151,94 @@
 
   </service>
 
+
+  <service name="InteropService" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://localhost:8989/wstx/services/InteropService"/>
+      <parameter name="wsdlServiceElement" value="InteropServiceService"/>
+      <parameter name="schemaUnqualified" value="http://fabrikam123.com,http://localhost:8989/wstx/services/InteropService"/>
+      <parameter name="wsdlServicePort" value="InteropService"/>
+      <parameter name="className" value="InteropServiceSoapBindingImpl"/>
+      <parameter name="wsdlPortType" value="InteropService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation name="commit" qname="operNS:Commit" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:CommitReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:Commit" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="rollback" qname="operNS:Rollback" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:RollbackReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:Rollback" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="phase2Rollback" qname="operNS:Phase2Rollback" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:Phase2RollbackReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:Phase2Rollback" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="readonly" qname="operNS:Readonly" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:ReadonlyReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:Readonly" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="volatileAndDurable" qname="operNS:VolatileAndDurable" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:VolatileAndDurableReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:VolatileAndDurable" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="earlyReadonly" qname="operNS:EarlyReadonly" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:EarlyReadonlyReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:EarlyReadonly" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="earlyAborted" qname="operNS:EarlyAborted" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:EarlyAbortedReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:EarlyAborted" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="replayAbort" qname="operNS:ReplayAbort" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:ReplayAbortReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:ReplayAbort" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="replayCommit" qname="operNS:ReplayCommit" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:ReplayCommitReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:ReplayCommit" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="retryPreparedCommit" qname="operNS:RetryPreparedCommit" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:RetryPreparedCommitReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:RetryPreparedCommit" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="retryPreparedAbort" qname="operNS:RetryPreparedAbort" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:RetryPreparedAbortReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:RetryPreparedAbort" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="retryCommit" qname="operNS:RetryCommit" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:RetryCommitReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:RetryCommit" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="retryReplay" qname="operNS:RetryReplay" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:RetryReplayReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:RetryReplay" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="preparedAfterTimeout" qname="operNS:PreparedAfterTimeout" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:PreparedAfterTimeoutReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:PreparedAfterTimeout" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="lostCommitted" qname="operNS:LostCommitted" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:LostCommittedReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:LostCommitted" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="participantClosed" qname="operNS:ParticipantClosed" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:ParticipantClosedReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:ParticipantClosed" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="participantCompensated" qname="operNS:ParticipantCompensated" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:ParticipantCompensatedReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:ParticipantCompensated" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="participantCanceled" qname="operNS:ParticipantCanceled" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:ParticipantCanceledReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:ParticipantCanceled" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="participantExit" qname="operNS:ParticipantExit" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:ParticipantExitReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:ParticipantExit" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="participantFault" qname="operNS:ParticipantFault" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:ParticipantFaultReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:ParticipantFault" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="participantCompensationFault" qname="operNS:ParticipantCompensationFault" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:ParticipantCompensationFaultReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:ParticipantCompensationFault" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="completionCommit" qname="operNS:CompletionCommit" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:CompletionCommitReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:CompletionCommit" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="completionRollback" qname="operNS:CompletionRollback" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:CompletionRollbackReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:CompletionRollback" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="invalidProtocol" qname="operNS:InvalidProtocol" xmlns:operNS="http://fabrikam123.com" returnQName="retNS:InvalidProtocolReturn" xmlns:retNS="http://localhost:8989/wstx/services/InteropService" returnType="rtns:string" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="urn:foo" >
+        <parameter qname="pns:InvalidProtocol" xmlns:pns="http://fabrikam123.com" type="tns:string" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <parameter name="allowedMethods" value="phase2Rollback retryPreparedAbort participantCompensated participantFault earlyReadonly retryCommit retryReplay replayCommit rollback participantCompensationFault preparedAfterTimeout readonly participantCanceled participantExit retryPreparedCommit completionCommit volatileAndDurable lostCommitted earlyAborted participantClosed commit invalidProtocol completionRollback replayAbort"/>
+
+  </service>
+
+  <service name="faultDispatcher" style="message">
+    <parameter name="className" value="org.apache.ws.transaction.coordinator.FaultDispatcher" />
+    <parameter name="allowedMethods" value="process" />
+  </service>
 
 </deployment>
