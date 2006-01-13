@@ -10,8 +10,15 @@ THE AUTHORS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR 
 The name and trademarks of the Authors may NOT be used in any manner, including advertising or publicity pertaining to the "Web Services Atomic Transaction" Specification or its contents without specific, written prior permission. Title to copyright in the "Web Services Atomic Transaction" Specification will at all times remain with the Authors.
 No other rights are granted by implication, estoppel or otherwise.
 -->
-<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsat="http://schemas.xmlsoap.org/ws/2004/10/wsat" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" targetNamespace="http://schemas.xmlsoap.org/ws/2004/10/wsat">
-        <wsdl:types>
+<wsdl:definitions 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:wsat="http://schemas.xmlsoap.org/ws/2004/10/wsat"
+	xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
+	targetNamespace="http://schemas.xmlsoap.org/ws/2004/10/wsat">
+	
+	<wsdl:types>
           <xs:schema>
             <xs:import
                 namespace='http://schemas.xmlsoap.org/ws/2004/08/addressing'
@@ -166,7 +173,7 @@ No other rights are granted by implication, estoppel or otherwise.
 				<soap:body use="literal"/>
 			</wsdl:input>
 		</wsdl:operation>
-	</wsdl:binding>	
+	</wsdl:binding>
 	
 	<wsdl:portType name="ParticipantPortType">
 		<wsdl:operation name="PrepareOperation">
