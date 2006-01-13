@@ -23,7 +23,7 @@
 		{http://ws.apache.org/kandula}CallbackRef"/>
      </handler>
 
-     <handler type="java:org.apache.ws.transaction.coordinator.at.TxHandler" />
+     <handler type="java:org.apache.kandula.geronimo.TxHandler" />
    </requestFlow>
    <!-- uncomment this if you want the SOAP monitor -->
 
@@ -38,7 +38,7 @@
 		{http://ws.apache.org/kandula}CallbackRef"/>
      </handler>
 
-     <handler type="java:org.apache.ws.transaction.coordinator.at.TxHandler" />
+     <handler type="java:org.apache.kandula.geronimo.TxHandler" />
 
    </responseFlow>
 
@@ -125,7 +125,7 @@
       <parameter name="wsdlServiceElement" value="xxx"/>
       <parameter name="schemaQualified" value="http://schemas.xmlsoap.org/ws/2004/08/addressing,http://schemas.xmlsoap.org/ws/2004/10/wscoor"/>
       <parameter name="wsdlServicePort" value="RegistrationRPC"/>
-      <parameter name="className" value="org.apache.ws.transaction.coordinator.RegistrationImpl"/>
+      <parameter name="className" value="org.apache.kandula.coordinator.RegistrationImpl"/>
       <parameter name="wsdlPortType" value="RegistrationPortTypeRPC"/>
       <parameter name="typeMappingVersion" value="1.2"/>
       <operation name="registerOperation" qname="RegisterOperation" returnQName="retNS:RegisterResponse" xmlns:retNS="http://schemas.xmlsoap.org/ws/2004/10/wscoor" returnType="rtns:RegisterResponseType" xmlns:rtns="http://schemas.xmlsoap.org/ws/2004/10/wscoor" soapAction="http://xxx" >
@@ -152,7 +152,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:RegisterResponseType"
-        type="java:org.apache.ws.transaction.wscoor.RegisterResponseType"
+        type="java:org.apache.kandula.wscoor.RegisterResponseType"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -160,7 +160,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:ErrorCodes"
-        type="java:org.apache.ws.transaction.wscoor.ErrorCodes"
+        type="java:org.apache.kandula.wscoor.ErrorCodes"
         serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
         encodingStyle=""
@@ -168,7 +168,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:CoordinationContextType"
-        type="java:org.apache.ws.transaction.wscoor.CoordinationContextType"
+        type="java:org.apache.kandula.wscoor.CoordinationContextType"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -200,7 +200,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:>Expires"
-        type="java:org.apache.ws.transaction.wscoor.Expires"
+        type="java:org.apache.kandula.wscoor.Expires"
         serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
         encodingStyle=""
@@ -208,7 +208,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:RegisterType"
-        type="java:org.apache.ws.transaction.wscoor.RegisterType"
+        type="java:org.apache.kandula.wscoor.RegisterType"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -216,7 +216,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:CreateCoordinationContextResponseType"
-        type="java:org.apache.ws.transaction.wscoor.CreateCoordinationContextResponseType"
+        type="java:org.apache.kandula.wscoor.CreateCoordinationContextResponseType"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -256,7 +256,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:>CoordinationContextType>Identifier"
-        type="java:org.apache.ws.transaction.wscoor.CoordinationContextTypeIdentifier"
+        type="java:org.apache.kandula.wscoor.CoordinationContextTypeIdentifier"
         serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
         encodingStyle=""
@@ -264,7 +264,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:CreateCoordinationContextType"
-        type="java:org.apache.ws.transaction.wscoor.CreateCoordinationContextType"
+        type="java:org.apache.kandula.wscoor.CreateCoordinationContextType"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -285,7 +285,7 @@
       <parameter name="wsdlServiceElement" value="xxx"/>
       <parameter name="schemaQualified" value="http://schemas.xmlsoap.org/ws/2004/08/addressing,http://schemas.xmlsoap.org/ws/2004/10/wscoor"/>
       <parameter name="wsdlServicePort" value="ActivationRPC"/>
-      <parameter name="className" value="org.apache.ws.transaction.coordinator.ActivationImpl"/>
+      <parameter name="className" value="org.apache.kandula.coordinator.ActivationImpl"/>
       <parameter name="wsdlPortType" value="ActivationPortTypeRPC"/>
       <parameter name="typeMappingVersion" value="1.2"/>
       <operation name="createCoordinationContextOperation" qname="CreateCoordinationContextOperation" returnQName="retNS:CreateCoordinationContextResponse" xmlns:retNS="http://schemas.xmlsoap.org/ws/2004/10/wscoor" returnType="rtns:CreateCoordinationContextResponseType" xmlns:rtns="http://schemas.xmlsoap.org/ws/2004/10/wscoor" soapAction="http://xxx" >
@@ -312,7 +312,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:RegisterResponseType"
-        type="java:org.apache.ws.transaction.wscoor.RegisterResponseType"
+        type="java:org.apache.kandula.wscoor.RegisterResponseType"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -320,7 +320,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:ErrorCodes"
-        type="java:org.apache.ws.transaction.wscoor.ErrorCodes"
+        type="java:org.apache.kandula.wscoor.ErrorCodes"
         serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
         encodingStyle=""
@@ -328,7 +328,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:CoordinationContextType"
-        type="java:org.apache.ws.transaction.wscoor.CoordinationContextType"
+        type="java:org.apache.kandula.wscoor.CoordinationContextType"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -360,7 +360,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:>Expires"
-        type="java:org.apache.ws.transaction.wscoor.Expires"
+        type="java:org.apache.kandula.wscoor.Expires"
         serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
         encodingStyle=""
@@ -368,7 +368,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:RegisterType"
-        type="java:org.apache.ws.transaction.wscoor.RegisterType"
+        type="java:org.apache.kandula.wscoor.RegisterType"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -376,7 +376,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:CreateCoordinationContextResponseType"
-        type="java:org.apache.ws.transaction.wscoor.CreateCoordinationContextResponseType"
+        type="java:org.apache.kandula.wscoor.CreateCoordinationContextResponseType"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -416,7 +416,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:>CoordinationContextType>Identifier"
-        type="java:org.apache.ws.transaction.wscoor.CoordinationContextTypeIdentifier"
+        type="java:org.apache.kandula.wscoor.CoordinationContextTypeIdentifier"
         serializer="org.apache.axis.encoding.ser.SimpleSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.SimpleDeserializerFactory"
         encodingStyle=""
@@ -424,7 +424,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
         qname="ns:CreateCoordinationContextType"
-        type="java:org.apache.ws.transaction.wscoor.CreateCoordinationContextType"
+        type="java:org.apache.kandula.wscoor.CreateCoordinationContextType"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -446,7 +446,7 @@
       <parameter name="wsdlServiceElement" value="foo"/>
       <parameter name="schemaQualified" value="http://schemas.xmlsoap.org/ws/2004/08/addressing,http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
       <parameter name="wsdlServicePort" value="Participant"/>
-      <parameter name="className" value="org.apache.ws.transaction.coordinator.at.ParticipantImpl"/>
+      <parameter name="className" value="org.apache.kandula.coordinator.at.ParticipantImpl"/>
       <parameter name="wsdlPortType" value="ParticipantPortType"/>
       <parameter name="typeMappingVersion" value="1.2"/>
       <operation name="prepareOperation" qname="PrepareOperation" soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Prepare" mep="oneway" >
@@ -463,7 +463,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>ATAlwaysCapability"
-        type="java:org.apache.ws.transaction.wsat.ATAlwaysCapability"
+        type="java:org.apache.kandula.wsat.ATAlwaysCapability"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -487,7 +487,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>ATAssertion"
-        type="java:org.apache.ws.transaction.wsat.ATAssertion"
+        type="java:org.apache.kandula.wsat.ATAssertion"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -551,7 +551,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>PrepareResponse"
-        type="java:org.apache.ws.transaction.wsat.PrepareResponse"
+        type="java:org.apache.kandula.wsat.PrepareResponse"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -559,7 +559,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:Notification"
-        type="java:org.apache.ws.transaction.wsat.Notification"
+        type="java:org.apache.kandula.wsat.Notification"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -567,7 +567,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>ReplayResponse"
-        type="java:org.apache.ws.transaction.wsat.ReplayResponse"
+        type="java:org.apache.kandula.wsat.ReplayResponse"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -575,7 +575,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:Outcome"
-        type="java:org.apache.ws.transaction.wsat.Outcome"
+        type="java:org.apache.kandula.wsat.Outcome"
         serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
         encodingStyle=""
@@ -583,7 +583,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:ErrorCodes"
-        type="java:org.apache.ws.transaction.wsat.ErrorCodes"
+        type="java:org.apache.kandula.wsat.ErrorCodes"
         serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
         encodingStyle=""
@@ -599,7 +599,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:Vote"
-        type="java:org.apache.ws.transaction.wsat.Vote"
+        type="java:org.apache.kandula.wsat.Vote"
         serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
         encodingStyle=""
@@ -612,7 +612,7 @@
       <parameter name="wsdlServiceElement" value="foo"/>
       <parameter name="schemaQualified" value="http://schemas.xmlsoap.org/ws/2004/08/addressing,http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
       <parameter name="wsdlServicePort" value="CompletionInitiator"/>
-      <parameter name="className" value="org.apache.ws.transaction.coordinator.at.CompletionInitiatorImpl"/>
+      <parameter name="className" value="org.apache.kandula.coordinator.at.CompletionInitiatorImpl"/>
       <parameter name="wsdlPortType" value="CompletionInitiatorPortType"/>
       <parameter name="typeMappingVersion" value="1.2"/>
       <operation name="committedOperation" qname="CommittedOperation" soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Committed" mep="oneway" >
@@ -626,7 +626,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>ATAlwaysCapability"
-        type="java:org.apache.ws.transaction.wsat.ATAlwaysCapability"
+        type="java:org.apache.kandula.wsat.ATAlwaysCapability"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -650,7 +650,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>ATAssertion"
-        type="java:org.apache.ws.transaction.wsat.ATAssertion"
+        type="java:org.apache.kandula.wsat.ATAssertion"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -714,7 +714,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>PrepareResponse"
-        type="java:org.apache.ws.transaction.wsat.PrepareResponse"
+        type="java:org.apache.kandula.wsat.PrepareResponse"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -722,7 +722,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:Notification"
-        type="java:org.apache.ws.transaction.wsat.Notification"
+        type="java:org.apache.kandula.wsat.Notification"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -730,7 +730,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>ReplayResponse"
-        type="java:org.apache.ws.transaction.wsat.ReplayResponse"
+        type="java:org.apache.kandula.wsat.ReplayResponse"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -738,7 +738,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:Outcome"
-        type="java:org.apache.ws.transaction.wsat.Outcome"
+        type="java:org.apache.kandula.wsat.Outcome"
         serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
         encodingStyle=""
@@ -746,7 +746,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:ErrorCodes"
-        type="java:org.apache.ws.transaction.wsat.ErrorCodes"
+        type="java:org.apache.kandula.wsat.ErrorCodes"
         serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
         encodingStyle=""
@@ -762,7 +762,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:Vote"
-        type="java:org.apache.ws.transaction.wsat.Vote"
+        type="java:org.apache.kandula.wsat.Vote"
         serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
         encodingStyle=""
@@ -774,7 +774,7 @@
       <parameter name="wsdlServiceElement" value="foo"/>
       <parameter name="schemaQualified" value="http://schemas.xmlsoap.org/ws/2004/08/addressing,http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
       <parameter name="wsdlServicePort" value="Coordinator"/>
-      <parameter name="className" value="org.apache.ws.transaction.coordinator.at.CoordinatorImpl"/>
+      <parameter name="className" value="org.apache.kandula.coordinator.at.CoordinatorImpl"/>
       <parameter name="wsdlPortType" value="CoordinatorPortType"/>
       <parameter name="typeMappingVersion" value="1.2"/>
       <operation name="replayOperation" qname="ReplayOperation" soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Replay" mep="oneway" >
@@ -797,7 +797,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>ATAlwaysCapability"
-        type="java:org.apache.ws.transaction.wsat.ATAlwaysCapability"
+        type="java:org.apache.kandula.wsat.ATAlwaysCapability"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -821,7 +821,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>ATAssertion"
-        type="java:org.apache.ws.transaction.wsat.ATAssertion"
+        type="java:org.apache.kandula.wsat.ATAssertion"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -885,7 +885,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>PrepareResponse"
-        type="java:org.apache.ws.transaction.wsat.PrepareResponse"
+        type="java:org.apache.kandula.wsat.PrepareResponse"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -893,7 +893,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:Notification"
-        type="java:org.apache.ws.transaction.wsat.Notification"
+        type="java:org.apache.kandula.wsat.Notification"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -901,7 +901,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>ReplayResponse"
-        type="java:org.apache.ws.transaction.wsat.ReplayResponse"
+        type="java:org.apache.kandula.wsat.ReplayResponse"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -909,7 +909,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:Outcome"
-        type="java:org.apache.ws.transaction.wsat.Outcome"
+        type="java:org.apache.kandula.wsat.Outcome"
         serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
         encodingStyle=""
@@ -917,7 +917,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:ErrorCodes"
-        type="java:org.apache.ws.transaction.wsat.ErrorCodes"
+        type="java:org.apache.kandula.wsat.ErrorCodes"
         serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
         encodingStyle=""
@@ -933,7 +933,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:Vote"
-        type="java:org.apache.ws.transaction.wsat.Vote"
+        type="java:org.apache.kandula.wsat.Vote"
         serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
         encodingStyle=""
@@ -945,7 +945,7 @@
       <parameter name="wsdlServiceElement" value="foo"/>
       <parameter name="schemaQualified" value="http://schemas.xmlsoap.org/ws/2004/08/addressing,http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
       <parameter name="wsdlServicePort" value="CompletionCoordinator"/>
-      <parameter name="className" value="org.apache.ws.transaction.coordinator.at.CompletionCoordinatorImpl"/>
+      <parameter name="className" value="org.apache.kandula.coordinator.at.CompletionCoordinatorImpl"/>
       <parameter name="wsdlPortType" value="CompletionCoordinatorPortType"/>
       <parameter name="typeMappingVersion" value="1.2"/>
       <operation name="commitOperation" qname="CommitOperation" soapAction="http://schemas.xmlsoap.org/ws/2004/10/wsat/Commit" mep="oneway" >
@@ -959,7 +959,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>ATAlwaysCapability"
-        type="java:org.apache.ws.transaction.wsat.ATAlwaysCapability"
+        type="java:org.apache.kandula.wsat.ATAlwaysCapability"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -983,7 +983,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>ATAssertion"
-        type="java:org.apache.ws.transaction.wsat.ATAssertion"
+        type="java:org.apache.kandula.wsat.ATAssertion"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -1047,7 +1047,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>PrepareResponse"
-        type="java:org.apache.ws.transaction.wsat.PrepareResponse"
+        type="java:org.apache.kandula.wsat.PrepareResponse"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -1055,7 +1055,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:Notification"
-        type="java:org.apache.ws.transaction.wsat.Notification"
+        type="java:org.apache.kandula.wsat.Notification"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -1063,7 +1063,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:>ReplayResponse"
-        type="java:org.apache.ws.transaction.wsat.ReplayResponse"
+        type="java:org.apache.kandula.wsat.ReplayResponse"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -1071,7 +1071,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:Outcome"
-        type="java:org.apache.ws.transaction.wsat.Outcome"
+        type="java:org.apache.kandula.wsat.Outcome"
         serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
         encodingStyle=""
@@ -1079,7 +1079,7 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:ErrorCodes"
-        type="java:org.apache.ws.transaction.wsat.ErrorCodes"
+        type="java:org.apache.kandula.wsat.ErrorCodes"
         serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
         encodingStyle=""
@@ -1095,13 +1095,12 @@
       <typeMapping
         xmlns:ns="http://schemas.xmlsoap.org/ws/2004/10/wsat"
         qname="ns:Vote"
-        type="java:org.apache.ws.transaction.wsat.Vote"
+        type="java:org.apache.kandula.wsat.Vote"
         serializer="org.apache.axis.encoding.ser.EnumSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.EnumDeserializerFactory"
         encodingStyle=""
       />
   </service>
-
 
 
   <service name="TestSuite1" provider="java:RPC" style="document" use="literal">
@@ -1150,7 +1149,6 @@
       <parameter name="allowedMethods" value="testMarkedRollbackCommit commitTransactionOperation testMarkedRollbackRollback enlistXAExceptionOnCommitRollbackResourceOperation enlistXA_OKOnPrepareResourceOperation testPrepareCommit testReadonlyCommit rollbackTransactionOperation testEarlyCommit markTransactionForRollbackOperation testRollback testPrepareRollback testCommitFailure testReadonlyRollback enlistXAExceptionOnPrepareResourceOperation testRollbackFailure testEarlyRollback justReturnOperation"/>
 
   </service>
-
 
   <service name="InteropService" provider="java:RPC" style="document" use="literal">
       <parameter name="wsdlTargetNamespace" value="http://localhost:8989/wstx/services/InteropService"/>
@@ -1237,7 +1235,7 @@
   </service>
 
   <service name="faultDispatcher" style="message">
-    <parameter name="className" value="org.apache.ws.transaction.coordinator.FaultDispatcher" />
+    <parameter name="className" value="org.apache.kandula.coordinator.FaultDispatcher" />
     <parameter name="allowedMethods" value="process" />
   </service>
 
