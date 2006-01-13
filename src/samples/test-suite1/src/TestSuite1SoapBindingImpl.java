@@ -11,8 +11,8 @@ import javax.transaction.xa.Xid;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.geronimo.transaction.manager.NamedXAResource;
-import org.apache.ws.transaction.coordinator.at.TransactionManagerImpl;
-import org.apache.ws.transaction.j2ee.Bridge;
+import org.apache.kandula.coordinator.at.TransactionManagerImpl;
+import org.apache.kandula.geronimo.Bridge;
 
 public class TestSuite1SoapBindingImpl implements TestSuite1PortType {
 	TransactionManagerImpl wsTm = TransactionManagerImpl.getInstance();
