@@ -20,7 +20,7 @@ import javax.xml.soap.SOAPHeader;
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
-import org.apache.ws.transaction.coordinator.CoordinationContext;
+import org.apache.kandula.coordinator.CoordinationContext;
 
 /**
  * @author Dasarath Weeratunge

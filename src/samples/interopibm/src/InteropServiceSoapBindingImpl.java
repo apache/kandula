@@ -6,10 +6,10 @@ import javax.transaction.xa.XAResource;
 
 import org.apache.axis.message.addressing.EndpointReference;
 import org.apache.axis.types.URI.MalformedURIException;
-import org.apache.ws.transaction.coordinator.at.AT2PCStatus;
-import org.apache.ws.transaction.coordinator.at.AbstractParticipant;
-import org.apache.ws.transaction.coordinator.at.TransactionImpl;
-import org.apache.ws.transaction.coordinator.at.TransactionManagerImpl;
+import org.apache.kandula.coordinator.at.AT2PCStatus;
+import org.apache.kandula.coordinator.at.AbstractParticipant;
+import org.apache.kandula.coordinator.at.TransactionImpl;
+import org.apache.kandula.coordinator.at.TransactionManagerImpl;
 
 /**
  * InteropServiceSoapBindingImpl.java

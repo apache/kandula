@@ -4,13 +4,13 @@ import java.net.URL;
 import javax.xml.soap.Name;
 
 import org.apache.axis.message.addressing.EndpointReference;
-import org.apache.ws.transaction.coordinator.ActivationStub;
-import org.apache.ws.transaction.coordinator.Callback;
-import org.apache.ws.transaction.coordinator.CoordinationContext;
-import org.apache.ws.transaction.coordinator.TimedOutException;
-import org.apache.ws.transaction.coordinator.at.ATCoordinator;
-import org.apache.ws.transaction.coordinator.at.CompletionCoordinatorStub;
-import org.apache.ws.transaction.utility.TCPSnifferHelper;
+import org.apache.kandula.coordinator.ActivationStub;
+import org.apache.kandula.coordinator.Callback;
+import org.apache.kandula.coordinator.CoordinationContext;
+import org.apache.kandula.coordinator.TimedOutException;
+import org.apache.kandula.coordinator.at.ATCoordinator;
+import org.apache.kandula.coordinator.at.CompletionCoordinatorStub;
+import org.apache.kandula.utils.TCPSnifferHelper;
 
 /*
  * Created on Dec 29, 2005
@@ -134,7 +134,7 @@ public class InitiatorApp {
 	}
 
 	public static void main(String[] args) throws Exception {
-		new InitiatorApp().testPreparedAfterTimeout();
+		new InitiatorApp().testCommit();
 	}
 
 	EndpointReference cps;
