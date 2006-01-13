@@ -1,0 +1,29 @@
+how-to deploy the samples
+-------------------------
+
++ BEFORE you build kandula, set conf/kandula.properties/kandula.context
+
++ build kandula
+
++ copy all *.jar s in target/lib and target/kandula-*.jar to catalina/shared/lib
+
++ for samples/test-suite1 use "org.apache.kandula.geronimo.TxHandler" in server-config.wsdd
+
++ for samples/interopibm use "org.apache.kandula.coordinator.at.TxHandler"
+
++ copy conf/server-config.wsdd to axis/WEB-INF
+
++ copy conf/client-config.wsdd to axis/WEB-INF/classes
+
++ build samples, use "ant dist". note that you need target/kandula-*.jar for this
+
++ copy build/*.jar to WEB-INF/lib for each sample
+
+
+
+
+
+
+please report any error(s) you find in the above instructions to kandula-dev@ws.apache.org
+
+thanks
