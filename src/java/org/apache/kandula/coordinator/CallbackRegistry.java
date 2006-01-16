@@ -14,9 +14,7 @@ import java.util.TimerTask;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.MessageContext;
 import org.apache.axis.message.addressing.AddressingHeaders;
-import org.apache.axis.message.addressing.Constants;
 
 /**
  * @author Dasarath Weeratunge
@@ -77,13 +75,8 @@ public class CallbackRegistry {
 			return (Callback) callbacks.get(s);
 	}
 
-	private AddressingHeaders getAddressingHeaders() {
-		return (AddressingHeaders) MessageContext.getCurrentContext().getProperty(
-			Constants.ENV_ADDRESSING_REQUEST_HEADERS);
-	}
-
 	private String getRef(QName q) {
-		AddressingHeaders headers = getAddressingHeaders();
+		AddressingHeaders headers = org.apache.kandula.utils.AddressingHeaders.getAddressingHeadersOfCurrentMessage();
 		try {
 			return headers.getReferenceProperties().get(q).getValue();
 		} catch (NullPointerException e) {
