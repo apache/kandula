@@ -15,16 +15,17 @@ import org.apache.kandula.coordinator.at.TransactionManagerImpl;
 import org.apache.kandula.geronimo.Bridge;
 
 public class TestSuite1SoapBindingImpl implements TestSuite1PortType {
-	TransactionManagerImpl wsTm = TransactionManagerImpl.getInstance();
+
+	TransactionManagerImpl wstm = TransactionManagerImpl.getInstance();
 
 	TransactionManager tm = Bridge.getInstance().getTM();
 
 	public void testReadonlyCommit() throws RemoteException {
 		try {
 			TestSuite1PortType p = new TestSuite1PortTypeServiceLocator().getTestSuite1();
-			wsTm.begin();
+			wstm.begin();
 			p.justReturnOperation();
-			wsTm.commit();
+			wstm.commit();
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -33,9 +34,9 @@ public class TestSuite1SoapBindingImpl implements TestSuite1PortType {
 	public void testReadonlyRollback() throws RemoteException {
 		try {
 			TestSuite1PortType p = new TestSuite1PortTypeServiceLocator().getTestSuite1();
-			wsTm.begin();
+			wstm.begin();
 			p.justReturnOperation();
-			wsTm.rollback();
+			wstm.rollback();
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -44,9 +45,9 @@ public class TestSuite1SoapBindingImpl implements TestSuite1PortType {
 	public void testRollback() throws RemoteException {
 		try {
 			TestSuite1PortType p = new TestSuite1PortTypeServiceLocator().getTestSuite1();
-			wsTm.begin();
+			wstm.begin();
 			p.enlistXA_OKOnPrepareResourceOperation();
-			wsTm.rollback();
+			wstm.rollback();
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -55,9 +56,9 @@ public class TestSuite1SoapBindingImpl implements TestSuite1PortType {
 	public void testPrepareCommit() throws RemoteException {
 		try {
 			TestSuite1PortType p = new TestSuite1PortTypeServiceLocator().getTestSuite1();
-			wsTm.begin();
+			wstm.begin();
 			p.enlistXA_OKOnPrepareResourceOperation();
-			wsTm.commit();
+			wstm.commit();
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -66,10 +67,10 @@ public class TestSuite1SoapBindingImpl implements TestSuite1PortType {
 	public void testPrepareRollback() throws RemoteException {
 		try {
 			TestSuite1PortType p = new TestSuite1PortTypeServiceLocator().getTestSuite1();
-			wsTm.begin();
+			wstm.begin();
 			p.enlistXA_OKOnPrepareResourceOperation();
 			p.enlistXAExceptionOnPrepareResourceOperation();
-			wsTm.commit();
+			wstm.commit();
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -78,9 +79,9 @@ public class TestSuite1SoapBindingImpl implements TestSuite1PortType {
 	public void testEarlyCommit() throws RemoteException {
 		try {
 			TestSuite1PortType p = new TestSuite1PortTypeServiceLocator().getTestSuite1();
-			wsTm.begin();
+			wstm.begin();
 			p.commitTransactionOperation();
-			wsTm.commit();
+			wstm.commit();
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -90,9 +91,9 @@ public class TestSuite1SoapBindingImpl implements TestSuite1PortType {
 	public void testEarlyRollback() throws RemoteException {
 		try {
 			TestSuite1PortType p = new TestSuite1PortTypeServiceLocator().getTestSuite1();
-			wsTm.begin();
+			wstm.begin();
 			p.rollbackTransactionOperation();
-			wsTm.commit();
+			wstm.commit();
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -101,9 +102,9 @@ public class TestSuite1SoapBindingImpl implements TestSuite1PortType {
 	public void testMarkedRollbackCommit() throws RemoteException {
 		try {
 			TestSuite1PortType p = new TestSuite1PortTypeServiceLocator().getTestSuite1();
-			wsTm.begin();
+			wstm.begin();
 			p.markTransactionForRollbackOperation();
-			wsTm.commit();
+			wstm.commit();
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -113,9 +114,9 @@ public class TestSuite1SoapBindingImpl implements TestSuite1PortType {
 	public void testMarkedRollbackRollback() throws RemoteException {
 		try {
 			TestSuite1PortType p = new TestSuite1PortTypeServiceLocator().getTestSuite1();
-			wsTm.begin();
+			wstm.begin();
 			p.markTransactionForRollbackOperation();
-			wsTm.rollback();
+			wstm.rollback();
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -125,9 +126,9 @@ public class TestSuite1SoapBindingImpl implements TestSuite1PortType {
 	public void testCommitFailure() throws RemoteException {
 		try {
 			TestSuite1PortType p = new TestSuite1PortTypeServiceLocator().getTestSuite1();
-			wsTm.begin();
+			wstm.begin();
 			p.enlistXAExceptionOnCommitRollbackResourceOperation();
-			wsTm.commit();
+			wstm.commit();
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
@@ -136,9 +137,9 @@ public class TestSuite1SoapBindingImpl implements TestSuite1PortType {
 	public void testRollbackFailure() throws RemoteException {
 		try {
 			TestSuite1PortType p = new TestSuite1PortTypeServiceLocator().getTestSuite1();
-			wsTm.begin();
+			wstm.begin();
 			p.enlistXAExceptionOnCommitRollbackResourceOperation();
-			wsTm.rollback();
+			wstm.rollback();
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
