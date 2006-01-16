@@ -9,11 +9,9 @@ import java.net.MalformedURLException;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFault;
-import org.apache.axis.message.addressing.Constants;
 import org.apache.axis.message.addressing.EndpointReference;
 import org.apache.axis.message.addressing.MessageID;
 import org.apache.axis.soap.SOAPConstants;
@@ -25,8 +23,7 @@ import org.apache.axis.soap.SOAPConstants;
 public class SoapFaultSender {
 
 	private static MessageID getCurrentMessageID() {
-		org.apache.axis.message.addressing.AddressingHeaders headers = (org.apache.axis.message.addressing.AddressingHeaders) MessageContext.getCurrentContext().getProperty(
-			Constants.ENV_ADDRESSING_REQUEST_HEADERS);
+		org.apache.axis.message.addressing.AddressingHeaders headers = org.apache.kandula.utils.AddressingHeaders.getAddressingHeadersOfCurrentMessage();
 		return headers.getMessageID();
 	}
 

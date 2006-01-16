@@ -7,7 +7,9 @@ package org.apache.kandula.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.axis.MessageContext;
 import org.apache.axis.components.uuid.UUIDGenFactory;
+import org.apache.axis.message.addressing.Constants;
 import org.apache.axis.message.addressing.EndpointReference;
 import org.apache.axis.message.addressing.MessageID;
 import org.apache.axis.message.addressing.RelatesTo;
@@ -47,5 +49,20 @@ public class AddressingHeaders extends
 		List l = new ArrayList(1);
 		l.add(new RelatesTo(id, RelationshipTypeValues.RESPONSE));
 		setRelatesTo(l);
+	}
+
+	public static AddressingHeaders getAddressingHeadersOfCurrentMessage() {
+		return (AddressingHeaders) MessageContext.getCurrentContext().getProperty(
+			Constants.ENV_ADDRESSING_REQUEST_HEADERS);
+	}
+
+	public static EndpointReference getReplyToOfCurrentMessage() {
+		AddressingHeaders headers = getAddressingHeadersOfCurrentMessage();
+		return headers.getReplyTo();
+	}
+
+	public static EndpointReference getFaultToOfCurrentMessage() {
+		AddressingHeaders headers = getAddressingHeadersOfCurrentMessage();
+		return headers.getFaultTo();
 	}
 }
