@@ -123,7 +123,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			return;
 
 		case AT2PCStatus.COMMITTING:
-			throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+			trigger(participantRef, INVALID_STATE_SOAP_FAULT);
 			return;
 
 		case AT2PCStatus.ABORTING:
@@ -143,7 +143,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			return;
 
 		case AT2PCStatus.COMMITTING:
-			throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+			trigger(participantRef, INVALID_STATE_SOAP_FAULT);
 			return;
 
 		case AT2PCStatus.ABORTING:
@@ -191,11 +191,11 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 
 		case AT2PCStatus.NONE:
 			if (volatile2PCParticipants.containsKey(participantRef))
-				throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+				trigger(participantRef, INVALID_STATE_SOAP_FAULT);
 			else {
 				epr = (EndpointReference) durable2PCParticipants.get(participantRef);
 				if (epr == null)
-					epr = getReplyToEpr();
+					epr = org.apache.kandula.utils.AddressingHeaders.getReplyToOfCurrentMessage();
 				if (epr != null)
 					try {
 						getParticipantStub(participantRef, epr).rollbackOperation(
@@ -211,7 +211,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 		switch (status) {
 		case AT2PCStatus.ACTIVE:
 			try {
-				throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+				trigger(participantRef, INVALID_STATE_SOAP_FAULT);
 			} finally {
 				rollback();
 			}
@@ -235,11 +235,11 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 
 		case AT2PCStatus.ABORTING:
 			if (volatile2PCParticipants.remove(participantRef) != null)
-				throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+				trigger(participantRef, INVALID_STATE_SOAP_FAULT);
 			else {
 				epr = (EndpointReference) durable2PCParticipants.remove(participantRef);
 				if (epr == null)
-					epr = getReplyToEpr();
+					epr = org.apache.kandula.utils.AddressingHeaders.getReplyToOfCurrentMessage();
 				if (epr != null) {
 					try {
 						getParticipantStub(participantRef, epr).rollbackOperation(
@@ -253,11 +253,11 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 
 		case AT2PCStatus.NONE:
 			if (volatile2PCParticipants.containsKey(participantRef))
-				throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+				trigger(participantRef, INVALID_STATE_SOAP_FAULT);
 			else {
 				epr = (EndpointReference) durable2PCParticipants.get(participantRef);
 				if (epr == null)
-					epr = getReplyToEpr();
+					epr = org.apache.kandula.utils.AddressingHeaders.getReplyToOfCurrentMessage();
 				if (epr != null)
 					try {
 						getParticipantStub(participantRef, epr).rollbackOperation(
@@ -275,7 +275,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 		case AT2PCStatus.PREPARING_VOLATILE:
 		case AT2PCStatus.PREPARING_DURABLE:
 			try {
-				throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+				trigger(participantRef, INVALID_STATE_SOAP_FAULT);
 			} finally {
 				rollback();
 			}
@@ -286,7 +286,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			return;
 
 		case AT2PCStatus.ABORTING:
-			throwFault(participantRef, INVALID_STATE_SOAP_FAULT);
+			trigger(participantRef, INVALID_STATE_SOAP_FAULT);
 			return;
 
 		case AT2PCStatus.NONE:
@@ -445,7 +445,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 	}
 
 	private EndpointReference getEprToSendFault(String participantRef) {
-		EndpointReference epr = getFaultToEpr();
+		EndpointReference epr = org.apache.kandula.utils.AddressingHeaders.getFaultToOfCurrentMessage();
 		if (epr != null)
 			return epr;
 		return getEprToRespond(participantRef);
@@ -458,11 +458,11 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 		epr = (EndpointReference) durable2PCParticipants.get(participantRef);
 		if (epr != null)
 			return epr;
-		return getReplyToEpr();
+		return org.apache.kandula.utils.AddressingHeaders.getReplyToOfCurrentMessage();
 	}
 
 	private String getParticipantRef() {
-		AddressingHeaders headers = getAddressingHeaders();
+		AddressingHeaders headers = org.apache.kandula.utils.AddressingHeaders.getAddressingHeadersOfCurrentMessage();
 		MessageElement e = headers.getReferenceProperties().get(PARTICIPANT_REF);
 		return e.getValue();
 	}
@@ -488,9 +488,9 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 		}
 	}
 
-	private void throwFault(String participantRef, AxisFault fault)
+	private void trigger(String participantRef, AxisFault fault)
 			throws AxisFault {
-		throwFault(getEprToSendFault(participantRef), fault);
+		trigger(getEprToSendFault(participantRef), fault);
 	}
 
 	/*
