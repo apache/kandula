@@ -79,7 +79,7 @@ public class TestSuite1PortTypeServiceTestCase extends junit.framework.TestCase 
 		// TBD - validate results
 	}
 
-	public void test4TestSuite1TestPrepareCommit() throws Exception {
+*/	public void test4TestSuite1TestPrepareCommit() throws Exception {
 		TestSuite1SoapBindingStub binding;
 		try {
 			binding = (TestSuite1SoapBindingStub) new TestSuite1PortTypeServiceLocator().getTestSuite1();
@@ -99,7 +99,7 @@ public class TestSuite1PortTypeServiceTestCase extends junit.framework.TestCase 
 		// TBD - validate results
 	}
 
-	public void test5TestSuite1TestPrepareRollback() throws Exception {
+/*	public void test5TestSuite1TestPrepareRollback() throws Exception {
 		TestSuite1SoapBindingStub binding;
 		try {
 			binding = (TestSuite1SoapBindingStub) new TestSuite1PortTypeServiceLocator().getTestSuite1();
@@ -118,7 +118,7 @@ public class TestSuite1PortTypeServiceTestCase extends junit.framework.TestCase 
 		binding.testPrepareRollback();
 		// TBD - validate results
 	}
-*/
+
 	public void test6TestSuite1TestEarlyCommit() throws Exception {
 		TestSuite1SoapBindingStub binding;
 		try {
@@ -138,7 +138,7 @@ public class TestSuite1PortTypeServiceTestCase extends junit.framework.TestCase 
 		binding.testEarlyCommit();
 		// TBD - validate results
 	}
-/*
+
 	public void test7TestSuite1TestEarlyRollback() throws Exception {
 		TestSuite1SoapBindingStub binding;
 		try {
