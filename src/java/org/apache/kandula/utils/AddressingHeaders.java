@@ -51,18 +51,18 @@ public class AddressingHeaders extends
 		setRelatesTo(l);
 	}
 
-	public static AddressingHeaders getAddressingHeadersOfCurrentMessage() {
-		return (AddressingHeaders) MessageContext.getCurrentContext().getProperty(
+	public static org.apache.axis.message.addressing.AddressingHeaders getAddressingHeadersOfCurrentMessage() {
+		return (org.apache.axis.message.addressing.AddressingHeaders) MessageContext.getCurrentContext().getProperty(
 			Constants.ENV_ADDRESSING_REQUEST_HEADERS);
 	}
 
 	public static EndpointReference getReplyToOfCurrentMessage() {
-		AddressingHeaders headers = getAddressingHeadersOfCurrentMessage();
+		org.apache.axis.message.addressing.AddressingHeaders headers = getAddressingHeadersOfCurrentMessage();
 		return headers.getReplyTo();
 	}
 
 	public static EndpointReference getFaultToOfCurrentMessage() {
-		AddressingHeaders headers = getAddressingHeadersOfCurrentMessage();
+		org.apache.axis.message.addressing.AddressingHeaders headers = getAddressingHeadersOfCurrentMessage();
 		return headers.getFaultTo();
 	}
 }
