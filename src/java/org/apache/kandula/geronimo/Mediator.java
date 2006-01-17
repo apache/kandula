@@ -112,7 +112,6 @@ public class Mediator extends AbstractParticipant implements NamedXAResource {
 	}
 
 	public int prepare() throws XAException {
-		forget();
 		return tm.prepare(tx);
 	}
 
@@ -133,7 +132,7 @@ public class Mediator extends AbstractParticipant implements NamedXAResource {
 
 	public int getStatus() {
 		try {
-			switch (tm.getStatus()) {
+			switch (tx.getStatus()) {
 			case Status.STATUS_ACTIVE:
 			case Status.STATUS_MARKED_ROLLBACK:
 				return AT2PCStatus.ACTIVE;
