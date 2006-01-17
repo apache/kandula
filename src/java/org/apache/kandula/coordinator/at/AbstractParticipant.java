@@ -83,6 +83,7 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 
 	public synchronized void prepareOperation(Notification parameters)
 			throws RemoteException {
+
 		switch (getStatus()) {
 		case AT2PCStatus.NONE:
 			getCoordinator().abortedOperation(null);
@@ -91,10 +92,10 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 		case AT2PCStatus.ACTIVE:
 			final CoordinatorPortType p = getCoordinator();
 			try {
-				if (prepare() == XAResource.XA_RDONLY) {
-					forget();
+				forget();
+				if (prepare() == XAResource.XA_RDONLY)
 					p.readOnlyOperation(null);
-				} else {
+				else {
 					p.preparedOperation(null);
 					timer.schedule(new TimerTask() {
 						public void run() {
@@ -121,7 +122,6 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 					}, RETRY_DELAY_MILLIS, RETRY_DELAY_MILLIS);
 				}
 			} catch (XAException e) {
-				forget();
 				p.abortedOperation(null);
 			}
 			return;
@@ -152,8 +152,8 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 		case AT2PCStatus.ACTIVE:
 		case AT2PCStatus.PREPARING:
 			try {
-				rollback();
 				forget();
+				rollback();				
 				getCoordinator().abortedOperation(null);
 			} catch (XAException e) {
 				e.printStackTrace();
@@ -163,7 +163,6 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 		case AT2PCStatus.PREPARED:
 			try {
 				commit();
-				forget();
 				getCoordinator().committedOperation(null);
 			} catch (XAException e) {
 				e.printStackTrace();
@@ -188,8 +187,8 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 		case AT2PCStatus.PREPARING:
 		case AT2PCStatus.PREPARED:
 			try {
-				rollback();
 				forget();
+				rollback();			
 				getCoordinator().abortedOperation(null);
 			} catch (XAException e) {
 				e.printStackTrace();
@@ -213,8 +212,8 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 		if (getStatus() == AT2PCStatus.NONE)
 			return;
 		try {
-			rollback();
 			forget();
+			rollback();		
 			getCoordinator().abortedOperation(null);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -228,7 +227,7 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 		// FIXME:
 		try {
 			forget();
-			rollback();			
+			rollback();
 		} catch (XAException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
