@@ -19,12 +19,14 @@ how-to deploy the samples
 
 + copy build/*.jar to WEB-INF/lib for each sample
 
++ using the tcpmon, forward 8081 to 8080
+
++ to run the interopibm sample you also need to forward 8082 to http://wsi.alphaworks.ibm.com:8080/
+
 + when you run the samples, use the success-criteria.txt in samples/test-suite1 to 
   decide whether each test was a success or a failure. a similar
   document is available for the samples/interopibm from:
   http://wsi.alphaworks.ibm.com:8080/interop/index.html
-
-
 
 
 
