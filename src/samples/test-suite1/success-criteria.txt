@@ -1,0 +1,99 @@
+TestSuite1- Success criteria for each test
+------------------------------------------
+
+P: Participant
+CS: Coordination Service
+CI: Completion Initiator
+
+(1) TestReadonlyCommit:
+
+P registers for wsat:Durable2PC
+CS receives wsat:Commit from CI
+P receives wsat:Prepare
+CS receives wsat:ReadOnly from P
+P does NOT receive wsat:Commit
+CI receives wsat:Committed
+
+
+(2) TestReadonlyRollback:
+
+P registers for wsat:Durable2PC
+CS receives wsat:Rollback from CI
+P receives wsat:Rollback
+CS receives wsat:Aborted from P
+CI receives wsat:Aborted
+
+
+(3) TestRollback:
+
+Same as for 'TestReadonlyRollback'
+
+
+(4) TestPrepareCommit:
+
+P registers for wsat:Durable2PC
+CS receives wsat:Commit from CI
+P receives wsat:Prepare
+CS receives wsat:Prepared from P
+P receives wsat:Commit
+CS receives wsat:Committed from P
+CI receives wsat:Committed
+
+
+(5) TestPrepareRollback:
+
+P registers for wsat:Durable2PC *once* after enlistXA_OKOnPrepareResourceOperation
+CS receives wsat:Commit from CI
+P receives wsat:Prepare
+CS receives wsat:Aborted from P
+CI receives wsat:Aborted
+javax.transaction.RollbackException
+        at org.apache.kandula.coordinator.at.TransactionImpl.commit
+
+prepare fails due to XAExceptionOnPrepareXAResource
+
+
+(6) TestEarlyCommit:
+
+to be documented in future
+
+this scenario tests when the j2ee side commits the local transaction prior to the CI.
+the outcome depends on whether the CI is able to register before CS receives wsat:Committed
+from P. 
+
+
+(7) TestEarlyCommit:
+
+to be documented in future
+
+similar to 'TestEarlyCommit' but in this case the j2ee side rollbacks the local transaction
+instead of committing.
+
+
+(8) TestMarkedRollbackCommit:
+
+similar to 'TestPrepareRollback', however in this case the j2ee side marks the local transaction
+as RollbackOnly.
+
+
+(9) TestMarkedRollbackRollback:
+
+similar to 'TestReadonlyRollback', here CI tries to rollback the transaction when the local
+transaction has already been marked as RollbackOnly by the j2ee side
+
+
+(10) TestCommitFailure:
+
+to be documented in future
+
+one of the XAResources fails during the commit phase
+
+
+(11) TestRollbackFailure:
+
+to be documented in future
+
+one of the XAResources fails during the rollback phase
+
+
+
