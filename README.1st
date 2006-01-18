@@ -19,6 +19,11 @@ how-to deploy the samples
 
 + copy build/*.jar to WEB-INF/lib for each sample
 
++ when you run the samples, use the success-criteria.txt in samples/test-suite1 to 
+  decide whether each test was a success or a failure. a similar
+  document is available for the samples/interopibm from:
+  http://wsi.alphaworks.ibm.com:8080/interop/index.html
+
 
 
 
