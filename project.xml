@@ -232,34 +232,6 @@
             </properties>
      	</dependency>
      	
-<!--     
-	 	<dependency>
-            <groupId>jotm</groupId>
-            <artifactId>jotm</artifactId>
-            <version>1.5.3</version>
-            <properties>
-                <module>true</module>
-            </properties>
-     	</dependency>     
-     
-	 	<dependency>
-            <groupId>jotm</groupId>
-            <artifactId>jotm-carol</artifactId>
-            <version>1.5.3</version>
-            <properties>
-                <module>true</module>
-            </properties>
-     	</dependency>
-     
-	 	<dependency>
-            <groupId>jotm</groupId>
-            <artifactId>jotm-jrmp-stubs</artifactId>
-            <version>1.5.3</version>
-            <properties>
-                <module>true</module>
-            </properties>
-     	</dependency>    
--->     
     </dependencies>
 
     <!-- ======= -->
