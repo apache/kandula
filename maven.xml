@@ -12,8 +12,6 @@
     </goal>
     
     <postGoal name="test:compile">
-	<ant:mkdir dir="${basedir}/target/lib"/>
-    	<deploy:copy-deps todir="${basedir}/target/lib"/>
 
 	<echo message="----------------Creating ActivationCoordinator.aar----------------"/>
 	<mkdir dir="target/services/ActivationCoordinator/META-INF"/>
@@ -79,11 +77,11 @@
 	<mkdir dir="target/testing-repository"/>
         <copy file="target/ActivationCoordinator.aar"
             tofile="target/testing-repository/services/ActivationCoordinator.aar"/>
-	 <copy file="target/RegistrationCoordinator.aar"
+	 <copy file="target/AtomicTransactionCoordinator.aar"
             tofile="target/testing-repository/services/AtomicTransactionCoordinator.aar"/>
-	 <copy file="target/RegistrationCoordinator.aar"
+	 <copy file="target/AtomicTransactionParticipant.aar"
             tofile="target/testing-repository/services/AtomicTransactionParticipant.aar"/>
-	 <copy file="target/RegistrationCoordinator.aar"
+	 <copy file="target/CompletionCoordinator.aar"
             tofile="target/testing-repository/services/CompletionCoordinator.aar"/>
 	 <copy file="target/RegistrationCoordinator.aar"
             tofile="target/testing-repository/services/RegistrationCoordinator.aar"/>
