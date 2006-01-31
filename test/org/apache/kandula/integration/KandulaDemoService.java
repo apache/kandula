@@ -23,14 +23,14 @@ import org.apache.axis2.om.OMElement;
  */
 public class KandulaDemoService {
 
-    /**
-     * 
-     */
-    public KandulaDemoService() {
+	/**
+	 *  
+	 */
+	public KandulaDemoService() {
 
-    }
-    public OMElement creditOperation(OMElement element)
-    {
-        return null;
-    }
+	}
+
+	public OMElement creditOperation(OMElement element) {
+		return null;
+	}
 }

@@ -20,81 +20,98 @@ import java.io.IOException;
 
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.MessageSender;
+import org.apache.axis2.client.OperationClient;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.AxisServiceGroup;
+import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.axis2.om.OMAbstractFactory;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 
-public class KandulaDemoServiceStub extends
-        org.apache.axis2.client.Stub {
+public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 
-    public static final String AXIS2_HOME = ".";
+	public static final String AXIS2_HOME = ".";
 
-    protected static org.apache.axis2.description.AxisOperation[] operations;
+	// private AxisService service;
+	private ConfigurationContext configurationContext;
 
-    static {
+	private ServiceContext serviceContext;
 
-        //creating the Service
-        _service = new AxisService(
-                new javax.xml.namespace.QName( "KandulaDemoService"));
+	private EndpointReference toEPR;
 
-        //creating the operations
-        AxisOperation operationDesc;
-        operations = new org.apache.axis2.description.AxisOperation[1];
+	private static org.apache.axis2.description.AxisOperation[] operations;
 
-        operationDesc = new OutInAxisOperation();
-        operationDesc.setName(new javax.xml.namespace.QName("creditOperation"));
-        operations[0] = operationDesc;
-        _service.addOperation(operationDesc);
+	static {
 
-    }
+		//creating the Service
+		_service = new AxisService("KandulaDemoService");
 
-    /**
-     * Constructor
-     */
-    public KandulaDemoServiceStub(String axis2Home,
-            EndpointReference targetEndpoint) throws java.lang.Exception {
-        this.toEPR = targetEndpoint;
-        //creating the configuration
-        _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
-                .buildClientConfigurationContext(axis2Home);
+		//creating the operations
+		AxisOperation operationDesc;
+		operations = new org.apache.axis2.description.AxisOperation[1];
 
-        _configurationContext.getAxisConfiguration().addService(_service);
-        _serviceContext = _service.getParent().getServiceGroupContext(
-                _configurationContext).getServiceContext(
-                _service.getName().getLocalPart());
+		operationDesc = new OutOnlyAxisOperation();
+		operationDesc.setName(new javax.xml.namespace.QName("creditOperation"));
+		operations[0] = operationDesc;
+		_service.addOperation(operationDesc);
 
-    }
+	}
 
-    public void creditOperation() throws IOException {
+	/**
+	 * Constructor
+	 */
+	public KandulaDemoServiceStub(String axis2Home,
+			EndpointReference targetEndpoint) throws java.lang.Exception {
+		this.toEPR = targetEndpoint;
+		//creating the configuration
+		configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
+				.createConfigurationContextFromFileSystem(axis2Home, axis2Home
+						+ "/axis2.xml");
+		// configurationContext.getAxisConfiguration().engageModule(new
+		// QName("addressing"));
+		configurationContext.getAxisConfiguration().addService(_service);
+		ServiceGroupContext sgc = new ServiceGroupContext(
+				this.configurationContext, (AxisServiceGroup) this._service
+						.getParent());
+		this.serviceContext = new ServiceContext(_service, sgc);
 
-        EndpointReference replyToEpr;
+	}
 
-        org.apache.axis2.context.MessageContext messageContext = getMessageContext();
-        messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
-                AddressingConstants.Submission.WSA_NAMESPACE);
-        org.apache.axis2.soap.SOAPEnvelope env = createSOAPEnvelope();
-        messageContext.setEnvelope(env);
+	public void creditOperation() throws IOException {
 
-        MessageSender messageSender = new MessageSender(_serviceContext);
-        messageSender.setWsaAction("creditOperation");
-        messageSender.setTo(this.toEPR);
-        messageSender
-                .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
-        messageSender.send(operations[0], messageContext);
+		EndpointReference replyToEpr;
+		Options options = new Options();
+		MessageContext messageContext = new MessageContext();
+		messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
+				AddressingConstants.Submission.WSA_NAMESPACE);
+		org.apache.axis2.soap.SOAPEnvelope env = createSOAPEnvelope();
+		messageContext.setEnvelope(env);
 
-    }
+		options.setAction("creditOperation");
+		options.setTo(this.toEPR);
+		//        messageSender
+		//                .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
+		OperationClient client = operations[0].createClient(serviceContext,
+				options);
+		client.addMessageContext(messageContext);
+		client.execute(true);
 
-    private org.apache.axis2.soap.SOAPEnvelope createSOAPEnvelope() {
-        org.apache.axis2.soap.SOAPEnvelope env = super.createEnvelope();
-        org.apache.axis2.soap.SOAPFactory factory = OMAbstractFactory
-                .getSOAP12Factory();
-        return env;
-    }
+	}
+
+	private org.apache.axis2.soap.SOAPEnvelope createSOAPEnvelope() {
+
+		org.apache.axis2.soap.SOAPFactory factory = OMAbstractFactory
+				.getSOAP12Factory();
+		org.apache.axis2.soap.SOAPEnvelope env = factory.getDefaultEnvelope();
+		return env;
+	}
 
 }

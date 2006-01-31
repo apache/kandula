@@ -23,28 +23,28 @@ import junit.framework.TestCase;
  */
 public class ATCoordinatorTest extends TestCase {
 
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
+	/*
+	 * @see TestCase#setUp()
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+	}
 
-    /**
-     * Constructor for ATCoordinatorTest.
-     * 
-     * @param arg0
-     */
-    public ATCoordinatorTest(String arg0) {
-        super(arg0);
-    }
+	/**
+	 * Constructor for ATCoordinatorTest.
+	 * 
+	 * @param arg0
+	 */
+	public ATCoordinatorTest(String arg0) {
+		super(arg0);
+	}
 
-    public void testCommitOperation() {
-        //TODO Implement commitOperation().
-    }
+	public void testCommitOperation() {
+		//TODO Implement commitOperation().
+	}
 
-    public void testRollbackOperation() {
-        //TODO Implement rollbackOperation().
-    }
+	public void testRollbackOperation() {
+		//TODO Implement rollbackOperation().
+	}
 
 }

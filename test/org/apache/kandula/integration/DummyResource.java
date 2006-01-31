@@ -25,32 +25,30 @@ import org.apache.kandula.participant.Vote;
  */
 public class DummyResource implements KandulaResource {
 
-    /**
-     * 
-     */
-    public DummyResource() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+	/**
+	 *  
+	 */
+	public DummyResource() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
+	public void commit() {
+		System.out.println("Commited");
 
-    public void commit() {
-        System.out.println("Commited");
+	}
 
-    }
+	public void rollback() {
+		System.out.println("rollback");
 
-    public void rollback() {
-        System.out.println("rollback");
+	}
 
-    }
+	public Vote prepare() {
+		return Vote.PREPARED;
+	}
 
-    public Vote prepare() {
-       return Vote.ABORT;
-    }
-
-
-    public String getProtocol() {
-       return Constants.WS_AT_DURABLE2PC;
-    }
+	public String getProtocol() {
+		return Constants.WS_AT_DURABLE2PC;
+	}
 
 }

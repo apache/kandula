@@ -34,63 +34,73 @@ import org.apache.kandula.initiator.TransactionManager;
 
 public class CreateCoordinationContextTest extends TestCase {
 
-    private String repository = "test-resources/testing-repository";
+	private String repository = "target/testing-repository";
 
-    private SimpleHTTPServer server;
+	private SimpleHTTPServer server;
 
-    private boolean finish = false;
+	private boolean finish = false;
 
-    public CreateCoordinationContextTest() {
-        super(CreateCoordinationContextTest.class.getName());
-    }
+	public CreateCoordinationContextTest() {
+		super(CreateCoordinationContextTest.class.getName());
+	}
 
-    public CreateCoordinationContextTest(String testName) {
-        super(testName);
-    }
+	public CreateCoordinationContextTest(String testName) {
+		super(testName);
+	}
 
-    protected void setUp() throws Exception {
-        ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-        File file = new File(repository);
-        if (!file.exists()) {
-            throw new Exception("repository directory "
-                    + file.getAbsolutePath() + " does not exists");
-        }
-        ConfigurationContext er = erfac.buildConfigurationContext(file
-                .getAbsolutePath());
+	protected void setUp() throws Exception {
+		ConfigurationContextFactory erfac = new ConfigurationContextFactory();
+		File file = new File(repository);
+		File configFile = new File(repository + "/axis2.xml");
+		if (!file.exists()) {
+			throw new Exception("repository directory "
+					+ file.getAbsolutePath() + " does not exists");
+		}
+		ConfigurationContext er = erfac
+				.createConfigurationContextFromFileSystem(file
+						.getAbsolutePath(), configFile.getAbsolutePath());
 
-        server = new SimpleHTTPServer(er, 8081);
+		server = new SimpleHTTPServer(er, 8081);
 
-        try {
-           server.start();
-            System.out.print("Server started on port " + 8081 + ".....");
-        } finally {
+		try {
+			server.start();
+			System.out.print("Server started on port " + 8081 + ".....");
+		} finally {
 
-        }
+		}
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e1) {
-            throw new AxisFault("Thread interuptted", e1);
-        }
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			throw new AxisFault("Thread interuptted", e1);
+		}
 
-    }
+	}
 
-    protected void tearDown() throws Exception {
-        server.stop();
-    }
+	protected void tearDown() throws Exception {
+		server.stop();
+	}
 
-    public void testEchoXMLSync() throws Exception {
-        TransactionManager tm = new TransactionManager(
-                Constants.WS_AT,
-                new EndpointReference(
-                        "http://localhost:8082/axis2/services/ActivationCoordinator"));
+	public void testEchoXMLSync() throws Exception {
+		TransactionManager tm = new TransactionManager(
+				Constants.WS_AT,
+				new EndpointReference(
+						"http://localhost:8082/axis2/services/ActivationCoordinator"));
 
-        tm.begin();
-        KandulaDemoServiceStub stub = new KandulaDemoServiceStub("test-resources/client-repo",new EndpointReference(
-        "http://localhost:8082/axis2/services/KandulaDemoService"));
-        stub.creditOperation();
-        tm.commit();
-        Thread.sleep(3000);
-        
-    }
+		tm
+				.begin("D:/Dev/kandula_svn/repo",
+						"D:/Dev/kandula_svn/repo/axis2.xml");
+		//Thread.sleep(10000);
+		KandulaDemoServiceStub stub = new KandulaDemoServiceStub(
+				"D:/Dev/kandula_svn/repo",
+				new EndpointReference(
+						"http://localhost:8082/axis2/services/KandulaDemoService"));
+		stub.creditOperation();
+//		try{
+		tm.commit();
+//		}catch (Exception e)
+//		{
+//			e.printStackTrace();
+//		}
+	}
 }

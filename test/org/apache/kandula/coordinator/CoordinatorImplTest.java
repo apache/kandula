@@ -31,59 +31,59 @@ import org.apache.kandula.faults.AbstractKandulaException;
  */
 public class CoordinatorImplTest extends TestCase {
 
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
+	/*
+	 * @see TestCase#setUp()
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+	}
 
-    /*
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
+	/*
+	 * @see TestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		super.tearDown();
+	}
 
-    /*
-     * Class under test for ActivityContext createCoordinationContext(String,
-     * long)
-     */
-    public void testCreateCoordinationContextStringlong()
-            throws AbstractKandulaException {
-        Coordinator coordinator = new Coordinator();
-        AbstractContext context = coordinator.createCoordinationContext(
-                Constants.WS_AT, 3000);
-        assertTrue(ATActivityContext.class.isInstance(context));
-        assertNotNull(context.getCoordinationContext());
-        assertTrue(context.getStatus() == Status.CoordinatorStatus.STATUS_ACTIVE);
-    }
+	/*
+	 * Class under test for ActivityContext createCoordinationContext(String,
+	 * long)
+	 */
+	public void testCreateCoordinationContextStringlong()
+			throws AbstractKandulaException {
+		Coordinator coordinator = new Coordinator();
+		AbstractContext context = coordinator.createCoordinationContext(
+				Constants.WS_AT, 3000);
+		assertTrue(ATActivityContext.class.isInstance(context));
+		assertNotNull(context.getCoordinationContext());
+		assertTrue(context.getStatus() == Status.CoordinatorStatus.STATUS_ACTIVE);
+	}
 
-    /*
-     * Class under test for ActivityContext
-     * createCoordinationContext(CoordinationContext)
-     */
-    public void testCreateCoordinationContextCoordinationContext()
-            throws AbstractKandulaException {
-        Coordinator coordinator = new Coordinator();
-        CoordinationContext coorContext = CoordinationContext.Factory
-                .newContext("uuid:29919219jdk02102021", Constants.WS_AT,
-                        new EndpointReference(""));
-        coorContext.setExpires(3000);
-        // coorContext.setRegistrationService()
-        AbstractContext context = coordinator
-                .createCoordinationContext(coorContext);
-        assertTrue(ATActivityContext.class.isInstance(context));
-        assertNotNull(context.getCoordinationContext());
-        assertTrue(context.getStatus() == Status.CoordinatorStatus.STATUS_ACTIVE);
-        assertEquals(context.getCoordinationContext().getCoordinationType(),
-                coorContext.getCoordinationType());
-        assertEquals(context.getCoordinationContext().getActivityID(),
-                coorContext.getActivityID());
-    }
+	/*
+	 * Class under test for ActivityContext
+	 * createCoordinationContext(CoordinationContext)
+	 */
+	public void testCreateCoordinationContextCoordinationContext()
+			throws AbstractKandulaException {
+		Coordinator coordinator = new Coordinator();
+		CoordinationContext coorContext = CoordinationContext.Factory
+				.newContext("uuid:29919219jdk02102021", Constants.WS_AT,
+						new EndpointReference(""));
+		coorContext.setExpires(3000);
+		// coorContext.setRegistrationService()
+		AbstractContext context = coordinator
+				.createCoordinationContext(coorContext);
+		assertTrue(ATActivityContext.class.isInstance(context));
+		assertNotNull(context.getCoordinationContext());
+		assertTrue(context.getStatus() == Status.CoordinatorStatus.STATUS_ACTIVE);
+		assertEquals(context.getCoordinationContext().getCoordinationType(),
+				coorContext.getCoordinationType());
+		assertEquals(context.getCoordinationContext().getActivityID(),
+				coorContext.getActivityID());
+	}
 
-    public void testRegisterParticipant() {
-        //TODO Implement registerParticipant().
-    }
+	public void testRegisterParticipant() {
+		//TODO Implement registerParticipant().
+	}
 
 }
