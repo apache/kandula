@@ -34,62 +34,67 @@ import org.apache.kandula.context.coordination.SimpleCoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
+import org.apache.kandula.utility.EPRHandlingUtils;
 import org.apache.kandula.utility.EndpointReferenceFactory;
-import org.apache.kandula.utility.KandulaUtils;
 import org.apache.kandula.wscoor.RegistrationCoordinatorPortTypeRawXMLStub;
 
 public class TransactionInHandler extends AbstractHandler {
-    private ThreadLocal threadInfo = new ThreadLocal();
+	private ThreadLocal threadInfo = new ThreadLocal();
 
-    public void invoke(MessageContext msgContext) throws AxisFault {
-        KandulaResource resource;
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-        ATParticipantContext context = new ATParticipantContext();
-        SOAPHeader header = msgContext.getEnvelope().getHeader();
-        OMElement coordinationElement = header.getFirstChildWithName(new QName(
-                Constants.WS_COOR, "CoordinationContext"));
-        if (coordinationElement == null) {
-            throw new AxisFault(
-                    "Transaction Handler engaged.. No Coordination Context found");
-        }
-        CoordinationContext coorContext = new SimpleCoordinationContext(
-                coordinationElement);
-        context.setCoordinationContext(coorContext);
+	public void invoke(MessageContext msgContext) throws AxisFault {
+		KandulaResource resource;
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		ATParticipantContext context = new ATParticipantContext();
+		SOAPHeader header = msgContext.getEnvelope().getHeader();
+		OMElement coordinationElement = header.getFirstChildWithName(new QName(
+				Constants.WS_COOR, "CoordinationContext"));
+		if (coordinationElement == null) {
+			throw new AxisFault(
+					"Transaction Handler engaged.. No Coordination Context found");
+		}
+		CoordinationContext coorContext = new SimpleCoordinationContext(
+				coordinationElement);
+		context.setCoordinationContext(coorContext);
 
-        // TODO : See whether we can allow the user to set the resource when the
-        // business logic receives the message
-        String resourceFile = (String) msgContext.getParameter(
-                Constants.KANDULA_RESOURCE).getValue();
-        String participantRepository = EndpointReferenceFactory.getInstance().getPariticipantRepository();
-        System.out.println(participantRepository);
-        try {
-            resource = (KandulaResource) Class.forName(resourceFile)
-                    .newInstance();
-        } catch (Exception e) {
-            throw new AxisFault(e);
-        }
-        context.setResource(resource);
+		// TODO : See whether we can allow the user to set the resource when the
+		// business logic receives the message
+		String resourceFile = (String) msgContext.getParameter(
+				Constants.KANDULA_RESOURCE).getValue();
+		String participantRepository = EndpointReferenceFactory.getInstance()
+				.getParticipantRepository();
+		String participantAxis2Xml = EndpointReferenceFactory.getInstance()
+				.getParticipantAxis2Conf();
 
-        String id = KandulaUtils.getRandomStringOf18Characters();
-        Store store = StorageFactory.getInstance().getStore();
-        context.setProperty(AbstractContext.REQUESTER_ID, id);
-        store.put(id, context);
-        ParticipantTransactionManager txManager = new ParticipantTransactionManager();
-        try {
-            RegistrationCoordinatorPortTypeRawXMLStub stub = new RegistrationCoordinatorPortTypeRawXMLStub(
-                    participantRepository, coorContext.getRegistrationService());
-            EndpointReference participantProtocolService = EndpointReferenceFactory
-                    .getInstance().get2PCParticipantEndpoint(id);
-            stub.registerOperation(resource.getProtocol(),
-                    participantProtocolService, id);
-        } catch (IOException e) {
-            throw new AxisFault(e);
-        } catch (AbstractKandulaException e) {
-            AxisFault e1 = new AxisFault(e);
-            e1.setFaultCode(e.getFaultCode());
-            throw e1;
-        }
+		try {
+			resource = (KandulaResource) Class.forName(resourceFile)
+					.newInstance();
+		} catch (Exception e) {
+			throw new AxisFault(e);
+		}
+		context.setResource(resource);
 
-    }
+		String id = EPRHandlingUtils.getRandomStringOf18Characters();
+		Store store = StorageFactory.getInstance().getStore();
+		context.setProperty(AbstractContext.REQUESTER_ID, id);
+		store.put(id, context);
+		ParticipantTransactionManager txManager = new ParticipantTransactionManager();
+		try {
+			RegistrationCoordinatorPortTypeRawXMLStub stub = new RegistrationCoordinatorPortTypeRawXMLStub(
+					participantRepository, participantAxis2Xml, coorContext
+							.getRegistrationService());
+			EndpointReference participantProtocolService = EndpointReferenceFactory
+					.getInstance().get2PCParticipantEndpoint(id);
+			stub.registerOperation(resource.getProtocol(),
+					participantProtocolService, id);
+		} catch (IOException e) {
+			throw new AxisFault(e);
+		} catch (AbstractKandulaException e) {
+			AxisFault e1 = new AxisFault(e);
+			e1.setFaultCode(e.getFaultCode());
+			throw e1;
+		}
+
+	}
 }
 

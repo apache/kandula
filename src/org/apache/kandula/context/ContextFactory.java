@@ -25,37 +25,37 @@ import org.apache.kandula.faults.InvalidProtocolException;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class ContextFactory {
-    private static ContextFactory instance = new ContextFactory();
+	private static ContextFactory instance = new ContextFactory();
 
-    public static ContextFactory getInstance() {
-        return instance;
-    }
+	public static ContextFactory getInstance() {
+		return instance;
+	}
 
-    public AbstractContext createActivity(String protocol)
-            throws InvalidProtocolException {
-        if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(protocol)) {
-            return new ATActivityContext();
-        } else {
-            throw new InvalidProtocolException("Unsupported Protocol Type");
-        }
-    }
+	public AbstractContext createActivity(String protocol)
+			throws InvalidProtocolException {
+		if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(protocol)) {
+			return new ATActivityContext();
+		} else {
+			throw new InvalidProtocolException("Unsupported Protocol Type");
+		}
+	}
 
-    public AbstractContext createActivity(String protocol,
-            EndpointReference activationEPR) throws InvalidProtocolException {
-        if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(protocol)) {
-            return new ATActivityContext(activationEPR);
-        } else {
-            throw new InvalidProtocolException("Unsupported Protocol Type");
-        }
-    }
+	public AbstractContext createActivity(String protocol,
+			EndpointReference activationEPR) throws InvalidProtocolException {
+		if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(protocol)) {
+			return new ATActivityContext(activationEPR);
+		} else {
+			throw new InvalidProtocolException("Unsupported Protocol Type");
+		}
+	}
 
-    public AbstractContext createActivity(CoordinationContext context)
-            throws InvalidProtocolException {
-        if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(context
-                .getCoordinationType())) {
-            return new ATActivityContext(context);
-        } else {
-            throw new InvalidProtocolException("Unsupported Protocol Type");
-        }
-    }
+	public AbstractContext createActivity(CoordinationContext context)
+			throws InvalidProtocolException {
+		if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(context
+				.getCoordinationType())) {
+			return new ATActivityContext(context);
+		} else {
+			throw new InvalidProtocolException("Unsupported Protocol Type");
+		}
+	}
 }

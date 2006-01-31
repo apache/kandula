@@ -21,45 +21,45 @@ package org.apache.kandula.faults;
  */
 public class KandulaGeneralException extends AbstractKandulaException {
 
-    /**
-     *  
-     */
-    public KandulaGeneralException(Exception e) {
-        super(e);
-    }
+	/**
+	 *  
+	 */
+	public KandulaGeneralException(Exception e) {
+		super(e);
+	}
 
-    public KandulaGeneralException(String s, Exception e) {
-        super(s, e);
-    }
+	public KandulaGeneralException(String s, Exception e) {
+		super(s, e);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.AbstractKandulaException#getFaultCode()
-     */
-    public String getFaultCode() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.AbstractKandulaException#getFaultCode()
+	 */
+	public String getFaultCode() {
 
-        return null;
-    }
+		return null;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.AbstractKandulaException#getFaultSubcode()
-     */
-    public String getFaultSubcode() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.AbstractKandulaException#getFaultSubcode()
+	 */
+	public String getFaultSubcode() {
 
-        return null;
-    }
+		return null;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.AbstractKandulaException#getFaultReason()
-     */
-    public String getFaultReason() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.AbstractKandulaException#getFaultReason()
+	 */
+	public String getFaultReason() {
 
-        return null;
-    }
+		return null;
+	}
 
 }

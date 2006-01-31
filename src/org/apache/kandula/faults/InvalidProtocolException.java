@@ -21,59 +21,59 @@ package org.apache.kandula.faults;
  */
 public class InvalidProtocolException extends AbstractKandulaException {
 
-    /**
-     *  
-     */
-    public InvalidProtocolException() {
-        super();
-    }
+	/**
+	 *  
+	 */
+	public InvalidProtocolException() {
+		super();
+	}
 
-    /**
-     * @param arg0
-     */
-    public InvalidProtocolException(String arg0) {
-        super(arg0);
-    }
+	/**
+	 * @param arg0
+	 */
+	public InvalidProtocolException(String arg0) {
+		super(arg0);
+	}
 
-    /**
-     * @param arg0
-     */
-    public InvalidProtocolException(Throwable arg0) {
-        super(arg0);
-    }
+	/**
+	 * @param arg0
+	 */
+	public InvalidProtocolException(Throwable arg0) {
+		super(arg0);
+	}
 
-    /**
-     * @param arg0
-     * @param arg1
-     */
-    public InvalidProtocolException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
-    }
+	/**
+	 * @param arg0
+	 * @param arg1
+	 */
+	public InvalidProtocolException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultCode()
-     */
-    public String getFaultCode() {
-        return "Sender";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultCode()
+	 */
+	public String getFaultCode() {
+		return "Sender";
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultSubcode()
-     */
-    public String getFaultSubcode() {
-        return "wscoor:InvalidProtocol";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultSubcode()
+	 */
+	public String getFaultSubcode() {
+		return "wscoor:InvalidProtocol";
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultReason()
-     */
-    public String getFaultReason() {
-        return "The protocol is invalid or is not supported by the coordinator.";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultReason()
+	 */
+	public String getFaultReason() {
+		return "The protocol is invalid or is not supported by the coordinator.";
+	}
 }

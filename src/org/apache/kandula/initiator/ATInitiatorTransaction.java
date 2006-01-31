@@ -24,41 +24,41 @@ import org.apache.kandula.context.coordination.CoordinationContext;
  */
 public class ATInitiatorTransaction {
 
-    private EndpointReference coordinationEPR;
+	private EndpointReference coordinationEPR;
 
-    private CoordinationContext coordinationContext;
+	private CoordinationContext coordinationContext;
 
-    public ATInitiatorTransaction(EndpointReference coordinationEPR) {
-        this.coordinationEPR = coordinationEPR;
-    }
+	public ATInitiatorTransaction(EndpointReference coordinationEPR) {
+		this.coordinationEPR = coordinationEPR;
+	}
 
-    /**
-     * @return Returns the coordinationEPR.
-     */
-    public EndpointReference getCoordinationEPR() {
-        return coordinationEPR;
-    }
+	/**
+	 * @return Returns the coordinationEPR.
+	 */
+	public EndpointReference getCoordinationEPR() {
+		return coordinationEPR;
+	}
 
-    /**
-     * @param coordinationEPR
-     *            The coordinationEPR to set.
-     */
-    public void setCoordinationEPR(EndpointReference coordinationEPR) {
-        this.coordinationEPR = coordinationEPR;
-    }
+	/**
+	 * @param coordinationEPR
+	 *            The coordinationEPR to set.
+	 */
+	public void setCoordinationEPR(EndpointReference coordinationEPR) {
+		this.coordinationEPR = coordinationEPR;
+	}
 
-    /**
-     * @return Returns the coordinationContext.
-     */
-    public CoordinationContext getCoordinationContext() {
-        return coordinationContext;
-    }
+	/**
+	 * @return Returns the coordinationContext.
+	 */
+	public CoordinationContext getCoordinationContext() {
+		return coordinationContext;
+	}
 
-    /**
-     * @param coordinationContext
-     *            The coordinationContext to set.
-     */
-    public void setCoordinationContext(CoordinationContext coordinationContext) {
-        this.coordinationContext = coordinationContext;
-    }
+	/**
+	 * @param coordinationContext
+	 *            The coordinationContext to set.
+	 */
+	public void setCoordinationContext(CoordinationContext coordinationContext) {
+		this.coordinationContext = coordinationContext;
+	}
 }

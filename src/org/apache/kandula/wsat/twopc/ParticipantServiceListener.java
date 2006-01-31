@@ -35,76 +35,75 @@ import org.apache.kandula.utility.KandulaListener;
  */
 public class ParticipantServiceListener {
 
-    private static ParticipantServiceListener instance = null;
+	private static ParticipantServiceListener instance = null;
 
-    private EndpointReference epr = null;
+	private EndpointReference epr = null;
 
-    private ParticipantServiceListener() {
-        super();
-    }
+	private ParticipantServiceListener() {
+		super();
+	}
 
-    public static ParticipantServiceListener getInstance() {
-        if (instance == null) {
-            instance = new ParticipantServiceListener();
-        }
-        return instance;
-    }
+	public static ParticipantServiceListener getInstance() {
+		if (instance == null) {
+			instance = new ParticipantServiceListener();
+		}
+		return instance;
+	}
 
-    public EndpointReference getEpr() throws IOException {
-        if (epr == null) {
-            this.epr = setupListener();
-        }
-        return this.epr;
-    }
+	public EndpointReference getEpr() throws IOException {
+		if (epr == null) {
+			this.epr = setupListener();
+		}
+		return this.epr;
+	}
 
-    private EndpointReference setupListener() throws IOException {
-        QName serviceName = new QName("ParticipantPortType");
-        String className = ParticipantPortTypeRawXMLSkeleton.class.getName();
-        AxisService service = new AxisService(serviceName);
-        service.addParameter(new ParameterImpl(
-                AbstractMessageReceiver.SERVICE_CLASS, className));
-        service.setFileName(className);
+	private EndpointReference setupListener() throws IOException {
+		String className = ParticipantPortTypeRawXMLSkeleton.class.getName();
+		String serviceName = "ParticipantPortType";
+		AxisService service = new AxisService(serviceName);
+		service.addParameter(new ParameterImpl(
+				AbstractMessageReceiver.SERVICE_CLASS, className));
+		service.setFileName(className);
 
-        QName prepareOperationName = new QName(Constants.WS_COOR,
-                "prepareOperation");
-        AxisOperation prepareOperationDesc;
-        String prepareMapping = Constants.WS_AT_PREPARE;
-        prepareOperationDesc = new InOnlyAxisOperation();
-        prepareOperationDesc.setName(prepareOperationName);
-        prepareOperationDesc
-                .setMessageReceiver(new RawXMLINOnlyMessageReceiver());
-        // Adding the WSA Action mapping to the operation
-        service.addMapping(prepareMapping, prepareOperationDesc);
-        service.addOperation(prepareOperationDesc);
+		QName prepareOperationName = new QName(Constants.WS_COOR,
+				"prepareOperation");
+		AxisOperation prepareOperationDesc;
+		String prepareMapping = Constants.WS_AT_PREPARE;
+		prepareOperationDesc = new InOnlyAxisOperation();
+		prepareOperationDesc.setName(prepareOperationName);
+		prepareOperationDesc
+				.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
+		// Adding the WSA Action mapping to the operation
+		service.mapActionToOperation(prepareMapping, prepareOperationDesc);
+		service.addOperation(prepareOperationDesc);
 
-        QName commitOperationName = new QName(Constants.WS_COOR,
-                "commitOperation");
-        AxisOperation commitOperationDesc;
-        String commitMapping = Constants.WS_AT_COMMIT;
-        commitOperationDesc = new InOnlyAxisOperation();
-        commitOperationDesc.setName(commitOperationName);
-        commitOperationDesc
-                .setMessageReceiver(new RawXMLINOnlyMessageReceiver());
-        // Adding the WSA Action mapping to the operation
-        service.addMapping(commitMapping, commitOperationDesc);
-        service.addOperation(commitOperationDesc);
+		QName commitOperationName = new QName(Constants.WS_COOR,
+				"commitOperation");
+		AxisOperation commitOperationDesc;
+		String commitMapping = Constants.WS_AT_COMMIT;
+		commitOperationDesc = new InOnlyAxisOperation();
+		commitOperationDesc.setName(commitOperationName);
+		commitOperationDesc
+				.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
+		// Adding the WSA Action mapping to the operation
+		service.mapActionToOperation(commitMapping, commitOperationDesc);
+		service.addOperation(commitOperationDesc);
 
-        QName rollbackOperationName = new QName(Constants.WS_COOR,
-                "rollbackOperation");
-        AxisOperation rollbackOperationDesc;
-        String rollbackMapping = Constants.WS_AT_ROLLBACK;
-        rollbackOperationDesc = new InOnlyAxisOperation();
-        rollbackOperationDesc.setName(rollbackOperationName);
-        rollbackOperationDesc
-                .setMessageReceiver(new RawXMLINOnlyMessageReceiver());
-        // Adding the WSA Action mapping to the operation
-        service.addMapping(rollbackMapping, rollbackOperationDesc);
-        service.addOperation(rollbackOperationDesc);
+		QName rollbackOperationName = new QName(Constants.WS_COOR,
+				"rollbackOperation");
+		AxisOperation rollbackOperationDesc;
+		String rollbackMapping = Constants.WS_AT_ROLLBACK;
+		rollbackOperationDesc = new InOnlyAxisOperation();
+		rollbackOperationDesc.setName(rollbackOperationName);
+		rollbackOperationDesc
+				.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
+		// Adding the WSA Action mapping to the operation
+		service.mapActionToOperation(rollbackMapping, rollbackOperationDesc);
+		service.addOperation(rollbackOperationDesc);
 
-        KandulaListener listener = KandulaListener.getInstance();
-        listener.addService(service);
-        listener.start();
-        return new EndpointReference(listener.getHost()
-                + serviceName.getLocalPart());
-    }
+		KandulaListener listener = KandulaListener.getInstance();
+		listener.addService(service);
+		listener.start();
+		return new EndpointReference(listener.getHost() + serviceName);
+	}
 }

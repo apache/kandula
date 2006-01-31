@@ -28,31 +28,33 @@ import org.apache.kandula.storage.StorageFactory;
  */
 
 public class CompletionInitiatorPortTypeRawXMLSkeleton {
-    private MessageContext msgContext;
+	private MessageContext msgContext;
 
-    public void init(MessageContext context) {
-        this.msgContext = context;
-    }
+	public void init(MessageContext context) {
+		this.msgContext = context;
+	}
 
-    public OMElement committedOperation(OMElement requestElement) {
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-        OMElement header = msgContext.getEnvelope().getHeader();
-        String requesterID = header.getFirstChildWithName(
-                Constants.REQUESTER_ID_PARAMETER).getText();
-        AbstractContext context = (AbstractContext) StorageFactory
-                .getInstance().getStore().get(requesterID);
-        context.setStatus(Status.ParticipantStatus.STATUS_COMMITED);
-        return null;
-    }
+	public OMElement committedOperation(OMElement requestElement) {
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		OMElement header = msgContext.getEnvelope().getHeader();
+		String requesterID = header.getFirstChildWithName(
+				Constants.REQUESTER_ID_PARAMETER).getText();
+		AbstractContext context = (AbstractContext) StorageFactory
+				.getInstance().getInitiatorStore().get(requesterID);
+		context.setStatus(Status.ParticipantStatus.STATUS_COMMITED);
+		return null;
+	}
 
-    public OMElement abortedOperation(OMElement requestElement) {
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-        OMElement header = msgContext.getEnvelope().getHeader();
-        String requesterID = header.getFirstChildWithName(
-                Constants.REQUESTER_ID_PARAMETER).getText();
-        AbstractContext context = (AbstractContext) StorageFactory
-                .getInstance().getStore().get(requesterID);
-        context.setStatus(Status.ParticipantStatus.STATUS_ABORTED);
-        return null;
-    }
+	public OMElement abortedOperation(OMElement requestElement) {
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		OMElement header = msgContext.getEnvelope().getHeader();
+		String requesterID = header.getFirstChildWithName(
+				Constants.REQUESTER_ID_PARAMETER).getText();
+		AbstractContext context = (AbstractContext) StorageFactory
+				.getInstance().getInitiatorStore().get(requesterID);
+		context.setStatus(Status.ParticipantStatus.STATUS_ABORTED);
+		return null;
+	}
 }

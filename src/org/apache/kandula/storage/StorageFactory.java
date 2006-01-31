@@ -23,50 +23,50 @@ import org.apache.kandula.Constants;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class StorageFactory {
-    private static StorageFactory instance= new StorageFactory();
+	private static StorageFactory instance = new StorageFactory();
 
-    private ConfigurationContext configurationContext=null;
+	private ConfigurationContext configurationContext = null;
 
-    private Store clientStore =null;
+	private Store clientStore = null;
 
-    private StorageFactory()
-    {}
-    public static StorageFactory getInstance() {
-        return instance;
-    }
+	private StorageFactory() {
+	}
 
-    public Store getStore() {
-        if (configurationContext ==null)
-            return null;
-        Store store  = (Store)configurationContext.getProperty(Constants.KANDULA_STORE);
-        if (store == null) {
-            store = new SimpleStore();
-            configurationContext.setProperty(Constants.KANDULA_STORE,store);
-        }
-        return store;
-    }
+	public static StorageFactory getInstance() {
+		return instance;
+	}
 
-    /*
-     * TODO: Have to remove this. This is a hack done to get through the interop
-     */
-    public Store getInitiatorStore()
-    {
-         if  (clientStore==null)
-         {
-              clientStore = new SimpleStore();
-         }
-        return clientStore;
-    }
+	public Store getStore() {
+		if (configurationContext == null)
+			return null;
+		Store store = (Store) configurationContext
+				.getProperty(Constants.KANDULA_STORE);
+		if (store == null) {
+			store = new SimpleStore();
+			configurationContext.setProperty(Constants.KANDULA_STORE, store);
+		}
+		return store;
+	}
 
-    public void setConfigurationContext(ConfigurationContext configurationContext)
-    {
-        this.configurationContext = configurationContext;
-    }
-    /*
-     * TODO : Remove this... Parts of the Hack done for Interop
-    */
-    public ConfigurationContext getConfigurationContext()
-    {
-       return configurationContext;
-    }
+	/*
+	 * TODO: Have to remove this. This is a hack done to get through the interop
+	 */
+	public Store getInitiatorStore() {
+		if (clientStore == null) {
+			clientStore = new SimpleStore();
+		}
+		return clientStore;
+	}
+
+	public void setConfigurationContext(
+			ConfigurationContext configurationContext) {
+		this.configurationContext = configurationContext;
+	}
+
+	/*
+	 * TODO : Remove this... Parts of the Hack done for Interop
+	 */
+	public ConfigurationContext getConfigurationContext() {
+		return configurationContext;
+	}
 }

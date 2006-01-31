@@ -29,76 +29,76 @@ import org.apache.kandula.storage.Store;
  */
 
 public class Coordinator {
-    private Store store;
+	private Store store;
 
-    public Coordinator() {
-        StorageFactory storageFactory = StorageFactory.getInstance();
-        store = storageFactory.getStore();
-    }
+	public Coordinator() {
+		StorageFactory storageFactory = StorageFactory.getInstance();
+		store = storageFactory.getStore();
+	}
 
-    /**
-     * @param coordinationType
-     * @return the Coordination Context created <p/>Initiators can use this to
-     *         Create new Distributed transactions.This will take in the
-     *         Coordination Type and will create an instance of the reapective
-     *         ActivityContext. The Coordination Context created by this can be
-     *         used to convey the information about the transaction between
-     *         initiator,Participants and coordinator
-     * @throws AbstractKandulaException
-     */
-    public AbstractContext createCoordinationContext(String coordinationType,
-            long expires) throws AbstractKandulaException {
-        ContextFactory factory = ContextFactory.getInstance();
-        AbstractContext context = factory.createActivity(coordinationType);
-        context.getCoordinationContext().setExpires(expires);
-        store.put(context.getCoordinationContext().getActivityID(), context);
-        return context;
-    }
+	/**
+	 * @param coordinationType
+	 * @return the Coordination Context created <p/>Initiators can use this to
+	 *         Create new Distributed transactions.This will take in the
+	 *         Coordination Type and will create an instance of the reapective
+	 *         ActivityContext. The Coordination Context created by this can be
+	 *         used to convey the information about the transaction between
+	 *         initiator,Participants and coordinator
+	 * @throws AbstractKandulaException
+	 */
+	public AbstractContext createCoordinationContext(String coordinationType,
+			long expires) throws AbstractKandulaException {
+		ContextFactory factory = ContextFactory.getInstance();
+		AbstractContext context = factory.createActivity(coordinationType);
+		context.getCoordinationContext().setExpires(expires);
+		store.put(context.getCoordinationContext().getActivityID(), context);
+		return context;
+	}
 
-    /**
-     * @param coorContext
-     * @return the interposed Coordination Context created <p/>Participants
-     *         decided to use this Coordinator as a interposed
-     *         sub-coordinator.The newly created CoordinationContext will
-     *         contain the same ActivityIdentifier & Protocol type. Registration
-     *         EPR of the earlier CoordinationContext will be replaced by the
-     *         RegistrationEPR of this Coordinator.
-     */
-    public AbstractContext createCoordinationContext(
-            CoordinationContext coorContext) throws AbstractKandulaException {
-        ContextFactory factory = ContextFactory.getInstance();
-        AbstractContext context = factory.createActivity(coorContext);
-        store.put(context.getCoordinationContext().getActivityID(), context);
-        return context;
-    }
+	/**
+	 * @param coorContext
+	 * @return the interposed Coordination Context created <p/>Participants
+	 *         decided to use this Coordinator as a interposed
+	 *         sub-coordinator.The newly created CoordinationContext will
+	 *         contain the same ActivityIdentifier & Protocol type. Registration
+	 *         EPR of the earlier CoordinationContext will be replaced by the
+	 *         RegistrationEPR of this Coordinator.
+	 */
+	public AbstractContext createCoordinationContext(
+			CoordinationContext coorContext) throws AbstractKandulaException {
+		ContextFactory factory = ContextFactory.getInstance();
+		AbstractContext context = factory.createActivity(coorContext);
+		store.put(context.getCoordinationContext().getActivityID(), context);
+		return context;
+	}
 
-    /**
-     * @param protocol
-     * @param participantEPR
-     * @param id
-     * @return Should return the particular Coordiators End Point Reference <p/>
-     *         This method provides the functional logic for participants to
-     *         register for a particular transaction activity which was created
-     *         by a initiator. Registration request will be forwarded to
-     *         repective protocol coordinators.
-     * @throws AbstractKandulaException
-     */
-    public EndpointReference registerParticipant(String id, String protocol,
-            EndpointReference participantEPR) throws AbstractKandulaException {
+	/**
+	 * @param protocol
+	 * @param participantEPR
+	 * @param id
+	 * @return Should return the particular Coordiators End Point Reference <p/>
+	 *         This method provides the functional logic for participants to
+	 *         register for a particular transaction activity which was created
+	 *         by a initiator. Registration request will be forwarded to
+	 *         repective protocol coordinators.
+	 * @throws AbstractKandulaException
+	 */
+	public EndpointReference registerParticipant(String id, String protocol,
+			EndpointReference participantEPR) throws AbstractKandulaException {
 
-        AbstractContext context = getCoordinationContext(id);
-        if (context == null) {
-            throw new IllegalStateException(
-                    "No Activity Found for this Activity ID");
-        }
+		AbstractContext context = getCoordinationContext(id);
+		if (context == null) {
+			throw new IllegalStateException(
+					"No Activity Found for this Activity ID");
+		}
 
-        Registerable registerableCoordinator = Registerable.Factory
-                .newRegisterable(context.getCoordinationType());
-        return registerableCoordinator.register(context, protocol,
-                participantEPR);
-    }
+		Registerable registerableCoordinator = Registerable.Factory
+				.newRegisterable(context.getCoordinationType());
+		return registerableCoordinator.register(context, protocol,
+				participantEPR);
+	}
 
-    private AbstractContext getCoordinationContext(String id) {
-        return (AbstractContext) store.get(id);
-    }
+	private AbstractContext getCoordinationContext(String id) {
+		return (AbstractContext) store.get(id);
+	}
 }

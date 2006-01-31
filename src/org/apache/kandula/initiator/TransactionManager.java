@@ -16,9 +16,8 @@
  */
 package org.apache.kandula.initiator;
 
-import java.io.IOException;
-
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.kandula.Status;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.ContextFactory;
 import org.apache.kandula.context.at.ATActivityContext;
@@ -38,91 +37,108 @@ import org.apache.kandula.wscoor.RegistrationCoordinatorPortTypeRawXMLStub;
 
 public class TransactionManager {
 
-    private static ThreadLocal threadInfo;
-    
-    public TransactionManager(String coordinationType,
-            EndpointReference coordinatorEPR) throws AbstractKandulaException {
-        
-        threadInfo = new ThreadLocal();
-        AbstractContext context = ContextFactory.getInstance().createActivity(
-                coordinationType, coordinatorEPR);
-        if (threadInfo.get() != null)
-            throw new IllegalStateException();
-        threadInfo.set(context.getProperty(ATActivityContext.REQUESTER_ID));
-        Store store = StorageFactory.getInstance().getInitiatorStore();
-        store.put(context.getProperty(ATActivityContext.REQUESTER_ID), context);
-    }
+	private static ThreadLocal threadInfo;
 
-    /**
-     * @throws Exception
-     */
-    public void begin() throws Exception {
-        AbstractContext context = getTransaction();
-        String id = (String) context
-                .getProperty(ATActivityContext.REQUESTER_ID);
-        ActivationCoordinatorPortTypeRawXMLStub activationCoordinator = new ActivationCoordinatorPortTypeRawXMLStub(
-                ".", (EndpointReference) context
-                        .getProperty(ATActivityContext.ACTIVATION_EPR));
-        activationCoordinator.createCoordinationContextOperation(
-                org.apache.kandula.Constants.WS_AT, id);
-        while (context.getCoordinationContext() == null) {
-            //allow other threads to execute
-            Thread.sleep(10);
-        }
-        RegistrationCoordinatorPortTypeRawXMLStub registrationCoordinator = new RegistrationCoordinatorPortTypeRawXMLStub(
-                ".", context.getCoordinationContext().getRegistrationService());
-        EndpointReference registrationRequeterPortEPR = EndpointReferenceFactory
-                .getInstance().getCompletionParticipantEndpoint(id);
-        registrationCoordinator.registerOperation(
-                org.apache.kandula.Constants.WS_AT_COMPLETION,
-                registrationRequeterPortEPR, id);
-        while (context.getProperty(ATActivityContext.COORDINATION_EPR) == null) {
-            Thread.sleep(10);
-        }
-    }
+	private String axis2Home, axis2Xml;
 
-    public void commit() throws AbstractKandulaException, IOException {
-        AbstractContext context = getTransaction();
-        EndpointReference coordinationEPR = (EndpointReference) context
-                .getProperty(ATActivityContext.COORDINATION_EPR);
-        CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(
-                ".", coordinationEPR);
-        stub.commitOperation();
-    }
+	public TransactionManager(String coordinationType,
+			EndpointReference coordinatorEPR) throws AbstractKandulaException {
 
-    public void rollback() throws AbstractKandulaException, IOException {
-        AbstractContext context = getTransaction();
-        EndpointReference coordinationEPR = (EndpointReference) context
-                .getProperty(ATActivityContext.COORDINATION_EPR);
-        CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(
-                ".", coordinationEPR);
-        stub.rollbackOperation();
-    }
+		threadInfo = new ThreadLocal();
+		AbstractContext context = ContextFactory.getInstance().createActivity(
+				coordinationType, coordinatorEPR);
+		if (threadInfo.get() != null)
+			throw new IllegalStateException();
+		threadInfo.set(context.getProperty(ATActivityContext.REQUESTER_ID));
+		Store store = StorageFactory.getInstance().getInitiatorStore();
+		store.put(context.getProperty(ATActivityContext.REQUESTER_ID), context);
+	}
 
-    //	public Transaction suspend() {
-    //		Transaction tx= getTransaction();
-    //		forget();
-    //		return tx;
-    //	}
-    //
-    //	public void resume(Transaction tx) {
-    //		if (threadInfo.get() != null)
-    //			throw new IllegalStateException();
-    //		else
-    //			threadInfo.set(tx);
-    //	}
-    //
-    //	public void forget() {
-    //		threadInfo.set(null);
-    //	}
+	/**
+	 * @throws Exception
+	 */
+	public void begin(String axis2Home, String axis2Xml) throws Exception {
+		this.axis2Home = axis2Home;
+		this.axis2Xml = axis2Xml;
+		AbstractContext context = getTransaction();
+		String id = (String) context
+				.getProperty(ATActivityContext.REQUESTER_ID);
+		ActivationCoordinatorPortTypeRawXMLStub activationCoordinator = new ActivationCoordinatorPortTypeRawXMLStub(
+				axis2Home, axis2Xml, (EndpointReference) context
+						.getProperty(ATActivityContext.ACTIVATION_EPR));
+		activationCoordinator.createCoordinationContextOperation(
+				org.apache.kandula.Constants.WS_AT, id);
+		while (context.getCoordinationContext() == null) {
+			//allow other threads to execute
+			Thread.sleep(10);
+		}
+		RegistrationCoordinatorPortTypeRawXMLStub registrationCoordinator = new RegistrationCoordinatorPortTypeRawXMLStub(
+				axis2Home, axis2Xml, context.getCoordinationContext()
+						.getRegistrationService());
+		EndpointReference registrationRequeterPortEPR = EndpointReferenceFactory
+				.getInstance().getCompletionInitiatorEndpoint(id);
+		registrationCoordinator.registerOperation(
+				org.apache.kandula.Constants.WS_AT_COMPLETION,
+				registrationRequeterPortEPR, id);
+		while (context.getProperty(ATActivityContext.COORDINATION_EPR) == null) {
+			Thread.sleep(10);
+		}
+	}
 
-    public static AbstractContext getTransaction() throws AbstractKandulaException {
-        Object key = threadInfo.get();
-        AbstractContext context = (AbstractContext) StorageFactory
-                .getInstance().getInitiatorStore().get(key);
-        if (context == null) {
-            throw new InvalidStateException("No Activity Found");
-        }
-        return context;
-    }
+	public void commit() throws Exception {
+		AbstractContext context = getTransaction();
+		EndpointReference coordinationEPR = (EndpointReference) context
+				.getProperty(ATActivityContext.COORDINATION_EPR);
+		CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(
+				axis2Home, axis2Xml, coordinationEPR);
+		stub.commitOperation();
+		while ((context.getStatus() != Status.ParticipantStatus.STATUS_COMMITED)
+				& (context.getStatus() != Status.ParticipantStatus.STATUS_ABORTED)) {
+			Thread.sleep(10);
+		}
+		if ((context.getStatus() == Status.ParticipantStatus.STATUS_ABORTED)) {
+			throw new Exception("Aborted");
+		}
+	}
+
+	public void rollback() throws Exception {
+		AbstractContext context = getTransaction();
+		EndpointReference coordinationEPR = (EndpointReference) context
+				.getProperty(ATActivityContext.COORDINATION_EPR);
+		CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(
+				axis2Home, axis2Xml, coordinationEPR);
+		stub.rollbackOperation();
+		while ((context.getStatus() != Status.ParticipantStatus.STATUS_COMMITED)
+				| (context.getStatus() != Status.ParticipantStatus.STATUS_ABORTED)) {
+			Thread.sleep(10);
+		}
+	}
+
+	//	public Transaction suspend() {
+	//		Transaction tx= getTransaction();
+	//		forget();
+	//		return tx;
+	//	}
+	//
+	//	public void resume(Transaction tx) {
+	//		if (threadInfo.get() != null)
+	//			throw new IllegalStateException();
+	//		else
+	//			threadInfo.set(tx);
+	//	}
+	//
+	//	public void forget() {
+	//		threadInfo.set(null);
+	//	}
+
+	public static AbstractContext getTransaction()
+			throws AbstractKandulaException {
+		Object key = threadInfo.get();
+		AbstractContext context = (AbstractContext) StorageFactory
+				.getInstance().getInitiatorStore().get(key);
+		if (context == null) {
+			throw new InvalidStateException("No Activity Found");
+		}
+		return context;
+	}
 }

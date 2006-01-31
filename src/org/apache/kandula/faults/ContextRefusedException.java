@@ -21,59 +21,59 @@ package org.apache.kandula.faults;
  */
 public class ContextRefusedException extends AbstractKandulaException {
 
-    /**
-     *  
-     */
-    public ContextRefusedException() {
-        super();
-    }
+	/**
+	 *  
+	 */
+	public ContextRefusedException() {
+		super();
+	}
 
-    /**
-     * @param arg0
-     */
-    public ContextRefusedException(String arg0) {
-        super(arg0);
-    }
+	/**
+	 * @param arg0
+	 */
+	public ContextRefusedException(String arg0) {
+		super(arg0);
+	}
 
-    /**
-     * @param arg0
-     */
-    public ContextRefusedException(Throwable arg0) {
-        super(arg0);
-    }
+	/**
+	 * @param arg0
+	 */
+	public ContextRefusedException(Throwable arg0) {
+		super(arg0);
+	}
 
-    /**
-     * @param arg0
-     * @param arg1
-     */
-    public ContextRefusedException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
-    }
+	/**
+	 * @param arg0
+	 * @param arg1
+	 */
+	public ContextRefusedException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultCode()
-     */
-    public String getFaultCode() {
-        return "Sender";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultCode()
+	 */
+	public String getFaultCode() {
+		return "Sender";
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultSubcode()
-     */
-    public String getFaultSubcode() {
-        return "wscoor:ContextRefused";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultSubcode()
+	 */
+	public String getFaultSubcode() {
+		return "wscoor:ContextRefused";
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultReason()
-     */
-    public String getFaultReason() {
-        return "The coordination context that was provided could not be accepted.";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultReason()
+	 */
+	public String getFaultReason() {
+		return "The coordination context that was provided could not be accepted.";
+	}
 }

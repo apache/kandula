@@ -21,59 +21,59 @@ package org.apache.kandula.faults;
  */
 public class InvalidStateException extends AbstractKandulaException {
 
-    /**
-     *  
-     */
-    public InvalidStateException() {
-        super();
-    }
+	/**
+	 *  
+	 */
+	public InvalidStateException() {
+		super();
+	}
 
-    /**
-     * @param arg0
-     */
-    public InvalidStateException(String arg0) {
-        super(arg0);
-    }
+	/**
+	 * @param arg0
+	 */
+	public InvalidStateException(String arg0) {
+		super(arg0);
+	}
 
-    /**
-     * @param arg0
-     */
-    public InvalidStateException(Throwable arg0) {
-        super(arg0);
-    }
+	/**
+	 * @param arg0
+	 */
+	public InvalidStateException(Throwable arg0) {
+		super(arg0);
+	}
 
-    /**
-     * @param arg0
-     * @param arg1
-     */
-    public InvalidStateException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
-    }
+	/**
+	 * @param arg0
+	 * @param arg1
+	 */
+	public InvalidStateException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultCode()
-     */
-    public String getFaultCode() {
-        return "Sender";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultCode()
+	 */
+	public String getFaultCode() {
+		return "Sender";
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultSubcode()
-     */
-    public String getFaultSubcode() {
-        return "wscoor:InvalidState";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultSubcode()
+	 */
+	public String getFaultSubcode() {
+		return "wscoor:InvalidState";
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultReason()
-     */
-    public String getFaultReason() {
-        return "The message was invalid for the current state of the activity.";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultReason()
+	 */
+	public String getFaultReason() {
+		return "The message was invalid for the current state of the activity.";
+	}
 }

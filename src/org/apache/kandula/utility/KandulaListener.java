@@ -19,7 +19,6 @@ package org.apache.kandula.utility;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.net.BindException;
 import java.util.HashMap;
 
 import org.apache.axis2.AxisFault;
@@ -27,91 +26,96 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.apache.axis2.util.Utils;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class KandulaListener {
 
-    private static KandulaListener instance = null;
+	private static KandulaListener instance = null;
 
-    private ConfigurationContext responseConfigurationContext;
+	private ConfigurationContext responseConfigurationContext;
 
-    protected static AxisOperation[] operations;
+	protected static AxisOperation[] operations;
 
-    private SimpleHTTPServer receiver = null;
+	private SimpleHTTPServer receiver = null;
 
-    private boolean serverStarted = false;
+	private boolean serverStarted = false;
 
-    public int serverPort;
+	public int serverPort;
 
-     private KandulaListener() throws IOException {
-        responseConfigurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
-                .buildClientConfigurationContext(".");
-        try{
-        serverPort = Integer.parseInt(EndpointReferenceFactory.getInstance().getKadulaListenerPort());
-        }catch (Exception e)
-         {
-              serverPort = 5059;
-         }
-        while (receiver == null) {
-            try {
-                receiver = new SimpleHTTPServer(responseConfigurationContext,
-                serverPort);
-            } catch (BindException e) {
-                serverPort++;
-            }
-        }
-    }
+	private KandulaListener() throws IOException {
+		EndpointReferenceFactory endpointReferenceFactory = EndpointReferenceFactory
+				.getInstance();
+		responseConfigurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
+				.createConfigurationContextFromFileSystem(
+						endpointReferenceFactory.getKandulaListenerRepository(),
+						endpointReferenceFactory.getKandulaListenerAxis2Xml());
+		try {
+			serverPort = Integer.parseInt(EndpointReferenceFactory
+					.getInstance().getKadulaListenerPort());
+		} catch (Exception e) {
+			serverPort = 5059;
+		}
+		while (receiver == null) {
 
-    public static KandulaListener getInstance() throws IOException {
-        if (instance == null) {
-            instance = new KandulaListener();
-        }
-        return instance;
-    }
+			receiver = new SimpleHTTPServer(responseConfigurationContext,
+					serverPort);
 
-    public void start() throws IOException {
-        if (!serverStarted) {
+		}
+	}
 
-            receiver.start();
-            serverStarted = true;
-            System.out.print("Server started on port " + serverPort + ".....");
-        }
+	public static KandulaListener getInstance() throws IOException {
+		if (instance == null) {
+			instance = new KandulaListener();
+		}
+		return instance;
+	}
 
-    }
+	public void start() throws IOException {
+		if (!serverStarted) {
 
-    public void stop() {
-        receiver.stop();
-        serverStarted = false;
-    }
+			receiver.start();
+			serverStarted = true;
+			System.out.print("Server started on port " + serverPort + ".....");
+		}
 
-    /**
-     * @param service
-     * @throws AxisFault
-     *             To add services with only one operation, which is the
-     *             frequent case in reponses
-     */
-    public void addService(AxisService service) throws AxisFault {
-        AxisOperation responseOperationDesc;
+	}
 
-        service.setClassLoader(Thread.currentThread().getContextClassLoader());
-        HashMap allServices = responseConfigurationContext
-                .getAxisConfiguration().getServices();
+	public void stop() {
+		receiver.stop();
+		serverStarted = false;
+	}
 
-        if (allServices.get(service.getName().getLocalPart()) == null) {
+	/**
+	 * @param service
+	 * @throws AxisFault
+	 *             To add services with only one operation, which is the
+	 *             frequent case in reponses
+	 */
+	public void addService(AxisService service) throws AxisFault {
+		AxisOperation responseOperationDesc;
 
-            responseConfigurationContext.getAxisConfiguration().addService(
-                    service);
-            Utils.resolvePhases(receiver.getSystemContext()
-                    .getAxisConfiguration(), service);
-        }
+		service.setClassLoader(Thread.currentThread().getContextClassLoader());
+		HashMap allServices = responseConfigurationContext
+				.getAxisConfiguration().getServices();
 
-    }
+		if (allServices.get(service.getName()) == null) {
 
-    public String getHost() throws UnknownHostException {
-        return "http://" + InetAddress.getLocalHost().getHostAddress() + ":"
-                + (serverPort) + "/axis2/services/";
-    }
+			responseConfigurationContext.getAxisConfiguration().addService(
+					service);
+			//TODO : check how to do this or this is neccessary anymore
+			//			Utils.resolvePhases(receiver.getSystemContext()
+			//					.getAxisConfiguration(), service);
+		}
+
+	}
+
+	public String getHost() throws UnknownHostException {
+		return "http://"
+				+ InetAddress.getLocalHost().getHostAddress()
+				+ ":"
+				+ EndpointReferenceFactory.getInstance()
+						.getKadulaListenerPortForEPR() + "/axis2/services/";
+	}
 }

@@ -28,36 +28,36 @@ import org.apache.kandula.faults.InvalidProtocolException;
  */
 public class ATSubCoordinator extends ATCoordinator {
 
-    public void commitOperation(String id) throws AbstractKandulaException {
-        throw new InvalidProtocolException(
-                "This activity is a Sub Ordinate activity. Completion Protocol not supported.");
-    }
+	public void commitOperation(String id) throws AbstractKandulaException {
+		throw new InvalidProtocolException(
+				"This activity is a Sub Ordinate activity. Completion Protocol not supported.");
+	}
 
-    public void rollbackOperation(String id) throws AbstractKandulaException {
-        throw new InvalidProtocolException(
-                "This activity is a Sub Ordinate activity. Completion Protocol not supported.");
-    }
+	public void rollbackOperation(String id) throws AbstractKandulaException {
+		throw new InvalidProtocolException(
+				"This activity is a Sub Ordinate activity. Completion Protocol not supported.");
+	}
 
-    public EndpointReference addParticipant(AbstractContext context,
-            String protocol, EndpointReference participantEPR)
-            throws AbstractKandulaException {
-        ATActivityContext atContext = (ATActivityContext) context;
-        if (protocol.equals(Constants.WS_AT_DURABLE2PC)) {
-            if (!atContext.getSubDurableRegistered()) {
-                //have to register with the parent coordinator
-                atContext.setSubDurableRegistered(true);
-            }
-            return atContext.addParticipant(participantEPR, protocol);
-        }
+	public EndpointReference addParticipant(AbstractContext context,
+			String protocol, EndpointReference participantEPR)
+			throws AbstractKandulaException {
+		ATActivityContext atContext = (ATActivityContext) context;
+		if (protocol.equals(Constants.WS_AT_DURABLE2PC)) {
+			if (!atContext.getSubDurableRegistered()) {
+				//have to register with the parent coordinator
+				atContext.setSubDurableRegistered(true);
+			}
+			return atContext.addParticipant(participantEPR, protocol);
+		}
 
-        else if (protocol.equals(Constants.WS_AT_VOLATILE2PC)) {
-            if (!atContext.getSubDurableRegistered()) {
-                //have to register with the parent coordinator
-                atContext.setSubDurableRegistered(true);
-            }
-            return atContext.addParticipant(participantEPR, protocol);
-        } else
-            throw new InvalidProtocolException();
-    }
+		else if (protocol.equals(Constants.WS_AT_VOLATILE2PC)) {
+			if (!atContext.getSubDurableRegistered()) {
+				//have to register with the parent coordinator
+				atContext.setSubDurableRegistered(true);
+			}
+			return atContext.addParticipant(participantEPR, protocol);
+		} else
+			throw new InvalidProtocolException();
+	}
 
 }

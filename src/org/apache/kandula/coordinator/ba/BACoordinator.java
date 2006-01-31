@@ -26,9 +26,9 @@ import org.apache.kandula.faults.AbstractKandulaException;
  */
 public class BACoordinator implements Registerable {
 
-    public EndpointReference register(AbstractContext context, String protocol,
-            EndpointReference participantEPR) throws AbstractKandulaException {
-        return null; //To change body of implemented methods use File |
-        // Settings | File Templates.
-    }
+	public EndpointReference register(AbstractContext context, String protocol,
+			EndpointReference participantEPR) throws AbstractKandulaException {
+		return null; //To change body of implemented methods use File |
+		// Settings | File Templates.
+	}
 }

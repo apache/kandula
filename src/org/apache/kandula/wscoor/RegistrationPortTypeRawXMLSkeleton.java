@@ -29,72 +29,73 @@ import org.apache.kandula.Constants;
 import org.apache.kandula.coordinator.Coordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.storage.StorageFactory;
-import org.apache.kandula.utility.KandulaUtils;
+import org.apache.kandula.utility.EPRHandlingUtils;
 
 /**
  * @author <a href="mailto:thilina@apache.org"> Thilina Gunarathne </a>
  */
 
 public class RegistrationPortTypeRawXMLSkeleton {
-    private MessageContext msgContext;
+	private MessageContext msgContext;
 
-    public void init(MessageContext msgContext) {
-        this.msgContext = msgContext;
-    }
+	public void init(MessageContext msgContext) {
+		this.msgContext = msgContext;
+	}
 
-    public OMElement registerOperation(OMElement request) throws AxisFault {
+	public OMElement registerOperation(OMElement request) throws AxisFault {
 
-        String protocolIdentifier;
-        EndpointReference participantEPR;
-        String activityId;
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-        /*
-         * Extracting data from the received message
-         */
-        protocolIdentifier = request.getFirstChildWithName(
-                new QName("ProtocolIdentifier")).getText();
-        OMElement participantEPRElement = request
-                .getFirstChildWithName(new QName("ParticipantProtocolService"));
-        //Extracting the participant EPR
-        participantEPR = KandulaUtils.endpointFromOM(participantEPRElement);
+		String protocolIdentifier;
+		EndpointReference participantEPR;
+		String activityId;
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		/*
+		 * Extracting data from the received message
+		 */
+		protocolIdentifier = request.getFirstChildWithName(
+				new QName("ProtocolIdentifier")).getText();
+		OMElement participantEPRElement = request
+				.getFirstChildWithName(new QName("ParticipantProtocolService"));
+		//Extracting the participant EPR
+		participantEPR = EPRHandlingUtils.endpointFromOM(participantEPRElement);
 
-        OMElement header = msgContext.getEnvelope().getHeader();
-        activityId = header.getFirstChildWithName(
-                Constants.TRANSACTION_ID_PARAMETER).getText();
-        /*
-         * Registering the participant for the activity for the given protocol
-         */
-        try {
-            Coordinator coordinator = new Coordinator();
-            EndpointReference epr = coordinator.registerParticipant(activityId,
-                    protocolIdentifier, participantEPR);
-            SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
-            OMNamespace wsCoor = factory.createOMNamespace(Constants.WS_COOR,
-                    "wscoor");
-            OMElement responseEle = factory.createOMElement("RegisterResponse",
-                    wsCoor);
-            responseEle.addChild(toOM(epr));
-            return responseEle;
-        } catch (AbstractKandulaException e) {
-            AxisFault fault = new AxisFault(e);
-            fault.setFaultCode(e.getFaultCode());
-            throw fault;
-        }
-    }
+		OMElement header = msgContext.getEnvelope().getHeader();
+		activityId = header.getFirstChildWithName(
+				Constants.TRANSACTION_ID_PARAMETER).getText();
+		/*
+		 * Registering the participant for the activity for the given protocol
+		 */
+		try {
+			Coordinator coordinator = new Coordinator();
+			EndpointReference epr = coordinator.registerParticipant(activityId,
+					protocolIdentifier, participantEPR);
+			SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
+			OMNamespace wsCoor = factory.createOMNamespace(Constants.WS_COOR,
+					"wscoor");
+			OMElement responseEle = factory.createOMElement("RegisterResponse",
+					wsCoor);
+			responseEle.addChild(toOM(epr));
+			return responseEle;
+		} catch (AbstractKandulaException e) {
+			AxisFault fault = new AxisFault(e);
+			fault.setFaultCode(e.getFaultCode());
+			throw fault;
+		}
+	}
 
-    /**
-     * Serializes an EndpointRefrence to OM Nodes
-     */
-    private OMElement toOM(EndpointReference epr) {
-        SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
-        OMNamespace wsCoor = factory.createOMNamespace(
-                org.apache.kandula.Constants.WS_COOR, "wscoor");
-        OMElement protocolService = factory.createOMElement(
-                "CoordinatorProtocolService", wsCoor);
-        OMElement coordinatorProtocolService = factory.createOMElement(
-                "CoordinatorProtocolService", wsCoor);
-        KandulaUtils.endpointToOM(epr, coordinatorProtocolService, factory);
-        protocolService.addChild(coordinatorProtocolService);
-        return protocolService;
-    }
+	/**
+	 * Serializes an EndpointRefrence to OM Nodes
+	 */
+	private OMElement toOM(EndpointReference epr) {
+		SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
+		OMNamespace wsCoor = factory.createOMNamespace(
+				org.apache.kandula.Constants.WS_COOR, "wscoor");
+		OMElement protocolService = factory.createOMElement(
+				"CoordinatorProtocolService", wsCoor);
+		OMElement coordinatorProtocolService = factory.createOMElement(
+				"CoordinatorProtocolService", wsCoor);
+		EPRHandlingUtils.endpointToOM(epr, coordinatorProtocolService, factory);
+		protocolService.addChild(coordinatorProtocolService);
+		return protocolService;
+	}
 }

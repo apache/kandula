@@ -25,38 +25,38 @@ import org.apache.kandula.context.AbstractContext;
  */
 public class SimpleStore implements Store {
 
-    private HashMap contextMap;
+	private HashMap contextMap;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.storage.Store#putContext(java.lang.String,
-     *      org.apache.kandula.context.ActivityContext)
-     */
-    public SimpleStore() {
-        contextMap = new HashMap();
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.storage.Store#putContext(java.lang.String,
+	 *      org.apache.kandula.context.ActivityContext)
+	 */
+	public SimpleStore() {
+		contextMap = new HashMap();
+	}
 
-    public void put(Object id, Object context) {
-        contextMap.put(id, context);
-    }
+	public void put(Object id, Object context) {
+		contextMap.put(id, context);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.storage.Store#getContext(java.lang.String)
-     */
-    public Object get(Object id) {
-        return (AbstractContext) contextMap.get(id);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.storage.Store#getContext(java.lang.String)
+	 */
+	public Object get(Object id) {
+		return (AbstractContext) contextMap.get(id);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.storage.Store#forgetContext(java.lang.String)
-     */
-    public void forget(Object id) {
-        contextMap.remove(id);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.storage.Store#forgetContext(java.lang.String)
+	 */
+	public void forget(Object id) {
+		contextMap.remove(id);
+	}
 
 }

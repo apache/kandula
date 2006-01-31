@@ -20,11 +20,11 @@ package org.apache.kandula.participant;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public interface KandulaResource {
-    public void commit();
+	public void commit();
 
-    public void rollback();
+	public void rollback();
 
-    public Vote prepare();
+	public Vote prepare();
 
-    public String getProtocol();
+	public String getProtocol();
 }

@@ -21,13 +21,20 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.AnyContentType;
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.client.MessageSender;
+import org.apache.axis2.client.OperationClient;
+import org.apache.axis2.client.Options;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.ServiceContext;
+import org.apache.axis2.context.ServiceGroupContext;
+import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
+import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.InOnlyAxisOperation;
-import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.axis2.description.ParameterImpl;
 import org.apache.axis2.om.OMAbstractFactory;
 import org.apache.axis2.om.OMElement;
@@ -37,131 +44,129 @@ import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.KandulaGeneralException;
+import org.apache.kandula.utility.EPRHandlingUtils;
 import org.apache.kandula.utility.KandulaListener;
-import org.apache.kandula.utility.KandulaUtils;
+
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class RegistrationCoordinatorPortTypeRawXMLStub extends
-        org.apache.axis2.client.Stub {
-    public static final String AXIS2_HOME = ".";
+		org.apache.axis2.client.Stub {
+	public static final String AXIS2_HOME = ".";
 
-    protected static org.apache.axis2.description.AxisOperation[] _operations;
+	protected static org.apache.axis2.description.AxisOperation[] _operations;
 
-    static {
+	protected AxisService service;
 
-        //creating the Service
-        _service = new AxisService(
-                new javax.xml.namespace.QName(
-                        "http://schemas.xmlsoap.org/ws/2003/09/wscoor",
-                        "RegistrationCoordinatorPortType"));
+	protected ConfigurationContext configurationContext;
 
-        //creating the operations
-        org.apache.axis2.description.AxisOperation __operation;
-        _operations = new org.apache.axis2.description.AxisOperation[1];
+	private ServiceContext serviceContext;
 
-        __operation = new OutInAxisOperation();
-        __operation.setName(new javax.xml.namespace.QName(
-                "http://schemas.xmlsoap.org/ws/2003/09/wscoor",
-                "RegisterOperation"));
-        _operations[0] = __operation;
-        _service.addOperation(__operation);
+	private EndpointReference toEPR;
 
-    }
+	private AxisOperation operation;
 
-    /**
-     * Constructor
-     */
-    public RegistrationCoordinatorPortTypeRawXMLStub(String axis2Home,
-            EndpointReference targetEndpoint) throws AbstractKandulaException {
-        this.toEPR = targetEndpoint;
-        try {
-            //creating the configuration
-            _configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
-                    .buildClientConfigurationContext(axis2Home);
+	/**
+	 * Constructor
+	 */
+	public RegistrationCoordinatorPortTypeRawXMLStub(String axis2Home,
+			String axis2Xml, EndpointReference targetEndpoint)
+			throws AbstractKandulaException {
+		this.toEPR = targetEndpoint;
+		service = new AxisService("RegistrationCoordinatorPortType");
+		try {
+			configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
+					.createConfigurationContextFromFileSystem(axis2Home,
+							axis2Xml);
+			configurationContext.getAxisConfiguration().addService(service);
+		} catch (DeploymentException e) {
+			throw new KandulaGeneralException(e);
+		} catch (AxisFault e1) {
+			throw new KandulaGeneralException(e1);
+		}
+		ServiceGroupContext sgc = new ServiceGroupContext(
+				this.configurationContext, (AxisServiceGroup) this.service
+						.getParent());
+		this.serviceContext = new ServiceContext(service, sgc);
 
-            _configurationContext.getAxisConfiguration().addService(_service);
-        } catch (AxisFault e1) {
-            throw new KandulaGeneralException(e1);
-        }
+		operation = new OutOnlyAxisOperation();
+		operation.setName(new javax.xml.namespace.QName(
+				"http://schemas.xmlsoap.org/ws/2003/09/wscoor",
+				"RegisterOperation"));
+		service.addOperation(operation);
 
-        _serviceContext = _service.getParent().getServiceGroupContext(
-                _configurationContext).getServiceContext(
-                _service.getName().getLocalPart());
-    }
+	}
 
-    public void registerOperation(String protocolType, EndpointReference epr,
-            String id) throws IOException {
+	public void registerOperation(String protocolType, EndpointReference epr,
+			String id) throws IOException {
+		EndpointReference replyToEpr;
+		MessageContext messageContext = new MessageContext();
+		Options options = new Options();
+		messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
+				AddressingConstants.Submission.WSA_NAMESPACE);
+		org.apache.axis2.soap.SOAPEnvelope env = createSOAPEnvelope(
+				protocolType, epr);
+		messageContext.setEnvelope(env);
+		replyToEpr = setupListener();
+		EPRHandlingUtils.addReferenceProperty(replyToEpr,
+				Constants.REQUESTER_ID_PARAMETER, id);
+		options.setReplyTo(replyToEpr);
+		options.setTo(this.toEPR);
+		options.setAction(Constants.WS_COOR_REGISTER);
+		OperationClient client = operation
+				.createClient(serviceContext, options);
+		client.addMessageContext(messageContext);
+		client.execute(false);
 
-        EndpointReference replyToEpr;
+	}
 
-        org.apache.axis2.context.MessageContext messageContext = getMessageContext();
-        org.apache.axis2.soap.SOAPEnvelope env = createSOAPEnvelope(
-                protocolType, epr);
-        messageContext.setEnvelope(env);
+	private org.apache.axis2.soap.SOAPEnvelope createSOAPEnvelope(
+			String protocolType, EndpointReference epr) {
 
-        replyToEpr = setupListener();
-        AnyContentType refParameters = new AnyContentType();
-        refParameters.addReferenceValue(Constants.REQUESTER_ID_PARAMETER, id);
-        replyToEpr.setReferenceParameters(refParameters);
+		org.apache.axis2.soap.SOAPFactory factory = OMAbstractFactory
+				.getSOAP12Factory();
+		org.apache.axis2.soap.SOAPEnvelope env = factory.getDefaultEnvelope();
+		OMNamespace wsCoor = factory.createOMNamespace(Constants.WS_COOR,
+				"wscoor");
+		OMElement request = factory.createOMElement("Register", wsCoor);
+		OMElement protocolTypeElement = factory.createOMElement(
+				"ProtocolIdentifier", wsCoor);
+		protocolTypeElement.setText(protocolType);
+		request.addChild(protocolTypeElement);
 
-        MessageSender messageSender = new MessageSender(_serviceContext);
-        messageSender.setReplyTo(replyToEpr);
-        messageSender.setTo(this.toEPR);
-        messageSender.setWsaAction(Constants.WS_COOR_REGISTER);
+		OMElement protocolService = factory.createOMElement(
+				"ParticipantProtocolService", wsCoor);
+		EPRHandlingUtils.endpointToOM(epr, protocolService, factory);
+		request.addChild(protocolService);
+		env.getBody().addChild(request);
+		return env;
+	}
 
-        messageSender
-                .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
-        messageSender.send(_operations[0], messageContext);
-    }
+	private EndpointReference setupListener() throws IOException {
+		String serviceName = "RegistrationRequesterPortType";
+		QName operationName = new QName(Constants.WS_COOR,
+				"registerResponseOperation");
+		AxisOperation responseOperationDesc;
+		String className = RegistrationRequesterPortTypeRawXMLSkeleton.class
+				.getName();
+		String mapping = Constants.WS_COOR_REGISTER_RESPONSE;
 
-    private org.apache.axis2.soap.SOAPEnvelope createSOAPEnvelope(
-            String protocolType, EndpointReference epr) {
-        org.apache.axis2.soap.SOAPEnvelope env = super.createEnvelope();
-        org.apache.axis2.soap.SOAPFactory factory = OMAbstractFactory
-                .getSOAP12Factory();
-        OMNamespace wsCoor = factory.createOMNamespace(Constants.WS_COOR,
-                "wscoor");
-        OMElement request = factory.createOMElement("Register", wsCoor);
-        OMElement protocolTypeElement = factory.createOMElement(
-                "ProtocolIdentifier", wsCoor);
-        protocolTypeElement.setText(protocolType);
-        request.addChild(protocolTypeElement);
+		KandulaListener listener = KandulaListener.getInstance();
+		AxisService service = new AxisService(serviceName);
+		service.addParameter(new ParameterImpl(
+				AbstractMessageReceiver.SERVICE_CLASS, className));
+		service.setFileName(className);
 
-        OMElement protocolService = factory.createOMElement(
-                "ParticipantProtocolService", wsCoor);
-        KandulaUtils.endpointToOM(epr, protocolService, factory);
-        request.addChild(protocolService);
-        env.getBody().addChild(request);
-        return env;
-    }
+		responseOperationDesc = new InOnlyAxisOperation();
+		responseOperationDesc.setName(operationName);
+		responseOperationDesc
+				.setMessageReceiver(new RawXMLINOnlyMessageReceiver());
 
-    private EndpointReference setupListener() throws IOException {
-        QName serviceName = new QName("RegistrationRequesterPortType");
-        QName operationName = new QName(Constants.WS_COOR,
-                "registerResponseOperation");
-        AxisOperation responseOperationDesc;
-        String className = RegistrationRequesterPortTypeRawXMLSkeleton.class
-                .getName();
-        String mapping = Constants.WS_COOR_REGISTER_RESPONSE;
-
-        KandulaListener listener = KandulaListener.getInstance();
-        AxisService service = new AxisService(serviceName);
-        service.addParameter(new ParameterImpl(
-                AbstractMessageReceiver.SERVICE_CLASS, className));
-        service.setFileName(className);
-
-        responseOperationDesc = new InOnlyAxisOperation();
-        responseOperationDesc.setName(operationName);
-        responseOperationDesc
-                .setMessageReceiver(new RawXMLINOnlyMessageReceiver());
-
-        // Adding the WSA Action mapping to the operation
-        service.addMapping(mapping, responseOperationDesc);
-        service.addOperation(responseOperationDesc);
-        listener.addService(service);
-        listener.start();
-        return new EndpointReference(listener.getHost()
-                + serviceName.getLocalPart());
-    }
+		// Adding the WSA Action mapping to the operation
+		service.mapActionToOperation(mapping, responseOperationDesc);
+		service.addOperation(responseOperationDesc);
+		listener.addService(service);
+		listener.start();
+		return new EndpointReference(listener.getHost() + serviceName);
+	}
 }

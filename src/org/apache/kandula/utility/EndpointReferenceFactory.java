@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.Properties;
 
-import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
 import org.apache.kandula.wsat.completion.CompletionInitiatorServiceListener;
@@ -41,22 +40,44 @@ public class EndpointReferenceFactory {
 	static final String PORT_PROPERTY = "port";
 
 	static final String TCPMON_ENABLE = "tcpmon_enable";
-	
-	static final String REPO = "PARTICIPANT_REPOSITORY";
 
-   static final String LISTENER_PORT = "KANDULA_LISTENER_PORT";
+	static final String PARTICIPANT_REPO = "PARTICIPANT_REPOSITORY";
 
-    private static EndpointReferenceFactory instance = null;
+	static final String PARTICIPANT_AXIS2_CONF = "PARTICIPANT_AXIS2_CONF";
+
+	static final String KANDULA_LISTENER_REPO = "KANDULA_LISTENER_REPOSITORY";
+
+	static final String KANDULA_LISTENER_AXIS2XML = "KANDULA_LISTENER_AXIS2XML";
+
+	static final String LISTENER_PORT = "KANDULA_LISTENER_PORT";
+
+	static final String COORDINATOR_AXIS2XML = "COORDINATOR_AXIS2XML";
+
+	static final String COORDINATOR_REPOSITORY = "COORDINATOR_REPOSITORY";
+
+	private static EndpointReferenceFactory instance = null;
 
 	Properties properties = null;
 
 	String location = null;
-	
-	String participantRepository =null;
 
-    String kandulaListenerPort=null;
+	String participantRepository = null;
 
-    private EndpointReferenceFactory() {
+	String participantAxis2Xml = null;
+
+	String kandulaListenerRepository = null;
+
+	String kandulaListenerAxis2Xml = null;
+
+	String kandulaListenerPort = null;
+
+	String coordinatorRepo;
+
+	String coordinatorAxis2Conf;
+
+	String debug = "false";
+
+	private EndpointReferenceFactory() {
 
 		String port = null;
 
@@ -69,31 +90,58 @@ public class EndpointReferenceFactory {
 			in.close();
 			host = properties.getProperty(HOST_PROPERTY);
 			port = properties.getProperty(PORT_PROPERTY);
-			participantRepository = properties.getProperty(REPO);
-
-            if (participantRepository ==null)
-			{
+			participantRepository = properties.getProperty(PARTICIPANT_REPO);
+			if (participantRepository == null) {
 				participantRepository = ".";
 			}
 
-            kandulaListenerPort = properties.getProperty(LISTENER_PORT);
-
-             if (kandulaListenerPort ==null)
-			{
-				kandulaListenerPort = "5059";
+			if (properties.getProperty("tcpmon_enable").equals("true")) {
+				debug = "true";
 			}
 
-            if (port == null) {
+			participantAxis2Xml = properties
+					.getProperty(PARTICIPANT_AXIS2_CONF);
+			if (participantAxis2Xml == null) {
+				participantAxis2Xml = "axis2.xml";
+			}
+
+			kandulaListenerRepository = properties
+					.getProperty(KANDULA_LISTENER_REPO);
+			if (kandulaListenerRepository == null) {
+				kandulaListenerRepository = ".";
+			}
+			kandulaListenerAxis2Xml = properties
+					.getProperty(KANDULA_LISTENER_AXIS2XML);
+			if (kandulaListenerAxis2Xml == null) {
+				kandulaListenerRepository += "/axis2.xml";
+			}
+
+			coordinatorAxis2Conf = properties.getProperty(COORDINATOR_AXIS2XML);
+			if (coordinatorAxis2Conf == null) {
+				coordinatorAxis2Conf = "axis2.xml";
+			}
+
+			coordinatorRepo = properties.getProperty(COORDINATOR_REPOSITORY);
+			if (coordinatorRepo == null) {
+				coordinatorAxis2Conf = ".";
+			}
+
+			kandulaListenerPort = properties.getProperty(LISTENER_PORT);
+			if (kandulaListenerPort == null) {
+				kandulaListenerPort = "5050";
+			}
+
+			if (port == null) {
 				port = "8080";
 			}
+
 			if (host == null) {
 				host = InetAddress.getLocalHost().getHostAddress();
 			}
-			
 
-			location = "http://" + host + ":"+port;
-            System.out.println(location);
-        } catch (Exception e) {
+			location = "http://" + host + ":" + port;
+			System.out.println(location);
+		} catch (Exception e) {
 			if (e instanceof RuntimeException)
 				throw (RuntimeException) e;
 			else
@@ -112,20 +160,25 @@ public class EndpointReferenceFactory {
 
 		EndpointReference epr = new EndpointReference(location
 				+ "/axis2/services/RegistrationCoordinator");
-		AnyContentType refParameters = new AnyContentType();
-		refParameters.addReferenceValue(Constants.TRANSACTION_ID_PARAMETER, id);
-		epr.setReferenceParameters(refParameters);
+		EPRHandlingUtils.addReferenceProperty(epr,
+				Constants.TRANSACTION_ID_PARAMETER, id);
 		return epr;
 	}
 
-	public EndpointReference getCompletionParticipantEndpoint(String id)
+	/**
+	 * Sets up a listener in the transaction initiator to recieve notify
+	 * messages mentioning the outcome of the transaction These messages include
+	 * "aborted" and "commited".
+	 * 
+	 * @throws IOException
+	 */
+	public EndpointReference getCompletionInitiatorEndpoint(String id)
 			throws IOException {
 		CompletionInitiatorServiceListener serviceListener = CompletionInitiatorServiceListener
 				.getInstance();
 		EndpointReference epr = serviceListener.getEpr();
-		AnyContentType refParameters = new AnyContentType();
-		refParameters.addReferenceValue(Constants.REQUESTER_ID_PARAMETER, id);
-		epr.setReferenceParameters(refParameters);
+		EPRHandlingUtils.addReferenceProperty(epr,
+				Constants.REQUESTER_ID_PARAMETER, id);
 		return epr;
 	}
 
@@ -133,23 +186,21 @@ public class EndpointReferenceFactory {
 
 		EndpointReference epr = new EndpointReference(location
 				+ "/axis2/services/CompletionCoordinator");
-		AnyContentType refParameters = new AnyContentType();
-		refParameters.addReferenceValue(Constants.TRANSACTION_ID_PARAMETER, id);
-		epr.setReferenceParameters(refParameters);
+		EPRHandlingUtils.addReferenceProperty(epr,
+				Constants.TRANSACTION_ID_PARAMETER, id);
 		return epr;
 	}
 
 	public EndpointReference get2PCCoordinatorEndpoint(String activityId,
 			String enlistmentId) {
-
+		//Activity ID to find Activity Context , EnlistmentID to find
+		// participant in activity
 		EndpointReference epr = new EndpointReference(location
 				+ "/axis2/services/AtomicTransactionCoordinator");
-		AnyContentType refParameters = new AnyContentType();
-		refParameters.addReferenceValue(Constants.TRANSACTION_ID_PARAMETER,
-				activityId);
-		refParameters.addReferenceValue(Constants.ENLISTMENT_ID_PARAMETER,
-				enlistmentId);
-		epr.setReferenceParameters(refParameters);
+		EPRHandlingUtils.addReferenceProperty(epr,
+				Constants.TRANSACTION_ID_PARAMETER, activityId);
+		EPRHandlingUtils.addReferenceProperty(epr,
+				Constants.ENLISTMENT_ID_PARAMETER, enlistmentId);
 		return epr;
 	}
 
@@ -157,18 +208,46 @@ public class EndpointReferenceFactory {
 
 		EndpointReference epr = new EndpointReference(location
 				+ "/axis2/services/AtomicTransactionParticipant");
-		AnyContentType refParameters = new AnyContentType();
-		refParameters.addReferenceValue(Constants.REQUESTER_ID_PARAMETER, id);
-		epr.setReferenceParameters(refParameters);
+		EPRHandlingUtils.addReferenceProperty(epr,
+				Constants.REQUESTER_ID_PARAMETER, id);
 		return epr;
 	}
-	public String getPariticipantRepository()
-	{
+
+	public String getParticipantRepository() {
 		return participantRepository;
 	}
 
-    public String getKadulaListenerPort()
-    {
-         return kandulaListenerPort;
-    }
+	public String getParticipantAxis2Conf() {
+		return participantAxis2Xml;
+	}
+
+	public String getCoordinatorRepo() {
+		return coordinatorRepo;
+	}
+
+	public String getCoordinatorAxis2Conf() {
+		return coordinatorAxis2Conf;
+	}
+
+	public String getKadulaListenerPort() {
+		return kandulaListenerPort;
+	}
+
+	public String getKadulaListenerPortForEPR() {
+		if (debug.equals("true"))
+			return (Integer.parseInt(kandulaListenerPort) + 1) + "";
+		else
+			return kandulaListenerPort;
+	}
+
+	/**
+	 * @return Returns the kandulaListenerRepository.
+	 */
+	public String getKandulaListenerRepository() {
+		return kandulaListenerRepository;
+	}
+
+	public String getKandulaListenerAxis2Xml() {
+		return kandulaListenerAxis2Xml;
+	}
 }

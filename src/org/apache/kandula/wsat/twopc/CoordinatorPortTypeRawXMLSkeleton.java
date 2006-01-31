@@ -25,106 +25,112 @@ import org.apache.kandula.coordinator.at.ATCoordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.participant.Vote;
 import org.apache.kandula.storage.StorageFactory;
+
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class CoordinatorPortTypeRawXMLSkeleton {
-    private MessageContext msgContext;
+	private MessageContext msgContext;
 
-    public void init(MessageContext context) {
-        this.msgContext = context;
-    }
-    
-    /**
-     * @param requestElement
-     * @throws AbstractKandulaException
-     */
-    public OMElement preparedOperation(OMElement requestElement)
-            throws AxisFault {
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-        OMElement header = msgContext.getEnvelope().getHeader();
-        String activityId = header.getFirstChildWithName(
-                Constants.TRANSACTION_ID_PARAMETER).getText();
-        String enlistmentId = header.getFirstChildWithName(
-                Constants.ENLISTMENT_ID_PARAMETER).getText();
-        ATCoordinator coordinator = new ATCoordinator();
-        try {
-            coordinator.countVote(activityId, Vote.PREPARED, enlistmentId);
-        } catch (AbstractKandulaException e) {
-            AxisFault fault = new AxisFault(e);
-            fault.setFaultCode(e.getFaultCode());
-            throw fault;
-        }
-        return null;
-    }
+	public void init(MessageContext context) {
+		this.msgContext = context;
+	}
 
-    /**
-     * @param requestElement
-     * @throws AbstractKandulaException
-     */
-    public OMElement abortedOperation(OMElement requestElement)
-            throws AxisFault {
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-        OMElement header = msgContext.getEnvelope().getHeader();
-        String activityId = header.getFirstChildWithName(
-                Constants.TRANSACTION_ID_PARAMETER).getText();
-        String enlistmentId = header.getFirstChildWithName(
-                Constants.ENLISTMENT_ID_PARAMETER).getText();
-        ATCoordinator coordinator = new ATCoordinator();
-        try {
-            coordinator.countVote(activityId, Vote.ABORT, enlistmentId);
-        } catch (AbstractKandulaException e) {
-            AxisFault fault = new AxisFault(e);
-            fault.setFaultCode(e.getFaultCode());
-            throw fault;
-        }
-        return null;
-    }
+	/**
+	 * @param requestElement
+	 * @throws AbstractKandulaException
+	 */
+	public OMElement preparedOperation(OMElement requestElement)
+			throws AxisFault {
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		OMElement header = msgContext.getEnvelope().getHeader();
+		String activityId = header.getFirstChildWithName(
+				Constants.TRANSACTION_ID_PARAMETER).getText();
+		String enlistmentId = header.getFirstChildWithName(
+				Constants.ENLISTMENT_ID_PARAMETER).getText();
+		ATCoordinator coordinator = new ATCoordinator();
+		try {
+			coordinator.countVote(activityId, Vote.PREPARED, enlistmentId);
+		} catch (AbstractKandulaException e) {
+			AxisFault fault = new AxisFault(e);
+			fault.setFaultCode(e.getFaultCode());
+			throw fault;
+		}
+		return null;
+	}
 
-    /**
-     * @param requestElement
-     * @throws AbstractKandulaException
-     */
-    public OMElement readOnlyOperation(OMElement requestElement)
-            throws AxisFault {
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-        OMElement header = msgContext.getEnvelope().getHeader();
-        String activityId = header.getFirstChildWithName(
-                Constants.TRANSACTION_ID_PARAMETER).getText();
-        String enlistmentId = header.getFirstChildWithName(
-                Constants.ENLISTMENT_ID_PARAMETER).getText();
-        ATCoordinator coordinator = new ATCoordinator();
-        try {
-            coordinator.countVote(activityId, Vote.READ_ONLY, enlistmentId);
-        } catch (AbstractKandulaException e) {
-            AxisFault fault = new AxisFault(e);
-            fault.setFaultCode(e.getFaultCode());
-            throw fault;
-        }
-        return null;
-    }
+	/**
+	 * @param requestElement
+	 * @throws AbstractKandulaException
+	 */
+	public OMElement abortedOperation(OMElement requestElement)
+			throws AxisFault {
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		OMElement header = msgContext.getEnvelope().getHeader();
+		String activityId = header.getFirstChildWithName(
+				Constants.TRANSACTION_ID_PARAMETER).getText();
+		String enlistmentId = header.getFirstChildWithName(
+				Constants.ENLISTMENT_ID_PARAMETER).getText();
+		ATCoordinator coordinator = new ATCoordinator();
+		try {
+			coordinator.countVote(activityId, Vote.ABORT, enlistmentId);
+		} catch (AbstractKandulaException e) {
+			AxisFault fault = new AxisFault(e);
+			fault.setFaultCode(e.getFaultCode());
+			throw fault;
+		}
+		return null;
+	}
 
-    /**
-     * @param requestElement
-     * @throws AbstractKandulaException
-     */
-    public OMElement committedOperation(OMElement requestElement)
-            throws AxisFault {
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-        AbstractContext context;
-        System.out.println("Visited Committed operation");
-        return null;
-    }
+	/**
+	 * @param requestElement
+	 * @throws AbstractKandulaException
+	 */
+	public OMElement readOnlyOperation(OMElement requestElement)
+			throws AxisFault {
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		OMElement header = msgContext.getEnvelope().getHeader();
+		String activityId = header.getFirstChildWithName(
+				Constants.TRANSACTION_ID_PARAMETER).getText();
+		String enlistmentId = header.getFirstChildWithName(
+				Constants.ENLISTMENT_ID_PARAMETER).getText();
+		ATCoordinator coordinator = new ATCoordinator();
+		try {
+			coordinator.countVote(activityId, Vote.READ_ONLY, enlistmentId);
+		} catch (AbstractKandulaException e) {
+			AxisFault fault = new AxisFault(e);
+			fault.setFaultCode(e.getFaultCode());
+			throw fault;
+		}
+		return null;
+	}
 
-    /**
-     * @param requestElement
-     * @throws AbstractKandulaException
-     */
-    public OMElement replayOperation(OMElement requestElement) throws AxisFault {
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-        AbstractContext context;
-        System.out.println("Visited Replay operation");
-        return null;
-    }
+	/**
+	 * @param requestElement
+	 * @throws AbstractKandulaException
+	 */
+	public OMElement committedOperation(OMElement requestElement)
+			throws AxisFault {
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		AbstractContext context;
+		System.out.println("Visited Committed operation");
+		return null;
+	}
+
+	/**
+	 * @param requestElement
+	 * @throws AbstractKandulaException
+	 */
+	public OMElement replayOperation(OMElement requestElement) throws AxisFault {
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		AbstractContext context;
+		System.out.println("Visited Replay operation");
+		return null;
+	}
 
 }

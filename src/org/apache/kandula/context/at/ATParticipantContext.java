@@ -26,39 +26,38 @@ import org.apache.kandula.participant.KandulaResource;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class ATParticipantContext extends AbstractContext {
-    KandulaResource resource;
+	KandulaResource resource;
 
+	public ATParticipantContext() {
+		this.setStatus(Status.CoordinatorStatus.STATUS_ACTIVE);
+	}
 
-    public ATParticipantContext() {
-        this.setStatus(Status.CoordinatorStatus.STATUS_ACTIVE);
-    }
-    /**
-     * @return Returns the resource.
-     */
-    public KandulaResource getResource() {
-        return resource;
-    }
+	/**
+	 * @return Returns the resource.
+	 */
+	public KandulaResource getResource() {
+		return resource;
+	}
 
-    /**
-     * @param resource
-     *            The resource to set.
-     */
-    public void setResource(KandulaResource resource) {
-        this.resource = resource;
-    }
+	/**
+	 * @param resource
+	 *            The resource to set.
+	 */
+	public void setResource(KandulaResource resource) {
+		this.resource = resource;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.context.AbstractContext#getCoordinationType()
-     */
-    public String getCoordinationType() {
-        return Constants.WS_AT;
-    }
-    
-    public EndpointReference getCoordinationEPR()
-    {
-        return (EndpointReference)getProperty(ATActivityContext.COORDINATION_EPR);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.context.AbstractContext#getCoordinationType()
+	 */
+	public String getCoordinationType() {
+		return Constants.WS_AT;
+	}
+
+	public EndpointReference getCoordinationEPR() {
+		return (EndpointReference) getProperty(ATActivityContext.COORDINATION_EPR);
+	}
 
 }

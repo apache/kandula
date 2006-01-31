@@ -21,60 +21,60 @@ package org.apache.kandula.faults;
  */
 public class InvalidParameterException extends AbstractKandulaException {
 
-    /**
-     *  
-     */
-    public InvalidParameterException() {
-        super();
-    }
+	/**
+	 *  
+	 */
+	public InvalidParameterException() {
+		super();
+	}
 
-    /**
-     * @param arg0
-     */
-    public InvalidParameterException(String arg0) {
-        super(arg0);
-    }
+	/**
+	 * @param arg0
+	 */
+	public InvalidParameterException(String arg0) {
+		super(arg0);
+	}
 
-    /**
-     * @param arg0
-     */
-    public InvalidParameterException(Throwable arg0) {
-        super(arg0);
-    }
+	/**
+	 * @param arg0
+	 */
+	public InvalidParameterException(Throwable arg0) {
+		super(arg0);
+	}
 
-    /**
-     * @param arg0
-     * @param arg1
-     */
-    public InvalidParameterException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
-    }
+	/**
+	 * @param arg0
+	 * @param arg1
+	 */
+	public InvalidParameterException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultCode()
-     */
-    public String getFaultCode() {
-        return "Sender";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultCode()
+	 */
+	public String getFaultCode() {
+		return "Sender";
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultSubcode()
-     */
-    public String getFaultSubcode() {
-        return "wscoor:InvalidParameters";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultSubcode()
+	 */
+	public String getFaultSubcode() {
+		return "wscoor:InvalidParameters";
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultReason()
-     */
-    public String getFaultReason() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultReason()
+	 */
+	public String getFaultReason() {
 
-        return "The message contained invalid parameters and could not be processed.x";
-    }
+		return "The message contained invalid parameters and could not be processed.x";
+	}
 }

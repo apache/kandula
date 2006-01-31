@@ -31,62 +31,67 @@ import org.apache.kandula.storage.Store;
  */
 
 public class ParticipantPortTypeRawXMLSkeleton {
-    private MessageContext msgContext;
+	private MessageContext msgContext;
 
-    public void init(MessageContext context) {
-        this.msgContext = context;
-    }
+	public void init(MessageContext context) {
+		this.msgContext = context;
+	}
 
-    public OMElement prepareOperation(OMElement requestEle) throws AxisFault {
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-        OMElement header = msgContext.getEnvelope().getHeader();
-        String requesterID = header.getFirstChildWithName(
-                Constants.REQUESTER_ID_PARAMETER).getText();
-        Store store = StorageFactory.getInstance().getStore();
-        AbstractContext context = (AbstractContext)store.get(requesterID);
-        ParticipantTransactionManager txManager = new ParticipantTransactionManager();
-        try {
-            txManager.prepare(context);
-        } catch (AbstractKandulaException e) {
-            AxisFault fault = new AxisFault(e);
-            fault.setFaultCode(e.getFaultCode());
-            throw fault;
-        }
-        return null;
+	public OMElement prepareOperation(OMElement requestEle) throws AxisFault {
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		OMElement header = msgContext.getEnvelope().getHeader();
+		String requesterID = header.getFirstChildWithName(
+				Constants.REQUESTER_ID_PARAMETER).getText();
+		Store store = StorageFactory.getInstance().getStore();
+		AbstractContext context = (AbstractContext) store.get(requesterID);
+		ParticipantTransactionManager txManager = new ParticipantTransactionManager();
+		try {
+			txManager.prepare(context);
+		} catch (AbstractKandulaException e) {
+			AxisFault fault = new AxisFault(e);
+			fault.setFaultCode(e.getFaultCode());
+			throw fault;
+		}
+		return null;
 
-    }
+	}
 
-    public OMElement commitOperation(OMElement requestEle) throws AxisFault {
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-        OMElement header = msgContext.getEnvelope().getHeader();
-        String requesterID = header.getFirstChildWithName(
-                Constants.REQUESTER_ID_PARAMETER).getText();
-        Store store = StorageFactory.getInstance().getStore();
-        AbstractContext context = (AbstractContext)store.get(requesterID);
-        ParticipantTransactionManager txManager = new ParticipantTransactionManager();
-        try {
-            txManager.commit(context);
-        } catch (AbstractKandulaException e) {
-            AxisFault fault = new AxisFault(e);
-            fault.setFaultCode(e.getFaultCode());
-            throw fault;
-        }return null;
-    }
+	public OMElement commitOperation(OMElement requestEle) throws AxisFault {
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		OMElement header = msgContext.getEnvelope().getHeader();
+		String requesterID = header.getFirstChildWithName(
+				Constants.REQUESTER_ID_PARAMETER).getText();
+		Store store = StorageFactory.getInstance().getStore();
+		AbstractContext context = (AbstractContext) store.get(requesterID);
+		ParticipantTransactionManager txManager = new ParticipantTransactionManager();
+		try {
+			txManager.commit(context);
+		} catch (AbstractKandulaException e) {
+			AxisFault fault = new AxisFault(e);
+			fault.setFaultCode(e.getFaultCode());
+			throw fault;
+		}
+		return null;
+	}
 
-    public OMElement rollbackOperation(OMElement requestEle) throws AxisFault {
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-        OMElement header = msgContext.getEnvelope().getHeader();
-        String requesterID = header.getFirstChildWithName(
-                Constants.REQUESTER_ID_PARAMETER).getText();
-        Store store = StorageFactory.getInstance().getStore();
-        AbstractContext context = (AbstractContext)store.get(requesterID);
-        ParticipantTransactionManager txManager = new ParticipantTransactionManager();
-        try {
-            txManager.rollback(context);
-        } catch (AbstractKandulaException e) {
-            AxisFault fault = new AxisFault(e);
-            fault.setFaultCode(e.getFaultCode());
-            throw fault;
-        }return null;
-    }
+	public OMElement rollbackOperation(OMElement requestEle) throws AxisFault {
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		OMElement header = msgContext.getEnvelope().getHeader();
+		String requesterID = header.getFirstChildWithName(
+				Constants.REQUESTER_ID_PARAMETER).getText();
+		Store store = StorageFactory.getInstance().getStore();
+		AbstractContext context = (AbstractContext) store.get(requesterID);
+		ParticipantTransactionManager txManager = new ParticipantTransactionManager();
+		try {
+			txManager.rollback(context);
+		} catch (AbstractKandulaException e) {
+			AxisFault fault = new AxisFault(e);
+			fault.setFaultCode(e.getFaultCode());
+			throw fault;
+		}
+		return null;
+	}
 }

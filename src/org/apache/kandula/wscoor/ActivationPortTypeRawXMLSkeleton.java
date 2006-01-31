@@ -25,66 +25,69 @@ import org.apache.axis2.om.OMElement;
 import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.soap.SOAPFactory;
 import org.apache.kandula.Constants;
-import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.coordinator.Coordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
+import org.apache.kandula.storage.StorageFactory;
+
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 
 public class ActivationPortTypeRawXMLSkeleton {
-    private MessageContext msgContext;
-     public void init(MessageContext context) {
-        this.msgContext = context;
-    }
+	private MessageContext msgContext;
 
-    /**
-     * Auto generated method signature
-     * 
-     * @param requestElement
-     * @throws AbstractKandulaException
-     */
-    public OMElement createCoordinationContextOperation(OMElement requestElement)
-            throws AxisFault {
-        AbstractContext context;
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-        /*
-         * Extracting data from the incoming message
-         */
-        String coordinationType = requestElement.getFirstChildWithName(
-                new QName("CoordinationType")).getText();
-        OMElement expiresElement = requestElement
-                .getFirstChildWithName(new QName("Expires"));
-        String expires = null;
-        long expiresL = 0;
-        if (expiresElement != null) {
-            expires = expiresElement.getText();
-            if ((expires != null) && (expires.equals(""))) {
-                expiresL = Long.parseLong(expires);
-            }
-        }
+	public void init(MessageContext context) {
+		this.msgContext = context;
+	}
 
-        /*
-         * Creating the Coordination Context
-         */
-        try {
-            Coordinator coordinator = new Coordinator();
-            context = coordinator.createCoordinationContext(coordinationType,
-                    expiresL);
-            SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
-            OMNamespace wsCoor = factory.createOMNamespace(Constants.WS_COOR,
-                    "wscoor");
-            OMElement responseEle = factory.createOMElement(
-                    "CreateCoordinationContextResponse", wsCoor);
-            responseEle.addChild(context.getCoordinationContext().toOM());
-            return responseEle;
-        } catch (AbstractKandulaException e) {
-            AxisFault fault = new AxisFault(e);
-            fault.setFaultCode(e.getFaultCode());
-            throw fault;
-        }
+	/**
+	 * Auto generated method signature
+	 * 
+	 * @param requestElement
+	 * @throws AbstractKandulaException
+	 */
+	public OMElement createCoordinationContextOperation(OMElement requestElement)
+			throws AxisFault {
+		AbstractContext context;
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		/*
+		 * Extracting data from the incoming message
+		 */
+		String coordinationType = requestElement.getFirstChildWithName(
+				new QName("CoordinationType")).getText();
+		OMElement expiresElement = requestElement
+				.getFirstChildWithName(new QName("Expires"));
+		String expires = null;
+		long expiresL = 0;
+		if (expiresElement != null) {
+			expires = expiresElement.getText();
+			if ((expires != null) && (expires.equals(""))) {
+				expiresL = Long.parseLong(expires);
+			}
+		}
 
-    }
+		/*
+		 * Creating the Coordination Context
+		 */
+		try {
+			Coordinator coordinator = new Coordinator();
+			context = coordinator.createCoordinationContext(coordinationType,
+					expiresL);
+			SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
+			OMNamespace wsCoor = factory.createOMNamespace(Constants.WS_COOR,
+					"wscoor");
+			OMElement responseEle = factory.createOMElement(
+					"CreateCoordinationContextResponse", wsCoor);
+			responseEle.addChild(context.getCoordinationContext().toOM());
+			return responseEle;
+		} catch (AbstractKandulaException e) {
+			AxisFault fault = new AxisFault(e);
+			fault.setFaultCode(e.getFaultCode());
+			throw fault;
+		}
+
+	}
 
 }

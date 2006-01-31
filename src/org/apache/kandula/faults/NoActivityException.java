@@ -21,60 +21,60 @@ package org.apache.kandula.faults;
  */
 public class NoActivityException extends AbstractKandulaException {
 
-    /**
-     *  
-     */
-    public NoActivityException() {
-        super();
-    }
+	/**
+	 *  
+	 */
+	public NoActivityException() {
+		super();
+	}
 
-    /**
-     * @param arg0
-     */
-    public NoActivityException(String arg0) {
-        super(arg0);
-    }
+	/**
+	 * @param arg0
+	 */
+	public NoActivityException(String arg0) {
+		super(arg0);
+	}
 
-    /**
-     * @param arg0
-     */
-    public NoActivityException(Throwable arg0) {
-        super(arg0);
-    }
+	/**
+	 * @param arg0
+	 */
+	public NoActivityException(Throwable arg0) {
+		super(arg0);
+	}
 
-    /**
-     * @param arg0
-     * @param arg1
-     */
-    public NoActivityException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
-    }
+	/**
+	 * @param arg0
+	 * @param arg1
+	 */
+	public NoActivityException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultCode()
-     */
-    public String getFaultCode() {
-        return "Sender";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultCode()
+	 */
+	public String getFaultCode() {
+		return "Sender";
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultSubcode()
-     */
-    public String getFaultSubcode() {
-        return "wscoor:NoActivity";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultSubcode()
+	 */
+	public String getFaultSubcode() {
+		return "wscoor:NoActivity";
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kandula.faults.KandulaFault#getFaultReason()
-     */
-    public String getFaultReason() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.kandula.faults.KandulaFault#getFaultReason()
+	 */
+	public String getFaultReason() {
 
-        return "The participant is not responding and is presumed to have ended.";
-    }
+		return "The participant is not responding and is presumed to have ended.";
+	}
 }

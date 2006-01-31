@@ -20,9 +20,9 @@ package org.apache.kandula.storage;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public interface Store {
-    void put(Object id, Object context);
+	void put(Object id, Object context);
 
-    Object get(Object id);
+	Object get(Object id);
 
-    void forget(Object id);
+	void forget(Object id);
 }

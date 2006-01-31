@@ -26,55 +26,55 @@ import org.apache.kandula.Constants;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class RegistrationPortTypeRawXMLAsyncMessageReceiver extends
-        org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver {
+		org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver {
 
-    public void invokeBusinessLogic(
-            org.apache.axis2.context.MessageContext msgContext,
-            org.apache.axis2.context.MessageContext newMsgContext)
-            throws org.apache.axis2.AxisFault {
+	public void invokeBusinessLogic(
+			org.apache.axis2.context.MessageContext msgContext,
+			org.apache.axis2.context.MessageContext newMsgContext)
+			throws org.apache.axis2.AxisFault {
 
-        try {
+		try {
 
-            // get the implementation class for the Web Service
-            Object obj = getTheImplementationObject(msgContext);
+			// get the implementation class for the Web Service
+			Object obj = getTheImplementationObject(msgContext);
 
-            //Inject the Message Context if it is asked for
-            DependencyManager.configureBusinessLogicProvider(obj, msgContext,
-                    newMsgContext);
+			//Inject the Message Context if it is asked for
+			DependencyManager.configureBusinessLogicProvider(obj, msgContext,
+					newMsgContext);
 
-            RegistrationPortTypeRawXMLSkeleton skel = (RegistrationPortTypeRawXMLSkeleton) obj;
-            //Out Envelop
-            org.apache.axis2.soap.SOAPEnvelope envelope = null;
-            //Find the operation that has been set by the Dispatch phase.
-            AxisOperation op = msgContext
-                    .getOperationContext().getAxisOperation();
+			RegistrationPortTypeRawXMLSkeleton skel = (RegistrationPortTypeRawXMLSkeleton) obj;
+			//Out Envelop
+			org.apache.axis2.soap.SOAPEnvelope envelope = null;
+			//Find the operation that has been set by the Dispatch phase.
+			AxisOperation op = msgContext.getOperationContext()
+					.getAxisOperation();
 
-            String methodName;
-            if (op.getName() != null
-                    & (methodName = op.getName().getLocalPart()) != null) {
-                if (("registerOperation").equals(methodName)) {
-                    OMElement response = null;
+			String methodName;
+			if (op.getName() != null
+					& (methodName = op.getName().getLocalPart()) != null) {
+				if (("registerOperation").equals(methodName)) {
+					OMElement response = null;
 
-                    //doc style
-                    response = skel
-                            .registerOperation((org.apache.axis2.om.OMElement) msgContext
-                                    .getEnvelope().getBody().getFirstElement()
-                                    .detach());
+					//doc style
+					response = skel
+							.registerOperation((org.apache.axis2.om.OMElement) msgContext
+									.getEnvelope().getBody().getFirstElement()
+									.detach());
 
-                    //Create a default envelop
-                    envelope = getSOAPFactory().getDefaultEnvelope();
-                    //Create a Omelement of the result if a result exist
+					//Create a default envelop
+					envelope = getSOAPFactory(msgContext).getDefaultEnvelope();
+					//Create a Omelement of the result if a result exist
 
-                    envelope.getBody().setFirstChild(response);
-                }
-                newMsgContext.setEnvelope(envelope);
-                newMsgContext.setWSAAction(Constants.WS_COOR_REGISTER_RESPONSE);
-                newMsgContext.setRelatesTo(null);
-            }
-        } catch (Exception e) {
-            throw AxisFault.makeFault(e);
-        }
+					envelope.getBody().setFirstChild(response);
+				}
+				newMsgContext.setEnvelope(envelope);
+				newMsgContext.setWSAAction(Constants.WS_COOR_REGISTER_RESPONSE);
+				newMsgContext.setRelatesTo(null);
+			}
+		} catch (Exception e) {
+			throw AxisFault.makeFault(e);
+		}
 
-    }
+	}
 
 }

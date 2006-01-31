@@ -24,58 +24,62 @@ import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.coordinator.at.ATCoordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.storage.StorageFactory;
+
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 
 public class CompletionCoordinatorPortTypeRawXMLSkeleton {
-    private MessageContext msgContext;
+	private MessageContext msgContext;
 
-    public void init(MessageContext context) {
-        this.msgContext = context;
-    }
-    /**
-     * @param requestElement
-     * @throws AxisFault
-     */
-    public OMElement commitOperation(OMElement requestElement) throws AxisFault {
-        AbstractContext context;
-        String activityId;
-     //log.info("Visited Commit operation");
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-        OMElement header = msgContext.getEnvelope().getHeader();
-        activityId = header.getFirstChildWithName(
-                Constants.TRANSACTION_ID_PARAMETER).getText();
-        // TODO do we need to check the incoming message
-        try {
-            ATCoordinator coordinator = new ATCoordinator();
-            coordinator.commitOperation(activityId);
-        } catch (AbstractKandulaException e) {
-            AxisFault fault = new AxisFault(e);
-            fault.setFaultCode(e.getFaultCode());
-            throw fault;
-        }
-        return null;
-    }
+	public void init(MessageContext context) {
+		this.msgContext = context;
+	}
 
-    public OMElement rollbackOperation(OMElement requestElement)
-            throws AxisFault {
-        AbstractContext context;
-        String activityId;
-        StorageFactory.getInstance().setConfigurationContext(msgContext.getServiceContext().getConfigurationContext());
-      //log.info("Visited rollback operation");
-        OMElement header = msgContext.getEnvelope().getHeader();
-        activityId = header.getFirstChildWithName(
-                Constants.TRANSACTION_ID_PARAMETER).getText();
-        try {
-            ATCoordinator coordinator = new ATCoordinator();
-            coordinator.commitOperation(activityId);
-        } catch (AbstractKandulaException e) {
-            AxisFault fault = new AxisFault(e);
-            fault.setFaultCode(e.getFaultCode());
-            throw fault;
-        }
-        return null;
-    }
+	/**
+	 * @param requestElement
+	 * @throws AxisFault
+	 */
+	public OMElement commitOperation(OMElement requestElement) throws AxisFault {
+		AbstractContext context;
+		String activityId;
+		//log.info("Visited Commit operation");
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		OMElement header = msgContext.getEnvelope().getHeader();
+		activityId = header.getFirstChildWithName(
+				Constants.TRANSACTION_ID_PARAMETER).getText();
+		// TODO do we need to check the incoming message
+		try {
+			ATCoordinator coordinator = new ATCoordinator();
+			coordinator.commitOperation(activityId);
+		} catch (AbstractKandulaException e) {
+			AxisFault fault = new AxisFault(e);
+			fault.setFaultCode(e.getFaultCode());
+			throw fault;
+		}
+		return null;
+	}
+
+	public OMElement rollbackOperation(OMElement requestElement)
+			throws AxisFault {
+		AbstractContext context;
+		String activityId;
+		StorageFactory.getInstance().setConfigurationContext(
+				msgContext.getServiceContext().getConfigurationContext());
+		//log.info("Visited rollback operation");
+		OMElement header = msgContext.getEnvelope().getHeader();
+		activityId = header.getFirstChildWithName(
+				Constants.TRANSACTION_ID_PARAMETER).getText();
+		try {
+			ATCoordinator coordinator = new ATCoordinator();
+			coordinator.commitOperation(activityId);
+		} catch (AbstractKandulaException e) {
+			AxisFault fault = new AxisFault(e);
+			fault.setFaultCode(e.getFaultCode());
+			throw fault;
+		}
+		return null;
+	}
 
 }

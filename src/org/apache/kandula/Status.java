@@ -20,42 +20,42 @@ package org.apache.kandula;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 abstract public interface Status {
-    //TODO remove the inner interfaces.. 
-    interface ParticipantStatus {
+	//TODO remove the inner interfaces..
+	interface ParticipantStatus {
 
-        public static final int STATUS_VOLATILE_PREPARING = 20;
+		public static final int STATUS_VOLATILE_PREPARING = 20;
 
-        public static final int STATUS_DURABLE_PREPARING = 21;
+		public static final int STATUS_DURABLE_PREPARING = 21;
 
-        public static final int STATUS_ABORTED = 22;
+		public static final int STATUS_ABORTED = 22;
 
-        public static final int STATUS_READ_ONLY = 23;
+		public static final int STATUS_READ_ONLY = 23;
 
-        public static final int STATUS_COMMITED = 24;
+		public static final int STATUS_COMMITED = 24;
 
-    }
+	}
 
-    interface CoordinatorStatus {
+	interface CoordinatorStatus {
 
-        public static final int STATUS_NONE = 6;
+		public static final int STATUS_NONE = 6;
 
-        public static final int STATUS_COMMITTING = 8;
+		public static final int STATUS_COMMITTING = 8;
 
-        public static final int STATUS_PREPARING = 10;
+		public static final int STATUS_PREPARING = 10;
 
-        public static final int STATUS_PREPARING_DURABLE = 11;
+		public static final int STATUS_PREPARING_DURABLE = 11;
 
-        public static final int STATUS_PREPARING_VOLATILE = 12;
+		public static final int STATUS_PREPARING_VOLATILE = 12;
 
-        public static final int STATUS_PREPARED_SUCCESS = 13;
+		public static final int STATUS_PREPARED_SUCCESS = 13;
 
-        public static final int STATUS_READ_ONLY = 23;
-        
-        public static final int STATUS_PREPARED = 14;
+		public static final int STATUS_READ_ONLY = 23;
 
-        public static final int STATUS_ABORTING = 9;
+		public static final int STATUS_PREPARED = 14;
 
-        public static final int STATUS_ACTIVE = 0;
+		public static final int STATUS_ABORTING = 9;
 
-    }
+		public static final int STATUS_ACTIVE = 0;
+
+	}
 }

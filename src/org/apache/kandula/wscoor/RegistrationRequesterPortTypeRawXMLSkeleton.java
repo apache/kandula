@@ -17,50 +17,50 @@
 package org.apache.kandula.wscoor;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.om.OMElement;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.at.ATActivityContext;
 import org.apache.kandula.storage.StorageFactory;
-import org.apache.kandula.utility.KandulaUtils;
+import org.apache.kandula.utility.EPRHandlingUtils;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 
 public class RegistrationRequesterPortTypeRawXMLSkeleton {
-    private MessageContext msgContext;
+	private MessageContext msgContext;
 
-    public void init(MessageContext context) {
-        this.msgContext = context;
-    }
+	public void init(MessageContext context) {
+		this.msgContext = context;
+	}
 
-    public OMElement registerResponseOperation(OMElement responseElement) {
+	public OMElement registerResponseOperation(OMElement responseElement) {
 
-        OMElement response = responseElement.getFirstElement();
-        if ("CoordinatorProtocolService".equals(response.getLocalName())) {
-            OMElement header = msgContext.getEnvelope().getHeader();
-            String requesterID = header.getFirstChildWithName(
-                    Constants.REQUESTER_ID_PARAMETER).getText();
-            EndpointReference coordinatorService = KandulaUtils
-                    .endpointFromOM(response.getFirstElement());
-            // TODO: remove this
-            ConfigurationContext configurationContext =  StorageFactory.getInstance().getConfigurationContext();
-            AbstractContext context;
-            if (configurationContext==null)
-            {
-                context = (AbstractContext) StorageFactory
-                    .getInstance().getInitiatorStore().get(requesterID);
-            }
-            else
-            {
-                 context = (AbstractContext) StorageFactory.getInstance().getStore().get(requesterID);
-            }
-            context.setProperty(ATActivityContext.COORDINATION_EPR,
-                    coordinatorService);
-        }
-        return null;
-    }
+		OMElement response = responseElement.getFirstElement();
+		if ("CoordinatorProtocolService".equals(response.getLocalName())) {
+			OMElement header = msgContext.getEnvelope().getHeader();
+			String requesterID = header.getFirstChildWithName(
+					Constants.REQUESTER_ID_PARAMETER).getText();
+			EndpointReference coordinatorService = EPRHandlingUtils
+					.endpointFromOM(response.getFirstElement());
+			// TODO: remove this
+			ConfigurationContext configurationContext = StorageFactory
+					.getInstance().getConfigurationContext();
+			AbstractContext context;
+
+			context = (AbstractContext) StorageFactory.getInstance()
+					.getInitiatorStore().get(requesterID);
+			if (context == null) {
+				context = (AbstractContext) StorageFactory.getInstance()
+						.getStore().get(requesterID);
+			}
+
+			context.setProperty(ATActivityContext.COORDINATION_EPR,
+					coordinatorService);
+		}
+		return null;
+	}
 }

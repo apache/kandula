@@ -21,44 +21,44 @@ package org.apache.kandula.faults;
  */
 public abstract class AbstractKandulaException extends Exception {
 
-    public AbstractKandulaException() {
-        super();
-    }
+	public AbstractKandulaException() {
+		super();
+	}
 
-    /**
-     * @param arg0 -
-     *            String
-     */
-    public AbstractKandulaException(String arg0) {
-        super(arg0);
-    }
+	/**
+	 * @param arg0 -
+	 *            String
+	 */
+	public AbstractKandulaException(String arg0) {
+		super(arg0);
+	}
 
-    /**
-     * @param arg0 -
-     *            Throwable
-     */
-    public AbstractKandulaException(Throwable arg0) {
-        super(arg0);
-    }
+	/**
+	 * @param arg0 -
+	 *            Throwable
+	 */
+	public AbstractKandulaException(Throwable arg0) {
+		super(arg0);
+	}
 
-    /**
-     * @param arg0 -
-     *            String
-     * @param arg1 -
-     *            Throwable
-     */
-    public AbstractKandulaException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
-    }
+	/**
+	 * @param arg0 -
+	 *            String
+	 * @param arg1 -
+	 *            Throwable
+	 */
+	public AbstractKandulaException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+	}
 
-    public abstract String getFaultCode();
+	public abstract String getFaultCode();
 
-    public abstract String getFaultSubcode();
+	public abstract String getFaultSubcode();
 
-    public abstract String getFaultReason();
+	public abstract String getFaultReason();
 
-    public String getFaultDetail() {
-        return this.toString();
-    }
+	public String getFaultDetail() {
+		return this.toString();
+	}
 
 }

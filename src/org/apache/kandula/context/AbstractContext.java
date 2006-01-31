@@ -18,98 +18,95 @@ package org.apache.kandula.context;
 
 import java.util.HashMap;
 
-import org.apache.axis2.addressing.AnyContentType;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Status.CoordinatorStatus;
 import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.utility.EPRHandlingUtils;
 import org.apache.kandula.utility.EndpointReferenceFactory;
-import org.apache.kandula.utility.KandulaUtils;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public abstract class AbstractContext {
 
-    private final HashMap propertyBag;
+	private final HashMap propertyBag;
 
-    protected String activityID;
+	protected String activityID;
 
-    private int status = CoordinatorStatus.STATUS_NONE;
+	private int status = CoordinatorStatus.STATUS_NONE;
 
-    private boolean locked = false;
+	private boolean locked = false;
 
-    protected CoordinationContext coordinationContext = null;
+	protected CoordinationContext coordinationContext = null;
 
-    public static String REQUESTER_ID = "requesterID";
+	public static String REQUESTER_ID = "requesterID";
 
-    public static String COORDINATION_EPR = "coordinationEPR";
+	public static String COORDINATION_EPR = "coordinationEPR";
 
-    public static String ACTIVATION_EPR = "activationEPR";
+	public static String ACTIVATION_EPR = "activationEPR";
 
-    protected AbstractContext() {
-        propertyBag = new HashMap();
-    }
+	protected AbstractContext() {
+		propertyBag = new HashMap();
+	}
 
-    public AbstractContext(String coordinationType) {
-        propertyBag = new HashMap();
-        activityID = KandulaUtils.getRandomStringOf18Characters();
-        EndpointReference registrationEpr = EndpointReferenceFactory
-                .getInstance().getRegistrationEndpoint(activityID);
-        AnyContentType referenceProp = new AnyContentType();
-        registrationEpr.setReferenceProperties(referenceProp);
-        coordinationContext = CoordinationContext.Factory.newContext(
-                activityID, coordinationType, registrationEpr);
-    }
+	public AbstractContext(String coordinationType) {
+		propertyBag = new HashMap();
+		activityID = EPRHandlingUtils.getRandomStringOf18Characters();
+		EndpointReference registrationEpr = EndpointReferenceFactory
+				.getInstance().getRegistrationEndpoint(activityID);
+		coordinationContext = CoordinationContext.Factory.newContext(
+				activityID, coordinationType, registrationEpr);
+	}
 
-    public final CoordinationContext getCoordinationContext() {
-        return coordinationContext;
-    }
+	public final CoordinationContext getCoordinationContext() {
+		return coordinationContext;
+	}
 
-    public final void setCoordinationContext(CoordinationContext context) {
-        this.coordinationContext = context;
-    }
+	public final void setCoordinationContext(CoordinationContext context) {
+		this.coordinationContext = context;
+	}
 
-    public final int getStatus() {
-        return status;
-    }
+	public final int getStatus() {
+		return status;
+	}
 
-    // we can use a publisher-subscriber in the future to notify listeners abt
-    // state changes.
-    public final void setStatus(int value) {
-        status = value;
-    }
+	// we can use a publisher-subscriber in the future to notify listeners abt
+	// state changes.
+	public final void setStatus(int value) {
+		status = value;
+	}
 
-    public final synchronized void lock() {
-        if (locked) {
-            while (locked) {
-                try {
-                    wait();
-                } catch (InterruptedException ex) {
-                    //	ignore
-                }
-                if (status == CoordinatorStatus.STATUS_NONE)
-                    throw new IllegalStateException();
-            }
-        }
+	public final synchronized void lock() {
+		if (locked) {
+			while (locked) {
+				try {
+					wait();
+				} catch (InterruptedException ex) {
+					//	ignore
+				}
+				if (status == CoordinatorStatus.STATUS_NONE)
+					throw new IllegalStateException();
+			}
+		}
 
-        locked = true;
-    }
+		locked = true;
+	}
 
-    public final synchronized void unlock() {
-        if (!locked)
-            throw new IllegalStateException();
-        locked = false;
-        notify();
-    }
+	public final synchronized void unlock() {
+		if (!locked)
+			throw new IllegalStateException();
+		locked = false;
+		notify();
+	}
 
-    public final void setProperty(Object key, Object value) {
-        propertyBag.put(key, value);
+	public final void setProperty(Object key, Object value) {
+		propertyBag.put(key, value);
 
-    }
+	}
 
-    public final Object getProperty(Object key) {
-        return propertyBag.get(key);
-    }
+	public final Object getProperty(Object key) {
+		return propertyBag.get(key);
+	}
 
-    public abstract String getCoordinationType();
+	public abstract String getCoordinationType();
 }

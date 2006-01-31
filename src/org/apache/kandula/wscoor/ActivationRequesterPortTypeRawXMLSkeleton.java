@@ -28,25 +28,25 @@ import org.apache.kandula.storage.StorageFactory;
  */
 
 public class ActivationRequesterPortTypeRawXMLSkeleton {
-    private MessageContext msgContext;
+	private MessageContext msgContext;
 
-    public void init(MessageContext context) {
-        this.msgContext = context;
-    }
+	public void init(MessageContext context) {
+		this.msgContext = context;
+	}
 
-    public OMElement createCoordinationContextResponseOperation(
-            OMElement responseElement) {
-        OMElement response = responseElement.getFirstElement();
-        if ("CoordinationContext".equals(response.getLocalName())) {
-            OMElement header = msgContext.getEnvelope().getHeader();
-            String requesterID = header.getFirstChildWithName(
-                    Constants.REQUESTER_ID_PARAMETER).getText();
-            CoordinationContext coordinationContext = CoordinationContext.Factory
-                    .newContext(response);
-            AbstractContext context = (AbstractContext) StorageFactory
-                    .getInstance().getInitiatorStore().get(requesterID);
-            context.setCoordinationContext(coordinationContext);
-        }
-        return null;
-    }
+	public OMElement createCoordinationContextResponseOperation(
+			OMElement responseElement) {
+		OMElement response = responseElement.getFirstElement();
+		if ("CoordinationContext".equals(response.getLocalName())) {
+			OMElement header = msgContext.getEnvelope().getHeader();
+			String requesterID = header.getFirstChildWithName(
+					Constants.REQUESTER_ID_PARAMETER).getText();
+			CoordinationContext coordinationContext = CoordinationContext.Factory
+					.newContext(response);
+			AbstractContext context = (AbstractContext) StorageFactory
+					.getInstance().getInitiatorStore().get(requesterID);
+			context.setCoordinationContext(coordinationContext);
+		}
+		return null;
+	}
 }

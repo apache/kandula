@@ -28,83 +28,84 @@ import org.apache.kandula.wsat.twopc.CoordinatorPortTypeRawXMLStub;
  */
 public class ParticipantTransactionManager {
 
-    public void prepare(AbstractContext context)
-            throws AbstractKandulaException {
-        CoordinatorPortTypeRawXMLStub stub;
-        ATParticipantContext atContext = (ATParticipantContext) context;
-        atContext.lock();
-        switch (context.getStatus()) {
-        case (Status.CoordinatorStatus.STATUS_NONE):
-            atContext.unlock();
-            stub = new CoordinatorPortTypeRawXMLStub(".", atContext
-                    .getCoordinationEPR());
-            stub.abortedOperation();
-            break;
-        case (Status.CoordinatorStatus.STATUS_PREPARING):
-        case (Status.CoordinatorStatus.STATUS_PREPARED):
-        case (Status.CoordinatorStatus.STATUS_COMMITTING):
-            //Ignore the message
-            atContext.unlock();
-            break;
-        case (Status.CoordinatorStatus.STATUS_PREPARED_SUCCESS):
-            atContext.unlock();
-            stub = new CoordinatorPortTypeRawXMLStub(".", atContext
-                    .getCoordinationEPR());
-            stub.preparedOperation();
-            break;
-        case (Status.CoordinatorStatus.STATUS_ACTIVE):
-            atContext.setStatus(Status.CoordinatorStatus.STATUS_PREPARING);
-            atContext.unlock();
-            KandulaResource resource = atContext.getResource();
-            Vote vote = resource.prepare();
-            stub = new CoordinatorPortTypeRawXMLStub(".", atContext
-                    .getCoordinationEPR());
-            if (vote == Vote.ABORT) {
-                stub.abortedOperation();
-            } else if (vote == Vote.PREPARED) {
-                stub.preparedOperation();
-            } else if (vote == Vote.READ_ONLY) {
-                stub.readOnlyOperation();
-            }
-            break;
-        default:
-            context.unlock();
-            throw new InvalidStateException();
-        }
-    }
+	public void prepare(AbstractContext context)
+			throws AbstractKandulaException {
+		CoordinatorPortTypeRawXMLStub stub;
+		ATParticipantContext atContext = (ATParticipantContext) context;
+		atContext.lock();
+		switch (context.getStatus()) {
+		case (Status.CoordinatorStatus.STATUS_NONE):
+			atContext.unlock();
+			stub = new CoordinatorPortTypeRawXMLStub(atContext
+					.getCoordinationEPR());
+			stub.abortedOperation();
+			break;
+		case (Status.CoordinatorStatus.STATUS_PREPARING):
+		case (Status.CoordinatorStatus.STATUS_PREPARED):
+		case (Status.CoordinatorStatus.STATUS_COMMITTING):
+			//Ignore the message
+			atContext.unlock();
+			break;
+		case (Status.CoordinatorStatus.STATUS_PREPARED_SUCCESS):
+			atContext.unlock();
+			stub = new CoordinatorPortTypeRawXMLStub(atContext
+					.getCoordinationEPR());
+			stub.preparedOperation();
+			break;
+		case (Status.CoordinatorStatus.STATUS_ACTIVE):
+			atContext.setStatus(Status.CoordinatorStatus.STATUS_PREPARING);
+			atContext.unlock();
+			KandulaResource resource = atContext.getResource();
+			Vote vote = resource.prepare();
+			stub = new CoordinatorPortTypeRawXMLStub(atContext
+					.getCoordinationEPR());
+			if (vote == Vote.ABORT) {
+				stub.abortedOperation();
+			} else if (vote == Vote.PREPARED) {
+				stub.preparedOperation();
+			} else if (vote == Vote.READ_ONLY) {
+				stub.readOnlyOperation();
+			}
+			break;
+		default:
+			context.unlock();
+			throw new InvalidStateException();
+		}
+	}
 
-    public void commit(AbstractContext context) throws InvalidStateException {
-        ATParticipantContext atContext = (ATParticipantContext) context;
-        atContext.getResource().commit();
-        //        ATParticipantContext atContext = (ATParticipantContext) context;
-        //        atContext.lock();
-        //        switch (context.getStatus()) {
-        //        case (Status.CoordinatorStatus.STATUS_NONE):
-        //            //TODO send aborted
-        //            atContext.unlock();
-        //            return Vote.ABORT;
-        //        case (Status.CoordinatorStatus.STATUS_PREPARING):
-        //        case (Status.CoordinatorStatus.STATUS_PREPARED):
-        //        case (Status.CoordinatorStatus.STATUS_COMMITTING):
-        //            //Ignore the message
-        //            atContext.unlock();
-        //            return Vote.NONE;
-        //        case (Status.CoordinatorStatus.STATUS_PREPARED_SUCCESS):
-        //            atContext.unlock();
-        //            return Vote.PREPARED;
-        //        case (Status.CoordinatorStatus.STATUS_ACTIVE):
-        //            atContext.setStatus(Status.CoordinatorStatus.STATUS_PREPARING);
-        //            KandulaResource resource = atContext.getResource();
-        //            return resource.prepare();
-        //        default:
-        //            context.unlock();
-        //            throw new InvalidStateException();
-        //        }
-    }
-    public void rollback(AbstractContext context) throws InvalidStateException {
-        ATParticipantContext atContext = (ATParticipantContext) context;
-        atContext.getResource().rollback();
-        
-    }
-    
+	public void commit(AbstractContext context) throws InvalidStateException {
+		ATParticipantContext atContext = (ATParticipantContext) context;
+		atContext.getResource().commit();
+		//        ATParticipantContext atContext = (ATParticipantContext) context;
+		//        atContext.lock();
+		//        switch (context.getStatus()) {
+		//        case (Status.CoordinatorStatus.STATUS_NONE):
+		//            //TODO send aborted
+		//            atContext.unlock();
+		//            return Vote.ABORT;
+		//        case (Status.CoordinatorStatus.STATUS_PREPARING):
+		//        case (Status.CoordinatorStatus.STATUS_PREPARED):
+		//        case (Status.CoordinatorStatus.STATUS_COMMITTING):
+		//            //Ignore the message
+		//            atContext.unlock();
+		//            return Vote.NONE;
+		//        case (Status.CoordinatorStatus.STATUS_PREPARED_SUCCESS):
+		//            atContext.unlock();
+		//            return Vote.PREPARED;
+		//        case (Status.CoordinatorStatus.STATUS_ACTIVE):
+		//            atContext.setStatus(Status.CoordinatorStatus.STATUS_PREPARING);
+		//            KandulaResource resource = atContext.getResource();
+		//            return resource.prepare();
+		//        default:
+		//            context.unlock();
+		//            throw new InvalidStateException();
+		//        }
+	}
+
+	public void rollback(AbstractContext context) throws InvalidStateException {
+		ATParticipantContext atContext = (ATParticipantContext) context;
+		atContext.getResource().rollback();
+
+	}
+
 }
