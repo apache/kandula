@@ -85,7 +85,7 @@ public class CreateCoordinationContextTest extends TestCase {
 		TransactionManager tm = new TransactionManager(
 				Constants.WS_AT,
 				new EndpointReference(
-						"http://localhost:8082/axis2/services/ActivationCoordinator"));
+						"http://localhost:8081/axis2/services/ActivationCoordinator"));
 
 		tm
 				.begin("D:/Dev/kandula_svn/repo",
@@ -94,7 +94,7 @@ public class CreateCoordinationContextTest extends TestCase {
 		KandulaDemoServiceStub stub = new KandulaDemoServiceStub(
 				"D:/Dev/kandula_svn/repo",
 				new EndpointReference(
-						"http://localhost:8082/axis2/services/KandulaDemoService"));
+						"http://localhost:8081/axis2/services/KandulaDemoService"));
 		stub.creditOperation();
 //		try{
 		tm.commit();
