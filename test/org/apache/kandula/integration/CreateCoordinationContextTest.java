@@ -87,20 +87,18 @@ public class CreateCoordinationContextTest extends TestCase {
 				new EndpointReference(
 						"http://localhost:8081/axis2/services/ActivationCoordinator"));
 
-		tm
-				.begin("D:/Dev/kandula_svn/repo",
-						"D:/Dev/kandula_svn/repo/axis2.xml");
-		//Thread.sleep(10000);
+		tm.begin("target/initiator-repository","target/initiator-repository/axis2.xml");
+		// Thread.sleep(10000);
 		KandulaDemoServiceStub stub = new KandulaDemoServiceStub(
 				"D:/Dev/kandula_svn/repo",
 				new EndpointReference(
 						"http://localhost:8081/axis2/services/KandulaDemoService"));
 		stub.creditOperation();
-//		try{
+		// try{
 		tm.commit();
-//		}catch (Exception e)
-//		{
-//			e.printStackTrace();
-//		}
+		// }catch (Exception e)
+		// {
+		// e.printStackTrace();
+		// }
 	}
 }
