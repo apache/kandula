@@ -90,14 +90,14 @@
             tofile="target/testing-repository/modules/kandula-inflow.mar"/>
 	 <copy file="modules/addressing.mar"
             tofile="target/testing-repository/modules/addressing.mar"/>
-	 <copy file="conf/participant-axis2.xml"
+	 <copy file="conf/coordinator-axis2.xml"
             tofile="target/testing-repository/axis2.xml"/>
 
 	<echo message="----------------Creating KandulaDemoService.aar----------------"/>
 	<mkdir dir="target/services/KandulaDemoService/META-INF"/>
         <copy file="test-resources/KandulaDemoService/META-INF/services.xml"
             tofile="target/services/KandulaDemoService/META-INF/services.xml"/>
-        <jar jarfile="target/KandulaDemoService.aar" 									basedir="target/services/KandulaDemoService">
+        <jar jarfile="target/KandulaDemoService.aar" basedir="target/services/KandulaDemoService">
             <include name="**"/>
         </jar>
 	<copy file="target/KandulaDemoService.aar"
