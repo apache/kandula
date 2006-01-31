@@ -61,22 +61,28 @@
   
   <!-- who the developers are for the project -->
   <developers>
+		<developer>
+			<name>Davanum Srinivas</name>
+			<id>dims</id>
+			<email>dims AT wso2.com</email>
+			<organization>WSO2</organization>
+		</developer>  
+       <developer>
+			<name>Sanjiva Weerawarana</name>
+			<id>sanjiva</id>
+			<email>sanjiva AT wso2.com</email>
+			<organization>WSO2</organization>
+		</developer>
         <developer>
             <name>Dasarath Weeratunge</name>
             <id>dasarath</id>
-            <email>dasarath@opensource.lk</email>
+            <email>dasarath AT opensource.lk</email>
             <organization>Lanka Software Foundation (LSF), Sri Lanka.</organization>
-        </developer>      
-        <developer>
-            <name>Sanjiva Weerawarana</name>
-            <id>sanjiva</id>
-            <email>sanjiva@opensource.lk</email>
-            <organization>Lanka Software Foundation (LSF), Sri Lanka.</organization>
-        </developer>
-<developer>
+        </developer>    
+		<developer>
             <name>Thilina Gunarathne</name>
             <id>thilina</id>
-            <email>thilina@opensource.lk</email>
+            <email>thilina AT apache.org</email>
             <organization>Lanka Software Foundation (LSF) / University of Moratuwa, Sri Lanka.</organization>
         </developer>
   </developers>
@@ -113,36 +119,36 @@
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-core</artifactId>
-            <version>0.93-dev</version>
+            <version>0.95-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-xml</artifactId>
-            <version>0.93-dev</version>
+            <version>0.95-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-wsdl</artifactId>
-            <version>0.93-dev</version>
+            <version>0.95-SNAPSHOT</version>
         </dependency>
         
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-addressing</artifactId>
-            <version>0.93-dev</version>
+            <version>0.95-SNAPSHOT</version>
         </dependency>
         
         <dependency>
             <groupId>axis2</groupId>
             <artifactId>axis2-common</artifactId>
-            <version>0.93-dev</version>
+            <version>0.95-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
             <properties>
                 <module>true</module>
             </properties>
@@ -151,7 +157,7 @@
        <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
-            <version>3.0-rc2</version>
+            <version>3.0-rc3</version>
             <properties>
                 <module>true</module>
             </properties>
@@ -183,7 +189,11 @@
                 <module>true</module>
             </properties>
         </dependency>
-
+  		<dependency>
+            <groupId>ws-commons</groupId>
+            <artifactId>XmlSchema</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
  	  <dependency>
             <groupId>axis</groupId>
             <artifactId>axis-wsdl4j</artifactId>
@@ -200,8 +210,30 @@
                 <module>true</module>
             </properties>
         </dependency>
-
-
+        <dependency>
+            <groupId>backport-util-concurrent</groupId>
+            <artifactId>backport-util-concurrent</artifactId>
+            <version>2.0_01_pd</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+		<dependency>
+            <groupId>annogen</groupId>
+            <artifactId>annogen</artifactId>
+            <version>0.1.0</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
+		 <dependency>
+            <groupId>ws-commons</groupId>
+            <artifactId>ws-policy</artifactId>
+            <version>SNAPSHOT</version>
+            <properties>
+                <module>true</module>
+            </properties>
+        </dependency>
    
     </dependencies>
 
@@ -215,11 +247,11 @@
         <unitTestSourceDirectory>test</unitTestSourceDirectory>
 
         <unitTest>    
-        	<excludes>
-        		<exclude>**/*.java</exclude>
-        	</excludes>           
+        	 <includes>
+                <include>**/CreateCoordinationContextTest.java</include>
+            </includes>         
             
-<!--
+
             <resources>
                 <resource>
                     <directory>${basedir}/test-resources</directory>
@@ -233,14 +265,22 @@
                 <resource>
                     <directory>src</directory>
                     <includes>
-                        <include>**/*.properties</include>
+                        <include>**/*.conf</include>
                         <include>**/*.xml</include>
                     </includes>
                 </resource>
             </resources>
--->
         </unitTest>
-
+  <resources>
+                
+                <resource>
+                    <directory>src</directory>
+                    <includes>
+                        <include>**/*.conf</include>
+                        <include>**/*.xml</include>
+                    </includes>
+                </resource>
+            </resources>
     </build>
 
     <!-- ======= -->
