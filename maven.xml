@@ -12,6 +12,8 @@
     </goal>
     
     <postGoal name="test:compile">
+    <mkdir dir="${basedir}/target/lib"/>
+    <deploy:copy-deps todir="${basedir}/target/lib"/>
 
 	<echo message="----------------Creating ActivationCoordinator.aar----------------"/>
 	<mkdir dir="target/services/ActivationCoordinator/META-INF"/>
