@@ -1,0 +1,169 @@
+@author: Jack Wang <pipashu@yahoo.com>
+
+How to run Kandula_1 samples
+----------------------------
+	
+Kandula has two branches, Kandula_1 is for axis1.3 or later, and Kandula2 is for axis2. The following steps are for Kandula_1. 
+		
+step 1:
+	Get the kandula_1 from http://svn.apache.org/repos/asf/webservices/kandula/branches/Kandula_1/ using an svn client: Tortoise SVN or RapidSVN etc. Let's suppose you checked out kandula_1 to local machine's %KANDULA_HOME% directory.
+	
+step 2:
+	Prepare the testing environment. If you have finished these steps, skip it.
+		Install Java 2 platform (jdk1.5 or later), and set JAVA_HOME, see http://java.sun.com/
+		Install maven 1.02 (NOT maven 2.0), and set maven_home, see http://maven.apache.org/
+		also
+		Install tomcat 5.5 and set CATALINA_HOME, see http://maven.apache.org/
+		Install ant and set ant_home, see http://ant.apache.org/
+		
+step 3:
+	Download axis1.3 and deploy axis in tomcat, i.e. copy axis-1_3\webapps\axis\* to %CATALINA_HOME%\webapps\axis\*.
+		Update tomcat's server.xml to configure axis application:
+
+	<Context path="/axis" docBase="axis" debug="0" reloadable="true" crossContext="true">
+		<Resource name="jdbc/myDB" auth="Container" type="javax.sql.DataSource"
+			factory="org.objectweb.jndi.DataSourceFactory"
+			username="name"
+			password="pwsd" 
+			driverClassName="com.mysql.jdbc.Driver"
+			url="jdbc:mysql://localhost/axis?useUnicode=true&amp;characterEncoding=UTF-8" />
+	  	<Resource name="UserTransaction" auth="Container" type="javax.transaction.UserTransaction"
+	  		factory="org.objectweb.jotm.UserTransactionFactory"
+	  		jotm.timeout="60" />
+	</Context> 
+		
+step 4:
+	Modify %KANDULA_HOME%/conf/kandula.properties to build Kandula with maven in console at %KANDULA_HOME% directory. After maven, a directory named "target" will be created in %KANDULA_HOME% with kandula-0.2-SNAPSHOT.jar and all the jars you need to copy to %CATALINA_HOME%\webapps\axis\WEB-INF\lib. (Note: In the new code there is no file named endpoints.conf. Instead now you MUST set kandula.context to the default url http://localhost:8080/axis/services/ under which you have deployed axis.)
+		
+step 5:
+	Copy kandula-0.2-SNAPSHOT.jar in %KANDULA_HOME%/target/ directory and jars in %KANDULA_HOME%/target/lib/ to
+		%CATALINA_HOME%/webapps/axis/WEB-INF/lib/
+
+	You do not need to download jotm* jars or copy j2ee jars under the new code. The transaction manager and j2ee spec 	jars are provided by Geronimo and are downloaded by maven when building Kandula.
+
+	The new Kandula_1 code only supports the Geronimo TM for tx management.
+
+	To get a reference to the TM use Bridge.getTM();
+	
+step 6:
+	Build the two Kandula samples with "ant dist" in %KANDULA_HOME%/src/samples/interopibm and %KANDULA_HOME%/src/samples/test-suite1,	and copy the built jars named "interop-ibm.jar", "test-suite1.jar" to %KANDULA_HOME%/target/lib/
+
+	Note: you MUST have all the jars in %KANDULA_HOME%/target/lib/ for this.
+	
+step 7:
+	copy server-config.wsdd and client-config.wsdd in %KANDULA_HOME%/src/conf to 
+	%CATALINA_HOME%/webapps/axis/WEB-INF/ and %CATALINA_HOME%/webapps/axis/WEB-INF/classes.
+
+	Start tomcat.
+	
+step 8:
+	Update InitiatorApp.java to call web service KANDULA_INTEROP_SERVICE with code:
+		"private String eprOfInteropService = KANDULA_INTEROP_SERVICE;"
+		Update method testCommit() to show something:
+	----------------------------------------------------
+	public void testCommit() throws Exception {
+		System.out.println("Transaction begin");
+		begin();
+		getInteropService().commit(null);
+		commit();
+		System.out.println("Transaction end");
+	}
+	----------------------------------------------------
+	Then compile and run InitiatorApp in a java IDE, for example Eclipse or JBuilder. It will show:
+		Transaction begin
+		Transaction end
+	This tells you that KANDULA_INTEROP_SERVICE is called correctly.
+	
+
+Following steps will guide you how to add your own web service, and call it:
+----------------------------------------------------------------------------
+	
+step 9.1:
+
+	Code your own web service, for example, MyService.java
+	----------------------------------------------------------------
+	package po;
+	public MyService {
+		public java.lang.String getString() {
+	        System.out.println("[MyService] getString() executed!");
+	    	return "<MyService is ok>";
+	    }
+	}
+	-----------------------------------------------------------------
+
+step 9.2:
+	Compile MyService.java in your IDE.
+
+step 9.3:
+	Use Java2WSDL to create wddl named myService.wsdl:
+	----------------------------------------------------
+	@echo off
+	set classpath=.
+	for %%i in (%CATALINA_HOME%\webapps\axis\WEB-INF\lib\*.jar) do call appendJar %%i
+	set classpath=%CATALINA_HOME%\webapps\axis\WEB-INF\classes;%classpath%
+	echo Using classpath:  %classpath%
+	java -classpath %classpath% org.apache.axis.wsdl.Java2WSDL -o myService.wsdl -l"http://localhost:8080/axis/services/MyService" -n "urn:po" -p"po" "urn:po" po.MyService
+	----------------------------------------------------
+	
+step 9.4:
+	Update soapAction at file myService.wsdl
+
+	Just put some non-null string as the soapAction attribute in your wsdl:binding before generating code in myService.wsdl.
+        <wsdlsoap:operation soapAction=""/>
+		==>
+        <wsdlsoap:operation soapAction="http://MiscMisc"/>
+
+step 9.5:
+
+	Use WSDL2Java to create server side code and client side code:
+	----------------------------------------------------
+	@echo off
+	set classpath=.
+	for %%i in (%CATALINA_HOME%\webapps\axis\WEB-INF\lib\*.jar) do call appendJar %%i
+	echo Using classpath:  %classpath%
+	rem server side
+	java -classpath %classpath% org.apache.axis.wsdl.WSDL2Java --server-side --skeletonDeploy true -t myService.wsdl
+	rem client side
+	java -classpath %classpath% org.apache.axis.wsdl.WSDL2Java -t myService.wsdl
+	----------------------------------------------------
+	
+step 9.6:
+
+	Update impl file as you code in MyService.java. Now MyServiceSoapBindingImpl.java is:
+	----------------------------------------------------
+	package po;
+	public class MyServiceSoapBindingImpl implements po.MyService{
+	    public java.lang.String getString() throws java.rmi.RemoteException {
+	        System.out.println("[MyService] getString() executed!");
+	    	return "<MyService is ok>";
+	    }
+	}	
+	----------------------------------------------------
+
+step 9.7:
+	You should backup your original web service file MyService.java, for this class now becomes a interface in web service stub environment. Copy the created and updated java files to your IDE src directory and compile them. 
+	
+step 9.8:
+	Deploy your web service with deploy.wsdd created by step 11.5 WSDL2Java.
+	
+step 9.9:
+	Update InitiatorApp.java to call your web service with code:
+	----------------------------------------------------
+	private MyService getMyService() throws Exception {
+		return new MyServiceServiceLocator().getMyService(new URL("http://localhost:8080/axis/services/MyService"));
+	}
+	public void testCommit() throws Exception {
+		System.out.println("Transaction begin");
+		begin();
+		getInteropService().commit(null);
+		String result = getMyService().getString();		<-- You add it.
+		System.out.println("result=" + result);			<-- You add it.
+		commit();
+		System.out.println("Transaction end");
+	}
+	----------------------------------------------------
+	
+step 9.10:
+	Great, Now you can call your own web service by running InitiatorApp at your IDE. Enjoy Kandula!
+
+				
