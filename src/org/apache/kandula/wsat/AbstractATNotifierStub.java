@@ -30,12 +30,14 @@ import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
 import org.apache.kandula.Constants;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.KandulaGeneralException;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -94,9 +96,9 @@ public abstract class AbstractATNotifierStub {
 			OperationClient client = operations[opIndex].createClient(
 					serviceContext, options);
 
-			org.apache.axis2.soap.SOAPFactory factory = OMAbstractFactory
+			SOAPFactory factory = OMAbstractFactory
 					.getSOAP12Factory();
-			org.apache.axis2.soap.SOAPEnvelope env = factory
+			SOAPEnvelope env = factory
 					.getDefaultEnvelope();
 
 			OMNamespace wsAT = factory.createOMNamespace(Constants.WS_AT,

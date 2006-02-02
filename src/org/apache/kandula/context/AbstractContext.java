@@ -19,7 +19,7 @@ package org.apache.kandula.context;
 import java.util.HashMap;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.kandula.Status.CoordinatorStatus;
+import org.apache.kandula.Status;
 import org.apache.kandula.context.coordination.CoordinationContext;
 import org.apache.kandula.utility.EPRHandlingUtils;
 import org.apache.kandula.utility.EndpointReferenceFactory;
@@ -33,7 +33,7 @@ public abstract class AbstractContext {
 
 	protected String activityID;
 
-	private int status = CoordinatorStatus.STATUS_NONE;
+	private int status = Status.CoordinatorStatus.STATUS_NONE;
 
 	private boolean locked = false;
 
@@ -84,7 +84,7 @@ public abstract class AbstractContext {
 				} catch (InterruptedException ex) {
 					//	ignore
 				}
-				if (status == CoordinatorStatus.STATUS_NONE)
+				if (status == Status.CoordinatorStatus.STATUS_NONE)
 					throw new IllegalStateException();
 			}
 		}

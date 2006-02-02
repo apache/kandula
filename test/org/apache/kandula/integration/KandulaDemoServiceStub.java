@@ -30,7 +30,9 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.OutOnlyAxisOperation;
-import org.apache.axis2.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -92,7 +94,7 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 		MessageContext messageContext = new MessageContext();
 		messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
 				AddressingConstants.Submission.WSA_NAMESPACE);
-		org.apache.axis2.soap.SOAPEnvelope env = createSOAPEnvelope();
+		SOAPEnvelope env = createSOAPEnvelope();
 		messageContext.setEnvelope(env);
 
 		options.setAction("creditOperation");
@@ -106,11 +108,11 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 
 	}
 
-	private org.apache.axis2.soap.SOAPEnvelope createSOAPEnvelope() {
+	private SOAPEnvelope createSOAPEnvelope() {
 
-		org.apache.axis2.soap.SOAPFactory factory = OMAbstractFactory
+		SOAPFactory factory = OMAbstractFactory
 				.getSOAP12Factory();
-		org.apache.axis2.soap.SOAPEnvelope env = factory.getDefaultEnvelope();
+		SOAPEnvelope env = factory.getDefaultEnvelope();
 		return env;
 	}
 

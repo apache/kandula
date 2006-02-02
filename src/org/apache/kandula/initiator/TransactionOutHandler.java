@@ -19,11 +19,11 @@ package org.apache.kandula.initiator;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.axis2.soap.SOAPHeader;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.coordination.CoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
+import org.apache.ws.commons.soap.SOAPHeader;
 
 public class TransactionOutHandler extends AbstractHandler {
 

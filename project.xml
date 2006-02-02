@@ -228,11 +228,17 @@
         </dependency>
 		 <dependency>
             <groupId>ws-commons</groupId>
-            <artifactId>ws-policy</artifactId>
-            <version>SNAPSHOT</version>
+            <artifactId>policy</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <properties>
                 <module>true</module>
             </properties>
+             </dependency>
+          <dependency>
+            <groupId>ws-commons</groupId>
+            <artifactId>axiom</artifactId>
+            <version>1.0-SNAPSHOT</version>
+       
         </dependency>
    
     </dependencies>

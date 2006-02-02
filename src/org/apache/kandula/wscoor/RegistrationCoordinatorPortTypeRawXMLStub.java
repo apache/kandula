@@ -36,9 +36,6 @@ import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.axis2.description.ParameterImpl;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
@@ -46,6 +43,11 @@ import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.KandulaGeneralException;
 import org.apache.kandula.utility.EPRHandlingUtils;
 import org.apache.kandula.utility.KandulaListener;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.soap.SOAPEnvelope;
+import org.apache.ws.commons.soap.SOAPFactory;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -104,7 +106,7 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
 		Options options = new Options();
 		messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
 				AddressingConstants.Submission.WSA_NAMESPACE);
-		org.apache.axis2.soap.SOAPEnvelope env = createSOAPEnvelope(
+		SOAPEnvelope env = createSOAPEnvelope(
 				protocolType, epr);
 		messageContext.setEnvelope(env);
 		replyToEpr = setupListener();
@@ -120,12 +122,12 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
 
 	}
 
-	private org.apache.axis2.soap.SOAPEnvelope createSOAPEnvelope(
+	private SOAPEnvelope createSOAPEnvelope(
 			String protocolType, EndpointReference epr) {
 
-		org.apache.axis2.soap.SOAPFactory factory = OMAbstractFactory
+		SOAPFactory factory = OMAbstractFactory
 				.getSOAP12Factory();
-		org.apache.axis2.soap.SOAPEnvelope env = factory.getDefaultEnvelope();
+		SOAPEnvelope env = factory.getDefaultEnvelope();
 		OMNamespace wsCoor = factory.createOMNamespace(Constants.WS_COOR,
 				"wscoor");
 		OMElement request = factory.createOMElement("Register", wsCoor);

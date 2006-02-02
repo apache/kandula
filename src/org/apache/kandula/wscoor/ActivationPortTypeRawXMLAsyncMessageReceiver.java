@@ -19,8 +19,9 @@ package org.apache.kandula.wscoor;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.DependencyManager;
-import org.apache.axis2.om.OMElement;
 import org.apache.kandula.Constants;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAPEnvelope;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -44,7 +45,7 @@ public class ActivationPortTypeRawXMLAsyncMessageReceiver extends
 
 			ActivationPortTypeRawXMLSkeleton skel = (ActivationPortTypeRawXMLSkeleton) obj;
 			//Out Envelop
-			org.apache.axis2.soap.SOAPEnvelope envelope = null;
+			SOAPEnvelope envelope = null;
 			//Find the operation that has been set by the Dispatch phase.
 			AxisOperation op = msgContext.getOperationContext()
 					.getAxisOperation();
@@ -57,7 +58,7 @@ public class ActivationPortTypeRawXMLAsyncMessageReceiver extends
 
 					//doc style
 					response = skel
-							.createCoordinationContextOperation((org.apache.axis2.om.OMElement) msgContext
+							.createCoordinationContextOperation((OMElement) msgContext
 									.getEnvelope().getBody().getFirstElement()
 									.detach());
 

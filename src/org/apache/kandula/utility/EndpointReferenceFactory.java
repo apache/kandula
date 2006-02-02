@@ -250,4 +250,7 @@ public class EndpointReferenceFactory {
 	public String getKandulaListenerAxis2Xml() {
 		return kandulaListenerAxis2Xml;
 	}
+	public String getLocationForEPR(){
+		return location;
+	}
 }

@@ -24,8 +24,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.soap.SOAPHeader;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.at.ATParticipantContext;
@@ -37,6 +35,8 @@ import org.apache.kandula.storage.Store;
 import org.apache.kandula.utility.EPRHandlingUtils;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.wscoor.RegistrationCoordinatorPortTypeRawXMLStub;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.soap.SOAPHeader;
 
 public class TransactionInHandler extends AbstractHandler {
 	private ThreadLocal threadInfo = new ThreadLocal();

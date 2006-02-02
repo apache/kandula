@@ -19,12 +19,12 @@ package org.apache.kandula.context.coordination;
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.om.OMAbstractFactory;
-import org.apache.axis2.om.OMElement;
-import org.apache.axis2.om.OMNamespace;
-import org.apache.axis2.soap.SOAPFactory;
 import org.apache.kandula.Constants;
 import org.apache.kandula.utility.EPRHandlingUtils;
+import org.apache.ws.commons.om.OMAbstractFactory;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.soap.SOAPFactory;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>

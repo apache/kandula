@@ -17,7 +17,7 @@
 package org.apache.kandula.context.coordination;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.om.OMElement;
+import org.apache.ws.commons.om.OMElement;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
