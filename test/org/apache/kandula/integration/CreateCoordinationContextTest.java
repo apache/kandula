@@ -92,7 +92,7 @@ public class CreateCoordinationContextTest extends TestCase {
 		KandulaDemoServiceStub stub = new KandulaDemoServiceStub(
 				"target/initiator-repository",
 				new EndpointReference(
-						"http://localhost:8082/axis2/services/KandulaDemoService"));
+						"http://localhost:8081/axis2/services/KandulaDemoService"));
 		stub.creditOperation();
 		// try{
 		tm.commit();
