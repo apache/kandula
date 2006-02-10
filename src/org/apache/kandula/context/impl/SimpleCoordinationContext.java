@@ -14,13 +14,14 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.context.coordination;
+package org.apache.kandula.context.impl;
 
 import javax.xml.namespace.QName;
 
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
-import org.apache.kandula.utility.EPRHandlingUtils;
+import org.apache.kandula.context.CoordinationContext;
+import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
@@ -56,7 +57,7 @@ public class SimpleCoordinationContext implements CoordinationContext {
 				new QName("CoordinationType")).getText();
 		OMElement registrationElement = contextElement
 				.getFirstChildWithName(new QName("RegistrationService"));
-		registrationServiceEpr = EPRHandlingUtils
+		registrationServiceEpr = EndpointReferenceFactory
 				.endpointFromOM(registrationElement);
 	}
 
@@ -123,7 +124,7 @@ public class SimpleCoordinationContext implements CoordinationContext {
 			contextElement.addChild(coorTypeElement);
 			OMElement registrationServiceElement = factory.createOMElement(
 					"RegistrationService", wsCoor);
-			EPRHandlingUtils.endpointToOM(registrationServiceEpr,
+			EndpointReferenceFactory.endpointToOM(registrationServiceEpr,
 					registrationServiceElement, factory);
 			contextElement.addChild(registrationServiceElement);
 			return contextElement;

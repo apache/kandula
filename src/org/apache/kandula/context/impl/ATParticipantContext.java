@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.context.at;
+package org.apache.kandula.context.impl;
 
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;

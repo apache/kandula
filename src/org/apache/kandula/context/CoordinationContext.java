@@ -14,9 +14,10 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.context.coordination;
+package org.apache.kandula.context;
 
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.kandula.context.impl.SimpleCoordinationContext;
 import org.apache.ws.commons.om.OMElement;
 
 /**

@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.context.at;
+package org.apache.kandula.context.impl;
 
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -24,12 +24,11 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
 import org.apache.kandula.Status;
 import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.context.CoordinationContext;
+import org.apache.kandula.coordinator.at.ATParticipantInformation;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.AlreadyRegisteredException;
 import org.apache.kandula.faults.InvalidProtocolException;
-import org.apache.kandula.participant.Participant;
-import org.apache.kandula.utility.EPRHandlingUtils;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 
 /**
@@ -86,7 +85,7 @@ public class ATActivityContext extends AbstractContext {
 	 */
 	public ATActivityContext(EndpointReference activationEPR) {
 		super();
-		this.setProperty(REQUESTER_ID, EPRHandlingUtils
+		this.setProperty(REQUESTER_ID, EndpointReferenceFactory
 				.getRandomStringOf18Characters());
 		this.setProperty(ACTIVATION_EPR, activationEPR);
 	}
@@ -99,7 +98,7 @@ public class ATActivityContext extends AbstractContext {
 	 */
 	public EndpointReference addParticipant(EndpointReference participantEPR,
 			String protocol) throws AbstractKandulaException {
-		String enlistmentID = EPRHandlingUtils.getRandomStringOf18Characters();
+		String enlistmentID = EndpointReferenceFactory.getRandomStringOf18Characters();
 		if (Constants.WS_AT_VOLATILE2PC.equals(protocol)) {
 			addVolatileParticipant(participantEPR, enlistmentID);
 			return EndpointReferenceFactory.getInstance()
@@ -121,7 +120,7 @@ public class ATActivityContext extends AbstractContext {
 			String enlistmentID) throws AbstractKandulaException {
 		if (volatileParticipantsTable.contains(participantEPR))
 			throw new AlreadyRegisteredException();
-		Participant participant = new Participant(participantEPR,
+		ATParticipantInformation participant = new ATParticipantInformation(participantEPR,
 				Constants.WS_AT_VOLATILE2PC, enlistmentID);
 		volatileParticipantsTable.put(enlistmentID, participant);
 	}
@@ -131,7 +130,7 @@ public class ATActivityContext extends AbstractContext {
 		if (durableParticipantsTable.contains(participantEPR)) {
 			throw new AlreadyRegisteredException();
 		}
-		Participant participant = new Participant(participantEPR,
+		ATParticipantInformation participant = new ATParticipantInformation(participantEPR,
 				Constants.WS_AT_DURABLE2PC, enlistmentID);
 		durableParticipantsTable.put(enlistmentID, participant);
 	}
@@ -151,11 +150,11 @@ public class ATActivityContext extends AbstractContext {
 		return list.iterator();
 	}
 
-	public Participant getParticipant(String enlistmentId) {
+	public ATParticipantInformation getParticipant(String enlistmentId) {
 		if (volatileParticipantsTable.containsKey(enlistmentId)) {
-			return (Participant) volatileParticipantsTable.get(enlistmentId);
+			return (ATParticipantInformation) volatileParticipantsTable.get(enlistmentId);
 		} else if (durableParticipantsTable.containsKey(enlistmentId)) {
-			return (Participant) durableParticipantsTable.get(enlistmentId);
+			return (ATParticipantInformation) durableParticipantsTable.get(enlistmentId);
 		} else {
 			return null;
 		}
