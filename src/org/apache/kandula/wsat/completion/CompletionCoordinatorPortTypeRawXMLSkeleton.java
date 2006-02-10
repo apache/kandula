@@ -19,7 +19,6 @@ package org.apache.kandula.wsat.completion;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
-import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.coordinator.at.ATCoordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.storage.StorageFactory;
@@ -41,7 +40,6 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
 	 * @throws AxisFault
 	 */
 	public OMElement commitOperation(OMElement requestElement) throws AxisFault {
-		AbstractContext context;
 		String activityId;
 		//log.info("Visited Commit operation");
 		StorageFactory.getInstance().setConfigurationContext(
@@ -63,7 +61,7 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
 
 	public OMElement rollbackOperation(OMElement requestElement)
 			throws AxisFault {
-		AbstractContext context;
+
 		String activityId;
 		StorageFactory.getInstance().setConfigurationContext(
 				msgContext.getServiceContext().getConfigurationContext());

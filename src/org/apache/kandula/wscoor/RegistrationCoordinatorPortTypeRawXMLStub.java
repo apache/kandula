@@ -41,7 +41,7 @@ import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.KandulaGeneralException;
-import org.apache.kandula.utility.EPRHandlingUtils;
+import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.utility.KandulaListener;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
@@ -110,7 +110,7 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
 				protocolType, epr);
 		messageContext.setEnvelope(env);
 		replyToEpr = setupListener();
-		EPRHandlingUtils.addReferenceProperty(replyToEpr,
+		EndpointReferenceFactory.addReferenceProperty(replyToEpr,
 				Constants.REQUESTER_ID_PARAMETER, id);
 		options.setReplyTo(replyToEpr);
 		options.setTo(this.toEPR);
@@ -138,7 +138,7 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
 
 		OMElement protocolService = factory.createOMElement(
 				"ParticipantProtocolService", wsCoor);
-		EPRHandlingUtils.endpointToOM(epr, protocolService, factory);
+		EndpointReferenceFactory.endpointToOM(epr, protocolService, factory);
 		request.addChild(protocolService);
 		env.getBody().addChild(request);
 		return env;

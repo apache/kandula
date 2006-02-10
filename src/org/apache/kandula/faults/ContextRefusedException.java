@@ -22,6 +22,11 @@ package org.apache.kandula.faults;
 public class ContextRefusedException extends AbstractKandulaException {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8743352104016426531L;
+
+	/**
 	 *  
 	 */
 	public ContextRefusedException() {

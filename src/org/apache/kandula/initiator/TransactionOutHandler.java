@@ -21,11 +21,13 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.ws.commons.soap.SOAPHeader;
 
 public class TransactionOutHandler extends AbstractHandler {
+
+	private static final long serialVersionUID = 4133392345837905499L;
 
 	public void invoke(MessageContext msgContext) throws AxisFault {
 

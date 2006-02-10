@@ -21,9 +21,9 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.context.at.ATActivityContext;
+import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.storage.StorageFactory;
-import org.apache.kandula.utility.EPRHandlingUtils;
+import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.ws.commons.om.OMElement;
 
 /**
@@ -44,7 +44,7 @@ public class RegistrationRequesterPortTypeRawXMLSkeleton {
 			OMElement header = msgContext.getEnvelope().getHeader();
 			String requesterID = header.getFirstChildWithName(
 					Constants.REQUESTER_ID_PARAMETER).getText();
-			EndpointReference coordinatorService = EPRHandlingUtils
+			EndpointReference coordinatorService = EndpointReferenceFactory
 					.endpointFromOM(response.getFirstElement());
 			// TODO: remove this
 			ConfigurationContext configurationContext = StorageFactory

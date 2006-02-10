@@ -22,8 +22,8 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
 import org.apache.kandula.Status;
 import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.context.at.ATActivityContext;
-import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.context.CoordinationContext;
+import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 
 /**

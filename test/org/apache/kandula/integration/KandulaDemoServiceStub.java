@@ -53,10 +53,10 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 
 	static {
 
-		//creating the Service
+		// creating the Service
 		_service = new AxisService("KandulaDemoService");
 
-		//creating the operations
+		// creating the operations
 		AxisOperation operationDesc;
 		operations = new org.apache.axis2.description.AxisOperation[1];
 
@@ -73,7 +73,7 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 	public KandulaDemoServiceStub(String axis2Home,
 			EndpointReference targetEndpoint) throws java.lang.Exception {
 		this.toEPR = targetEndpoint;
-		//creating the configuration
+		// creating the configuration
 		configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
 				.createConfigurationContextFromFileSystem(axis2Home, axis2Home
 						+ "/axis2.xml");
@@ -97,10 +97,12 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 		SOAPEnvelope env = createSOAPEnvelope();
 		messageContext.setEnvelope(env);
 
+		// _service.engageModule("addressing");
+
 		options.setAction("creditOperation");
 		options.setTo(this.toEPR);
-		//        messageSender
-		//                .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
+		// messageSender
+		// .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
 		OperationClient client = operations[0].createClient(serviceContext,
 				options);
 		client.addMessageContext(messageContext);
@@ -110,8 +112,7 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 
 	private SOAPEnvelope createSOAPEnvelope() {
 
-		SOAPFactory factory = OMAbstractFactory
-				.getSOAP12Factory();
+		SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
 		SOAPEnvelope env = factory.getDefaultEnvelope();
 		return env;
 	}

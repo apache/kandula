@@ -17,8 +17,7 @@
 package org.apache.kandula.context;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.kandula.context.at.ATActivityContext;
-import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.faults.InvalidProtocolException;
 
 /**
@@ -40,6 +39,13 @@ public class ContextFactory {
 		}
 	}
 
+	/**
+	 * To be used by the initaitor TxManager to create the initial context
+	 * @param protocol
+	 * @param activationEPR
+	 * @return
+	 * @throws InvalidProtocolException
+	 */
 	public AbstractContext createActivity(String protocol,
 			EndpointReference activationEPR) throws InvalidProtocolException {
 		if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(protocol)) {

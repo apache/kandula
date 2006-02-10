@@ -26,20 +26,22 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.context.at.ATParticipantContext;
-import org.apache.kandula.context.coordination.CoordinationContext;
-import org.apache.kandula.context.coordination.SimpleCoordinationContext;
+import org.apache.kandula.context.CoordinationContext;
+import org.apache.kandula.context.impl.ATParticipantContext;
+import org.apache.kandula.context.impl.SimpleCoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
-import org.apache.kandula.utility.EPRHandlingUtils;
+import org.apache.kandula.utility.KandulaConfiguration;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.wscoor.RegistrationCoordinatorPortTypeRawXMLStub;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.soap.SOAPHeader;
 
 public class TransactionInHandler extends AbstractHandler {
-	private ThreadLocal threadInfo = new ThreadLocal();
+	
+	private static final long serialVersionUID = 2098581248112968550L;
+//	private ThreadLocal threadInfo = new ThreadLocal();
 
 	public void invoke(MessageContext msgContext) throws AxisFault {
 		KandulaResource resource;
@@ -61,9 +63,9 @@ public class TransactionInHandler extends AbstractHandler {
 		// business logic receives the message
 		String resourceFile = (String) msgContext.getParameter(
 				Constants.KANDULA_RESOURCE).getValue();
-		String participantRepository = EndpointReferenceFactory.getInstance()
+		String participantRepository = KandulaConfiguration.getInstance()
 				.getParticipantRepository();
-		String participantAxis2Xml = EndpointReferenceFactory.getInstance()
+		String participantAxis2Xml = KandulaConfiguration.getInstance()
 				.getParticipantAxis2Conf();
 
 		try {
@@ -74,11 +76,11 @@ public class TransactionInHandler extends AbstractHandler {
 		}
 		context.setResource(resource);
 
-		String id = EPRHandlingUtils.getRandomStringOf18Characters();
+		String id = EndpointReferenceFactory.getRandomStringOf18Characters();
 		Store store = StorageFactory.getInstance().getStore();
 		context.setProperty(AbstractContext.REQUESTER_ID, id);
 		store.put(id, context);
-		ParticipantTransactionManager txManager = new ParticipantTransactionManager();
+//		ParticipantTransactionCoordinator txManager = new ParticipantTransactionCoordinator();
 		try {
 			RegistrationCoordinatorPortTypeRawXMLStub stub = new RegistrationCoordinatorPortTypeRawXMLStub(
 					participantRepository, participantAxis2Xml, coorContext

@@ -19,7 +19,7 @@ package org.apache.kandula.coordinator.at;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.context.at.ATActivityContext;
+import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.InvalidProtocolException;
 

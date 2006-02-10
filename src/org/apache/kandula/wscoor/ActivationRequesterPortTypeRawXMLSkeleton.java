@@ -19,7 +19,7 @@ package org.apache.kandula.wscoor;
 import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.ws.commons.om.OMElement;
 

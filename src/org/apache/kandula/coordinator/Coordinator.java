@@ -19,7 +19,7 @@ package org.apache.kandula.coordinator;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.ContextFactory;
-import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;

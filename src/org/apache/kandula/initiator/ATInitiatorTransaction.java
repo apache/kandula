@@ -17,7 +17,7 @@
 package org.apache.kandula.initiator;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.kandula.context.coordination.CoordinationContext;
+import org.apache.kandula.context.CoordinationContext;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>

@@ -40,7 +40,7 @@ import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
 import org.apache.kandula.faults.KandulaGeneralException;
-import org.apache.kandula.utility.EPRHandlingUtils;
+import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.utility.KandulaListener;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
@@ -114,7 +114,7 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
 		SOAPEnvelope env = createSOAPEnvelope(coordinationType);
 		messageContext.setEnvelope(env);
 		replyToEpr = setupListener();
-		EPRHandlingUtils.addReferenceProperty(replyToEpr,
+		EndpointReferenceFactory.addReferenceProperty(replyToEpr,
 				Constants.REQUESTER_ID_PARAMETER, id);
 		options.setReplyTo(replyToEpr);
 		options.setTo(this.toEPR);

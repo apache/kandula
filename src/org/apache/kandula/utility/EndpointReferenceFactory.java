@@ -17,136 +17,40 @@
 package org.apache.kandula.utility;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
-import java.util.Properties;
+import java.net.UnknownHostException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Random;
 
+import javax.xml.namespace.QName;
+
+import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.kandula.Constants;
 import org.apache.kandula.wsat.completion.CompletionInitiatorServiceListener;
+import org.apache.ws.commons.om.OMElement;
+import org.apache.ws.commons.om.OMNamespace;
+import org.apache.ws.commons.om.impl.llom.factory.OMLinkedListImplFactory;
+import org.apache.ws.commons.soap.SOAPFactory;
 
 /**
- * @author Dasarath Weeratunge
  * @author <a href="mailto:thilina@apache.org"> Thilina Gunarathne </a>
  */
 
 public class EndpointReferenceFactory {
-	static final String PROPERTY_FILE = "endpoints.conf";
-
-	//  static final String PROTOCOL_PROPERTY = "protocol";
-
-	static final String HOST_PROPERTY = "host";
-
-	static final String PORT_PROPERTY = "port";
-
-	static final String TCPMON_ENABLE = "tcpmon_enable";
-
-	static final String PARTICIPANT_REPO = "PARTICIPANT_REPOSITORY";
-
-	static final String PARTICIPANT_AXIS2_CONF = "PARTICIPANT_AXIS2_CONF";
-
-	static final String KANDULA_LISTENER_REPO = "KANDULA_LISTENER_REPOSITORY";
-
-	static final String KANDULA_LISTENER_AXIS2XML = "KANDULA_LISTENER_AXIS2XML";
-
-	static final String LISTENER_PORT = "KANDULA_LISTENER_PORT";
-
-	static final String COORDINATOR_AXIS2XML = "COORDINATOR_AXIS2XML";
-
-	static final String COORDINATOR_REPOSITORY = "COORDINATOR_REPOSITORY";
 
 	private static EndpointReferenceFactory instance = null;
 
-	Properties properties = null;
-
-	String location = null;
-
-	String participantRepository = null;
-
-	String participantAxis2Xml = null;
-
-	String kandulaListenerRepository = null;
-
-	String kandulaListenerAxis2Xml = null;
-
-	String kandulaListenerPort = null;
-
-	String coordinatorRepo;
-
-	String coordinatorAxis2Conf;
-
-	String debug = "false";
+	private KandulaConfiguration configuration;
 
 	private EndpointReferenceFactory() {
 
-		String port = null;
-
-		String host = null;
-		InputStream in = getClass().getClassLoader().getResourceAsStream(
-				PROPERTY_FILE);
-		properties = new Properties();
-		try {
-			properties.load(in);
-			in.close();
-			host = properties.getProperty(HOST_PROPERTY);
-			port = properties.getProperty(PORT_PROPERTY);
-			participantRepository = properties.getProperty(PARTICIPANT_REPO);
-			if (participantRepository == null) {
-				participantRepository = ".";
-			}
-
-			if (properties.getProperty("tcpmon_enable").equals("true")) {
-				debug = "true";
-			}
-
-			participantAxis2Xml = properties
-					.getProperty(PARTICIPANT_AXIS2_CONF);
-			if (participantAxis2Xml == null) {
-				participantAxis2Xml = "axis2.xml";
-			}
-
-			kandulaListenerRepository = properties
-					.getProperty(KANDULA_LISTENER_REPO);
-			if (kandulaListenerRepository == null) {
-				kandulaListenerRepository = ".";
-			}
-			kandulaListenerAxis2Xml = properties
-					.getProperty(KANDULA_LISTENER_AXIS2XML);
-			if (kandulaListenerAxis2Xml == null) {
-				kandulaListenerRepository += "/axis2.xml";
-			}
-
-			coordinatorAxis2Conf = properties.getProperty(COORDINATOR_AXIS2XML);
-			if (coordinatorAxis2Conf == null) {
-				coordinatorAxis2Conf = "axis2.xml";
-			}
-
-			coordinatorRepo = properties.getProperty(COORDINATOR_REPOSITORY);
-			if (coordinatorRepo == null) {
-				coordinatorAxis2Conf = ".";
-			}
-
-			kandulaListenerPort = properties.getProperty(LISTENER_PORT);
-			if (kandulaListenerPort == null) {
-				kandulaListenerPort = "5050";
-			}
-
-			if (port == null) {
-				port = "8080";
-			}
-
-			if (host == null) {
-				host = InetAddress.getLocalHost().getHostAddress();
-			}
-
-			location = "http://" + host + ":" + port;
-			System.out.println(location);
-		} catch (Exception e) {
-			if (e instanceof RuntimeException)
-				throw (RuntimeException) e;
-			else
-				throw new RuntimeException(e);
-		}
+		configuration = KandulaConfiguration.getInstance();
 
 	}
 
@@ -158,9 +62,10 @@ public class EndpointReferenceFactory {
 
 	public EndpointReference getRegistrationEndpoint(String id) {
 
-		EndpointReference epr = new EndpointReference(location
+		EndpointReference epr = new EndpointReference(configuration
+				.getLocationForEPR()
 				+ "/axis2/services/RegistrationCoordinator");
-		EPRHandlingUtils.addReferenceProperty(epr,
+		EndpointReferenceFactory.addReferenceProperty(epr,
 				Constants.TRANSACTION_ID_PARAMETER, id);
 		return epr;
 	}
@@ -177,80 +82,150 @@ public class EndpointReferenceFactory {
 		CompletionInitiatorServiceListener serviceListener = CompletionInitiatorServiceListener
 				.getInstance();
 		EndpointReference epr = serviceListener.getEpr();
-		EPRHandlingUtils.addReferenceProperty(epr,
+		EndpointReferenceFactory.addReferenceProperty(epr,
 				Constants.REQUESTER_ID_PARAMETER, id);
 		return epr;
 	}
 
 	public EndpointReference getCompletionEndpoint(String id) {
 
-		EndpointReference epr = new EndpointReference(location
+		EndpointReference epr = new EndpointReference(configuration
+				.getLocationForEPR()
 				+ "/axis2/services/CompletionCoordinator");
-		EPRHandlingUtils.addReferenceProperty(epr,
+		EndpointReferenceFactory.addReferenceProperty(epr,
 				Constants.TRANSACTION_ID_PARAMETER, id);
 		return epr;
 	}
 
 	public EndpointReference get2PCCoordinatorEndpoint(String activityId,
 			String enlistmentId) {
-		//Activity ID to find Activity Context , EnlistmentID to find
+		// Activity ID to find Activity Context , EnlistmentID to find
 		// participant in activity
-		EndpointReference epr = new EndpointReference(location
+		EndpointReference epr = new EndpointReference(configuration
+				.getLocationForEPR()
 				+ "/axis2/services/AtomicTransactionCoordinator");
-		EPRHandlingUtils.addReferenceProperty(epr,
+		EndpointReferenceFactory.addReferenceProperty(epr,
 				Constants.TRANSACTION_ID_PARAMETER, activityId);
-		EPRHandlingUtils.addReferenceProperty(epr,
+		EndpointReferenceFactory.addReferenceProperty(epr,
 				Constants.ENLISTMENT_ID_PARAMETER, enlistmentId);
 		return epr;
 	}
 
 	public EndpointReference get2PCParticipantEndpoint(String id) {
 
-		EndpointReference epr = new EndpointReference(location
+		EndpointReference epr = new EndpointReference(configuration
+				.getLocationForEPR()
 				+ "/axis2/services/AtomicTransactionParticipant");
-		EPRHandlingUtils.addReferenceProperty(epr,
+		EndpointReferenceFactory.addReferenceProperty(epr,
 				Constants.REQUESTER_ID_PARAMETER, id);
 		return epr;
 	}
 
-	public String getParticipantRepository() {
-		return participantRepository;
-	}
-
-	public String getParticipantAxis2Conf() {
-		return participantAxis2Xml;
-	}
-
-	public String getCoordinatorRepo() {
-		return coordinatorRepo;
-	}
-
-	public String getCoordinatorAxis2Conf() {
-		return coordinatorAxis2Conf;
-	}
-
-	public String getKadulaListenerPort() {
-		return kandulaListenerPort;
-	}
-
-	public String getKadulaListenerPortForEPR() {
-		if (debug.equals("true"))
-			return (Integer.parseInt(kandulaListenerPort) + 1) + "";
-		else
-			return kandulaListenerPort;
-	}
-
 	/**
-	 * @return Returns the kandulaListenerRepository.
+	 * MD5 a random string with localhost/date etc will return 128 bits
+	 * construct a string of 18 characters from those bits.
+	 * 
+	 * @return string
 	 */
-	public String getKandulaListenerRepository() {
-		return kandulaListenerRepository;
+	public static String getRandomStringOf18Characters() {
+		Random myRand = new Random();
+		long rand = myRand.nextLong();
+		String sid;
+		try {
+			sid = InetAddress.getLocalHost().toString();
+		} catch (UnknownHostException e) {
+			sid = Thread.currentThread().getName();
+		}
+		long time = System.currentTimeMillis();
+		StringBuffer sb = new StringBuffer();
+		sb.append(sid);
+		sb.append(":");
+		sb.append(Long.toString(time));
+		sb.append(":");
+		sb.append(Long.toString(rand));
+		MessageDigest md5 = null;
+		try {
+			md5 = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			// System.out.println("Error: " + e);
+			// todo heve to be properly handle
+		}
+		md5.update(sb.toString().getBytes());
+		byte[] array = md5.digest();
+		StringBuffer sb2 = new StringBuffer();
+		for (int j = 0; j < array.length; ++j) {
+			int b = array[j] & 0xFF;
+			sb2.append(Integer.toHexString(b));
+		}
+		int begin = myRand.nextInt();
+		if (begin < 0)
+			begin = begin * -1;
+		begin = begin % 8;
+		return new String(sb2.toString().substring(begin, begin + 18))
+				.toUpperCase();
 	}
 
-	public String getKandulaListenerAxis2Xml() {
-		return kandulaListenerAxis2Xml;
+	public static void addReferenceProperty(EndpointReference epr, QName key,
+			String Value) {
+		// We'll have to live with reference parameters for the moment
+		// Since Axis2 Addressing does not support ref properties well
+		HashMap refProperties;
+		if ((refProperties = (HashMap) epr.getAllReferenceParameters()) == null) {
+			refProperties = new HashMap();
+		}
+		OMLinkedListImplFactory factory = new OMLinkedListImplFactory();
+		OMElement omElement = factory.createOMElement(key, null);
+		omElement.setText(Value);
+		refProperties.put(key, omElement);
+		epr.setReferenceParameters(refProperties);
 	}
-	public String getLocationForEPR(){
-		return location;
+
+	public static EndpointReference endpointFromOM(OMElement eprElement) {
+		EndpointReference epr;
+		epr = new EndpointReference(eprElement.getFirstChildWithName(
+				new QName("Address")).getText());
+		HashMap referenceProperties = new HashMap();
+		OMElement referencePropertiesElement = eprElement
+				.getFirstChildWithName(new QName("ReferenceParameters"));
+		Iterator propertyIter = referencePropertiesElement.getChildElements();
+		while (propertyIter.hasNext()) {
+			OMElement element = (OMElement) propertyIter.next();
+
+			// TODO do we need to detach the OMElement
+			referenceProperties.put(element.getQName(), element
+					.cloneOMElement());
+		}
+		// will have to live with Ref parameters for some time :: Till axis2
+		// @ing gets stable
+		epr.setReferenceParameters(referenceProperties);
+		return epr;
+	}
+
+	public static void endpointToOM(EndpointReference epr, OMElement parentEPR,
+			SOAPFactory factory) {
+		OMNamespace wsAddressing = factory.createOMNamespace(
+				AddressingConstants.Submission.WSA_NAMESPACE,
+				AddressingConstants.WSA_DEFAULT_PREFIX);
+		OMElement addressElement = factory.createOMElement("Address",
+				wsAddressing);
+		addressElement.setText(epr.getAddress());
+		parentEPR.addChild(addressElement);
+		Map referenceValues = epr.getAllReferenceParameters();
+		if (referenceValues != null) {
+			OMElement refPropertyElement = factory.createOMElement(
+					"ReferenceParameters", wsAddressing);
+			parentEPR.addChild(refPropertyElement);
+			Iterator iterator = referenceValues.keySet().iterator();
+			while (iterator.hasNext()) {
+				QName key = (QName) iterator.next();
+				OMElement omElement = (OMElement) referenceValues.get(key);
+				refPropertyElement.addChild(omElement);
+				if (Final.WSA_NAMESPACE.equals(wsAddressing)) {
+					omElement.addAttribute(
+							Final.WSA_IS_REFERENCE_PARAMETER_ATTRIBUTE,
+							Final.WSA_TYPE_ATTRIBUTE_VALUE, wsAddressing);
+				}
+			}
+		}
 	}
 }

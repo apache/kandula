@@ -22,6 +22,11 @@ package org.apache.kandula.faults;
 public class InvalidProtocolException extends AbstractKandulaException {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2145946140688935653L;
+
+	/**
 	 *  
 	 */
 	public InvalidProtocolException() {

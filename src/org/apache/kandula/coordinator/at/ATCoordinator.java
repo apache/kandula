@@ -23,11 +23,10 @@ import org.apache.kandula.Constants;
 import org.apache.kandula.Status;
 import org.apache.kandula.Status.CoordinatorStatus;
 import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.context.at.ATActivityContext;
+import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.coordinator.Registerable;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.InvalidStateException;
-import org.apache.kandula.participant.Participant;
 import org.apache.kandula.participant.Vote;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
@@ -216,7 +215,7 @@ public class ATCoordinator implements Registerable {
 			atContext.unlock();
 			while (volatilePartipantIterator.hasNext()) {
 				atContext.countPreparing();
-				stub.prepareOperation(((Participant) volatilePartipantIterator
+				stub.prepareOperation(((ATParticipantInformation) volatilePartipantIterator
 						.next()).getEpr());
 			}
 		}
@@ -225,7 +224,7 @@ public class ATCoordinator implements Registerable {
 	public void countVote(String activityID, Vote vote, String enlistmentID)
 			throws AbstractKandulaException {
 		ATActivityContext context = (ATActivityContext) store.get(activityID);
-		Participant participant = context.getParticipant(enlistmentID);
+		ATParticipantInformation participant = context.getParticipant(enlistmentID);
 
 		if (Vote.PREPARED.equals(vote)) {
 			participant.setStatus(Status.CoordinatorStatus.STATUS_PREPARED);
@@ -260,7 +259,7 @@ public class ATCoordinator implements Registerable {
 			atContext.unlock();
 			while (durablePartipantIterator.hasNext()) {
 				atContext.countPreparing();
-				stub.prepareOperation(((Participant) durablePartipantIterator
+				stub.prepareOperation(((ATParticipantInformation) durablePartipantIterator
 						.next()).getEpr());
 			}
 		}
@@ -284,7 +283,7 @@ public class ATCoordinator implements Registerable {
 		atContext.unlock();
 		Iterator participants = atContext.getAll2PCParticipants();
 		while (participants.hasNext()) {
-			Participant participant = (Participant) participants.next();
+			ATParticipantInformation participant = (ATParticipantInformation) participants.next();
 			if (!(Status.CoordinatorStatus.STATUS_READ_ONLY == participant
 					.getStatus())) {
 				stub.commitOperation(participant.getEpr());
@@ -313,7 +312,7 @@ public class ATCoordinator implements Registerable {
 
 		while (participants.hasNext()) {
 			stub
-					.rollbackOperation(((Participant) participants.next())
+					.rollbackOperation(((ATParticipantInformation) participants.next())
 							.getEpr());
 		}
 		CompletionInitiatorPortTypeRawXMLStub completionStub = new CompletionInitiatorPortTypeRawXMLStub(

@@ -21,7 +21,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.faults.AbstractKandulaException;
-import org.apache.kandula.participant.ParticipantTransactionManager;
+import org.apache.kandula.participant.ParticipantTransactionCoordinator;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
 import org.apache.ws.commons.om.OMElement;
@@ -45,7 +45,7 @@ public class ParticipantPortTypeRawXMLSkeleton {
 				Constants.REQUESTER_ID_PARAMETER).getText();
 		Store store = StorageFactory.getInstance().getStore();
 		AbstractContext context = (AbstractContext) store.get(requesterID);
-		ParticipantTransactionManager txManager = new ParticipantTransactionManager();
+		ParticipantTransactionCoordinator txManager = new ParticipantTransactionCoordinator();
 		try {
 			txManager.prepare(context);
 		} catch (AbstractKandulaException e) {
@@ -65,7 +65,7 @@ public class ParticipantPortTypeRawXMLSkeleton {
 				Constants.REQUESTER_ID_PARAMETER).getText();
 		Store store = StorageFactory.getInstance().getStore();
 		AbstractContext context = (AbstractContext) store.get(requesterID);
-		ParticipantTransactionManager txManager = new ParticipantTransactionManager();
+		ParticipantTransactionCoordinator txManager = new ParticipantTransactionCoordinator();
 		try {
 			txManager.commit(context);
 		} catch (AbstractKandulaException e) {
@@ -84,7 +84,7 @@ public class ParticipantPortTypeRawXMLSkeleton {
 				Constants.REQUESTER_ID_PARAMETER).getText();
 		Store store = StorageFactory.getInstance().getStore();
 		AbstractContext context = (AbstractContext) store.get(requesterID);
-		ParticipantTransactionManager txManager = new ParticipantTransactionManager();
+		ParticipantTransactionCoordinator txManager = new ParticipantTransactionCoordinator();
 		try {
 			txManager.rollback(context);
 		} catch (AbstractKandulaException e) {

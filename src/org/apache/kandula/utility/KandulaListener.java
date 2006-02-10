@@ -45,14 +45,14 @@ public class KandulaListener {
 	public int serverPort;
 
 	private KandulaListener() throws IOException {
-		EndpointReferenceFactory endpointReferenceFactory = EndpointReferenceFactory
+		KandulaConfiguration configuration = KandulaConfiguration
 				.getInstance();
 		responseConfigurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
 				.createConfigurationContextFromFileSystem(
-						endpointReferenceFactory.getKandulaListenerRepository(),
-						endpointReferenceFactory.getKandulaListenerAxis2Xml());
+						configuration.getKandulaListenerRepository(),
+						configuration.getKandulaListenerAxis2Xml());
 		try {
-			serverPort = Integer.parseInt(EndpointReferenceFactory
+			serverPort = Integer.parseInt(KandulaConfiguration
 					.getInstance().getKadulaListenerPort());
 		} catch (Exception e) {
 			serverPort = 5059;
@@ -115,7 +115,7 @@ public class KandulaListener {
 		return "http://"
 				+ InetAddress.getLocalHost().getHostAddress()
 				+ ":"
-				+ EndpointReferenceFactory.getInstance()
+				+ KandulaConfiguration.getInstance()
 						.getKadulaListenerPortForEPR() + "/axis2/services/";
 	}
 }

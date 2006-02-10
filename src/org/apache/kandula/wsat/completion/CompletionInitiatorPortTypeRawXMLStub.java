@@ -22,7 +22,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.kandula.Constants;
 import org.apache.kandula.faults.AbstractKandulaException;
-import org.apache.kandula.utility.EndpointReferenceFactory;
+import org.apache.kandula.utility.KandulaConfiguration;
 import org.apache.kandula.wsat.AbstractATNotifierStub;
 
 /**
@@ -39,8 +39,8 @@ public class CompletionInitiatorPortTypeRawXMLStub extends
 	 */
 	public CompletionInitiatorPortTypeRawXMLStub(
 			EndpointReference targetEndpoint) throws AbstractKandulaException {
-		super(EndpointReferenceFactory.getInstance().getCoordinatorRepo(),
-				EndpointReferenceFactory.getInstance()
+		super(KandulaConfiguration.getInstance().getCoordinatorRepo(),
+				KandulaConfiguration.getInstance()
 						.getCoordinatorAxis2Conf(), new AxisService(
 						"CompletionInitiatorPortType"));
 		this.toEPR = targetEndpoint;

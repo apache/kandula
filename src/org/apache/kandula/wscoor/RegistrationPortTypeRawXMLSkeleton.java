@@ -25,7 +25,7 @@ import org.apache.kandula.Constants;
 import org.apache.kandula.coordinator.Coordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.storage.StorageFactory;
-import org.apache.kandula.utility.EPRHandlingUtils;
+import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.ws.commons.om.OMAbstractFactory;
 import org.apache.ws.commons.om.OMElement;
 import org.apache.ws.commons.om.OMNamespace;
@@ -57,7 +57,7 @@ public class RegistrationPortTypeRawXMLSkeleton {
 		OMElement participantEPRElement = request
 				.getFirstChildWithName(new QName("ParticipantProtocolService"));
 		//Extracting the participant EPR
-		participantEPR = EPRHandlingUtils.endpointFromOM(participantEPRElement);
+		participantEPR = EndpointReferenceFactory.endpointFromOM(participantEPRElement);
 
 		OMElement header = msgContext.getEnvelope().getHeader();
 		activityId = header.getFirstChildWithName(
@@ -94,7 +94,7 @@ public class RegistrationPortTypeRawXMLSkeleton {
 				"CoordinatorProtocolService", wsCoor);
 		OMElement coordinatorProtocolService = factory.createOMElement(
 				"CoordinatorProtocolService", wsCoor);
-		EPRHandlingUtils.endpointToOM(epr, coordinatorProtocolService, factory);
+		EndpointReferenceFactory.endpointToOM(epr, coordinatorProtocolService, factory);
 		protocolService.addChild(coordinatorProtocolService);
 		return protocolService;
 	}

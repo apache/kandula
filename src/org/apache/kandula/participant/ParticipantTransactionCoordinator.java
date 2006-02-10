@@ -18,7 +18,7 @@ package org.apache.kandula.participant;
 
 import org.apache.kandula.Status;
 import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.context.at.ATParticipantContext;
+import org.apache.kandula.context.impl.ATParticipantContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.InvalidStateException;
 import org.apache.kandula.wsat.twopc.CoordinatorPortTypeRawXMLStub;
@@ -26,7 +26,7 @@ import org.apache.kandula.wsat.twopc.CoordinatorPortTypeRawXMLStub;
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public class ParticipantTransactionManager {
+public class ParticipantTransactionCoordinator {
 
 	public void prepare(AbstractContext context)
 			throws AbstractKandulaException {

@@ -20,8 +20,6 @@ import java.util.HashMap;
 
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Status;
-import org.apache.kandula.context.coordination.CoordinationContext;
-import org.apache.kandula.utility.EPRHandlingUtils;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 
 /**
@@ -51,7 +49,7 @@ public abstract class AbstractContext {
 
 	public AbstractContext(String coordinationType) {
 		propertyBag = new HashMap();
-		activityID = EPRHandlingUtils.getRandomStringOf18Characters();
+		activityID = EndpointReferenceFactory.getRandomStringOf18Characters();
 		EndpointReference registrationEpr = EndpointReferenceFactory
 				.getInstance().getRegistrationEndpoint(activityID);
 		coordinationContext = CoordinationContext.Factory.newContext(

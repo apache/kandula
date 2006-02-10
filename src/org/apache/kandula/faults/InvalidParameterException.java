@@ -22,6 +22,11 @@ package org.apache.kandula.faults;
 public class InvalidParameterException extends AbstractKandulaException {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6973003681131477662L;
+
+	/**
 	 *  
 	 */
 	public InvalidParameterException() {

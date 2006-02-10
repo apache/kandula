@@ -20,7 +20,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Status;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.ContextFactory;
-import org.apache.kandula.context.at.ATActivityContext;
+import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.InvalidStateException;
 import org.apache.kandula.storage.StorageFactory;
