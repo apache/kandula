@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions name="TransactionalService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsap10="http://www.w3.org/2005/08/addressing" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/09/policy/addressing" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:tns="http://tempuri.org/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsa10="http://www.w3.org/2005/08/addressing">
+  <wsp:Policy wsu:Id="CustomTransactionBinding_ITransactionalService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <wspe:Utf816FFFECharacterEncoding xmlns:wspe="http://schemas.xmlsoap.org/ws/2004/09/policy/encoding"/>
+        <wsap10:UsingAddressing/>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsp:Policy wsu:Id="CustomTransactionBinding_ITransactionalService_Commit_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <wsat:ATAssertion xmlns:wsat="http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsp:Policy wsu:Id="CustomTransactionBinding_ITransactionalService_Rollback_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <wsat:ATAssertion xmlns:wsat="http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsp:Policy wsu:Id="CustomTransactionBinding_ITransactionalService_AsyncRollback_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <wsat:ATAssertion xmlns:wsat="http://schemas.xmlsoap.org/ws/2004/10/wsat"/>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+    	<!--
+      <xsd:import schemaLocation="http://131.107.72.15/Transactions_Service_Indigo/TransactionalService.svc?xsd=xsd0" namespace="http://tempuri.org/"/>
+      -->
+      <xsd:import schemaLocation="TransactionalService-schema.xml"  namespace="http://tempuri.org/"/>
+    </xsd:schema>
+  </wsdl:types>
+  
+  <wsdl:message name="ITransactionalService_Commit_InputMessage">
+    <wsdl:part name="parameters" element="tns:Commit"/>
+  </wsdl:message>
+  <wsdl:message name="ITransactionalService_Commit_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CommitResponse"/>
+  </wsdl:message>
+  <wsdl:message name="ITransactionalService_Rollback_InputMessage">
+    <wsdl:part name="parameters" element="tns:Rollback"/>
+  </wsdl:message>
+  <wsdl:message name="ITransactionalService_Rollback_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RollbackResponse"/>
+  </wsdl:message>
+  <wsdl:message name="ITransactionalService_AsyncRollback_InputMessage">
+    <wsdl:part name="parameters" element="tns:AsyncRollback"/>
+  </wsdl:message>
+  <wsdl:message name="ITransactionalService_AsyncRollback_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AsyncRollbackResponse"/>
+  </wsdl:message>
+  
+  <wsdl:portType msc:usingSession="false" name="ITransactionalService">
+    <wsdl:operation name="Commit">
+      <wsdl:input wsa10:Action="http://tempuri.org/ITransactionalService/Commit" message="tns:ITransactionalService_Commit_InputMessage"/>
+      <wsdl:output wsa10:Action="http://tempuri.org/ITransactionalService/CommitResponse" message="tns:ITransactionalService_Commit_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="Rollback">
+      <wsdl:input wsa10:Action="http://tempuri.org/ITransactionalService/Rollback" message="tns:ITransactionalService_Rollback_InputMessage"/>
+      <wsdl:output wsa10:Action="http://tempuri.org/ITransactionalService/RollbackResponse" message="tns:ITransactionalService_Rollback_OutputMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="AsyncRollback">
+      <wsdl:input wsa10:Action="http://tempuri.org/ITransactionalService/AsyncRollback" message="tns:ITransactionalService_AsyncRollback_InputMessage"/>
+      <wsdl:output wsa10:Action="http://tempuri.org/ITransactionalService/AsyncRollbackResponse" message="tns:ITransactionalService_AsyncRollback_OutputMessage"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  
+  
+  <wsdl:binding name="CustomTransactionBinding_ITransactionalService" type="tns:ITransactionalService">
+    <wsp:PolicyReference URI="#CustomTransactionBinding_ITransactionalService_policy"/>
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="Commit">
+      <wsp:PolicyReference URI="#CustomTransactionBinding_ITransactionalService_Commit_policy"/>
+      <soap:operation soapAction="http://tempuri.org/ITransactionalService/Commit" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Rollback">
+      <wsp:PolicyReference URI="#CustomTransactionBinding_ITransactionalService_Rollback_policy"/>
+      <soap:operation soapAction="http://tempuri.org/ITransactionalService/Rollback" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AsyncRollback">
+      <wsp:PolicyReference URI="#CustomTransactionBinding_ITransactionalService_AsyncRollback_policy"/>
+      <soap:operation soapAction="http://tempuri.org/ITransactionalService/AsyncRollback" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="TransactionalService">
+    <wsdl:port name="CustomTransactionBinding_ITransactionalService" binding="tns:CustomTransactionBinding_ITransactionalService">
+      <soap:address location="http://131.107.72.15/Transactions_Service_Indigo/TransactionalService.svc"/>
+      <wsa10:EndpointReference>
+        <wsa10:Address>http://131.107.72.15/Transactions_Service_Indigo/TransactionalService.svc</wsa10:Address>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,54 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+  <!-- Services from TransactionalService WSDL service -->
+
+  <service name="CustomTransactionBinding_ITransactionalService" provider="java:RPC" style="wrapped" use="literal">
+      <parameter name="wsdlTargetNamespace" value="http://tempuri.org/"/>
+      <parameter name="wsdlServiceElement" value="TransactionalService"/>
+      <parameter name="schemaQualified" value="http://tempuri.org/"/>
+      <parameter name="schemaUnqualified" value="http://tempuri.org/Imports"/>
+      <parameter name="wsdlServicePort" value="CustomTransactionBinding_ITransactionalService"/>
+      <parameter name="className" value="CustomTransactionBinding_ITransactionalServiceImpl"/>
+      <parameter name="wsdlPortType" value="ITransactionalService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation name="commit" qname="operNS:Commit" xmlns:operNS="http://tempuri.org/" soapAction="http://tempuri.org/ITransactionalService/Commit" >
+      </operation>
+      <operation name="rollback" qname="operNS:Rollback" xmlns:operNS="http://tempuri.org/" soapAction="http://tempuri.org/ITransactionalService/Rollback" >
+      </operation>
+      <operation name="asyncRollback" qname="operNS:AsyncRollback" xmlns:operNS="http://tempuri.org/" soapAction="http://tempuri.org/ITransactionalService/AsyncRollback" >
+      </operation>
+      <parameter name="allowedMethods" value="commit asyncRollback rollback"/>
+
+  </service>
+  
+  <!-- Services from IAServiceService WSDL service -->
+
+  <service name="IAService" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="urn:test"/>
+      <parameter name="wsdlServiceElement" value="IAServiceService"/>
+      <parameter name="wsdlServicePort" value="IAService"/>
+      <parameter name="className" value="IAServiceSoapBindingImpl"/>
+      <parameter name="wsdlPortType" value="IAService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation name="testCommit" qname="testCommit" soapAction="http://ws.apache.org/kandula/test" >
+      </operation>
+      <operation name="testRollback" qname="testRollback" soapAction="http://ws.apache.org/kandula/test" >
+      </operation>
+      <operation name="testAsyncRollback" qname="testAsyncRollback" soapAction="http://ws.apache.org/kandula/test" >
+      </operation>
+      <parameter name="allowedMethods" value="testRollback testAsyncRollback testCommit"/>
+
+  </service>
+  
+  
+</deployment>
