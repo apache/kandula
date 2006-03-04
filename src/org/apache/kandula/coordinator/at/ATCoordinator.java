@@ -16,6 +16,7 @@
  */
 package org.apache.kandula.coordinator.at;
 
+import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import org.apache.axis2.addressing.EndpointReference;
@@ -27,6 +28,7 @@ import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.coordinator.Registerable;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.InvalidStateException;
+import org.apache.kandula.faults.KandulaGeneralException;
 import org.apache.kandula.participant.Vote;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
@@ -112,7 +114,7 @@ public class ATCoordinator implements Registerable {
 		case CoordinatorStatus.STATUS_PREPARING_DURABLE:
 		case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
 		case CoordinatorStatus.STATUS_PREPARED_SUCCESS:
-			//If prepared success Ignore this message
+			// If prepared success Ignore this message
 			atContext.unlock();
 			break;
 		case CoordinatorStatus.STATUS_COMMITTING:
@@ -124,23 +126,13 @@ public class ATCoordinator implements Registerable {
 		case Status.CoordinatorStatus.STATUS_ACTIVE:
 			atContext.setStatus(Status.CoordinatorStatus.STATUS_PREPARING);
 			atContext.unlock();
-			volatilePrepare(atContext);
-			// wait till all the Volatile prepare()'s are done
-			while (atContext.hasMorePreparing()) {
-				if (atContext.getStatus() == Status.CoordinatorStatus.STATUS_ABORTING) {
-					return;
-				}
+			if (atContext.getVolatileParticipantCount() > 0) {
+				volatilePrepare(atContext);
+
+			} else if (atContext.getDurableParticipantCount() > 0) {
+				durablePrepare(atContext);
 			}
-			durablePrepare(atContext);
-			//wait till all the Durable prepare()'s are done
-			while (atContext.hasMorePreparing()) {
-				if (atContext.getStatus() == Status.CoordinatorStatus.STATUS_ABORTING) {
-					return;
-				}
-			}
-			if (!(atContext.getStatus() == Status.CoordinatorStatus.STATUS_ABORTING)) {
-				commitActivity(atContext);
-			}
+
 			break;
 		default:
 			atContext.unlock();
@@ -173,7 +165,7 @@ public class ATCoordinator implements Registerable {
 		case CoordinatorStatus.STATUS_PREPARING_DURABLE:
 		case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
 		case CoordinatorStatus.STATUS_PREPARED_SUCCESS:
-			//If prepared success Ignoring
+			// If prepared success Ignoring
 			atContext.unlock();
 			break;
 		case CoordinatorStatus.STATUS_COMMITTING:
@@ -193,6 +185,37 @@ public class ATCoordinator implements Registerable {
 		}
 	}
 
+	public void abortedOperation(String activityID, String enlistmentID) throws AbstractKandulaException {
+		ATActivityContext atContext = (ATActivityContext) store.get(activityID);
+		synchronized (atContext) {
+			atContext.lock();
+			switch (atContext.getStatus()) {
+			case CoordinatorStatus.STATUS_NONE:
+				atContext.unlock();
+				break;
+			case CoordinatorStatus.STATUS_ABORTING:
+				atContext.unlock();
+				atContext.removeParticipant(enlistmentID);
+				break;
+			case CoordinatorStatus.STATUS_PREPARING_DURABLE:
+			case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
+			case Status.CoordinatorStatus.STATUS_ACTIVE:
+				atContext.unlock();
+				atContext.removeParticipant(enlistmentID);
+				abortActivity(atContext);
+				break;
+			case CoordinatorStatus.STATUS_PREPARED_SUCCESS:
+			case CoordinatorStatus.STATUS_COMMITTING:
+				// Invalid state
+				atContext.unlock();
+				break;
+			default:
+				atContext.unlock();
+				break;
+			}
+		}
+	}
+
 	/**
 	 * @param context
 	 * @throws Exception
@@ -208,33 +231,42 @@ public class ATCoordinator implements Registerable {
 		ATActivityContext atContext = (ATActivityContext) context;
 		Iterator volatilePartipantIterator = atContext
 				.getRegistered2PCParticipants(Constants.WS_AT_VOLATILE2PC);
-		if (volatilePartipantIterator.hasNext()) {
-			atContext.lock();
-			atContext
-					.setStatus(Status.CoordinatorStatus.STATUS_PREPARING_VOLATILE);
-			atContext.unlock();
-			while (volatilePartipantIterator.hasNext()) {
-				atContext.countPreparing();
-				stub.prepareOperation(((ATParticipantInformation) volatilePartipantIterator
-						.next()).getEpr());
+		synchronized (atContext) {
+			if (volatilePartipantIterator.hasNext()) {
+				atContext.lock();
+				atContext
+						.setStatus(Status.CoordinatorStatus.STATUS_PREPARING_VOLATILE);
+				atContext.unlock();
+				while (volatilePartipantIterator.hasNext()) {
+					atContext.countPreparing();
+					stub
+							.prepareOperation(((ATParticipantInformation) volatilePartipantIterator
+									.next()).getEpr());
+				}
+			}
+			if (atContext.getDurableParticipantCount() > 0) {
+				try {
+					Method method = ATCoordinator.class.getMethod(
+							"durablePrepare",
+							new Class[] { AbstractContext.class });
+					atContext.setCallBackMethod(method);
+				} catch (Exception e) {
+					throw new KandulaGeneralException(
+							"Internal Kandula Server Error ", e);
+				}
+			} else {
+				try {
+					Method method = ATCoordinator.class.getMethod(
+							"commitActivity",
+							new Class[] { AbstractContext.class });
+					atContext.setCallBackMethod(method);
+				} catch (Exception e) {
+					throw new KandulaGeneralException(
+							"Internal Kandula Server Error ", e);
+				}
 			}
 		}
-	}
 
-	public void countVote(String activityID, Vote vote, String enlistmentID)
-			throws AbstractKandulaException {
-		ATActivityContext context = (ATActivityContext) store.get(activityID);
-		ATParticipantInformation participant = context.getParticipant(enlistmentID);
-
-		if (Vote.PREPARED.equals(vote)) {
-			participant.setStatus(Status.CoordinatorStatus.STATUS_PREPARED);
-		} else if (Vote.READ_ONLY.equals(vote)) {
-			participant.setStatus(Status.CoordinatorStatus.STATUS_READ_ONLY);
-		} else if (Vote.ABORT.equals(vote)) {
-			participant.setStatus(Status.ParticipantStatus.STATUS_ABORTED);
-			abortActivity(context);
-		}
-		context.decrementPreparing();
 	}
 
 	/**
@@ -252,17 +284,31 @@ public class ATCoordinator implements Registerable {
 		ATActivityContext atContext = (ATActivityContext) context;
 		Iterator durablePartipantIterator = atContext
 				.getRegistered2PCParticipants(Constants.WS_AT_DURABLE2PC);
-		if (durablePartipantIterator.hasNext()) {
-			atContext.lock();
-			atContext
-					.setStatus(Status.CoordinatorStatus.STATUS_PREPARING_DURABLE);
-			atContext.unlock();
-			while (durablePartipantIterator.hasNext()) {
-				atContext.countPreparing();
-				stub.prepareOperation(((ATParticipantInformation) durablePartipantIterator
-						.next()).getEpr());
+
+		synchronized (atContext) {
+			if (durablePartipantIterator.hasNext()) {
+				atContext.lock();
+				atContext
+						.setStatus(Status.CoordinatorStatus.STATUS_PREPARING_DURABLE);
+				atContext.unlock();
+				while (durablePartipantIterator.hasNext()) {
+					atContext.countPreparing();
+					stub
+							.prepareOperation(((ATParticipantInformation) durablePartipantIterator
+									.next()).getEpr());
+				}
+			}
+
+			try {
+				Method method = ATCoordinator.class.getMethod("commitActivity",
+						new Class[] { AbstractContext.class });
+				atContext.setCallBackMethod(method);
+			} catch (Exception e) {
+				throw new KandulaGeneralException(
+						"Internal Kandula Server Error ", e);
 			}
 		}
+
 	}
 
 	/**
@@ -272,7 +318,7 @@ public class ATCoordinator implements Registerable {
 	 *      registered for the Transaction Must check whether all the
 	 *      participants have replied to the prepare()
 	 */
-	private void commitActivity(AbstractContext context)
+	public void commitActivity(AbstractContext context)
 			throws AbstractKandulaException {
 		// check whether all participants have prepared
 		ParticipantPortTypeRawXMLStub stub = new ParticipantPortTypeRawXMLStub();
@@ -283,7 +329,8 @@ public class ATCoordinator implements Registerable {
 		atContext.unlock();
 		Iterator participants = atContext.getAll2PCParticipants();
 		while (participants.hasNext()) {
-			ATParticipantInformation participant = (ATParticipantInformation) participants.next();
+			ATParticipantInformation participant = (ATParticipantInformation) participants
+					.next();
 			if (!(Status.CoordinatorStatus.STATUS_READ_ONLY == participant
 					.getStatus())) {
 				stub.commitOperation(participant.getEpr());
@@ -311,13 +358,64 @@ public class ATCoordinator implements Registerable {
 		Iterator participants = atContext.getAll2PCParticipants();
 
 		while (participants.hasNext()) {
-			stub
-					.rollbackOperation(((ATParticipantInformation) participants.next())
-							.getEpr());
+			stub.rollbackOperation(((ATParticipantInformation) participants
+					.next()).getEpr());
 		}
 		CompletionInitiatorPortTypeRawXMLStub completionStub = new CompletionInitiatorPortTypeRawXMLStub(
 				atContext.getCompletionParticipant());
 		completionStub.abortedOperation();
+
+	}
+
+	/**
+	 * 
+	 * @param activityID
+	 * @param vote
+	 * @param enlistmentID
+	 * @throws AbstractKandulaException
+	 */
+	// TODO seperate these TWO and check states for each case
+	public void countVote(String activityID, Vote vote, String enlistmentID)
+			throws AbstractKandulaException {
+		ATActivityContext context = (ATActivityContext) store.get(activityID);
+		ATParticipantInformation participant = context
+				.getParticipant(enlistmentID);
+
+		if (Vote.PREPARED.equals(vote)) {
+			participant.setStatus(Status.CoordinatorStatus.STATUS_PREPARED);
+		} else if (Vote.READ_ONLY.equals(vote)) {
+			participant.setStatus(Status.CoordinatorStatus.STATUS_READ_ONLY);
+		}
+		/*
+		 * There can be a two invocations of the callback methode due to race
+		 * conditions at decrement preparing and count preparing
+		 */
+		synchronized (context) {
+			context.decrementPreparing();
+			if (!context.hasMorePreparing()) {
+				context.lock();
+				if (!(context.getStatus() == Status.CoordinatorStatus.STATUS_ABORTING)) {
+					context.unlock();
+					Method method = context.getCallBackMethod();
+					try {
+						method.invoke(this, new Object[] { context });
+
+					} catch (Exception e) {
+						throw new KandulaGeneralException(
+								"Internal Server Error", e);
+					}
+				} else {
+					context.unlock();
+				}
+			}
+		}
+
+	}
+
+	public void countParticipantOutcome(String activityID, String enlistmentID)
+			throws AbstractKandulaException {
+		ATActivityContext context = (ATActivityContext) store.get(activityID);
+		context.removeParticipant(enlistmentID);
 	}
 
 }

@@ -42,8 +42,6 @@ public class ActivationPortTypeRawXMLSkeleton {
 	}
 
 	/**
-	 * Auto generated method signature
-	 * 
 	 * @param requestElement
 	 * @throws AbstractKandulaException
 	 */

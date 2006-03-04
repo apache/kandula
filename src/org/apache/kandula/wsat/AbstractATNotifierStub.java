@@ -23,6 +23,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
@@ -58,8 +59,7 @@ public abstract class AbstractATNotifierStub {
 		//creating the configuration
 		this.service = service;
 		try {
-			configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
-					.createConfigurationContextFromFileSystem(axis2Home,
+			configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(axis2Home,
 							axis2Xml);
 			configurationContext.getAxisConfiguration().addService(service);
 		} catch (DeploymentException e) {
@@ -93,7 +93,7 @@ public abstract class AbstractATNotifierStub {
 		try {
 			Options options = new Options();
 			messageContext = new MessageContext();
-			OperationClient client = operations[opIndex].createClient(
+			final OperationClient client = operations[opIndex].createClient(
 					serviceContext, options);
 
 			SOAPFactory factory = OMAbstractFactory
@@ -115,7 +115,21 @@ public abstract class AbstractATNotifierStub {
 			//    options.setTranportOut(org.apache.axis2.Constants.TRANSPORT_HTTP);
 			//     System.out.println(operations[opIndex]);
 			client.addMessageContext(messageContext);
-			client.execute(false);
+			/*
+			 * hacking till we get fire and forget corretly in Axis2
+			 */
+			Thread thread = new Thread(new Runnable() {
+				public void run() {
+					try {
+						client.execute(false);
+					} catch (AxisFault e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+			thread.start();
+			
 		} catch (AxisFault e) {
 			throw new KandulaGeneralException(e);
 		}

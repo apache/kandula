@@ -17,7 +17,6 @@
 package org.apache.kandula.wscoor;
 
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
@@ -46,9 +45,6 @@ public class RegistrationRequesterPortTypeRawXMLSkeleton {
 					Constants.REQUESTER_ID_PARAMETER).getText();
 			EndpointReference coordinatorService = EndpointReferenceFactory
 					.endpointFromOM(response.getFirstElement());
-			// TODO: remove this
-			ConfigurationContext configurationContext = StorageFactory
-					.getInstance().getConfigurationContext();
 			AbstractContext context;
 
 			context = (AbstractContext) StorageFactory.getInstance()

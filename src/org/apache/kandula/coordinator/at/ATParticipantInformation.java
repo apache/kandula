@@ -17,13 +17,15 @@
 package org.apache.kandula.coordinator.at;
 
 import org.apache.axis2.addressing.EndpointReference;
-
 /**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a> <p/>
+ *  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
+ */
+/**
+ *  <p/>
  *         Used to store the details about the participant & to store the
  *         runtime status of Participants in the coordinator.
  */
-//TODO see whether we can avoid this class
+
 public class ATParticipantInformation {
 
 	private EndpointReference epr;

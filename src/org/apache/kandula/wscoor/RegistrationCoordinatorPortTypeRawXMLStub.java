@@ -26,6 +26,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
@@ -77,7 +78,7 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
 		this.toEPR = targetEndpoint;
 		service = new AxisService("RegistrationCoordinatorPortType");
 		try {
-			configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
+			configurationContext =ConfigurationContextFactory
 					.createConfigurationContextFromFileSystem(axis2Home,
 							axis2Xml);
 			configurationContext.getAxisConfiguration().addService(service);

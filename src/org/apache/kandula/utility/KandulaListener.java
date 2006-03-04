@@ -23,6 +23,7 @@ import java.util.HashMap;
 
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
@@ -47,7 +48,7 @@ public class KandulaListener {
 	private KandulaListener() throws IOException {
 		KandulaConfiguration configuration = KandulaConfiguration
 				.getInstance();
-		responseConfigurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
+		responseConfigurationContext = ConfigurationContextFactory
 				.createConfigurationContextFromFileSystem(
 						configuration.getKandulaListenerRepository(),
 						configuration.getKandulaListenerAxis2Xml());
@@ -94,7 +95,6 @@ public class KandulaListener {
 	 *             frequent case in reponses
 	 */
 	public void addService(AxisService service) throws AxisFault {
-		AxisOperation responseOperationDesc;
 
 		service.setClassLoader(Thread.currentThread().getContextClassLoader());
 		HashMap allServices = responseConfigurationContext

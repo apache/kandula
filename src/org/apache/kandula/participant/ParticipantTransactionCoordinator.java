@@ -73,9 +73,18 @@ public class ParticipantTransactionCoordinator {
 		}
 	}
 
-	public void commit(AbstractContext context) throws InvalidStateException {
+	public void commit(AbstractContext context) throws AbstractKandulaException {
 		ATParticipantContext atContext = (ATParticipantContext) context;
-		atContext.getResource().commit();
+		boolean outcome = atContext.getResource().commit();
+		CoordinatorPortTypeRawXMLStub stub = new CoordinatorPortTypeRawXMLStub(atContext
+				.getCoordinationEPR());
+		if (outcome)
+		{
+			stub.committedOperation();
+		}else
+		{
+			stub.abortedOperation();
+		}
 		//        ATParticipantContext atContext = (ATParticipantContext) context;
 		//        atContext.lock();
 		//        switch (context.getStatus()) {

@@ -33,9 +33,9 @@ public class DummyResource implements KandulaResource {
 		// TODO Auto-generated constructor stub
 	}
 
-	public void commit() {
+	public boolean commit() {
 		System.out.println("Commited");
-
+		return true;
 	}
 
 	public void rollback() {

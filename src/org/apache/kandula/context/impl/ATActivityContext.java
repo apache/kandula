@@ -16,6 +16,7 @@
  */
 package org.apache.kandula.context.impl;
 
+import java.lang.reflect.Method;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -52,6 +53,8 @@ public class ATActivityContext extends AbstractContext {
 	private boolean subDurableRegistered = false;
 
 	private EndpointReference parentEPR;
+	
+	private Method callBackMethod=null;
 
 	/**
 	 * Used when creating new activities
@@ -116,6 +119,19 @@ public class ATActivityContext extends AbstractContext {
 		}
 	}
 
+	public void removeParticipant(String enlistmentID)
+	{
+		//TODO: what to do if the participant is not found
+		if (durableParticipantsTable.containsKey(enlistmentID))
+		{
+			durableParticipantsTable.remove(enlistmentID);
+		}else if(volatileParticipantsTable.containsKey(enlistmentID))
+		{
+			volatileParticipantsTable.remove(enlistmentID);
+		}
+	}
+	
+
 	public void addVolatileParticipant(EndpointReference participantEPR,
 			String enlistmentID) throws AbstractKandulaException {
 		if (volatileParticipantsTable.contains(participantEPR))
@@ -167,19 +183,48 @@ public class ATActivityContext extends AbstractContext {
 		return completionParticipant;
 	}
 
-	public void countPreparing() {
+	public synchronized void countPreparing() {
 		preparingParticipantsCount++;
 
 	}
 
-	public void decrementPreparing() {
+	public synchronized void decrementPreparing() {
 		preparingParticipantsCount--;
 	}
 
-	public boolean hasMorePreparing() {
+	public synchronized boolean hasMorePreparing() {
 		return (preparingParticipantsCount > 0);
 	}
 
+	public int getVolatileParticipantCount()
+	{
+		return volatileParticipantsTable.size();
+	}
+	
+	public int getDurableParticipantCount()
+	{
+		return durableParticipantsTable.size();
+	}
+	
+
+	
+	
+	public String getCoordinationType() {
+		return Constants.WS_AT;
+	}
+
+	/**
+	 * @return Returns the callBackMethod.
+	 */
+	public Method getCallBackMethod() {
+		return callBackMethod;
+	}
+	/**
+	 * @param callBackMethod The callBackMethod to set.
+	 */
+	public void setCallBackMethod(Method callBackMethod) {
+		this.callBackMethod = callBackMethod;
+	}
 	public boolean getSubVolatileRegistered() {
 
 		return subVolatileRegistered;
@@ -196,17 +241,4 @@ public class ATActivityContext extends AbstractContext {
 	public void setSubDurableRegistered(boolean value) {
 		subDurableRegistered = value;
 	}
-
-	//    public void prepared(Participant participant)
-	//    {
-	//        if (participant.getStatus()==Status.ParticipantStatus.STATUS_ABORTED)
-	//        {
-	//            //throw new
-	//        }
-	//    }
-
-	public String getCoordinationType() {
-		return Constants.WS_AT;
-	}
-
 }

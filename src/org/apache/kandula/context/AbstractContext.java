@@ -107,4 +107,5 @@ public abstract class AbstractContext {
 	}
 
 	public abstract String getCoordinationType();
+
 }

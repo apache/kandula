@@ -65,9 +65,9 @@ public class ParticipantPortTypeRawXMLSkeleton {
 				Constants.REQUESTER_ID_PARAMETER).getText();
 		Store store = StorageFactory.getInstance().getStore();
 		AbstractContext context = (AbstractContext) store.get(requesterID);
-		ParticipantTransactionCoordinator txManager = new ParticipantTransactionCoordinator();
+		ParticipantTransactionCoordinator participantTxManager = new ParticipantTransactionCoordinator();
 		try {
-			txManager.commit(context);
+			participantTxManager.commit(context);
 		} catch (AbstractKandulaException e) {
 			AxisFault fault = new AxisFault(e);
 			fault.setFaultCode(e.getFaultCode());

@@ -23,6 +23,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
@@ -74,14 +75,14 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 			EndpointReference targetEndpoint) throws java.lang.Exception {
 		this.toEPR = targetEndpoint;
 		// creating the configuration
-		configurationContext = new org.apache.axis2.context.ConfigurationContextFactory()
+		configurationContext = ConfigurationContextFactory
 				.createConfigurationContextFromFileSystem(axis2Home, axis2Home
 						+ "/axis2.xml");
 		// configurationContext.getAxisConfiguration().engageModule(new
 		// QName("addressing"));
 		configurationContext.getAxisConfiguration().addService(_service);
 		ServiceGroupContext sgc = new ServiceGroupContext(
-				this.configurationContext, (AxisServiceGroup) this._service
+				this.configurationContext, (AxisServiceGroup)_service
 						.getParent());
 		this.serviceContext = new ServiceContext(_service, sgc);
 
@@ -89,7 +90,6 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 
 	public void creditOperation() throws IOException {
 
-		EndpointReference replyToEpr;
 		Options options = new Options();
 		MessageContext messageContext = new MessageContext();
 		messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
@@ -99,8 +99,9 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 
 		// _service.engageModule("addressing");
 
-		options.setAction("creditOperation");
+		options.setAction("http://tempuri.org/ITransactionalService/Commit");
 		options.setTo(this.toEPR);
+		
 		// messageSender
 		// .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
 		OperationClient client = operations[0].createClient(serviceContext,

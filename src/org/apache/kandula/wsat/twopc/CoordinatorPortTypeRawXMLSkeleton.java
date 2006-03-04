@@ -19,7 +19,6 @@ package org.apache.kandula.wsat.twopc;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
-import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.coordinator.at.ATCoordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.participant.Vote;
@@ -75,7 +74,7 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 				Constants.ENLISTMENT_ID_PARAMETER).getText();
 		ATCoordinator coordinator = new ATCoordinator();
 		try {
-			coordinator.countVote(activityId, Vote.ABORT, enlistmentId);
+			coordinator.abortedOperation(activityId, enlistmentId);
 		} catch (AbstractKandulaException e) {
 			AxisFault fault = new AxisFault(e);
 			fault.setFaultCode(e.getFaultCode());
@@ -116,8 +115,19 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
 				msgContext.getServiceContext().getConfigurationContext());
-		AbstractContext context;
-		System.out.println("Visited Committed operation");
+		OMElement header = msgContext.getEnvelope().getHeader();
+		String activityId = header.getFirstChildWithName(
+				Constants.TRANSACTION_ID_PARAMETER).getText();
+		String enlistmentId = header.getFirstChildWithName(
+				Constants.ENLISTMENT_ID_PARAMETER).getText();
+		ATCoordinator coordinator = new ATCoordinator();
+		try {
+			coordinator.countParticipantOutcome(activityId,  enlistmentId);
+		} catch (AbstractKandulaException e) {
+			AxisFault fault = new AxisFault(e);
+			fault.setFaultCode(e.getFaultCode());
+			throw fault;
+		}
 		return null;
 	}
 
@@ -128,7 +138,6 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 	public OMElement replayOperation(OMElement requestElement) throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
 				msgContext.getServiceContext().getConfigurationContext());
-		AbstractContext context;
 		System.out.println("Visited Replay operation");
 		return null;
 	}

@@ -38,8 +38,6 @@ public class CreateCoordinationContextTest extends TestCase {
 
 	private SimpleHTTPServer server;
 
-	private boolean finish = false;
-
 	public CreateCoordinationContextTest() {
 		super(CreateCoordinationContextTest.class.getName());
 	}
@@ -49,14 +47,13 @@ public class CreateCoordinationContextTest extends TestCase {
 	}
 
 	protected void setUp() throws Exception {
-		ConfigurationContextFactory erfac = new ConfigurationContextFactory();
-		File file = new File(repository);
+				File file = new File(repository);
 		File configFile = new File(repository + "/axis2.xml");
 		if (!file.exists()) {
 			throw new Exception("repository directory "
 					+ file.getAbsolutePath() + " does not exists");
 		}
-		ConfigurationContext er = erfac
+		ConfigurationContext er = ConfigurationContextFactory
 				.createConfigurationContextFromFileSystem(file
 						.getAbsolutePath(), configFile.getAbsolutePath());
 
@@ -92,7 +89,7 @@ public class CreateCoordinationContextTest extends TestCase {
 		KandulaDemoServiceStub stub = new KandulaDemoServiceStub(
 				"target/initiator-repository",
 				new EndpointReference(
-						"http://localhost:8081/axis2/services/KandulaDemoService"));
+						"http://127.0.0.1:8085/Transactions_Service_Indigo/TransactionalService.svc"));
 		stub.creditOperation();
 		// try{
 		tm.commit();
