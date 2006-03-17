@@ -62,7 +62,7 @@
 	<mkdir dir="target/modules/kandula-inflow/META-INF"/>
         <copy file="conf/inflow-module.xml"
             tofile="target/modules/kandula-inflow/META-INF/module.xml"/>
-        <jar jarfile="target/kandula-inflow.mar" 	basedir="target/modules/kandula-inflow">
+        <jar jarfile="target/kandula-inflow-0.1.mar" 	basedir="target/modules/kandula-inflow">
             <include name="**"/>
         </jar>
 
@@ -70,7 +70,7 @@
 	<mkdir dir="target/modules/kandula-outflow/META-INF"/>
         <copy file="conf/outflow-module.xml"
             tofile="target/modules/kandula-outflow/META-INF/module.xml"/>
-        <jar jarfile="target/kandula-outflow.mar" 	basedir="target/modules/kandula-outflow">
+        <jar jarfile="target/kandula-outflow-0.1.mar" 	basedir="target/modules/kandula-outflow">
             <include name="**"/>
         </jar>
 
@@ -88,14 +88,19 @@
 	 <copy file="target/RegistrationCoordinator.aar"
             tofile="target/testing-repository/services/RegistrationCoordinator.aar"/>
          <mkdir dir="target/testing-repository/modules"/>
-	 <copy file="target/kandula-inflow.mar"
-            tofile="target/testing-repository/modules/kandula-inflow.mar"/>
-	 <copy file="modules/addressing.mar"
-            tofile="target/testing-repository/modules/addressing.mar"/>
+	 <copy file="target/kandula-inflow-0.1.mar"
+            tofile="target/testing-repository/modules/kandula-inflow-0.1.mar"/>
+	 <copy file="modules/addressing-0.95-SNAPSHOT.mar"
+            tofile="target/testing-repository/modules/addressing-0.95-SNAPSHOT.mar"/>
 	 <copy file="conf/coordinator-axis2.xml"
             tofile="target/testing-repository/axis2.xml"/>
 
 	<echo message="----------------Creating KandulaDemoService.aar----------------"/>
+  <ant:copy todir="${samples.dir}/version/src">
+            <ant:fileset dir="src">
+                <ant:include name="sample/axisversion/**"/>
+            </ant:fileset>
+        </ant:copy>
 	<mkdir dir="target/services/KandulaDemoService/META-INF"/>
         <copy file="test-resources/KandulaDemoService/META-INF/services.xml"
             tofile="target/services/KandulaDemoService/META-INF/services.xml"/>
@@ -108,10 +113,10 @@
 	<echo message="-----------Creating Initiator test repository----------"/>
         <mkdir dir="target/initiator-repository"/>
 	<mkdir dir="target/initiator-repository/modules"/>
-	<copy file="target/kandula-outflow.mar"
-            tofile="target/initiator-repository/modules/kandula-outflow.mar"/>
- 	<copy file="modules/addressing.mar"
-            tofile="target/initiator-repository/modules/addressing.mar"/>
+	<copy file="target/kandula-outflow-0.1.mar"
+            tofile="target/initiator-repository/modules/kandula-outflow-0.1.mar"/>
+ 	<copy file="modules/addressing-0.95-SNAPSHOT.mar"
+            tofile="target/initiator-repository/modules/addressing-0.95-SNAPSHOT.mar"/>
 	 <copy file="conf/initiator-axis2.xml"
             tofile="target/initiator-repository/axis2.xml"/>       
        
