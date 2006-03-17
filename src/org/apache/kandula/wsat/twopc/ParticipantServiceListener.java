@@ -24,7 +24,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
-import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
@@ -61,7 +61,7 @@ public class ParticipantServiceListener {
 		String className = ParticipantPortTypeRawXMLSkeleton.class.getName();
 		String serviceName = "ParticipantPortType";
 		AxisService service = new AxisService(serviceName);
-		service.addParameter(new ParameterImpl(
+		service.addParameter(new Parameter(
 				AbstractMessageReceiver.SERVICE_CLASS, className));
 		service.setFileName(className);
 

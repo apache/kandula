@@ -36,7 +36,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.OutOnlyAxisOperation;
-import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
@@ -156,8 +156,7 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
 
 		KandulaListener listener = KandulaListener.getInstance();
 		AxisService service = new AxisService(serviceName);
-		service.addParameter(new ParameterImpl(
-				AbstractMessageReceiver.SERVICE_CLASS, className));
+		service.addParameter(new Parameter(AbstractMessageReceiver.SERVICE_CLASS, className));
 		service.setFileName(className);
 
 		responseOperationDesc = new InOnlyAxisOperation();

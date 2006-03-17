@@ -36,7 +36,7 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
-import org.apache.axis2.description.ParameterImpl;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
@@ -111,7 +111,7 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
 		MessageContext messageContext = new MessageContext();
 		Options options = new Options();
 		messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
-				AddressingConstants.Submission.WSA_NAMESPACE);
+				AddressingConstants.Final.WSA_NAMESPACE);
 		SOAPEnvelope env = createSOAPEnvelope(coordinationType);
 		messageContext.setEnvelope(env);
 		replyToEpr = setupListener();
@@ -156,7 +156,7 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
 
 		KandulaListener listener = KandulaListener.getInstance();
 		AxisService service = new AxisService(serviceName);
-		service.addParameter(new ParameterImpl(
+		service.addParameter(new Parameter(
 				AbstractMessageReceiver.SERVICE_CLASS, className));
 		service.setFileName(className);
 

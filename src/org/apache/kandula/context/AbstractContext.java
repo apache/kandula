@@ -49,7 +49,7 @@ public abstract class AbstractContext {
 
 	public AbstractContext(String coordinationType) {
 		propertyBag = new HashMap();
-		activityID = EndpointReferenceFactory.getRandomStringOf18Characters();
+		activityID = "urn:"+EndpointReferenceFactory.getRandomStringOf18Characters();
 		EndpointReference registrationEpr = EndpointReferenceFactory
 				.getInstance().getRegistrationEndpoint(activityID);
 		coordinationContext = CoordinationContext.Factory.newContext(
