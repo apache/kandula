@@ -230,7 +230,7 @@
 		 <dependency>
             <groupId>ws-commons</groupId>
             <artifactId>policy</artifactId>
-            <version>0.90-SNAPSHOT</version>
+            <version>0.92-SNAPSHOT</version>
             <properties>
                 <module>true</module>
             </properties>
