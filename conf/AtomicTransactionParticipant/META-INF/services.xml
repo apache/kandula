@@ -4,15 +4,15 @@
     </description>
    <parameter name="ServiceClass" locked="xsd:false">org.apache.kandula.wsat.twopc.ParticipantPortTypeRawXMLSkeleton</parameter>
     <operation name="commitOperation">
-        <parameter name="wsamapping" locked="xsd:false">http://schemas.xmlsoap.org/ws/2004/10/wsat/Commit</parameter>
+        <actionMapping>http://schemas.xmlsoap.org/ws/2004/10/wsat/Commit</actionMapping>
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
     </operation>
     <operation name="rollbackOperation">
-        <parameter name="wsamapping" locked="xsd:false">http://schemas.xmlsoap.org/ws/2004/10/wsat/Rollback</parameter>
+        <actionMapping>http://schemas.xmlsoap.org/ws/2004/10/wsat/Rollback</actionMapping>
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
     </operation>
     <operation name="prepareOperation">
-        <parameter name="wsamapping" locked="xsd:false">http://schemas.xmlsoap.org/ws/2004/10/wsat/Prepare</parameter>
+        <actionMapping>http://schemas.xmlsoap.org/ws/2004/10/wsat/Prepare</actionMapping>
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
     </operation>
 </service>
