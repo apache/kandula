@@ -16,12 +16,12 @@
  */
 package org.apache.kandula.wscoor;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.engine.DependencyManager;
 import org.apache.kandula.Constants;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.soap.SOAPEnvelope;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -40,8 +40,7 @@ public class ActivationPortTypeRawXMLAsyncMessageReceiver extends
 			Object obj = getTheImplementationObject(msgContext);
 
 			//Inject the Message Context if it is asked for
-			DependencyManager.configureBusinessLogicProvider(obj, msgContext,
-					newMsgContext);
+			DependencyManager.configureBusinessLogicProvider(obj, msgContext.getOperationContext());
 
 			ActivationPortTypeRawXMLSkeleton skel = (ActivationPortTypeRawXMLSkeleton) obj;
 			//Out Envelop
@@ -71,7 +70,7 @@ public class ActivationPortTypeRawXMLAsyncMessageReceiver extends
 				newMsgContext.setEnvelope(envelope);
 				newMsgContext
 						.setWSAAction(Constants.WS_COOR_CREATE_COORDINATIONCONTEXT_RESPONSE);
-				newMsgContext.setRelatesTo(null);
+				newMsgContext.setRelationships(null);
 			}
 		} catch (Exception e) {
 			throw AxisFault.makeFault(e);

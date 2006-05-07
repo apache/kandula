@@ -18,6 +18,10 @@ package org.apache.kandula.wscoor;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
@@ -25,10 +29,6 @@ import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.coordinator.Coordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.storage.StorageFactory;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.soap.SOAPFactory;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>

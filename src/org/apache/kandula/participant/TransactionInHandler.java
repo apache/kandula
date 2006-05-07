@@ -20,6 +20,8 @@ import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
@@ -32,11 +34,10 @@ import org.apache.kandula.context.impl.SimpleCoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
-import org.apache.kandula.utility.KandulaConfiguration;
 import org.apache.kandula.utility.EndpointReferenceFactory;
+import org.apache.kandula.utility.KandulaConfiguration;
 import org.apache.kandula.wscoor.RegistrationCoordinatorPortTypeRawXMLStub;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.soap.SOAPHeader;
+
 
 public class TransactionInHandler extends AbstractHandler {
 	

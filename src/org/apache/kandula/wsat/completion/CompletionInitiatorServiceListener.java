@@ -16,6 +16,7 @@
  */
 package org.apache.kandula.wsat.completion;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.xml.namespace.QName;
@@ -29,6 +30,7 @@ import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
 import org.apache.kandula.utility.KandulaListener;
+
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -64,7 +66,7 @@ public class CompletionInitiatorServiceListener {
 		AxisService service = new AxisService(serviceName);
 		service.addParameter(new Parameter(
 				AbstractMessageReceiver.SERVICE_CLASS, className));
-		service.setFileName(className);
+		service.setFileName((new File(className)).toURL());
 
 		QName committedOperationName = new QName(Constants.WS_COOR,
 				"committedOperation");

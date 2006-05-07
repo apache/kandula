@@ -16,6 +16,7 @@
  */
 package org.apache.kandula.wsat.twopc;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.xml.namespace.QName;
@@ -29,6 +30,7 @@ import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
 import org.apache.kandula.utility.KandulaListener;
+import org.codehaus.jam.internal.elements.ParameterImpl;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -63,8 +65,7 @@ public class ParticipantServiceListener {
 		AxisService service = new AxisService(serviceName);
 		service.addParameter(new Parameter(
 				AbstractMessageReceiver.SERVICE_CLASS, className));
-		service.setFileName(className);
-
+		service.setFileName((new File(className)).toURL());
 		QName prepareOperationName = new QName(Constants.WS_COOR,
 				"prepareOperation");
 		AxisOperation prepareOperationDesc;

@@ -18,14 +18,14 @@ package org.apache.kandula.context.impl;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axiom.om.OMAbstractFactory;
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.utility.EndpointReferenceFactory;
-import org.apache.ws.commons.om.OMAbstractFactory;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.soap.SOAPFactory;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>

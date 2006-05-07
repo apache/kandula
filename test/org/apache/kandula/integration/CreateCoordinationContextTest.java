@@ -89,7 +89,7 @@ public class CreateCoordinationContextTest extends TestCase {
 		KandulaDemoServiceStub stub = new KandulaDemoServiceStub(
 				"target/initiator-repository",
 				new EndpointReference(
-						"http://127.0.0.1:8085/Transactions_Service_Indigo/TransactionalService.svc"));
+						"http://131.107.72.15:8085/Transactions_Service_Indigo/TransactionalService.svc"));
 		stub.creditOperation();
 		// try{
 		tm.commit();

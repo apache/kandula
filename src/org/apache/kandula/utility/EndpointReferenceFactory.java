@@ -28,15 +28,15 @@ import java.util.Random;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.om.impl.llom.factory.OMLinkedListImplFactory;
+import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.addressing.AddressingConstants.Final;
 import org.apache.kandula.Constants;
 import org.apache.kandula.wsat.completion.CompletionInitiatorServiceListener;
-import org.apache.ws.commons.om.OMElement;
-import org.apache.ws.commons.om.OMNamespace;
-import org.apache.ws.commons.om.impl.llom.factory.OMLinkedListImplFactory;
-import org.apache.ws.commons.soap.SOAPFactory;
 
 /**
  * @author <a href="mailto:thilina@apache.org"> Thilina Gunarathne </a>
