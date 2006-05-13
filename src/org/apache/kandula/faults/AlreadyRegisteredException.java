@@ -21,11 +21,10 @@ package org.apache.kandula.faults;
  */
 public class AlreadyRegisteredException extends AbstractKandulaException {
 
-	
 	private static final long serialVersionUID = 354170092780305997L;
 
 	/**
-	 *  
+	 * 
 	 */
 	public AlreadyRegisteredException() {
 		super();

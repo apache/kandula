@@ -27,26 +27,15 @@ import org.apache.kandula.participant.KandulaResource;
  */
 public class ATParticipantContext extends AbstractContext {
 	KandulaResource resource;
-
+	
 	public ATParticipantContext() {
 		this.setStatus(Status.CoordinatorStatus.STATUS_ACTIVE);
 	}
-
-	/**
-	 * @return Returns the resource.
-	 */
-	public KandulaResource getResource() {
-		return resource;
+	
+	public EndpointReference getCoordinationEPR() {
+		return (EndpointReference) getProperty(ATActivityContext.COORDINATION_EPR);
 	}
-
-	/**
-	 * @param resource
-	 *            The resource to set.
-	 */
-	public void setResource(KandulaResource resource) {
-		this.resource = resource;
-	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -55,9 +44,23 @@ public class ATParticipantContext extends AbstractContext {
 	public String getCoordinationType() {
 		return Constants.WS_AT;
 	}
-
-	public EndpointReference getCoordinationEPR() {
-		return (EndpointReference) getProperty(ATActivityContext.COORDINATION_EPR);
+	
+	/**
+	 * @return Returns the transaction partcipant resource.
+	 */
+	public KandulaResource getResource() {
+		return resource;
+	}
+	
+	/**
+	 * @param setting the transaction participant resource
+	 */
+	public void setResource(KandulaResource resource) {
+		this.resource = resource;
 	}
 
+	public String getRegistrationProtocol() {
+		return resource.getProtocol();
+	}
+	
 }

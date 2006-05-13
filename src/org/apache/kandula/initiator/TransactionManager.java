@@ -54,33 +54,35 @@ public class TransactionManager {
 		store.put(context.getProperty(ATActivityContext.REQUESTER_ID), context);
 	}
 
+	public void begin(String axis2Home, String axis2Xml) throws Exception {
+		begin(axis2Home,axis2Xml,false);
+	}
 	/**
 	 * @throws Exception
 	 */
-	public void begin(String axis2Home, String axis2Xml) throws Exception {
+	public void begin(String axis2Home, String axis2Xml, boolean async) throws Exception {
 		this.axis2Home = axis2Home;
 		this.axis2Xml = axis2Xml;
 		AbstractContext context = getTransaction();
 		String id = (String) context
-				.getProperty(ATActivityContext.REQUESTER_ID);
+				.getProperty(AbstractContext.REQUESTER_ID);
 		ActivationCoordinatorPortTypeRawXMLStub activationCoordinator = new ActivationCoordinatorPortTypeRawXMLStub(
 				axis2Home, axis2Xml, (EndpointReference) context
-						.getProperty(ATActivityContext.ACTIVATION_EPR));
+						.getProperty(AbstractContext.ACTIVATION_EPR));
 		activationCoordinator.createCoordinationContextOperation(
-				org.apache.kandula.Constants.WS_AT, id);
-		while (context.getCoordinationContext() == null) {
-			//allow other threads to execute
+				context,async);
+		while (async & context.getCoordinationContext() == null) {
+			// allow other threads to execute
 			Thread.sleep(10);
 		}
 		RegistrationCoordinatorPortTypeRawXMLStub registrationCoordinator = new RegistrationCoordinatorPortTypeRawXMLStub(
 				axis2Home, axis2Xml, context.getCoordinationContext()
 						.getRegistrationService());
+		//TODO make this unaware of the protocol
 		EndpointReference registrationRequeterPortEPR = EndpointReferenceFactory
 				.getInstance().getCompletionInitiatorEndpoint(id);
-		registrationCoordinator.registerOperation(
-				org.apache.kandula.Constants.WS_AT_COMPLETION,
-				registrationRequeterPortEPR, id);
-		while (context.getProperty(ATActivityContext.COORDINATION_EPR) == null) {
+		registrationCoordinator.registerOperation( context,registrationRequeterPortEPR,async);
+		while (async & context.getProperty(ATActivityContext.COORDINATION_EPR) == null) {
 			Thread.sleep(10);
 		}
 	}
@@ -99,6 +101,7 @@ public class TransactionManager {
 		if ((context.getStatus() == Status.ParticipantStatus.STATUS_ABORTED)) {
 			throw new Exception("Aborted");
 		}
+		forgetTransaction();
 	}
 
 	public void rollback() throws Exception {
@@ -112,24 +115,25 @@ public class TransactionManager {
 				| (context.getStatus() != Status.ParticipantStatus.STATUS_ABORTED)) {
 			Thread.sleep(10);
 		}
+		forgetTransaction();
 	}
 
-	//	public Transaction suspend() {
-	//		Transaction tx= getTransaction();
-	//		forget();
-	//		return tx;
-	//	}
+	// public Transaction suspend() {
+	// Transaction tx= getTransaction();
+	// forget();
+	// return tx;
+	// }
 	//
-	//	public void resume(Transaction tx) {
-	//		if (threadInfo.get() != null)
-	//			throw new IllegalStateException();
-	//		else
-	//			threadInfo.set(tx);
-	//	}
+	// public void resume(Transaction tx) {
+	// if (threadInfo.get() != null)
+	// throw new IllegalStateException();
+	// else
+	// threadInfo.set(tx);
+	// }
 	//
-	//	public void forget() {
-	//		threadInfo.set(null);
-	//	}
+	// public void forget() {
+	// threadInfo.set(null);
+	// }
 
 	public static AbstractContext getTransaction()
 			throws AbstractKandulaException {
@@ -140,5 +144,9 @@ public class TransactionManager {
 			throw new InvalidStateException("No Activity Found");
 		}
 		return context;
+	}
+	public static void forgetTransaction()
+	{
+		threadInfo.set(null);
 	}
 }

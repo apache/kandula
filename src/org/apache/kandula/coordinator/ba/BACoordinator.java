@@ -28,7 +28,7 @@ public class BACoordinator implements Registerable {
 
 	public EndpointReference register(AbstractContext context, String protocol,
 			EndpointReference participantEPR) throws AbstractKandulaException {
-		return null; //To change body of implemented methods use File |
+		return null; // To change body of implemented methods use File |
 		// Settings | File Templates.
 	}
 }

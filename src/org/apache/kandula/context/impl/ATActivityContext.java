@@ -36,26 +36,26 @@ import org.apache.kandula.utility.EndpointReferenceFactory;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class ATActivityContext extends AbstractContext {
-
-	private int preparingParticipantsCount = 0;
-
-	private boolean subOrdinate = false;
-
-	private Hashtable volatileParticipantsTable;
-
-	private Hashtable durableParticipantsTable;
-
-	//TODO : check whether there can be more than 1 initiator
+	
+	private Method callBackMethod = null;
+	
+	// TODO : check whether there can be more than 1 initiator
 	private EndpointReference completionParticipant;
-
-	private boolean subVolatileRegistered = false;
-
-	private boolean subDurableRegistered = false;
-
+	
+	private Hashtable durableParticipantsTable;
+	
 	private EndpointReference parentEPR;
 	
-	private Method callBackMethod=null;
-
+	private int preparingParticipantsCount = 0;
+	
+	private boolean subDurableRegistered = false;
+	
+	private boolean subOrdinate = false;
+	
+	private boolean subVolatileRegistered = false;
+	
+	private Hashtable volatileParticipantsTable;
+	
 	/**
 	 * Used when creating new activities
 	 */
@@ -65,7 +65,7 @@ public class ATActivityContext extends AbstractContext {
 		volatileParticipantsTable = new Hashtable();
 		durableParticipantsTable = new Hashtable();
 	}
-
+	
 	/**
 	 * @param context
 	 *            To be used when coordinator is used as a sub ordinate to an
@@ -74,14 +74,14 @@ public class ATActivityContext extends AbstractContext {
 	public ATActivityContext(CoordinationContext context) {
 		subOrdinate = true;
 		parentEPR = context.getRegistrationService();
-		//        context.setRegistrationService(EndpointReferenceFactory.getInstance()
-		//                .getRegistrationEndpoint());
+		// context.setRegistrationService(EndpointReferenceFactory.getInstance()
+		// .getRegistrationEndpoint());
 		this.setStatus(Status.CoordinatorStatus.STATUS_ACTIVE);
 		volatileParticipantsTable = new Hashtable();
 		durableParticipantsTable = new Hashtable();
 		setCoordinationContext(context);
 	}
-
+	
 	/**
 	 * @param id
 	 *            To be used when using as the requester
@@ -92,7 +92,17 @@ public class ATActivityContext extends AbstractContext {
 				.getRandomStringOf18Characters());
 		this.setProperty(ACTIVATION_EPR, activationEPR);
 	}
-
+	
+	public void addDurableParticipant(EndpointReference participantEPR,
+			String enlistmentID) throws AlreadyRegisteredException {
+		if (durableParticipantsTable.contains(participantEPR)) {
+			throw new AlreadyRegisteredException();
+		}
+		ATParticipantInformation participant = new ATParticipantInformation(
+				participantEPR, Constants.WS_AT_DURABLE2PC, enlistmentID);
+		durableParticipantsTable.put(enlistmentID, participant);
+	}
+	
 	/**
 	 * @param participantEPR
 	 * @param protocol
@@ -101,56 +111,88 @@ public class ATActivityContext extends AbstractContext {
 	 */
 	public EndpointReference addParticipant(EndpointReference participantEPR,
 			String protocol) throws AbstractKandulaException {
-		String enlistmentID = EndpointReferenceFactory.getRandomStringOf18Characters();
+		String enlistmentID = EndpointReferenceFactory
+		.getRandomStringOf18Characters();
 		if (Constants.WS_AT_VOLATILE2PC.equals(protocol)) {
 			addVolatileParticipant(participantEPR, enlistmentID);
 			return EndpointReferenceFactory.getInstance()
-					.get2PCCoordinatorEndpoint(activityID, enlistmentID);
+			.get2PCCoordinatorEndpoint(activityID, enlistmentID);
 		} else if (Constants.WS_AT_DURABLE2PC.equals(protocol)) {
 			addDurableParticipant(participantEPR, enlistmentID);
 			return EndpointReferenceFactory.getInstance()
-					.get2PCCoordinatorEndpoint(activityID, enlistmentID);
+			.get2PCCoordinatorEndpoint(activityID, enlistmentID);
 		} else if (Constants.WS_AT_COMPLETION.equals(protocol)) {
 			completionParticipant = participantEPR;
 			return EndpointReferenceFactory.getInstance()
-					.getCompletionEndpoint(this.activityID);
+			.getCompletionEndpoint(this.activityID);
 		} else {
 			throw new InvalidProtocolException();
 		}
 	}
-
-	public void removeParticipant(String enlistmentID)
-	{
-		//TODO: what to do if the participant is not found
-		if (durableParticipantsTable.containsKey(enlistmentID))
-		{
-			durableParticipantsTable.remove(enlistmentID);
-		}else if(volatileParticipantsTable.containsKey(enlistmentID))
-		{
-			volatileParticipantsTable.remove(enlistmentID);
-		}
-	}
 	
-
 	public void addVolatileParticipant(EndpointReference participantEPR,
 			String enlistmentID) throws AbstractKandulaException {
 		if (volatileParticipantsTable.contains(participantEPR))
 			throw new AlreadyRegisteredException();
-		ATParticipantInformation participant = new ATParticipantInformation(participantEPR,
-				Constants.WS_AT_VOLATILE2PC, enlistmentID);
+		ATParticipantInformation participant = new ATParticipantInformation(
+				participantEPR, Constants.WS_AT_VOLATILE2PC, enlistmentID);
 		volatileParticipantsTable.put(enlistmentID, participant);
 	}
-
-	public void addDurableParticipant(EndpointReference participantEPR,
-			String enlistmentID) throws AlreadyRegisteredException {
-		if (durableParticipantsTable.contains(participantEPR)) {
-			throw new AlreadyRegisteredException();
-		}
-		ATParticipantInformation participant = new ATParticipantInformation(participantEPR,
-				Constants.WS_AT_DURABLE2PC, enlistmentID);
-		durableParticipantsTable.put(enlistmentID, participant);
+	
+	public synchronized void countPreparing() {
+		preparingParticipantsCount++;
+		
 	}
-
+	
+	public synchronized void decrementPreparing() {
+		preparingParticipantsCount--;
+	}
+	
+	public Iterator getAll2PCParticipants() {
+		LinkedList list = new LinkedList(volatileParticipantsTable.values());
+		list.addAll(durableParticipantsTable.values());
+		return list.iterator();
+	}
+	
+	/**
+	 * @return Returns the callBackMethod.
+	 */
+	public Method getCallBackMethod() {
+		return callBackMethod;
+	}
+	
+	/**
+	 * @return the completion initiator epr
+	 */
+	public EndpointReference getCompletionParticipant() {
+		return completionParticipant;
+	}
+	
+	public String getCoordinationType() {
+		return Constants.WS_AT;
+	}
+	
+	public int getDurableParticipantCount() {
+		return durableParticipantsTable.size();
+	}
+	
+	public String getRegistrationProtocol()
+	{
+		return Constants.WS_AT_COMPLETION;
+	}
+	
+	public ATParticipantInformation getParticipant(String enlistmentId) {
+		if (volatileParticipantsTable.containsKey(enlistmentId)) {
+			return (ATParticipantInformation) volatileParticipantsTable
+			.get(enlistmentId);
+		} else if (durableParticipantsTable.containsKey(enlistmentId)) {
+			return (ATParticipantInformation) durableParticipantsTable
+			.get(enlistmentId);
+		} else {
+			return null;
+		}
+	}
+	
 	public Iterator getRegistered2PCParticipants(String protocol) {
 		if (protocol.equals(Constants.WS_AT_VOLATILE2PC)) {
 			return volatileParticipantsTable.values().iterator();
@@ -159,86 +201,46 @@ public class ATActivityContext extends AbstractContext {
 		}
 		return null;
 	}
-
-	public Iterator getAll2PCParticipants() {
-		LinkedList list = new LinkedList(volatileParticipantsTable.values());
-		list.addAll(durableParticipantsTable.values());
-		return list.iterator();
+	
+	public boolean getSubDurableRegistered() {
+		return subDurableRegistered;
 	}
-
-	public ATParticipantInformation getParticipant(String enlistmentId) {
-		if (volatileParticipantsTable.containsKey(enlistmentId)) {
-			return (ATParticipantInformation) volatileParticipantsTable.get(enlistmentId);
-		} else if (durableParticipantsTable.containsKey(enlistmentId)) {
-			return (ATParticipantInformation) durableParticipantsTable.get(enlistmentId);
-		} else {
-			return null;
-		}
+	
+	public boolean getSubVolatileRegistered() {
+		
+		return subVolatileRegistered;
 	}
-
-	/**
-	 * @return the completion initiator epr
-	 */
-	public EndpointReference getCompletionParticipant() {
-		return completionParticipant;
-	}
-
-	public synchronized void countPreparing() {
-		preparingParticipantsCount++;
-
-	}
-
-	public synchronized void decrementPreparing() {
-		preparingParticipantsCount--;
-	}
-
-	public synchronized boolean hasMorePreparing() {
-		return (preparingParticipantsCount > 0);
-	}
-
-	public int getVolatileParticipantCount()
-	{
+	
+	public int getVolatileParticipantCount() {
 		return volatileParticipantsTable.size();
 	}
 	
-	public int getDurableParticipantCount()
-	{
-		return durableParticipantsTable.size();
+	public synchronized boolean hasMorePreparing() {
+		return (preparingParticipantsCount > 0);
 	}
 	
-
-	
-	
-	public String getCoordinationType() {
-		return Constants.WS_AT;
+	public void removeParticipant(String enlistmentID) {
+		// TODO: what to do if the participant is not found
+		if (durableParticipantsTable.containsKey(enlistmentID)) {
+			durableParticipantsTable.remove(enlistmentID);
+		} else if (volatileParticipantsTable.containsKey(enlistmentID)) {
+			volatileParticipantsTable.remove(enlistmentID);
+		}
 	}
-
+	
 	/**
-	 * @return Returns the callBackMethod.
-	 */
-	public Method getCallBackMethod() {
-		return callBackMethod;
-	}
-	/**
-	 * @param callBackMethod The callBackMethod to set.
+	 * @param callBackMethod
+	 *            The callBackMethod to set.
 	 */
 	public void setCallBackMethod(Method callBackMethod) {
 		this.callBackMethod = callBackMethod;
 	}
-	public boolean getSubVolatileRegistered() {
-
-		return subVolatileRegistered;
-	}
-
-	public boolean getSubDurableRegistered() {
-		return subDurableRegistered;
-	}
-
-	public void setSubVolatileRegistered(boolean value) {
-		subVolatileRegistered = value;
-	}
-
+	
 	public void setSubDurableRegistered(boolean value) {
 		subDurableRegistered = value;
+	}
+	
+	public void setSubVolatileRegistered(boolean value) {
+		subVolatileRegistered = value;
 	}
 }

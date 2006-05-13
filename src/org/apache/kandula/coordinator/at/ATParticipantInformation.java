@@ -17,24 +17,26 @@
 package org.apache.kandula.coordinator.at;
 
 import org.apache.axis2.addressing.EndpointReference;
+
 /**
- *  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
+ * *
+ * 
+ * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 /**
- *  <p/>
- *         Used to store the details about the participant & to store the
- *         runtime status of Participants in the coordinator.
+ * <p/> Used to store the details about the participant & to store the runtime
+ * status of Participants in the coordinator.
  */
 
 public class ATParticipantInformation {
+
+	private String enlistmentId;
 
 	private EndpointReference epr;
 
 	private String protocol;
 
 	private int status;
-
-	private String enlistmentId;
 
 	/**
 	 * @param epr
@@ -50,46 +52,39 @@ public class ATParticipantInformation {
 	}
 
 	/**
-	 * @return Returns the enlistmentId.
+	 * @return Returns the Id which this participant is registered with the
+	 *         coordinator
 	 */
 	public String getEnlistmentId() {
 		return enlistmentId;
 	}
 
 	/**
-	 * @return Returns the epr.
+	 * @return Returns the epr of the participant
 	 */
 	public EndpointReference getEpr() {
 		return epr;
 	}
 
 	/**
-	 * @param epr -
-	 *            The epr to set.
+	 * @return Returns the protocol of the participant (Eg: WS-AT, WS-BA)
 	 */
-	public void setEpr(EndpointReference epr) {
-		this.epr = epr;
+	public String getProtocol() {
+		return protocol;
 	}
 
 	/**
-	 * @return Returns the status.
+	 * @return Returns the status of the participant
 	 */
 	public int getStatus() {
 		return status;
 	}
 
-	/**
-	 * @param status -
-	 *            The status to set.
-	 */
-	public void setStatus(int status) {
-		this.status = status;
+	public void setEpr(EndpointReference epr) {
+		this.epr = epr;
 	}
 
-	/**
-	 * @return Returns the protocol.
-	 */
-	public String getProtocol() {
-		return protocol;
+	public void setStatus(int status) {
+		this.status = status;
 	}
 }

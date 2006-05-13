@@ -27,7 +27,7 @@ public class NoActivityException extends AbstractKandulaException {
 	private static final long serialVersionUID = -1625567169353147393L;
 
 	/**
-	 *  
+	 * 
 	 */
 	public NoActivityException() {
 		super();

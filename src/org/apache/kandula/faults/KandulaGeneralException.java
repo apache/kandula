@@ -27,7 +27,7 @@ public class KandulaGeneralException extends AbstractKandulaException {
 	private static final long serialVersionUID = 3605851255933308674L;
 
 	/**
-	 *  
+	 * 
 	 */
 	public KandulaGeneralException(Exception e) {
 		super(e);
@@ -35,6 +35,10 @@ public class KandulaGeneralException extends AbstractKandulaException {
 
 	public KandulaGeneralException(String s, Exception e) {
 		super(s, e);
+	}
+
+	public KandulaGeneralException(String string) {
+		super(string);
 	}
 
 	/*

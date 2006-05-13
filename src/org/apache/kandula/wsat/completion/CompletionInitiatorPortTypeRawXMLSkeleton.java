@@ -17,7 +17,9 @@
 package org.apache.kandula.wsat.completion;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.kandula.Constants;
 import org.apache.kandula.Status;
 import org.apache.kandula.context.AbstractContext;
@@ -28,16 +30,18 @@ import org.apache.kandula.storage.StorageFactory;
  */
 
 public class CompletionInitiatorPortTypeRawXMLSkeleton {
-	private MessageContext msgContext;
+	private OperationContext opContext;
 
-	public void init(MessageContext context) {
-		this.msgContext = context;
+	public void setOperationContext(OperationContext opContext) {
+		this.opContext = opContext;
 	}
 
-	public OMElement committedOperation(OMElement requestElement) {
+	public OMElement committedOperation(OMElement requestElement)
+			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
-				msgContext.getServiceContext().getConfigurationContext());
-		OMElement header = msgContext.getEnvelope().getHeader();
+				opContext.getServiceContext().getConfigurationContext());
+		OMElement header = opContext.getMessageContext(
+				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
 		String requesterID = header.getFirstChildWithName(
 				Constants.REQUESTER_ID_PARAMETER).getText();
 		AbstractContext context = (AbstractContext) StorageFactory
@@ -46,10 +50,12 @@ public class CompletionInitiatorPortTypeRawXMLSkeleton {
 		return null;
 	}
 
-	public OMElement abortedOperation(OMElement requestElement) {
+	public OMElement abortedOperation(OMElement requestElement)
+			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
-				msgContext.getServiceContext().getConfigurationContext());
-		OMElement header = msgContext.getEnvelope().getHeader();
+				opContext.getServiceContext().getConfigurationContext());
+		OMElement header = opContext.getMessageContext(
+				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
 		String requesterID = header.getFirstChildWithName(
 				Constants.REQUESTER_ID_PARAMETER).getText();
 		AbstractContext context = (AbstractContext) StorageFactory

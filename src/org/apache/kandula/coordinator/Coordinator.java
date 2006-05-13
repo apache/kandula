@@ -37,6 +37,23 @@ public class Coordinator {
 	}
 
 	/**
+	 * @param coorContext
+	 * @return the interposed Coordination Context created <p/>Participants
+	 *         decided to use this Coordinator as a interposed
+	 *         sub-coordinator.The newly created CoordinationContext will
+	 *         contain the same ActivityIdentifier & Protocol type. Registration
+	 *         EPR of the earlier CoordinationContext will be replaced by the
+	 *         RegistrationEPR of this Coordinator.
+	 */
+	public AbstractContext createCoordinationContext(
+			CoordinationContext coorContext) throws AbstractKandulaException {
+		ContextFactory factory = ContextFactory.getInstance();
+		AbstractContext context = factory.createActivity(coorContext);
+		store.put(context.getCoordinationContext().getActivityID(), context);
+		return context;
+	}
+
+	/**
 	 * @param coordinationType
 	 * @return the Coordination Context created <p/>Initiators can use this to
 	 *         Create new Distributed transactions.This will take in the
@@ -55,21 +72,8 @@ public class Coordinator {
 		return context;
 	}
 
-	/**
-	 * @param coorContext
-	 * @return the interposed Coordination Context created <p/>Participants
-	 *         decided to use this Coordinator as a interposed
-	 *         sub-coordinator.The newly created CoordinationContext will
-	 *         contain the same ActivityIdentifier & Protocol type. Registration
-	 *         EPR of the earlier CoordinationContext will be replaced by the
-	 *         RegistrationEPR of this Coordinator.
-	 */
-	public AbstractContext createCoordinationContext(
-			CoordinationContext coorContext) throws AbstractKandulaException {
-		ContextFactory factory = ContextFactory.getInstance();
-		AbstractContext context = factory.createActivity(coorContext);
-		store.put(context.getCoordinationContext().getActivityID(), context);
-		return context;
+	private AbstractContext getCoordinationContext(String id) {
+		return (AbstractContext) store.get(id);
 	}
 
 	/**
@@ -96,9 +100,5 @@ public class Coordinator {
 				.newRegisterable(context.getCoordinationType());
 		return registerableCoordinator.register(context, protocol,
 				participantEPR);
-	}
-
-	private AbstractContext getCoordinationContext(String id) {
-		return (AbstractContext) store.get(id);
 	}
 }

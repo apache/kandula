@@ -25,5 +25,6 @@ import org.apache.kandula.faults.AbstractKandulaException;
 
 public interface ExecutionCallBack {
 
-	public void process(AbstractContext context)  throws AbstractKandulaException;
+	public void process(AbstractContext context)
+			throws AbstractKandulaException;
 }

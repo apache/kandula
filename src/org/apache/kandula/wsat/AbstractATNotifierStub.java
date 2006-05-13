@@ -56,10 +56,11 @@ public abstract class AbstractATNotifierStub {
 
 	public AbstractATNotifierStub(String axis2Home, String axis2Xml,
 			AxisService service) throws AbstractKandulaException {
-		//creating the configuration
+		// creating the configuration
 		this.service = service;
 		try {
-			configurationContext = ConfigurationContextFactory.createConfigurationContextFromFileSystem(axis2Home,
+			configurationContext = ConfigurationContextFactory
+					.createConfigurationContextFromFileSystem(axis2Home,
 							axis2Xml);
 			configurationContext.getAxisConfiguration().addService(service);
 		} catch (DeploymentException e) {
@@ -96,10 +97,8 @@ public abstract class AbstractATNotifierStub {
 			final OperationClient client = operations[opIndex].createClient(
 					serviceContext, options);
 
-			SOAPFactory factory = OMAbstractFactory
-					.getSOAP12Factory();
-			SOAPEnvelope env = factory
-					.getDefaultEnvelope();
+			SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
+			SOAPEnvelope env = factory.getDefaultEnvelope();
 
 			OMNamespace wsAT = factory.createOMNamespace(Constants.WS_AT,
 					"wsat");
@@ -112,8 +111,8 @@ public abstract class AbstractATNotifierStub {
 				options.setReplyTo(replyToEPR);
 			}
 			options.setAction(action);
-			//    options.setTranportOut(org.apache.axis2.Constants.TRANSPORT_HTTP);
-			//     System.out.println(operations[opIndex]);
+			// options.setTranportOut(org.apache.axis2.Constants.TRANSPORT_HTTP);
+			// System.out.println(operations[opIndex]);
 			client.addMessageContext(messageContext);
 			/*
 			 * hacking till we get fire and forget corretly in Axis2
@@ -129,7 +128,7 @@ public abstract class AbstractATNotifierStub {
 				}
 			});
 			thread.start();
-			
+
 		} catch (AxisFault e) {
 			throw new KandulaGeneralException(e);
 		}

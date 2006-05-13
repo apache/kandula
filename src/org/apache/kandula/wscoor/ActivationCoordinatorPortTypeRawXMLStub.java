@@ -42,14 +42,18 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
+import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.kandula.Constants;
+import org.apache.kandula.context.AbstractContext;
+import org.apache.kandula.context.CoordinationContext;
+import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.faults.KandulaGeneralException;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.utility.KandulaListener;
-import org.codehaus.jam.internal.elements.ParameterImpl;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -68,7 +72,7 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
 
 	protected EndpointReference toEPR;
 
-	protected AxisOperation[] operations;
+	protected AxisOperation operation;
 
 	/**
 	 * Constructor
@@ -92,48 +96,60 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
 				this.configurationContext, (AxisServiceGroup) this.service
 						.getParent());
 		this.serviceContext = new ServiceContext(service, sgc);
-
-		//creating the operations
-		AxisOperation operationDesc;
-		operations = new org.apache.axis2.description.AxisOperation[1];
-
-		operationDesc = new OutInAxisOperation();
-		operationDesc.setName(new javax.xml.namespace.QName(
-				"http://schemas.xmlsoap.org/ws/2003/09/wscoor",
-				"CreateCoordinationContextOperation"));
-		operations[0] = operationDesc;
-		service.addOperation(operationDesc);
-
 	}
 
-	public void createCoordinationContextOperation(String coordinationType,
-			String id) throws IOException {
+	public void createCoordinationContextOperation(AbstractContext context, boolean async) throws IOException, KandulaGeneralException {
 
 		EndpointReference replyToEpr;
 		MessageContext messageContext = new MessageContext();
 		Options options = new Options();
 		messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
 				AddressingConstants.Final.WSA_NAMESPACE);
-		SOAPEnvelope env = createSOAPEnvelope(coordinationType);
+		SOAPEnvelope env = createSOAPEnvelope(context.getCoordinationType());
 		messageContext.setEnvelope(env);
-		replyToEpr = setupListener();
-		EndpointReferenceFactory.addReferenceProperty(replyToEpr,
-				Constants.REQUESTER_ID_PARAMETER, id);
-		options.setReplyTo(replyToEpr);
 		options.setTo(this.toEPR);
 		options.setAction(Constants.WS_COOR_CREATE_COORDINATIONCONTEXT);
-		//        messageSender
-		//                .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
-		OperationClient client = operations[0].createClient(serviceContext,
-				options);
-		client.addMessageContext(messageContext);
-		client.execute(false);
+
+		if (async) {
+			operation = new OutOnlyAxisOperation();
+			operation.setName(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/ws/2003/09/wscoor","CreateCoordinationContextOperation"));
+			service.addOperation(operation);
+			replyToEpr = setupListener();
+			EndpointReferenceFactory.addReferenceProperty(replyToEpr,
+					Constants.REQUESTER_ID_PARAMETER, (String) context
+							.getProperty(AbstractContext.REQUESTER_ID));
+			options.setReplyTo(replyToEpr);
+			OperationClient client = operation.createClient(serviceContext,
+					options);
+			client.addMessageContext(messageContext);
+			client.execute(false);
+		} else {
+			operation = new OutInAxisOperation();
+			operation.setName(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/ws/2003/09/wscoor","CreateCoordinationContextOperation"));
+			service.addOperation(operation);
+			OperationClient client = operation.createClient(serviceContext,
+					options);
+			client.addMessageContext(messageContext);
+			client.execute(true);
+			MessageContext msgContext = client
+					.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+			OMElement response = msgContext.getEnvelope().getBody()
+					.getFirstChildWithName(new QName(Constants.WS_COOR,"CreateCoordinationContextResponse"));
+			OMElement contextElement = response.getFirstChildWithName(new QName(Constants.WS_COOR,"CoordinationContext"));
+			if (contextElement!=null) {
+				CoordinationContext coordinationContext = CoordinationContext.Factory.newContext(contextElement);
+				context.setCoordinationContext(coordinationContext);
+			}
+			else 
+			{
+				throw new KandulaGeneralException("CoordinationContext was not found in the CreareCoordinationContextResponse Message");
+			}
+		}
+
 	}
 
-	private SOAPEnvelope createSOAPEnvelope(
-			String coordinationType) {
-		SOAPFactory factory = OMAbstractFactory
-				.getSOAP12Factory();
+	private SOAPEnvelope createSOAPEnvelope(String coordinationType) {
+		SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
 		SOAPEnvelope env = factory.getDefaultEnvelope();
 		OMNamespace wsCoor = factory.createOMNamespace(Constants.WS_COOR,
 				"wscoor");

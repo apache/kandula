@@ -23,7 +23,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.coordinator.Coordinator;
@@ -35,10 +35,10 @@ import org.apache.kandula.storage.StorageFactory;
  */
 
 public class ActivationPortTypeRawXMLSkeleton {
-	private MessageContext msgContext;
+	private OperationContext opContext;
 
-	public void init(MessageContext context) {
-		this.msgContext = context;
+	public void setOperationContext(OperationContext opContext) {
+		this.opContext = opContext;
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class ActivationPortTypeRawXMLSkeleton {
 			throws AxisFault {
 		AbstractContext context;
 		StorageFactory.getInstance().setConfigurationContext(
-				msgContext.getServiceContext().getConfigurationContext());
+				opContext.getServiceContext().getConfigurationContext());
 		/*
 		 * Extracting data from the incoming message
 		 */

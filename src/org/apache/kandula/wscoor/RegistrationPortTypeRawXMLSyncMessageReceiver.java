@@ -26,7 +26,7 @@ import org.apache.kandula.Constants;
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public class RegistrationPortTypeRawXMLAsyncMessageReceiver extends
+public class RegistrationPortTypeRawXMLSyncMessageReceiver extends
 		org.apache.axis2.receivers.AbstractInOutSyncMessageReceiver {
 
 	public void invokeBusinessLogic(
@@ -39,13 +39,14 @@ public class RegistrationPortTypeRawXMLAsyncMessageReceiver extends
 			// get the implementation class for the Web Service
 			Object obj = getTheImplementationObject(msgContext);
 
-			//Inject the Message Context if it is asked for
-			DependencyManager.configureBusinessLogicProvider(obj, msgContext.getOperationContext());
+			// Inject the Message Context if it is asked for
+			DependencyManager.configureBusinessLogicProvider(obj, msgContext
+					.getOperationContext());
 
 			RegistrationPortTypeRawXMLSkeleton skel = (RegistrationPortTypeRawXMLSkeleton) obj;
-			//Out Envelop
+			// Out Envelop
 			SOAPEnvelope envelope = null;
-			//Find the operation that has been set by the Dispatch phase.
+			// Find the operation that has been set by the Dispatch phase.
 			AxisOperation op = msgContext.getOperationContext()
 					.getAxisOperation();
 
@@ -55,15 +56,15 @@ public class RegistrationPortTypeRawXMLAsyncMessageReceiver extends
 				if (("registerOperation").equals(methodName)) {
 					OMElement response = null;
 
-					//doc style
+					// doc style
 					response = skel
 							.registerOperation((OMElement) msgContext
 									.getEnvelope().getBody().getFirstElement()
 									.detach());
 
-					//Create a default envelop
+					// Create a default envelop
 					envelope = getSOAPFactory(msgContext).getDefaultEnvelope();
-					//Create a Omelement of the result if a result exist
+					// Create a Omelement of the result if a result exist
 
 					envelope.getBody().setFirstChild(response);
 				}

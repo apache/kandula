@@ -24,7 +24,8 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.kandula.Constants;
 import org.apache.kandula.coordinator.Coordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
@@ -36,10 +37,10 @@ import org.apache.kandula.utility.EndpointReferenceFactory;
  */
 
 public class RegistrationPortTypeRawXMLSkeleton {
-	private MessageContext msgContext;
+	private OperationContext opContext;
 
-	public void init(MessageContext msgContext) {
-		this.msgContext = msgContext;
+	public void setOperationContext(OperationContext opContext) {
+		this.opContext = opContext;
 	}
 
 	public OMElement registerOperation(OMElement request) throws AxisFault {
@@ -48,7 +49,7 @@ public class RegistrationPortTypeRawXMLSkeleton {
 		EndpointReference participantEPR;
 		String activityId;
 		StorageFactory.getInstance().setConfigurationContext(
-				msgContext.getServiceContext().getConfigurationContext());
+				opContext.getServiceContext().getConfigurationContext());
 		/*
 		 * Extracting data from the received message
 		 */
@@ -56,10 +57,12 @@ public class RegistrationPortTypeRawXMLSkeleton {
 				new QName("ProtocolIdentifier")).getText();
 		OMElement participantEPRElement = request
 				.getFirstChildWithName(new QName("ParticipantProtocolService"));
-		//Extracting the participant EPR
-		participantEPR = EndpointReferenceFactory.endpointFromOM(participantEPRElement);
+		// Extracting the participant EPR
+		participantEPR = EndpointReferenceFactory
+				.endpointFromOM(participantEPRElement);
 
-		OMElement header = msgContext.getEnvelope().getHeader();
+		OMElement header = opContext.getMessageContext(
+				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
 		activityId = header.getFirstChildWithName(
 				Constants.TRANSACTION_ID_PARAMETER).getText();
 		/*
@@ -94,7 +97,8 @@ public class RegistrationPortTypeRawXMLSkeleton {
 				"CoordinatorProtocolService", wsCoor);
 		OMElement coordinatorProtocolService = factory.createOMElement(
 				"CoordinatorProtocolService", wsCoor);
-		EndpointReferenceFactory.endpointToOM(epr, coordinatorProtocolService, factory);
+		EndpointReferenceFactory.endpointToOM(epr, coordinatorProtocolService,
+				factory);
 		protocolService.addChild(coordinatorProtocolService);
 		return protocolService;
 	}

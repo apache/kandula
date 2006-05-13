@@ -44,7 +44,7 @@ public class CompletionCoordinatorPortTypeRawXMLStub extends
 				"CompletionCoordinatorPortType"));
 		this.toEPR = targetEndpoint;
 
-		//creating the operations
+		// creating the operations
 		AxisOperation operation;
 		operations = new AxisOperation[2];
 
@@ -62,13 +62,13 @@ public class CompletionCoordinatorPortTypeRawXMLStub extends
 	}
 
 	public void commitOperation() throws AbstractKandulaException {
-		//TODO must send reply to epr
+		// TODO must send reply to epr
 		this.notify("Commit", Constants.WS_AT_COMMIT, 0, null);
 
 	}
 
 	public void rollbackOperation() throws AbstractKandulaException {
-		//TODO must send reply to EPR
+		// TODO must send reply to EPR
 		this.notify("Rollback", Constants.WS_AT_ROLLBACK, 1, null);
 
 	}

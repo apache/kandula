@@ -40,12 +40,11 @@ public class CompletionInitiatorPortTypeRawXMLStub extends
 	public CompletionInitiatorPortTypeRawXMLStub(
 			EndpointReference targetEndpoint) throws AbstractKandulaException {
 		super(KandulaConfiguration.getInstance().getCoordinatorRepo(),
-				KandulaConfiguration.getInstance()
-						.getCoordinatorAxis2Conf(), new AxisService(
-						"CompletionInitiatorPortType"));
+				KandulaConfiguration.getInstance().getCoordinatorAxis2Conf(),
+				new AxisService("CompletionInitiatorPortType"));
 		this.toEPR = targetEndpoint;
 
-		//creating the operations
+		// creating the operations
 		AxisOperation operation;
 		operations = new AxisOperation[2];
 

@@ -25,7 +25,6 @@ import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 
-
 public class TransactionOutHandler extends AbstractHandler {
 
 	private static final long serialVersionUID = 4133392345837905499L;
@@ -50,4 +49,3 @@ public class TransactionOutHandler extends AbstractHandler {
 		}
 	}
 }
-

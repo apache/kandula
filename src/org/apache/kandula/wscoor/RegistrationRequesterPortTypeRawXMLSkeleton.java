@@ -17,8 +17,12 @@
 package org.apache.kandula.wscoor;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMException;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.impl.ATActivityContext;
@@ -30,17 +34,18 @@ import org.apache.kandula.utility.EndpointReferenceFactory;
  */
 
 public class RegistrationRequesterPortTypeRawXMLSkeleton {
-	private MessageContext msgContext;
+	private OperationContext opContext;
 
-	public void init(MessageContext context) {
-		this.msgContext = context;
+	public void setOperationContext(OperationContext opContext) {
+		this.opContext = opContext;
 	}
 
-	public OMElement registerResponseOperation(OMElement responseElement) {
+	public OMElement registerResponseOperation(OMElement responseElement) throws AxisFault{
 
 		OMElement response = responseElement.getFirstElement();
 		if ("CoordinatorProtocolService".equals(response.getLocalName())) {
-			OMElement header = msgContext.getEnvelope().getHeader();
+			OMElement header = opContext.getMessageContext(
+					WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
 			String requesterID = header.getFirstChildWithName(
 					Constants.REQUESTER_ID_PARAMETER).getText();
 			EndpointReference coordinatorService = EndpointReferenceFactory

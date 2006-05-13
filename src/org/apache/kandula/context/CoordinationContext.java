@@ -24,42 +24,42 @@ import org.apache.kandula.context.impl.SimpleCoordinationContext;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public interface CoordinationContext {
-	public abstract String getActivityID();
-
-	public abstract String getCoordinationType();
-
-	public abstract EndpointReference getRegistrationService();
-
-	public abstract long getExpires();
-
-	public abstract void setActivityID(String value);
-
-	public abstract void setCoordinationType(String value);
-
-	public abstract void setRegistrationService(EndpointReference value);
-
-	public abstract void setExpires(long value);
-
-	public abstract OMElement toOM();
-
-	public abstract Object getCoordinationContextType();
-
 	public static final class Factory {
+		public static CoordinationContext newContext(OMElement contextElement) {
+			return new SimpleCoordinationContext(contextElement);
+		}
+		
 		public static CoordinationContext newContext(String activityId,
 				String coordinationType, EndpointReference epr) {
 			return new SimpleCoordinationContext(activityId, coordinationType,
 					epr);
 		}
-
-		public static CoordinationContext newContext(OMElement contextElement) {
-			return new SimpleCoordinationContext(contextElement);
-		}
-
-		//        public static CoordinationContext newInstance(Object contextType) {
-		//            return new XmlBeansTypeCoordinationContext(contextType);
-		//        }
-
+		
+		// public static CoordinationContext newInstance(Object contextType) {
+		// return new XmlBeansTypeCoordinationContext(contextType);
+		// }
+		
 		private Factory() {
 		} // No instance of this class allowed
 	}
+	
+	public abstract String getActivityID();
+	
+	public abstract Object getCoordinationContextType();
+	
+	public abstract String getCoordinationType();
+	
+	public abstract long getExpires();
+	
+	public abstract EndpointReference getRegistrationService();
+	
+	public abstract void setActivityID(String value);
+	
+	public abstract void setCoordinationType(String value);
+	
+	public abstract void setExpires(long value);
+	
+	public abstract void setRegistrationService(EndpointReference value);
+	
+	public abstract OMElement toOM();
 }

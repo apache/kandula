@@ -30,7 +30,6 @@ import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
 import org.apache.kandula.utility.KandulaListener;
-import org.codehaus.jam.internal.elements.ParameterImpl;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>

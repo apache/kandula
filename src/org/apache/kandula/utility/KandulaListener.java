@@ -46,15 +46,14 @@ public class KandulaListener {
 	public int serverPort;
 
 	private KandulaListener() throws IOException {
-		KandulaConfiguration configuration = KandulaConfiguration
-				.getInstance();
+		KandulaConfiguration configuration = KandulaConfiguration.getInstance();
 		responseConfigurationContext = ConfigurationContextFactory
-				.createConfigurationContextFromFileSystem(
-						configuration.getKandulaListenerRepository(),
-						configuration.getKandulaListenerAxis2Xml());
+				.createConfigurationContextFromFileSystem(configuration
+						.getKandulaListenerRepository(), configuration
+						.getKandulaListenerAxis2Xml());
 		try {
-			serverPort = Integer.parseInt(KandulaConfiguration
-					.getInstance().getKadulaListenerPort());
+			serverPort = Integer.parseInt(KandulaConfiguration.getInstance()
+					.getKadulaListenerPort());
 		} catch (Exception e) {
 			serverPort = 5059;
 		}
@@ -104,9 +103,9 @@ public class KandulaListener {
 
 			responseConfigurationContext.getAxisConfiguration().addService(
 					service);
-			//TODO : check how to do this or this is neccessary anymore
-			//			Utils.resolvePhases(receiver.getSystemContext()
-			//					.getAxisConfiguration(), service);
+			// TODO : check how to do this or this is neccessary anymore
+			// Utils.resolvePhases(receiver.getSystemContext()
+			// .getAxisConfiguration(), service);
 		}
 
 	}

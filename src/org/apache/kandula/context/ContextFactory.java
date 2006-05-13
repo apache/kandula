@@ -25,22 +25,33 @@ import org.apache.kandula.faults.InvalidProtocolException;
  */
 public class ContextFactory {
 	private static ContextFactory instance = new ContextFactory();
-
+	
 	public static ContextFactory getInstance() {
 		return instance;
 	}
-
+	
+	public AbstractContext createActivity(CoordinationContext context)
+	throws InvalidProtocolException {
+		if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(context
+				.getCoordinationType())) {
+			return new ATActivityContext(context);
+		} else {
+			throw new InvalidProtocolException("Unsupported Protocol Type");
+		}
+	}
+	
 	public AbstractContext createActivity(String protocol)
-			throws InvalidProtocolException {
+	throws InvalidProtocolException {
 		if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(protocol)) {
 			return new ATActivityContext();
 		} else {
 			throw new InvalidProtocolException("Unsupported Protocol Type");
 		}
 	}
-
+	
 	/**
 	 * To be used by the initaitor TxManager to create the initial context
+	 * 
 	 * @param protocol
 	 * @param activationEPR
 	 * @return
@@ -50,16 +61,6 @@ public class ContextFactory {
 			EndpointReference activationEPR) throws InvalidProtocolException {
 		if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(protocol)) {
 			return new ATActivityContext(activationEPR);
-		} else {
-			throw new InvalidProtocolException("Unsupported Protocol Type");
-		}
-	}
-
-	public AbstractContext createActivity(CoordinationContext context)
-			throws InvalidProtocolException {
-		if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(context
-				.getCoordinationType())) {
-			return new ATActivityContext(context);
 		} else {
 			throw new InvalidProtocolException("Unsupported Protocol Type");
 		}

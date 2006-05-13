@@ -18,7 +18,8 @@ package org.apache.kandula.wsat.completion;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.context.OperationContext;
+import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.kandula.Constants;
 import org.apache.kandula.coordinator.at.ATCoordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
@@ -29,10 +30,10 @@ import org.apache.kandula.storage.StorageFactory;
  */
 
 public class CompletionCoordinatorPortTypeRawXMLSkeleton {
-	private MessageContext msgContext;
+	private OperationContext opContext;
 
-	public void init(MessageContext context) {
-		this.msgContext = context;
+	public void setOperationContext(OperationContext opContext) {
+		this.opContext = opContext;
 	}
 
 	/**
@@ -41,10 +42,11 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
 	 */
 	public OMElement commitOperation(OMElement requestElement) throws AxisFault {
 		String activityId;
-		//log.info("Visited Commit operation");
+		// log.info("Visited Commit operation");
 		StorageFactory.getInstance().setConfigurationContext(
-				msgContext.getServiceContext().getConfigurationContext());
-		OMElement header = msgContext.getEnvelope().getHeader();
+				opContext.getServiceContext().getConfigurationContext());
+		OMElement header = opContext.getMessageContext(
+				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
 		activityId = header.getFirstChildWithName(
 				Constants.TRANSACTION_ID_PARAMETER).getText();
 		// TODO do we need to check the incoming message
@@ -64,14 +66,15 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
 
 		String activityId;
 		StorageFactory.getInstance().setConfigurationContext(
-				msgContext.getServiceContext().getConfigurationContext());
-		//log.info("Visited rollback operation");
-		OMElement header = msgContext.getEnvelope().getHeader();
+				opContext.getServiceContext().getConfigurationContext());
+		// log.info("Visited rollback operation");
+		OMElement header = opContext.getMessageContext(
+				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
 		activityId = header.getFirstChildWithName(
 				Constants.TRANSACTION_ID_PARAMETER).getText();
 		try {
 			ATCoordinator coordinator = new ATCoordinator();
-			coordinator.commitOperation(activityId);
+			coordinator.rollbackOperation(activityId);
 		} catch (AbstractKandulaException e) {
 			AxisFault fault = new AxisFault(e);
 			fault.setFaultCode(e.getFaultCode());

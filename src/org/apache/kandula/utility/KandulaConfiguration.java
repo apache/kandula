@@ -20,16 +20,13 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.Properties;
 
-
-
-
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class KandulaConfiguration {
 	static final String PROPERTY_FILE = "endpoints.conf";
 
-	//  static final String PROTOCOL_PROPERTY = "protocol";
+	// static final String PROTOCOL_PROPERTY = "protocol";
 
 	static final String HOST_PROPERTY = "host";
 
@@ -151,6 +148,7 @@ public class KandulaConfiguration {
 			instance = new KandulaConfiguration();
 		return instance;
 	}
+
 	public String getParticipantRepository() {
 		return participantRepository;
 	}
@@ -170,6 +168,7 @@ public class KandulaConfiguration {
 	public String getKadulaListenerPort() {
 		return kandulaListenerPort;
 	}
+
 	public String getKadulaListenerPortForEPR() {
 		if (debug.equals("true"))
 			return (Integer.parseInt(kandulaListenerPort) + 1) + "";
@@ -187,12 +186,13 @@ public class KandulaConfiguration {
 	public String getKandulaListenerAxis2Xml() {
 		return kandulaListenerAxis2Xml;
 	}
-	public String getLocationForEPR(){
+
+	public String getLocationForEPR() {
 		return location;
 	}
-//	public static EndpointReferenceFactory getInstance() {
-//		if (instance == null)
-//			instance = new EndpointReferenceFactory();
-//		return instance;
-//	}
+	// public static EndpointReferenceFactory getInstance() {
+	// if (instance == null)
+	// instance = new EndpointReferenceFactory();
+	// return instance;
+	// }
 }
