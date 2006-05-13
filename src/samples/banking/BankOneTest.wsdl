@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="urn:kandula/samples/bankone#test" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="urn:kandula/samples/bankone#test" xmlns:intf="urn:kandula/samples/bankone#test" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--WSDL created by Apache Axis version: 1.3
+Built on Oct 05, 2005 (05:23:37 EDT)-->
+
+   <wsdl:message name="test1Request">
+
+   </wsdl:message>
+
+   <wsdl:message name="test1Response">
+
+   </wsdl:message>
+
+   <wsdl:portType name="BankOneTest">
+
+      <wsdl:operation name="test1">
+
+         <wsdl:input message="impl:test1Request" name="test1Request"/>
+
+         <wsdl:output message="impl:test1Response" name="test1Response"/>
+
+      </wsdl:operation>
+
+   </wsdl:portType>
+
+   <wsdl:binding name="BankOneTestSoapBinding" type="impl:BankOneTest">
+
+      <wsdlsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+      <wsdl:operation name="test1">
+
+         <wsdlsoap:operation soapAction="http://ws.apache.org/kandula/samples/bankone#test1"/>
+
+         <wsdl:input name="test1Request">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:input>
+
+         <wsdl:output name="test1Response">
+
+            <wsdlsoap:body use="literal"/>
+
+         </wsdl:output>
+
+      </wsdl:operation>
+
+   </wsdl:binding>
+
+   <wsdl:service name="BankOneTestService">
+
+      <wsdl:port binding="impl:BankOneTestSoapBinding" name="BankOneTest">
+
+         <wsdlsoap:address location="http://localhost:8081/axis/services/BankOneTest"/>
+
+      </wsdl:port>
+
+   </wsdl:service>
+
+</wsdl:definitions>

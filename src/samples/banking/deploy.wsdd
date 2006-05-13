@@ -1,0 +1,40 @@
+  <!-- Services from BankOneService WSDL service -->
+
+  <service name="BankOne" provider="java:RPC" style="rpc" use="encoded">
+      <parameter name="wsdlTargetNamespace" value="urn:kandula/samples/bankone"/>
+      <parameter name="wsdlServiceElement" value="BankOneService"/>
+      <parameter name="wsdlServicePort" value="BankOne"/>
+      <parameter name="className" value="bankone.BankOneSoapBindingImpl"/>
+      <parameter name="wsdlPortType" value="BankOne"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation name="getBalance" qname="operNS:getBalance" xmlns:operNS="urn:kandula/samples/bankone" returnQName="getBalanceReturn" returnType="rtns:double" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="http://ws.apache.org/kandula/samples/bankone#getBalance" >
+        <parameter qname="in0" type="tns:int" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="debit" qname="operNS:debit" xmlns:operNS="urn:kandula/samples/bankone" returnQName="debitReturn" returnType="rtns:double" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="http://ws.apache.org/kandula/samples/bankone#debit" >
+        <parameter qname="in0" type="tns:int" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="in1" type="tns:double" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <operation name="credit" qname="operNS:credit" xmlns:operNS="urn:kandula/samples/bankone" returnQName="creditReturn" returnType="rtns:double" xmlns:rtns="http://www.w3.org/2001/XMLSchema" soapAction="http://ws.apache.org/kandula/samples/bankone#credit" >
+        <parameter qname="in0" type="tns:int" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+        <parameter qname="in1" type="tns:double" xmlns:tns="http://www.w3.org/2001/XMLSchema"/>
+      </operation>
+      <parameter name="allowedMethods" value="getBalance credit debit"/>
+
+  </service>
+
+
+
+  <!-- Services from BankOneTestService WSDL service -->
+
+  <service name="BankOneTest" provider="java:RPC" style="document" use="literal">
+      <parameter name="wsdlTargetNamespace" value="urn:kandula/samples/bankone#test"/>
+      <parameter name="wsdlServiceElement" value="BankOneTestService"/>
+      <parameter name="wsdlServicePort" value="BankOneTest"/>
+      <parameter name="className" value="test.BankOneTestSoapBindingImpl"/>
+      <parameter name="wsdlPortType" value="BankOneTest"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation name="test1" qname="test1" soapAction="http://ws.apache.org/kandula/samples/bankone#test1" >
+      </operation>
+      <parameter name="allowedMethods" value="test1"/>
+
+  </service>
