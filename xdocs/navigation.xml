@@ -1,0 +1,20 @@
+<project name="Apache Kandula2">
+    <title>Apache Kandula2</title>
+
+    <body>
+        <links>
+            <item name="Apache Axis2" href="http://ws.apache.org/axis2"/>
+            <item name="Apache Kandula 1" href="http://ws.apache.org/kandula/1/"   />
+        </links>
+
+        <menu name="User's Guide" type="footer">
+            <item name="Using Kandula2" collapse="true" href="/under-construction.html"/>
+        </menu>
+
+        <menu name="Related Projects" type="footer">
+            <item name="Apache Axis2" href="http://ws.apache.org/axis2" target="_new"/>
+            <item name="Apache Kandula 1" href="http://ws.apache.org/kandula/1/" target="_new"/>
+        </menu>
+    </body>
+</project>
+
