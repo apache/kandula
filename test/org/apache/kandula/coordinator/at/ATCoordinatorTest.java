@@ -40,11 +40,11 @@ public class ATCoordinatorTest extends TestCase {
 	}
 
 	public void testCommitOperation() {
-		//TODO Implement commitOperation().
+		// TODO Implement commitOperation().
 	}
 
 	public void testRollbackOperation() {
-		//TODO Implement rollbackOperation().
+		// TODO Implement rollbackOperation().
 	}
 
 }

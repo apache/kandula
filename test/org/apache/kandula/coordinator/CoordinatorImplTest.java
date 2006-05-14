@@ -83,7 +83,7 @@ public class CoordinatorImplTest extends TestCase {
 	}
 
 	public void testRegisterParticipant() {
-		//TODO Implement registerParticipant().
+		// TODO Implement registerParticipant().
 	}
 
 }

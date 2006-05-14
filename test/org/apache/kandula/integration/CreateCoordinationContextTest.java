@@ -24,7 +24,6 @@ import java.io.File;
 
 import junit.framework.TestCase;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
@@ -36,18 +35,28 @@ public class CreateCoordinationContextTest extends TestCase {
 
 	private String repository = "target/testing-repository";
 
+	private KandulaDemoServiceStub stub;
+
 	private SimpleHTTPServer server;
 
-	public CreateCoordinationContextTest() {
+	public CreateCoordinationContextTest() throws Exception {
 		super(CreateCoordinationContextTest.class.getName());
+		stub = new KandulaDemoServiceStub(
+				"target/initiator-repository",
+				new EndpointReference(
+						"http://localhost:8081/axis2/services/KandulaDemoService"));
 	}
 
-	public CreateCoordinationContextTest(String testName) {
+	public CreateCoordinationContextTest(String testName) throws Exception {
 		super(testName);
+		stub = new KandulaDemoServiceStub(
+				"target/initiator-repository",
+				new EndpointReference(
+						"http://localhost:8081/axis2/services/KandulaDemoService"));
 	}
 
 	protected void setUp() throws Exception {
-				File file = new File(repository);
+		File file = new File(repository);
 		File configFile = new File(repository + "/axis2.xml");
 		if (!file.exists()) {
 			throw new Exception("repository directory "
@@ -65,37 +74,39 @@ public class CreateCoordinationContextTest extends TestCase {
 		} finally {
 
 		}
-
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e1) {
-			throw new AxisFault("Thread interuptted", e1);
-		}
-
 	}
 
 	protected void tearDown() throws Exception {
 		server.stop();
 	}
 
-	public void testEchoXMLSync() throws Exception {
+	public void testEchoXMLASync() throws Exception {
 		TransactionManager tm = new TransactionManager(
 				Constants.WS_AT,
 				new EndpointReference(
-						"http://localhost:8082/axis2/services/ActivationCoordinator"));
-
-		tm.begin("target/initiator-repository","target/initiator-repository/axis2.xml");
-		// Thread.sleep(10000);
-		KandulaDemoServiceStub stub = new KandulaDemoServiceStub(
-				"target/initiator-repository",
-				new EndpointReference(
-						"http://131.107.72.15:8085/Transactions_Service_Indigo/TransactionalService.svc"));
-		stub.creditOperation();
-		// try{
+						"http://localhost:8081/axis2/services/ActivationCoordinator"));
+		tm.begin("target/initiator-repository",
+				"target/initiator-repository/axis2.xml", true);
+		try {
+			stub.creditOperation();
+		} catch (Exception e) {
+			tm.rollback();
+		}
 		tm.commit();
-		// }catch (Exception e)
-		// {
-		// e.printStackTrace();
-		// }
 	}
+
+//	public void testEchoXMLSync() throws Exception {
+//		TransactionManager tm = new TransactionManager(
+//				Constants.WS_AT,
+//				new EndpointReference(
+//						"http://localhost:8082/axis2/services/ActivationCoordinator"));
+//		tm.begin("target/initiator-repository",
+//				"target/initiator-repository/axis2.xml", false);
+//		try {
+//			stub.creditOperation();
+//		} catch (Exception e) {
+//			tm.rollback();
+//		}
+//		tm.commit();
+//	}
 }

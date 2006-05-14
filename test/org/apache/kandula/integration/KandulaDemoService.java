@@ -24,7 +24,7 @@ import org.apache.axiom.om.OMElement;
 public class KandulaDemoService {
 
 	/**
-	 *  
+	 * 
 	 */
 	public KandulaDemoService() {
 

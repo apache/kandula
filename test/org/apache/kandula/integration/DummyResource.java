@@ -26,7 +26,7 @@ import org.apache.kandula.participant.Vote;
 public class DummyResource implements KandulaResource {
 
 	/**
-	 *  
+	 * 
 	 */
 	public DummyResource() {
 		super();

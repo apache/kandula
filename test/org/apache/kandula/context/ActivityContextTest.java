@@ -24,27 +24,27 @@ import junit.framework.TestCase;
 public class ActivityContextTest extends TestCase {
 
 	public void testGetActivityID() {
-		//TODO Implement getActivityID().
+		// TODO Implement getActivityID().
 	}
 
 	public void testAddParticipant() {
-		//TODO Implement addParticipant().
+		// TODO Implement addParticipant().
 	}
 
 	public void testGetStatus() {
-		//TODO Implement getStatus().
+		// TODO Implement getStatus().
 	}
 
 	public void testSetStatus() {
-		//TODO Implement setStatus().
+		// TODO Implement setStatus().
 	}
 
 	public void testLock() {
-		//TODO Implement lock().
+		// TODO Implement lock().
 	}
 
 	public void testUnlock() {
-		//TODO Implement unlock().
+		// TODO Implement unlock().
 	}
 
 }

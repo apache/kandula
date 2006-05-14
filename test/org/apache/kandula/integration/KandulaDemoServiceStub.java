@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
@@ -78,17 +79,15 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 		configurationContext = ConfigurationContextFactory
 				.createConfigurationContextFromFileSystem(axis2Home, axis2Home
 						+ "/axis2.xml");
-		// configurationContext.getAxisConfiguration().engageModule(new
-		// QName("addressing"));
 		configurationContext.getAxisConfiguration().addService(_service);
 		ServiceGroupContext sgc = new ServiceGroupContext(
-				this.configurationContext, (AxisServiceGroup)_service
+				this.configurationContext, (AxisServiceGroup) _service
 						.getParent());
 		this.serviceContext = new ServiceContext(_service, sgc);
 
 	}
 
-	public void creditOperation() throws IOException {
+	public void creditOperation() throws IOException, AxisFault{
 
 		Options options = new Options();
 		MessageContext messageContext = new MessageContext();
@@ -99,9 +98,9 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 
 		// _service.engageModule("addressing");
 
-		options.setAction("http://tempuri.org/ITransactionalService/Commit");
+		options.setAction("creditOperation");
 		options.setTo(this.toEPR);
-		
+
 		// messageSender
 		// .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
 		OperationClient client = operations[0].createClient(serviceContext,
