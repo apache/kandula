@@ -1,0 +1,191 @@
+client side handler:
+
+	<handler type="java:org.apache.kandula.coordinator.at.TxHandler" />		
+
+server side handler(both request & response):
+
+  <handler type="java:org.apache.kandula.geronimo.TxHandler" />
+
+the sample uses a pseudo-DBMS to keep things simple; however note that
+some real DBMSs do not support 2-phase commit and thus cannot be used here.
+
+output:
+
+[BankOneTestSoapBindingImpl] tx1
+[CallbackRegistry] registerCallback: timeout= 180000
+[CallbackRegistry] registerCallback: timeout= 180000
+[BankOne] credit(0, 100.0)
+[BankOneDBMS] isSameRM
+[BankOneDBMS] start
+[BankOneDBMS] end
+[BankOne] credit(1, 200.0)
+[BankOneDBMS] start
+[BankOneDBMS] end
+[CallbackRegistry] registerCallback: timeout= 180000
+[BankOneDBMS] end
+[BankOneDBMS] prepare
+[BankOneDBMS] commit
+[BankOne] getBalance(0)
+[BankOne] getBalance(1)
+[BankOneTestSoapBindingImpl] balance0= 100.0 balance1= 200.0
+[BankOneTestSoapBindingImpl] tx2
+[CallbackRegistry] registerCallback: timeout= 180000
+[CallbackRegistry] registerCallback: timeout= 180000
+[BankOne] credit(0, 50.0)
+[BankOneDBMS] isSameRM
+[BankOneDBMS] start
+[BankOneDBMS] end
+[BankOne] debit(1, 50.0)
+[BankOneDBMS] start
+[BankOneDBMS] end
+[CallbackRegistry] registerCallback: timeout= 180000
+[BankOneDBMS] end
+[BankOneDBMS] prepare
+[BankOneDBMS] commit
+[BankOne] getBalance(0)
+[BankOne] getBalance(1)
+[BankOneTestSoapBindingImpl] balance0= 150.0 balance1= 150.0
+[BankOneTestSoapBindingImpl] tx4
+[CallbackRegistry] registerCallback: timeout= 180000
+[CallbackRegistry] registerCallback: timeout= 180000
+[BankOne] debit(0, 20.0)
+[BankOneDBMS] isSameRM
+[BankOneDBMS] start
+[BankOneDBMS] end
+[BankOne] credit(1, 20.0)
+[BankOneDBMS] start
+[BankOneDBMS] end
+[BankOne] getBalance(0)
+[BankOneDBMS] start
+[BankOneDBMS] end
+[BankOne] getBalance(1)
+[BankOneDBMS] start
+[BankOneDBMS] end
+[BankOneTestSoapBindingImpl] balance0= 130.0 balance1= 170.0
+[CallbackRegistry] registerCallback: timeout= 180000
+[CallbackRegistry] registerCallback: timeout= 180000
+[BankOne] debit(0, 70.0)
+[BankOneDBMS] isSameRM
+[BankOneDBMS] start
+[BankOneDBMS] end
+[BankOne] credit(1, 70.0)
+[BankOneDBMS] start
+[BankOneDBMS] end
+[BankOne] getBalance(0)
+[BankOneDBMS] start
+[BankOneDBMS] end
+[BankOne] getBalance(1)
+[BankOneDBMS] start
+[BankOneDBMS] end
+[BankOneTestSoapBindingImpl] balance0= 80.0 balance1= 220.0
+[CallbackRegistry] registerCallback: timeout= 180000
+[BankOneDBMS] end
+[BankOneDBMS] prepare
+javax.transaction.RollbackException
+        at org.apache.kandula.coordinator.at.TransactionImpl.commit(TransactionI
+mpl.java:186)
+        at test.BankOneTestSoapBindingImpl.tx4(Unknown Source)
+        at test.BankOneTestSoapBindingImpl.test1(Unknown Source)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.
+java:39)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAcces
+sorImpl.java:25)
+        at java.lang.reflect.Method.invoke(Method.java:324)
+        at org.apache.axis.providers.java.RPCProvider.invokeMethod(RPCProvider.j
+ava:397)
+        at org.apache.axis.providers.java.RPCProvider.processMessage(RPCProvider
+.java:186)
+        at org.apache.axis.providers.java.JavaProvider.invoke(JavaProvider.java:
+323)
+        at org.apache.axis.strategies.InvocationStrategy.visit(InvocationStrateg
+y.java:32)
+        at org.apache.axis.SimpleChain.doVisiting(SimpleChain.java:118)
+        at org.apache.axis.SimpleChain.invoke(SimpleChain.java:83)
+        at org.apache.axis.handlers.soap.SOAPService.invoke(SOAPService.java:453
+)
+        at org.apache.axis.server.AxisServer.invoke(AxisServer.java:281)
+        at org.apache.axis.transport.http.AxisServlet.doPost(AxisServlet.java:69
+9)
+        at javax.servlet.http.HttpServlet.service(HttpServlet.java:709)
+        at org.apache.axis.transport.http.AxisServletBase.service(AxisServletBas
+e.java:327)
+        at javax.servlet.http.HttpServlet.service(HttpServlet.java:802)
+        at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(Appl
+icationFilterChain.java:237)
+        at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationF
+ilterChain.java:157)
+        at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperV
+alve.java:214)
+        at org.apache.catalina.core.StandardValveContext.invokeNext(StandardValv
+eContext.java:104)
+        at org.apache.catalina.core.StandardPipeline.invoke(StandardPipeline.jav
+a:520)
+        at org.apache.catalina.core.StandardContextValve.invokeInternal(Standard
+ContextValve.java:198)
+        at org.apache.catalina.core.StandardContextValve.invoke(StandardContextV
+alve.java:152)
+        at org.apache.catalina.core.StandardValveContext.invokeNext(StandardValv
+eContext.java:104)
+        at org.apache.catalina.core.StandardPipeline.invoke(StandardPipeline.jav
+a:520)
+        at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.j
+ava:137)
+        at org.apache.catalina.core.StandardValveContext.invokeNext(StandardValv
+eContext.java:104)
+        at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.j
+ava:118)
+        at org.apache.catalina.core.StandardValveContext.invokeNext(StandardValv
+eContext.java:102)
+        at org.apache.catalina.core.StandardPipeline.invoke(StandardPipeline.jav
+a:520)
+        at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineVal
+ve.java:109)
+        at org.apache.catalina.core.StandardValveContext.invokeNext(StandardValv
+eContext.java:104)
+        at org.apache.catalina.core.StandardPipeline.invoke(StandardPipeline.jav
+a:520)
+        at org.apache.catalina.core.ContainerBase.invoke(ContainerBase.java:929)
+
+        at org.apache.coyote.tomcat5.CoyoteAdapter.service(CoyoteAdapter.java:16
+0)
+        at org.apache.coyote.http11.Http11Processor.process(Http11Processor.java
+:799)
+        at org.apache.coyote.http11.Http11Protocol$Http11ConnectionHandler.proce
+ssConnection(Http11Protocol.java:705)
+        at org.apache.tomcat.util.net.TcpWorkerThread.runIt(PoolTcpEndpoint.java
+:577)
+        at org.apache.tomcat.util.threads.ThreadPool$ControlRunnable.run(ThreadP
+ool.java:683)
+        at java.lang.Thread.run(Thread.java:534)
+[BankOneTestSoapBindingImpl] could not commit txa
+[CallbackRegistry] registerCallback: timeout= 180000
+[BankOneDBMS] end
+[BankOneDBMS] prepare
+[BankOneDBMS] commit
+[BankOne] getBalance(0)
+[BankOne] getBalance(1)
+[BankOneTestSoapBindingImpl] balance0= 80.0 balance1= 220.0
+[BankOneTestSoapBindingImpl] tx3
+[CallbackRegistry] registerCallback: timeout= 180000
+[CallbackRegistry] registerCallback: timeout= 180000
+[BankOne] credit(0, 35.0)
+[BankOneDBMS] isSameRM
+[BankOneDBMS] start
+[BankOneDBMS] end
+[BankOne] debit(1, 35.0)
+[BankOneDBMS] start
+[BankOneDBMS] end
+[BankOne] getBalance(0)
+[BankOneDBMS] start
+[BankOneDBMS] end
+[BankOne] getBalance(1)
+[BankOneDBMS] start
+[BankOneDBMS] end
+[BankOneTestSoapBindingImpl] balance0= 115.0 balance1= 185.0
+[CallbackRegistry] registerCallback: timeout= 180000
+[BankOneDBMS] end
+[BankOneDBMS] rollback
+[BankOne] getBalance(0)
+[BankOne] getBalance(1)
+[BankOneTestSoapBindingImpl] balance0= 80.0 balance1= 220.0
