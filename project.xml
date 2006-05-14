@@ -41,13 +41,14 @@
   <siteDirectory>/kandula/</siteDirectory>
   <distributionDirectory>/www/ws.apache.org/builds/</distributionDirectory>
 
-  <!-- the version control repository and http url for online access
-       the connection element has the form:
-       scm:<system>:<system specific connection string> -->
-  <!--repository>
-    <connection>scm: svn:https://svn.apache.org/repos/asf/webservices/kandula/trunk/java/</connection>
-    <url>http://svn.apache.org/repos/asf/webservices/kandula/trunk/java/</url>
-  </repository-->
+  <repository>
+        <connection>
+            scm:svn:http://svn.apache.org:repos/asf/webservices:kandula/trunk/java</connection>
+        <developerConnection>
+            scm:svn:http://svn.apache.org:repos/asf/webservices:kandula/trunk/java</developerConnection>
+        <url>http://svn.apache.org/viewcvs.cgi/webservices/kandula/trunk/java?root=Apache-SVN</url>
+    </repository>
+
 
   <!-- any mailing lists for the project -->
     <mailingLists>
@@ -170,7 +171,7 @@
   	      <dependency>
             <groupId>org.apache.ws.commons</groupId>
             <artifactId>XmlSchema</artifactId>
-            <version>1.0</version>
+            <version>1.0.2</version>
         </dependency>
 
  	  <dependency>

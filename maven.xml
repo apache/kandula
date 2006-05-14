@@ -90,8 +90,8 @@
          <mkdir dir="target/testing-repository/modules"/>
 	 <copy file="target/kandula-inflow-0.1.mar"
             tofile="target/testing-repository/modules/kandula-inflow-0.1.mar"/>
-	 <copy file="modules/addressing-0.95-SNAPSHOT.mar"
-            tofile="target/testing-repository/modules/addressing-0.95-SNAPSHOT.mar"/>
+	 <copy file="modules/addressing-1.0.mar"
+            tofile="target/testing-repository/modules/addressing-1.0.mar"/>
 	 <copy file="conf/coordinator-axis2.xml"
             tofile="target/testing-repository/axis2.xml"/>
 
@@ -115,8 +115,8 @@
 	<mkdir dir="target/initiator-repository/modules"/>
 	<copy file="target/kandula-outflow-0.1.mar"
             tofile="target/initiator-repository/modules/kandula-outflow-0.1.mar"/>
- 	<copy file="modules/addressing-0.95-SNAPSHOT.mar"
-            tofile="target/initiator-repository/modules/addressing-0.95-SNAPSHOT.mar"/>
+ 	<copy file="modules/addressing-1.0.mar"
+            tofile="target/initiator-repository/modules/addressing-1.0.mar"/>
 	 <copy file="conf/initiator-axis2.xml"
             tofile="target/initiator-repository/axis2.xml"/>       
        
