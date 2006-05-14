@@ -5,6 +5,6 @@
     <parameter name="ServiceClass" locked="xsd:false">org.apache.kandula.wscoor.RegistrationPortTypeRawXMLSkeleton</parameter>
     <operation name="registerOperation">
         <actionMapping>http://schemas.xmlsoap.org/ws/2004/10/wscoor/Register</actionMapping>
-        <messageReceiver class="org.apache.kandula.wscoor.RegistrationPortTypeRawXMLAsyncMessageReceiver"/>
+        <messageReceiver class="org.apache.kandula.wscoor.RegistrationPortTypeRawXMLSyncMessageReceiver"/>
     </operation>
 </service>

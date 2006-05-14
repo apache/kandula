@@ -1,7 +1,7 @@
 <module name="kandula-inflow">
     <inflow>
         <handler name="TransactionInHandler" class="org.apache.kandula.participant.TransactionInHandler">
-            <order phase="userphase1"/>
+            <order phase="OperationInPhase"/>
         </handler>
     </inflow>
 </module>
