@@ -53,8 +53,12 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 
 	private static org.apache.axis2.description.AxisOperation[] operations;
 
-	static {
 
+	/**
+	 * Constructor
+	 */
+	public KandulaDemoServiceStub(String axis2Home,
+			EndpointReference targetEndpoint) throws java.lang.Exception {
 		// creating the Service
 		_service = new AxisService("KandulaDemoService");
 
@@ -66,14 +70,6 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 		operationDesc.setName(new javax.xml.namespace.QName("creditOperation"));
 		operations[0] = operationDesc;
 		_service.addOperation(operationDesc);
-
-	}
-
-	/**
-	 * Constructor
-	 */
-	public KandulaDemoServiceStub(String axis2Home,
-			EndpointReference targetEndpoint) throws java.lang.Exception {
 		this.toEPR = targetEndpoint;
 		// creating the configuration
 		configurationContext = ConfigurationContextFactory

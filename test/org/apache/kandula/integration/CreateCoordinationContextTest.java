@@ -35,24 +35,16 @@ public class CreateCoordinationContextTest extends TestCase {
 
 	private String repository = "target/testing-repository";
 
-	private KandulaDemoServiceStub stub;
+//	private KandulaDemoServiceStub stub;
 
 	private SimpleHTTPServer server;
 
 	public CreateCoordinationContextTest() throws Exception {
 		super(CreateCoordinationContextTest.class.getName());
-		stub = new KandulaDemoServiceStub(
-				"target/initiator-repository",
-				new EndpointReference(
-						"http://localhost:8081/axis2/services/KandulaDemoService"));
 	}
 
 	public CreateCoordinationContextTest(String testName) throws Exception {
 		super(testName);
-		stub = new KandulaDemoServiceStub(
-				"target/initiator-repository",
-				new EndpointReference(
-						"http://localhost:8081/axis2/services/KandulaDemoService"));
 	}
 
 	protected void setUp() throws Exception {
@@ -81,6 +73,10 @@ public class CreateCoordinationContextTest extends TestCase {
 	}
 
 	public void testEchoXMLASync() throws Exception {
+		KandulaDemoServiceStub	stub = new KandulaDemoServiceStub(
+				"target/initiator-repository",
+				new EndpointReference(
+						"http://localhost:8081/axis2/services/KandulaDemoService"));
 		TransactionManager tm = new TransactionManager(
 				Constants.WS_AT,
 				new EndpointReference(
@@ -95,18 +91,22 @@ public class CreateCoordinationContextTest extends TestCase {
 		tm.commit();
 	}
 
-//	public void testEchoXMLSync() throws Exception {
-//		TransactionManager tm = new TransactionManager(
-//				Constants.WS_AT,
-//				new EndpointReference(
-//						"http://localhost:8082/axis2/services/ActivationCoordinator"));
-//		tm.begin("target/initiator-repository",
-//				"target/initiator-repository/axis2.xml", false);
-//		try {
-//			stub.creditOperation();
-//		} catch (Exception e) {
-//			tm.rollback();
-//		}
-//		tm.commit();
-//	}
+	public void testEchoXMLSync() throws Exception {
+		KandulaDemoServiceStub stub = new KandulaDemoServiceStub(
+				"target/initiator-repository",
+				new EndpointReference(
+						"http://localhost:8081/axis2/services/KandulaDemoService"));
+		TransactionManager tm = new TransactionManager(
+				Constants.WS_AT,
+				new EndpointReference(
+						"http://localhost:8081/axis2/services/ActivationCoordinator"));
+		tm.begin("target/initiator-repository",
+				"target/initiator-repository/axis2.xml", false);
+		try {
+			stub.creditOperation();
+		} catch (Exception e) {
+			tm.rollback();
+		}
+		tm.commit();
+	}
 }

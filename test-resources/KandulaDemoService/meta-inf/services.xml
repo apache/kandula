@@ -1,11 +1,11 @@
 <service name="KandulaDemoService">
     <description>
-        Participant 2PC Coordination service.
+        Sample service for Testing
     </description>
     <module ref="kandula-inflow"/>
    	<parameter name="ServiceClass" locked="xsd:false">org.apache.kandula.integration.KandulaDemoService</parameter>
-    <parameter name="KandulaResource" locked="xsd:false">org.apache.kandula.integration.DummyResource</parameter>
     <operation name="creditOperation">
+	    <parameter name="KandulaResource" locked="xsd:false">org.apache.kandula.integration.DummyResource</parameter>
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
     </operation>
 </service>
