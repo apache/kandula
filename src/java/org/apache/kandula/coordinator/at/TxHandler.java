@@ -39,7 +39,7 @@ public class TxHandler extends BasicHandler {
 			if (tx != null) {
 				try {
 					SOAPHeader header = mc.getCurrentMessage().getSOAPEnvelope().getHeader();
-					tx.getCoordinationContex().toSOAPHeaderElement(header);
+					tx.getCoordinationContext().toSOAPHeaderElement(header);
 				} catch (Exception e) {
 					throw AxisFault.makeFault(e);
 				}
