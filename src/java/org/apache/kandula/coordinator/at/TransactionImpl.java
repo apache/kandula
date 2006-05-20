@@ -113,7 +113,7 @@ public class TransactionImpl {
 		}
 	}
 
-	protected CoordinationContext getCoordinationContex() {
+	protected CoordinationContext getCoordinationContext() {
 		return ctx;
 	}
 
