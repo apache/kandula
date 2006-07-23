@@ -1,0 +1,27 @@
+<service name="TestService">
+	<description>
+    	Sample service for Testing
+	</description>
+    <module ref="kandula-inflow"/>
+   	<parameter name="ServiceClass" locked="xsd:false">interop.testService</parameter>
+    <operation name="Commit">
+		<parameter name="KandulaResource" locked="xsd:false">interop.CommitTestResource</parameter>
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+	</operation>
+	<operation name="Rollback">
+		<parameter name="KandulaResource" locked="xsd:false">interop.RollbackTestResource</parameter>
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+	</operation>
+	<operation name="Phase2Rollback">
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+    </operation>
+	<operation name="Readonly">
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+    </operation>
+    <operation name="VolatileAndDurable">
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+    </operation>
+    <operation name="EarlyAborted">
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
+    </operation>
+</service>

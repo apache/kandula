@@ -14,35 +14,41 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.integration;
+package interop;
 
-import org.apache.axiom.om.OMElement;
+import org.apache.kandula.Constants;
+import org.apache.kandula.participant.KandulaResource;
+import org.apache.kandula.participant.Vote;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public class KandulaDemoService {
+public class VolatileAndDurableTestVolatileResource implements KandulaResource {
 
 	/**
 	 * 
 	 */
-	public KandulaDemoService() {
+	public VolatileAndDurableTestVolatileResource() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public boolean commit() {
+		System.out.println("Commited");
+		return true;
+	}
+
+	public void rollback() {
+		System.out.println("rollback");
 
 	}
 
-	public OMElement creditOperation(OMElement element) {
-		element.build();
-		element.detach();
-//		System.out.println("done com");
-		return element;
+	public Vote prepare() {
+		return Vote.READ_ONLY;
 	}
 
-
-	public OMElement debitOperation(OMElement element) {
-		element.build();
-		element.detach();
-//		System.out.println("done com");
-		return element;
+	public String getProtocol() {
+		return Constants.WS_AT_VOLATILE2PC;
 	}
 
 }

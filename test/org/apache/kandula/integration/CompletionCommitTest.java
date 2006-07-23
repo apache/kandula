@@ -20,6 +20,8 @@ package org.apache.kandula.integration;
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  */
 
+import interop.TestServiceStub;
+
 import java.io.File;
 
 import junit.framework.TestCase;
@@ -31,25 +33,33 @@ import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.kandula.Constants;
 import org.apache.kandula.initiator.TransactionManager;
 
-public class CreateCoordinationContextTest extends TestCase {
+public class CompletionCommitTest extends TestCase {
 
-	private String repository = "target/testing-repository";
+	private String repository = "C:/Program Files/Apache Software Foundation/Tomcat 5.0/webapps/axis2/WEB-INF";
 
-//	private KandulaDemoServiceStub stub;
+	private KandulaDemoServiceStub stub;
 
 	private SimpleHTTPServer server;
 
-	public CreateCoordinationContextTest() throws Exception {
-		super(CreateCoordinationContextTest.class.getName());
+	public CompletionCommitTest() throws Exception {
+		super(CompletionCommitTest.class.getName());
+		stub = new KandulaDemoServiceStub(
+				"target/initiator-repository",
+				new EndpointReference(
+						"http://localhost:8082/axis2/services/TestService"));
 	}
 
-	public CreateCoordinationContextTest(String testName) throws Exception {
+	public CompletionCommitTest(String testName) throws Exception {
 		super(testName);
+		stub = new KandulaDemoServiceStub(
+				"target/initiator-repository",
+				new EndpointReference(
+						"http://localhost:8082/axis2/services/TestService"));
 	}
 
 	protected void setUp() throws Exception {
 		File file = new File(repository);
-		File configFile = new File(repository + "/axis2.xml");
+		File configFile = new File(repository + "/conf/axis2.xml");
 		if (!file.exists()) {
 			throw new Exception("repository directory "
 					+ file.getAbsolutePath() + " does not exists");
@@ -73,40 +83,32 @@ public class CreateCoordinationContextTest extends TestCase {
 	}
 
 	public void testEchoXMLASync() throws Exception {
-		KandulaDemoServiceStub	stub = new KandulaDemoServiceStub(
-				"target/initiator-repository",
-				new EndpointReference(
-						"http://localhost:8081/axis2/services/KandulaDemoService"));
 		TransactionManager tm = new TransactionManager(
 				Constants.WS_AT,
 				new EndpointReference(
-						"http://localhost:8081/axis2/services/ActivationCoordinator"));
-		tm.begin("target/initiator-repository",
-				"target/initiator-repository/axis2.xml", true);
-		try {
-			stub.creditOperation();
-		} catch (Exception e) {
-			tm.rollback();
-		}
-		tm.commit();
+						"http://localhost:8082/axis2/services/ActivationCoordinator"),
+				"target/initiator-repository",
+				"target/initiator-repository/axis2.xml");
+		tm.begin(false);
+		 
+		 stub.creditOperation();
+		 tm.commit();
+		Thread.sleep(5000);
+		
 	}
 
-	public void testEchoXMLSync() throws Exception {
-		KandulaDemoServiceStub stub = new KandulaDemoServiceStub(
-				"target/initiator-repository",
-				new EndpointReference(
-						"http://localhost:8081/axis2/services/KandulaDemoService"));
-		TransactionManager tm = new TransactionManager(
-				Constants.WS_AT,
-				new EndpointReference(
-						"http://localhost:8081/axis2/services/ActivationCoordinator"));
-		tm.begin("target/initiator-repository",
-				"target/initiator-repository/axis2.xml", false);
-		try {
-			stub.creditOperation();
-		} catch (Exception e) {
-			tm.rollback();
-		}
-		tm.commit();
-	}
+//	public void testEchoXMLSync() throws Exception {
+//		// TransactionManager tm = new TransactionManager(
+//		// Constants.WS_AT,
+//		// new EndpointReference(
+//		// "http://localhost:8082/axis2/services/ActivationCoordinator"));
+//		// tm.begin("target/initiator-repository",
+//		// "target/initiator-repository/axis2.xml", false);
+//		// try {
+//		// stub.creditOperation();
+//		// } catch (Exception e) {
+//		// tm.rollback();
+//		// }
+//		// tm.commit();
+//	}
 }

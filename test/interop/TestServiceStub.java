@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.integration;
+package interop;
 
 import java.io.IOException;
 
@@ -35,13 +35,13 @@ import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
-import org.apache.axis2.description.OutOnlyAxisOperation;
+import org.apache.axis2.description.OutInAxisOperation;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 
-public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
+public class TestServiceStub extends org.apache.axis2.client.Stub {
 
 	public static final String AXIS2_HOME = ".";
 
@@ -53,16 +53,15 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 	private EndpointReference toEPR;
 
 	private static org.apache.axis2.description.AxisOperation[] operations;
-
 	{// creating the Service
-		_service = new AxisService("KandulaDemoService");
+		_service = new AxisService("TestService");
 
 		// creating the operations
 		AxisOperation operationDesc;
 		operations = new org.apache.axis2.description.AxisOperation[1];
 
-		operationDesc = new OutOnlyAxisOperation();
-		operationDesc.setName(new javax.xml.namespace.QName("creditOperation"));
+		operationDesc = new OutInAxisOperation();
+		operationDesc.setName(new javax.xml.namespace.QName("Commit"));
 		operations[0] = operationDesc;
 		_service.addOperation(operationDesc);
 	}
@@ -70,7 +69,7 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 	/**
 	 * Constructor
 	 */
-	public KandulaDemoServiceStub(String axis2Home,
+	public TestServiceStub(String axis2Home,
 			EndpointReference targetEndpoint) throws java.lang.Exception {
 		this.toEPR = targetEndpoint;
 		// creating the configuration
@@ -85,7 +84,7 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 
 	}
 
-	public void creditOperation() throws IOException, AxisFault {
+	public void commitOperation() throws IOException, AxisFault {
 
 		Options options = new Options();
 		MessageContext messageContext = new MessageContext();
@@ -94,9 +93,7 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 		SOAPEnvelope env = createSOAPEnvelope();
 		messageContext.setEnvelope(env);
 
-		// _service.engageModule("addressing");
-
-		options.setAction("creditOperation");
+		options.setAction("Commit");
 		options.setTo(this.toEPR);
 
 		// messageSender
@@ -108,7 +105,7 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 
 	}
 
-	public void debitOperation() throws IOException, AxisFault {
+	public void rollbackOperation() throws IOException, AxisFault {
 
 		Options options = new Options();
 		MessageContext messageContext = new MessageContext();
@@ -119,7 +116,91 @@ public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 
 		// _service.engageModule("addressing");
 
-		options.setAction("debitOperation");
+		options.setAction("Rollback");
+		options.setTo(this.toEPR);
+
+		// messageSender
+		// .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
+		OperationClient client = operations[0].createClient(serviceContext,
+				options);
+		client.addMessageContext(messageContext);
+		client.execute(true);
+	}
+	public void phase2RollbackOperation() throws IOException, AxisFault {
+
+		Options options = new Options();
+		MessageContext messageContext = new MessageContext();
+		messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
+				AddressingConstants.Submission.WSA_NAMESPACE);
+		SOAPEnvelope env = createSOAPEnvelope();
+		messageContext.setEnvelope(env);
+
+		// _service.engageModule("addressing");
+
+		options.setAction("Phase2Rollback");
+		options.setTo(this.toEPR);
+
+		// messageSender
+		// .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
+		OperationClient client = operations[0].createClient(serviceContext,
+				options);
+		client.addMessageContext(messageContext);
+		client.execute(true);
+	}
+	public void readonlyOperation() throws IOException, AxisFault {
+
+		Options options = new Options();
+		MessageContext messageContext = new MessageContext();
+		messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
+				AddressingConstants.Submission.WSA_NAMESPACE);
+		SOAPEnvelope env = createSOAPEnvelope();
+		messageContext.setEnvelope(env);
+
+		// _service.engageModule("addressing");
+
+		options.setAction("Readonly");
+		options.setTo(this.toEPR);
+
+		// messageSender
+		// .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
+		OperationClient client = operations[0].createClient(serviceContext,
+				options);
+		client.addMessageContext(messageContext);
+		client.execute(true);
+	}
+	public void volatileAndDurableOperation() throws IOException, AxisFault {
+
+		Options options = new Options();
+		MessageContext messageContext = new MessageContext();
+		messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
+				AddressingConstants.Submission.WSA_NAMESPACE);
+		SOAPEnvelope env = createSOAPEnvelope();
+		messageContext.setEnvelope(env);
+
+		// _service.engageModule("addressing");
+
+		options.setAction("VolatileAndDurable");
+		options.setTo(this.toEPR);
+
+		// messageSender
+		// .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
+		OperationClient client = operations[0].createClient(serviceContext,
+				options);
+		client.addMessageContext(messageContext);
+		client.execute(true);
+	}
+	public void earlyAbortedOperation() throws IOException, AxisFault {
+
+		Options options = new Options();
+		MessageContext messageContext = new MessageContext();
+		messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
+				AddressingConstants.Submission.WSA_NAMESPACE);
+		SOAPEnvelope env = createSOAPEnvelope();
+		messageContext.setEnvelope(env);
+
+		// _service.engageModule("addressing");
+
+		options.setAction("EarlyAborted");
 		options.setTo(this.toEPR);
 
 		// messageSender
