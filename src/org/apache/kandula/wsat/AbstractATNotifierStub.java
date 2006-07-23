@@ -28,11 +28,9 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -48,29 +46,32 @@ public abstract class AbstractATNotifierStub {
 
 	protected AxisService service;
 
-	protected ConfigurationContext configurationContext;
-
 	protected ServiceContext serviceContext;
 
 	protected EndpointReference toEPR;
 
-	public AbstractATNotifierStub(String axis2Home, String axis2Xml,
-			AxisService service) throws AbstractKandulaException {
-		// creating the configuration
-		this.service = service;
+	// public AbstractATNotifierStub(ConfigurationContext configurationContext,
+	// AxisService service) throws AbstractKandulaException {
+	// this.service = service;
+	// try {
+	// configurationContext.getAxisConfiguration().addService(service);
+	// } catch (AxisFault e1) {
+	// throw new KandulaGeneralException(e1);
+	// }
+	// ServiceGroupContext sgc = new ServiceGroupContext(configurationContext,
+	// (AxisServiceGroup) this.service.getParent());
+	// this.serviceContext = new ServiceContext(service, sgc);
+	// }
+	public AbstractATNotifierStub(ConfigurationContext configurationContext)
+			throws AbstractKandulaException {
+		this.service = new AxisService("annonService" + this.hashCode());
 		try {
-			configurationContext = ConfigurationContextFactory
-					.createConfigurationContextFromFileSystem(axis2Home,
-							axis2Xml);
 			configurationContext.getAxisConfiguration().addService(service);
-		} catch (DeploymentException e) {
-			throw new KandulaGeneralException(e);
 		} catch (AxisFault e1) {
 			throw new KandulaGeneralException(e1);
 		}
-		ServiceGroupContext sgc = new ServiceGroupContext(
-				this.configurationContext, (AxisServiceGroup) this.service
-						.getParent());
+		ServiceGroupContext sgc = new ServiceGroupContext(configurationContext,
+				(AxisServiceGroup) this.service.getParent());
 		this.serviceContext = new ServiceContext(service, sgc);
 	}
 
@@ -109,6 +110,9 @@ public abstract class AbstractATNotifierStub {
 			options.setTo(this.toEPR);
 			if (replyToEPR != null) {
 				options.setReplyTo(replyToEPR);
+			} else {
+				options.setReplyTo(new EndpointReference(
+						"http://www.w3.org/2005/08/addressing/none"));
 			}
 			options.setAction(action);
 			// options.setTranportOut(org.apache.axis2.Constants.TRANSPORT_HTTP);

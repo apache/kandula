@@ -21,8 +21,8 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.kandula.Constants;
-import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.CoordinationContext;
+import org.apache.kandula.initiator.InitiatorTransaction;
 import org.apache.kandula.storage.StorageFactory;
 
 /**
@@ -47,9 +47,9 @@ public class ActivationRequesterPortTypeRawXMLSkeleton {
 					Constants.REQUESTER_ID_PARAMETER).getText();
 			CoordinationContext coordinationContext = CoordinationContext.Factory
 					.newContext(response);
-			AbstractContext context = (AbstractContext) StorageFactory
+			InitiatorTransaction initiatorTransaction = (InitiatorTransaction) StorageFactory
 					.getInstance().getInitiatorStore().get(requesterID);
-			context.setCoordinationContext(coordinationContext);
+			initiatorTransaction.setCoordinationContext(coordinationContext);
 		}
 		return null;
 	}

@@ -37,13 +37,13 @@ public class Coordinator {
 	}
 
 	/**
+	 * Participants decided to use this Coordinator as a interposed
+	 * sub-coordinator.The newly created CoordinationContext will contain the
+	 * same ActivityIdentifier & Protocol type. But the registration EPR of this
+	 * coordinator.
+	 * 
 	 * @param coorContext
-	 * @return the interposed Coordination Context created <p/>Participants
-	 *         decided to use this Coordinator as a interposed
-	 *         sub-coordinator.The newly created CoordinationContext will
-	 *         contain the same ActivityIdentifier & Protocol type. Registration
-	 *         EPR of the earlier CoordinationContext will be replaced by the
-	 *         RegistrationEPR of this Coordinator.
+	 * @return the interposed Coordination Context received <p/>
 	 */
 	public AbstractContext createCoordinationContext(
 			CoordinationContext coorContext) throws AbstractKandulaException {

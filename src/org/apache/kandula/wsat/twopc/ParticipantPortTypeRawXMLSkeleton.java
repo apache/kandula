@@ -38,7 +38,7 @@ public class ParticipantPortTypeRawXMLSkeleton {
 		this.opContext = opContext;
 	}
 
-	public OMElement prepareOperation(OMElement requestEle) throws AxisFault {
+	public void prepareOperation(OMElement requestEle) throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
 				opContext.getServiceContext().getConfigurationContext());
 		OMElement header = opContext.getMessageContext(
@@ -55,11 +55,10 @@ public class ParticipantPortTypeRawXMLSkeleton {
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
-		return null;
 
 	}
 
-	public OMElement commitOperation(OMElement requestEle) throws AxisFault {
+	public void commitOperation(OMElement requestEle) throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
 				opContext.getServiceContext().getConfigurationContext());
 		OMElement header = opContext.getMessageContext(
@@ -76,10 +75,9 @@ public class ParticipantPortTypeRawXMLSkeleton {
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
-		return null;
 	}
 
-	public OMElement rollbackOperation(OMElement requestEle) throws AxisFault {
+	public void rollbackOperation(OMElement requestEle) throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
 				opContext.getServiceContext().getConfigurationContext());
 		OMElement header = opContext.getMessageContext(
@@ -96,6 +94,5 @@ public class ParticipantPortTypeRawXMLSkeleton {
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
-		return null;
 	}
 }

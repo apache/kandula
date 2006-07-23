@@ -32,15 +32,15 @@ import org.apache.kandula.utility.EndpointReferenceFactory;
  */
 public class SimpleCoordinationContext implements CoordinationContext {
 	private String activityID;
-	
+
 	private OMElement contextElement = null;
-	
+
 	private String coordinationType;
-	
+
 	private long expires;
-	
+
 	private EndpointReference registrationServiceEpr;
-	
+
 	public SimpleCoordinationContext(OMElement contextElement) {
 		super();
 		this.contextElement = contextElement;
@@ -49,63 +49,63 @@ public class SimpleCoordinationContext implements CoordinationContext {
 		coordinationType = contextElement.getFirstChildWithName(
 				new QName("CoordinationType")).getText();
 		OMElement registrationElement = contextElement
-		.getFirstChildWithName(new QName("RegistrationService"));
+				.getFirstChildWithName(new QName("RegistrationService"));
 		registrationServiceEpr = EndpointReferenceFactory
-		.endpointFromOM(registrationElement);
+				.endpointFromOM(registrationElement);
 	}
-	
+
 	public SimpleCoordinationContext(String activityID,
 			String coordinationType, EndpointReference epr) {
 		this.activityID = activityID;
 		this.coordinationType = coordinationType;
 		this.registrationServiceEpr = epr;
 	}
-	
+
 	public String getActivityID() {
 		return activityID;
 	}
-	
+
 	public Object getCoordinationContextType() {
 		return this;
 	}
-	
+
 	public String getCoordinationType() {
 		return coordinationType;
 	}
-	
+
 	public long getExpires() {
 		return expires;
 	}
-	
+
 	public EndpointReference getRegistrationService() {
 		return this.registrationServiceEpr;
 	}
-	
+
 	public void setActivityID(String value) {
 		this.activityID = value;
-		
+
 	}
-	
+
 	public void setCoordinationType(String value) {
 		this.coordinationType = value;
-		
+
 	}
-	
+
 	public void setExpires(long value) {
 		this.expires = value;
 	}
-	
+
 	public void setRegistrationService(EndpointReference epr) {
 		this.registrationServiceEpr = epr;
 	}
-	
+
 	public OMElement toOM() {
 		if (contextElement != null) {
 			return contextElement;
 		} else {
 			SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
 			OMNamespace wsCoor = factory.createOMNamespace(Constants.WS_COOR,
-			"wscoor");
+					"wscoor");
 			OMElement contextElement = factory.createOMElement(
 					"CoordinationContext", wsCoor);
 			if (this.expires != 0) {

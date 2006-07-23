@@ -32,11 +32,9 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -48,10 +46,10 @@ import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.kandula.Constants;
-import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.context.impl.ATActivityContext;
+import org.apache.kandula.context.impl.ATParticipantContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.KandulaGeneralException;
+import org.apache.kandula.initiator.InitiatorTransaction;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.utility.KandulaListener;
@@ -67,8 +65,6 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
 
 	protected AxisService service;
 
-	protected ConfigurationContext configurationContext;
-
 	private ServiceContext serviceContext;
 
 	private EndpointReference toEPR;
@@ -78,37 +74,32 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
 	/**
 	 * Constructor
 	 */
-	public RegistrationCoordinatorPortTypeRawXMLStub(String axis2Home,
-			String axis2Xml, EndpointReference targetEndpoint)
-			throws AbstractKandulaException {
+	public RegistrationCoordinatorPortTypeRawXMLStub(
+			ConfigurationContext configurationContext,
+			EndpointReference targetEndpoint) throws AbstractKandulaException {
+		configurationContext = configurationContext;
 		this.toEPR = targetEndpoint;
-		service = new AxisService("RegistrationCoordinatorPortType");
+		service = new AxisService("annonService"+this.hashCode());
 		try {
-			configurationContext = ConfigurationContextFactory
-					.createConfigurationContextFromFileSystem(axis2Home,
-							axis2Xml);
 			configurationContext.getAxisConfiguration().addService(service);
-		} catch (DeploymentException e) {
-			throw new KandulaGeneralException(e);
 		} catch (AxisFault e1) {
 			throw new KandulaGeneralException(e1);
 		}
-		ServiceGroupContext sgc = new ServiceGroupContext(
-				this.configurationContext, (AxisServiceGroup) this.service
-						.getParent());
+		ServiceGroupContext sgc = new ServiceGroupContext(configurationContext,
+				(AxisServiceGroup) this.service.getParent());
 		this.serviceContext = new ServiceContext(service, sgc);
 
 	}
 
-	public void registerOperation(AbstractContext context,
-			EndpointReference epr, boolean async) throws IOException, KandulaGeneralException {
+	public void registerOperation(String registrationProtocol,
+			String requesterID, EndpointReference epr, boolean async)
+			throws IOException, KandulaGeneralException {
 		EndpointReference replyToEpr;
 		MessageContext messageContext = new MessageContext();
 		Options options = new Options();
 		messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
 				AddressingConstants.Submission.WSA_NAMESPACE);
-		SOAPEnvelope env = createSOAPEnvelope(context
-				.getRegistrationProtocol(), epr);
+		SOAPEnvelope env = createSOAPEnvelope(registrationProtocol, epr);
 		messageContext.setEnvelope(env);
 		options.setTo(this.toEPR);
 		options.setAction(Constants.WS_COOR_REGISTER);
@@ -116,13 +107,12 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
 		if (async) {
 			operation = new OutOnlyAxisOperation();
 			operation.setName(new javax.xml.namespace.QName(
-					"http://schemas.xmlsoap.org/ws/2003/09/wscoor",
+					Constants.WS_COOR,
 					"RegisterOperation"));
 			service.addOperation(operation);
 			replyToEpr = setupListener();
 			EndpointReferenceFactory.addReferenceProperty(replyToEpr,
-					Constants.REQUESTER_ID_PARAMETER, (String) context
-							.getProperty(AbstractContext.REQUESTER_ID));
+					Constants.REQUESTER_ID_PARAMETER, requesterID);
 			options.setReplyTo(replyToEpr);
 			OperationClient client = operation.createClient(serviceContext,
 					options);
@@ -141,17 +131,28 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
 			MessageContext msgContext = client
 					.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 			OMElement response = msgContext.getEnvelope().getBody()
-					.getFirstChildWithName(new QName(Constants.WS_COOR,"RegisterResponse"));
-			OMElement serviceElement = response.getFirstChildWithName(new QName(Constants.WS_COOR,"CoordinatorProtocolService"));
-			if (serviceElement!=null) {
+					.getFirstChildWithName(
+							new QName(Constants.WS_COOR, "RegisterResponse"));
+			OMElement serviceElement = response
+					.getFirstChildWithName(new QName(Constants.WS_COOR,
+							"CoordinatorProtocolService"));
+			if (serviceElement != null) {
 				EndpointReference coordinatorService = EndpointReferenceFactory
 						.endpointFromOM(serviceElement.getFirstElement());
-				context.setProperty(ATActivityContext.COORDINATION_EPR,
-						coordinatorService);
-			}
-			else 
-			{
-				throw new KandulaGeneralException("CoordinatorProtocolService epr was not found in the RegistrationResponse Message");
+				// try to avoid following
+				InitiatorTransaction initiatorTransaction;
+				initiatorTransaction = (InitiatorTransaction) StorageFactory
+						.getInstance().getInitiatorStore().get(requesterID);
+				if (initiatorTransaction == null) {
+					ATParticipantContext context = (ATParticipantContext) StorageFactory
+							.getInstance().getStore().get(requesterID);
+					context.setCoordinationEPR(coordinatorService);
+				} else {
+					initiatorTransaction.setCoordinationEPR(coordinatorService);
+				}
+			} else {
+				throw new KandulaGeneralException(
+						"CoordinatorProtocolService epr was not found in the RegistrationResponse Message");
 			}
 		}
 

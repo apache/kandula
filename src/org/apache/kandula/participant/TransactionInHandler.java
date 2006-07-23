@@ -16,27 +16,21 @@
  */
 package org.apache.kandula.participant;
 
-import java.io.IOException;
-
 import javax.xml.namespace.QName;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.MessageContext;
+import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.context.impl.ATParticipantContext;
 import org.apache.kandula.context.impl.SimpleCoordinationContext;
-import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
-import org.apache.kandula.utility.EndpointReferenceFactory;
-import org.apache.kandula.utility.KandulaConfiguration;
-import org.apache.kandula.wscoor.RegistrationCoordinatorPortTypeRawXMLStub;
 
 public class TransactionInHandler extends AbstractHandler {
 
@@ -66,44 +60,23 @@ public class TransactionInHandler extends AbstractHandler {
 					coordinationElement);
 			context.setCoordinationContext(coorContext);
 
-			// TODO : See whether we can allow the user to set the resource when
-			// the
-			// business logic receives the message
-			String resourceFile = (String) msgContext.getParameter(
-					Constants.KANDULA_RESOURCE).getValue();
-			String participantRepository = KandulaConfiguration.getInstance()
-					.getParticipantRepository();
-			String participantAxis2Xml = KandulaConfiguration.getInstance()
-					.getParticipantAxis2Conf();
-
-			try {
-				resource = (KandulaResource) Class.forName(resourceFile)
-						.newInstance();
-			} catch (Exception e) {
-				throw new AxisFault(e);
-			}
-			context.setResource(resource);
-
-			String id = EndpointReferenceFactory
-					.getRandomStringOf18Characters();
 			Store store = StorageFactory.getInstance().getStore();
-			context.setProperty(AbstractContext.REQUESTER_ID, id);
-			store.put(id, context);
-			// ParticipantTransactionCoordinator txManager = new
-			// ParticipantTransactionCoordinator();
-			try {
-				RegistrationCoordinatorPortTypeRawXMLStub stub = new RegistrationCoordinatorPortTypeRawXMLStub(
-						participantRepository, participantAxis2Xml, coorContext
-								.getRegistrationService());
-				EndpointReference participantProtocolService = EndpointReferenceFactory
-						.getInstance().get2PCParticipantEndpoint(id);
-				stub.registerOperation(context,
-						participantProtocolService,false);
-			} catch (IOException e) {
-				throw new AxisFault(e);
-			} catch (AbstractKandulaException e) {
-				AxisFault e1 = new AxisFault(e);
-				throw e1;
+			store.put(context.getID(), context);
+			msgContext.setProperty(AbstractContext.REQUESTER_ID,context.getID());
+			Parameter resourceFile =  msgContext.getParameter(
+					Constants.KANDULA_RESOURCE);
+			
+			//Resource not given. Registration delayed to the business logic
+			if (resourceFile != null) {
+
+				try {
+					resource = (KandulaResource) Class.forName((String)resourceFile.getValue())
+							.newInstance();
+				} catch (Exception e) {
+					throw new AxisFault(e);
+				}
+				context.setResource(resource);
+				ParticipantUtility.registerParticipant(context);
 			}
 		}
 	}

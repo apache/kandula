@@ -16,13 +16,16 @@
  */
 package org.apache.kandula.initiator;
 
+import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.kandula.Constants;
 import org.apache.kandula.Status;
-import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.context.ContextFactory;
-import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.InvalidStateException;
+import org.apache.kandula.faults.KandulaGeneralException;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
 import org.apache.kandula.utility.EndpointReferenceFactory;
@@ -39,82 +42,89 @@ public class TransactionManager {
 
 	private static ThreadLocal threadInfo;
 
-	private String axis2Home, axis2Xml;
+	private ConfigurationContext configurationContext;
 
 	public TransactionManager(String coordinationType,
-			EndpointReference coordinatorEPR) throws AbstractKandulaException {
+			EndpointReference coordinatorEPR, String axis2Home, String axis2Xml)
+			throws AbstractKandulaException {
+
+		try {
+			configurationContext = ConfigurationContextFactory
+					.createConfigurationContextFromFileSystem(axis2Home,
+							axis2Xml);
+		} catch (DeploymentException e) {
+			throw new KandulaGeneralException(e);
+		} catch (AxisFault e1) {
+			throw new KandulaGeneralException(e1);
+		}
 
 		threadInfo = new ThreadLocal();
-		AbstractContext context = ContextFactory.getInstance().createActivity(
+		InitiatorTransaction initiatorTransaction = new InitiatorTransaction(
 				coordinationType, coordinatorEPR);
 		if (threadInfo.get() != null)
 			throw new IllegalStateException();
-		threadInfo.set(context.getProperty(ATActivityContext.REQUESTER_ID));
+		threadInfo.set(initiatorTransaction.getRequesterID());
 		Store store = StorageFactory.getInstance().getInitiatorStore();
-		store.put(context.getProperty(ATActivityContext.REQUESTER_ID), context);
+		store.put(initiatorTransaction.getRequesterID(), initiatorTransaction);
 	}
 
-	public void begin(String axis2Home, String axis2Xml) throws Exception {
-		begin(axis2Home,axis2Xml,false);
+	public void begin() throws Exception {
+		begin(false);
 	}
+
 	/**
 	 * @throws Exception
 	 */
-	public void begin(String axis2Home, String axis2Xml, boolean async) throws Exception {
-		this.axis2Home = axis2Home;
-		this.axis2Xml = axis2Xml;
-		AbstractContext context = getTransaction();
-		String id = (String) context
-				.getProperty(AbstractContext.REQUESTER_ID);
+	public void begin(boolean async) throws Exception {
+
+		InitiatorTransaction initiatorTransaction = getTransaction();
+		String id = initiatorTransaction.getRequesterID();
 		ActivationCoordinatorPortTypeRawXMLStub activationCoordinator = new ActivationCoordinatorPortTypeRawXMLStub(
-				axis2Home, axis2Xml, (EndpointReference) context
-						.getProperty(AbstractContext.ACTIVATION_EPR));
+				configurationContext, initiatorTransaction.getActivationEPR());
 		activationCoordinator.createCoordinationContextOperation(
-				context,async);
-		while (async & context.getCoordinationContext() == null) {
+				initiatorTransaction, async);
+		while (async & initiatorTransaction.getCoordinationContext() == null) {
 			// allow other threads to execute
 			Thread.sleep(10);
 		}
 		RegistrationCoordinatorPortTypeRawXMLStub registrationCoordinator = new RegistrationCoordinatorPortTypeRawXMLStub(
-				axis2Home, axis2Xml, context.getCoordinationContext()
-						.getRegistrationService());
-		//TODO make this unaware of the protocol
+				configurationContext, initiatorTransaction
+						.getCoordinationContext().getRegistrationService());
+		// TODO make this unaware of the protocol
 		EndpointReference registrationRequeterPortEPR = EndpointReferenceFactory
 				.getInstance().getCompletionInitiatorEndpoint(id);
-		registrationCoordinator.registerOperation( context,registrationRequeterPortEPR,async);
-		while (async & context.getProperty(ATActivityContext.COORDINATION_EPR) == null) {
+		registrationCoordinator.registerOperation(Constants.WS_AT_COMPLETION,
+				initiatorTransaction.getRequesterID(),
+				registrationRequeterPortEPR, async);
+		while (async & initiatorTransaction.getCoordinationEPR() == null) {
 			Thread.sleep(10);
 		}
 	}
 
 	public void commit() throws Exception {
-		AbstractContext context = getTransaction();
-		EndpointReference coordinationEPR = (EndpointReference) context
-				.getProperty(ATActivityContext.COORDINATION_EPR);
+		InitiatorTransaction initiatorTransaction = getTransaction();
+		EndpointReference coordinationEPR = initiatorTransaction
+				.getCoordinationEPR();
 		CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(
-				axis2Home, axis2Xml, coordinationEPR);
+				configurationContext, coordinationEPR);
 		stub.commitOperation();
-		while ((context.getStatus() != Status.ParticipantStatus.STATUS_COMMITED)
-				& (context.getStatus() != Status.ParticipantStatus.STATUS_ABORTED)) {
+		while ((initiatorTransaction.getStatus() != Status.CoordinatorStatus.STATUS_COMMITTING)
+				& (initiatorTransaction.getStatus() != Status.CoordinatorStatus.STATUS_ABORTING)) {
 			Thread.sleep(10);
 		}
-		if ((context.getStatus() == Status.ParticipantStatus.STATUS_ABORTED)) {
+		if ((initiatorTransaction.getStatus() == Status.CoordinatorStatus.STATUS_ABORTING)) {
 			throw new Exception("Aborted");
 		}
 		forgetTransaction();
 	}
 
 	public void rollback() throws Exception {
-		AbstractContext context = getTransaction();
-		EndpointReference coordinationEPR = (EndpointReference) context
-				.getProperty(ATActivityContext.COORDINATION_EPR);
+		InitiatorTransaction initiatorTransaction = getTransaction();
+		EndpointReference coordinationEPR = initiatorTransaction
+				.getCoordinationEPR();
 		CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(
-				axis2Home, axis2Xml, coordinationEPR);
+				configurationContext, coordinationEPR);
 		stub.rollbackOperation();
-		while ((context.getStatus() != Status.ParticipantStatus.STATUS_COMMITED)
-				| (context.getStatus() != Status.ParticipantStatus.STATUS_ABORTED)) {
-			Thread.sleep(10);
-		}
 		forgetTransaction();
 	}
 
@@ -135,18 +145,18 @@ public class TransactionManager {
 	// threadInfo.set(null);
 	// }
 
-	public static AbstractContext getTransaction()
+	public static InitiatorTransaction getTransaction()
 			throws AbstractKandulaException {
 		Object key = threadInfo.get();
-		AbstractContext context = (AbstractContext) StorageFactory
+		InitiatorTransaction context = (InitiatorTransaction) StorageFactory
 				.getInstance().getInitiatorStore().get(key);
 		if (context == null) {
 			throw new InvalidStateException("No Activity Found");
 		}
 		return context;
 	}
-	public static void forgetTransaction()
-	{
+
+	public static void forgetTransaction() {
 		threadInfo.set(null);
 	}
 }

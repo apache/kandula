@@ -22,7 +22,7 @@ import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.kandula.Constants;
 import org.apache.kandula.Status;
-import org.apache.kandula.context.AbstractContext;
+import org.apache.kandula.initiator.InitiatorTransaction;
 import org.apache.kandula.storage.StorageFactory;
 
 /**
@@ -36,7 +36,7 @@ public class CompletionInitiatorPortTypeRawXMLSkeleton {
 		this.opContext = opContext;
 	}
 
-	public OMElement committedOperation(OMElement requestElement)
+	public void committedOperation(OMElement requestElement)
 			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
 				opContext.getServiceContext().getConfigurationContext());
@@ -44,13 +44,12 @@ public class CompletionInitiatorPortTypeRawXMLSkeleton {
 				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
 		String requesterID = header.getFirstChildWithName(
 				Constants.REQUESTER_ID_PARAMETER).getText();
-		AbstractContext context = (AbstractContext) StorageFactory
+		InitiatorTransaction transaction = (InitiatorTransaction) StorageFactory
 				.getInstance().getInitiatorStore().get(requesterID);
-		context.setStatus(Status.ParticipantStatus.STATUS_COMMITED);
-		return null;
+		transaction.setStatus(Status.CoordinatorStatus.STATUS_COMMITTING);
 	}
 
-	public OMElement abortedOperation(OMElement requestElement)
+	public void abortedOperation(OMElement requestElement)
 			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
 				opContext.getServiceContext().getConfigurationContext());
@@ -58,9 +57,8 @@ public class CompletionInitiatorPortTypeRawXMLSkeleton {
 				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
 		String requesterID = header.getFirstChildWithName(
 				Constants.REQUESTER_ID_PARAMETER).getText();
-		AbstractContext context = (AbstractContext) StorageFactory
+		InitiatorTransaction transaction = (InitiatorTransaction) StorageFactory
 				.getInstance().getInitiatorStore().get(requesterID);
-		context.setStatus(Status.ParticipantStatus.STATUS_ABORTED);
-		return null;
+		transaction.setStatus(Status.CoordinatorStatus.STATUS_ABORTING);
 	}
 }

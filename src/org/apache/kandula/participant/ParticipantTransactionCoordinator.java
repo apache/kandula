@@ -109,10 +109,12 @@ public class ParticipantTransactionCoordinator {
 		// }
 	}
 
-	public void rollback(AbstractContext context) throws InvalidStateException {
+	public void rollback(AbstractContext context) throws AbstractKandulaException {
 		ATParticipantContext atContext = (ATParticipantContext) context;
 		atContext.getResource().rollback();
-
+		CoordinatorPortTypeRawXMLStub stub = new CoordinatorPortTypeRawXMLStub(
+				atContext.getCoordinationEPR());
+		stub.abortedOperation();
 	}
 
 }

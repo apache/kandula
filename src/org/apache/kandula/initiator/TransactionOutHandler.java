@@ -21,7 +21,6 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
 import org.apache.kandula.Constants;
-import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 
@@ -31,16 +30,16 @@ public class TransactionOutHandler extends AbstractHandler {
 
 	public void invoke(MessageContext msgContext) throws AxisFault {
 
-		AbstractContext context;
+		InitiatorTransaction initiatorTransaction;
 		try {
 			String wsaAction = msgContext.getWSAAction();
 			if ((wsaAction != Constants.WS_COOR_CREATE_COORDINATIONCONTEXT)
 					&& (wsaAction != Constants.WS_COOR_REGISTER)
 					&& (wsaAction != Constants.WS_AT_COMMIT)
 					&& (wsaAction != Constants.WS_AT_ROLLBACK)) {
-				context = TransactionManager.getTransaction();
+				initiatorTransaction = TransactionManager.getTransaction();
 				SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
-				CoordinationContext coorContext = context
+				CoordinationContext coorContext = initiatorTransaction
 						.getCoordinationContext();
 				soapHeader.addChild(coorContext.toOM());
 			}

@@ -36,9 +36,8 @@ public class CoordinatorPortTypeRawXMLStub extends AbstractATNotifierStub {
 	 */
 	public CoordinatorPortTypeRawXMLStub(EndpointReference targetEndpoint)
 			throws AbstractKandulaException {
-		super(KandulaConfiguration.getInstance().getParticipantRepository(),
-				KandulaConfiguration.getInstance().getParticipantAxis2Conf(),
-				new AxisService("CoordinatorPortType"));
+		super(KandulaConfiguration.getInstance()
+				.getPariticipantAxis2ConfigurationContext());
 		this.toEPR = targetEndpoint;
 
 		// creating the operations
@@ -76,7 +75,6 @@ public class CoordinatorPortTypeRawXMLStub extends AbstractATNotifierStub {
 	}
 
 	public void preparedOperation() throws AbstractKandulaException {
-		// must send reply to epr
 		this.notify("Prepared", Constants.WS_AT_PREPARED, 0, null);
 	}
 
@@ -95,7 +93,6 @@ public class CoordinatorPortTypeRawXMLStub extends AbstractATNotifierStub {
 	}
 
 	public void replayOperation() throws AbstractKandulaException {
-		// must send reply to epr
 		this.notify("Replay", Constants.WS_AT_REPLAY, 4, null);
 	}
 

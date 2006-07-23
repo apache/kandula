@@ -40,7 +40,7 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 	 * @param requestElement
 	 * @throws AbstractKandulaException
 	 */
-	public OMElement preparedOperation(OMElement requestElement)
+	public void preparedOperation(OMElement requestElement)
 			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
 				opContext.getServiceContext().getConfigurationContext());
@@ -54,18 +54,18 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 		try {
 			coordinator.countVote(activityId, Vote.PREPARED, enlistmentId);
 		} catch (AbstractKandulaException e) {
+			e.printStackTrace();
 			AxisFault fault = new AxisFault(e);
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
-		return null;
 	}
 
 	/**
 	 * @param requestElement
 	 * @throws AbstractKandulaException
 	 */
-	public OMElement abortedOperation(OMElement requestElement)
+	public void abortedOperation(OMElement requestElement)
 			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
 				opContext.getServiceContext().getConfigurationContext());
@@ -83,14 +83,13 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
-		return null;
 	}
 
 	/**
 	 * @param requestElement
 	 * @throws AbstractKandulaException
 	 */
-	public OMElement readOnlyOperation(OMElement requestElement)
+	public void readOnlyOperation(OMElement requestElement)
 			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
 				opContext.getServiceContext().getConfigurationContext());
@@ -108,14 +107,13 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
-		return null;
 	}
 
 	/**
 	 * @param requestElement
 	 * @throws AbstractKandulaException
 	 */
-	public OMElement committedOperation(OMElement requestElement)
+	public void committedOperation(OMElement requestElement)
 			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
 				opContext.getServiceContext().getConfigurationContext());
@@ -133,18 +131,16 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
-		return null;
 	}
 
 	/**
 	 * @param requestElement
 	 * @throws AbstractKandulaException
 	 */
-	public OMElement replayOperation(OMElement requestElement) throws AxisFault {
+	public void replayOperation(OMElement requestElement) throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
 				opContext.getServiceContext().getConfigurationContext());
 		System.out.println("Visited Replay operation");
-		return null;
 	}
 
 }

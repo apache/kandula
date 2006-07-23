@@ -17,15 +17,13 @@
 package org.apache.kandula.wscoor;
 
 import org.apache.axiom.om.OMElement;
-import org.apache.axiom.om.OMException;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.kandula.Constants;
-import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.context.impl.ATActivityContext;
+import org.apache.kandula.context.impl.ATParticipantContext;
+import org.apache.kandula.initiator.InitiatorTransaction;
 import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 
@@ -40,27 +38,28 @@ public class RegistrationRequesterPortTypeRawXMLSkeleton {
 		this.opContext = opContext;
 	}
 
-	public OMElement registerResponseOperation(OMElement responseElement) throws AxisFault{
+	public OMElement registerResponseOperation(OMElement responseElement)
+			throws AxisFault {
 
 		OMElement response = responseElement.getFirstElement();
 		if ("CoordinatorProtocolService".equals(response.getLocalName())) {
 			OMElement header = opContext.getMessageContext(
-					WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
+					WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope()
+					.getHeader();
 			String requesterID = header.getFirstChildWithName(
 					Constants.REQUESTER_ID_PARAMETER).getText();
 			EndpointReference coordinatorService = EndpointReferenceFactory
 					.endpointFromOM(response.getFirstElement());
-			AbstractContext context;
-
-			context = (AbstractContext) StorageFactory.getInstance()
-					.getInitiatorStore().get(requesterID);
-			if (context == null) {
-				context = (AbstractContext) StorageFactory.getInstance()
-						.getStore().get(requesterID);
+			InitiatorTransaction initiatorTransaction;
+			initiatorTransaction = (InitiatorTransaction) StorageFactory
+					.getInstance().getInitiatorStore().get(requesterID);
+			if (initiatorTransaction == null) {
+				ATParticipantContext context = (ATParticipantContext) StorageFactory
+						.getInstance().getStore().get(requesterID);
+				context.setCoordinationEPR(coordinatorService);
+			} else {
+				initiatorTransaction.setCoordinationEPR(coordinatorService);
 			}
-
-			context.setProperty(ATActivityContext.COORDINATION_EPR,
-					coordinatorService);
 		}
 		return null;
 	}

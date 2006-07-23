@@ -20,6 +20,14 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.util.Properties;
 
+import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.deployment.DeploymentException;
+import org.apache.kandula.faults.AbstractKandulaException;
+import org.apache.kandula.faults.KandulaGeneralException;
+import org.apache.kandula.storage.StorageFactory;
+
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
@@ -84,9 +92,9 @@ public class KandulaConfiguration {
 			host = properties.getProperty(HOST_PROPERTY);
 			port = properties.getProperty(PORT_PROPERTY);
 			participantRepository = properties.getProperty(PARTICIPANT_REPO);
-			if (participantRepository == null) {
-				participantRepository = ".";
-			}
+			// if (participantRepository == null) {
+			// participantRepository = ".";
+			// }
 
 			if (properties.getProperty("tcpmon_enable").equals("true")) {
 				debug = "true";
@@ -94,30 +102,30 @@ public class KandulaConfiguration {
 
 			participantAxis2Xml = properties
 					.getProperty(PARTICIPANT_AXIS2_CONF);
-			if (participantAxis2Xml == null) {
-				participantAxis2Xml = "axis2.xml";
-			}
+			// if (participantAxis2Xml == null) {
+			// participantAxis2Xml = "axis2.xml";
+			// }
 
 			kandulaListenerRepository = properties
 					.getProperty(KANDULA_LISTENER_REPO);
-			if (kandulaListenerRepository == null) {
-				kandulaListenerRepository = ".";
-			}
+			// if (kandulaListenerRepository == null) {
+			// kandulaListenerRepository = ".";
+			// }
 			kandulaListenerAxis2Xml = properties
 					.getProperty(KANDULA_LISTENER_AXIS2XML);
-			if (kandulaListenerAxis2Xml == null) {
-				kandulaListenerRepository += "/axis2.xml";
-			}
+			// if (kandulaListenerAxis2Xml == null) {
+			// kandulaListenerRepository += "/axis2.xml";
+			// }
 
 			coordinatorAxis2Conf = properties.getProperty(COORDINATOR_AXIS2XML);
-			if (coordinatorAxis2Conf == null) {
-				coordinatorAxis2Conf = "axis2.xml";
-			}
+			// if (coordinatorAxis2Conf == null) {
+			// coordinatorAxis2Conf = "axis2.xml";
+			// }
 
 			coordinatorRepo = properties.getProperty(COORDINATOR_REPOSITORY);
-			if (coordinatorRepo == null) {
-				coordinatorAxis2Conf = ".";
-			}
+			// if (coordinatorRepo == null) {
+			// coordinatorAxis2Conf = ".";
+			// }
 
 			kandulaListenerPort = properties.getProperty(LISTENER_PORT);
 			if (kandulaListenerPort == null) {
@@ -149,12 +157,48 @@ public class KandulaConfiguration {
 		return instance;
 	}
 
+	public ConfigurationContext getPariticipantAxis2ConfigurationContext()
+			throws AbstractKandulaException {
+		try {
+			if (coordinatorAxis2Conf != null && coordinatorAxis2Conf != "")
+
+				return ConfigurationContextFactory
+						.createConfigurationContextFromFileSystem(
+								participantRepository, participantAxis2Xml);
+			else {
+				return StorageFactory.getInstance().getConfigurationContext();
+			}
+		} catch (DeploymentException e) {
+			throw new KandulaGeneralException(e);
+		} catch (AxisFault e1) {
+			throw new KandulaGeneralException(e1);
+		}
+	}
+
 	public String getParticipantRepository() {
 		return participantRepository;
 	}
 
 	public String getParticipantAxis2Conf() {
 		return participantAxis2Xml;
+	}
+
+	public ConfigurationContext getCoordinatorAxis2ConfigurationContext()
+			throws AbstractKandulaException {
+		try {
+			if (coordinatorAxis2Conf != null && coordinatorAxis2Conf != "")
+
+				return ConfigurationContextFactory
+						.createConfigurationContextFromFileSystem(
+								coordinatorRepo, coordinatorAxis2Conf);
+			else {
+				return StorageFactory.getInstance().getConfigurationContext();
+			}
+		} catch (DeploymentException e) {
+			throw new KandulaGeneralException(e);
+		} catch (AxisFault e1) {
+			throw new KandulaGeneralException(e1);
+		}
 	}
 
 	public String getCoordinatorRepo() {

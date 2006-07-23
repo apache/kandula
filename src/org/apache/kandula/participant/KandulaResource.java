@@ -27,4 +27,5 @@ public interface KandulaResource {
 	public Vote prepare();
 
 	public String getProtocol();
+	
 }

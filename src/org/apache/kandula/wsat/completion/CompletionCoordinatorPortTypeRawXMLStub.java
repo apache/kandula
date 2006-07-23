@@ -16,8 +16,8 @@
  */
 package org.apache.kandula.wsat.completion;
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutOnlyAxisOperation;
@@ -32,16 +32,10 @@ public class CompletionCoordinatorPortTypeRawXMLStub extends
 		AbstractATNotifierStub {
 	public static final String AXIS2_HOME = ".";
 
-	/**
-	 * Constructor
-	 * 
-	 * @throws AxisFault
-	 */
-	public CompletionCoordinatorPortTypeRawXMLStub(String axis2Home,
-			String axis2Xml, EndpointReference targetEndpoint)
-			throws AbstractKandulaException {
-		super(axis2Home, axis2Xml, new AxisService(
-				"CompletionCoordinatorPortType"));
+	public CompletionCoordinatorPortTypeRawXMLStub(
+			ConfigurationContext configurationContext,
+			EndpointReference targetEndpoint) throws AbstractKandulaException {
+		super(configurationContext);
 		this.toEPR = targetEndpoint;
 
 		// creating the operations
@@ -52,23 +46,21 @@ public class CompletionCoordinatorPortTypeRawXMLStub extends
 		operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
 				"commitOperation"));
 		operations[0] = operation;
-		service.addOperation(operation);
+//		service.addOperation(operation);
 
 		operation = new OutOnlyAxisOperation();
 		operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
 				"rollbackOperation"));
 		operations[1] = operation;
-		service.addOperation(operation);
+//		service.addOperation(operation);
 	}
 
 	public void commitOperation() throws AbstractKandulaException {
-		// TODO must send reply to epr
 		this.notify("Commit", Constants.WS_AT_COMMIT, 0, null);
 
 	}
 
 	public void rollbackOperation() throws AbstractKandulaException {
-		// TODO must send reply to EPR
 		this.notify("Rollback", Constants.WS_AT_ROLLBACK, 1, null);
 
 	}

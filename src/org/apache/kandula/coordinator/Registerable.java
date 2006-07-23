@@ -29,21 +29,21 @@ import org.apache.kandula.faults.InvalidProtocolException;
 public interface Registerable {
 	public static final class Factory {
 		public static Registerable newRegisterable(String coordinationType)
-		throws InvalidProtocolException {
+				throws InvalidProtocolException {
 			if (Constants.WS_AT.equals(coordinationType)) {
-				
+
 				return new ATCoordinator();
-				
+
 			} else {
 				throw new InvalidProtocolException(
-				"Unsupported Coordination Type");
+						"Unsupported Coordination Type");
 			}
 		}
-		
+
 		private Factory() {
 		}
 	}
-	
+
 	public EndpointReference register(AbstractContext context, String protocol,
 			EndpointReference participantEPR) throws AbstractKandulaException;
 }

@@ -32,11 +32,9 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
 import org.apache.axis2.context.ConfigurationContext;
-import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.context.ServiceGroupContext;
-import org.apache.axis2.deployment.DeploymentException;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
@@ -48,10 +46,9 @@ import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.kandula.Constants;
-import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.CoordinationContext;
-import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.faults.KandulaGeneralException;
+import org.apache.kandula.initiator.InitiatorTransaction;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.utility.KandulaListener;
 
@@ -66,8 +63,6 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
 
 	protected AxisService service;
 
-	protected ConfigurationContext configurationContext;
-
 	protected ServiceContext serviceContext;
 
 	protected EndpointReference toEPR;
@@ -77,47 +72,46 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
 	/**
 	 * Constructor
 	 */
-	public ActivationCoordinatorPortTypeRawXMLStub(String axis2Home,
-			String axis2Xml, EndpointReference targetEndpoint)
-			throws java.lang.Exception {
+	public ActivationCoordinatorPortTypeRawXMLStub(
+			ConfigurationContext configurationContext,
+			EndpointReference targetEndpoint) throws java.lang.Exception {
 		this.toEPR = targetEndpoint;
 		service = new AxisService("ActivationCoordinatorPortType");
 		try {
-			configurationContext = ConfigurationContextFactory
-					.createConfigurationContextFromFileSystem(axis2Home,
-							axis2Xml);
 			configurationContext.getAxisConfiguration().addService(service);
-		} catch (DeploymentException e) {
-			throw new KandulaGeneralException(e);
 		} catch (AxisFault e1) {
 			throw new KandulaGeneralException(e1);
 		}
-		ServiceGroupContext sgc = new ServiceGroupContext(
-				this.configurationContext, (AxisServiceGroup) this.service
-						.getParent());
+		ServiceGroupContext sgc = new ServiceGroupContext(configurationContext,
+				(AxisServiceGroup) this.service.getParent());
 		this.serviceContext = new ServiceContext(service, sgc);
 	}
 
-	public void createCoordinationContextOperation(AbstractContext context, boolean async) throws IOException, KandulaGeneralException {
+	public void createCoordinationContextOperation(
+			InitiatorTransaction initiatorTransaction, boolean async)
+			throws IOException, KandulaGeneralException {
 
 		EndpointReference replyToEpr;
 		MessageContext messageContext = new MessageContext();
 		Options options = new Options();
 		messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
 				AddressingConstants.Final.WSA_NAMESPACE);
-		SOAPEnvelope env = createSOAPEnvelope(context.getCoordinationType());
+		SOAPEnvelope env = createSOAPEnvelope(initiatorTransaction
+				.getCoordinationType());
 		messageContext.setEnvelope(env);
 		options.setTo(this.toEPR);
 		options.setAction(Constants.WS_COOR_CREATE_COORDINATIONCONTEXT);
 
 		if (async) {
 			operation = new OutOnlyAxisOperation();
-			operation.setName(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/ws/2003/09/wscoor","CreateCoordinationContextOperation"));
+			operation.setName(new javax.xml.namespace.QName(
+					"http://schemas.xmlsoap.org/ws/2003/09/wscoor",
+					"CreateCoordinationContextOperation"));
 			service.addOperation(operation);
 			replyToEpr = setupListener();
 			EndpointReferenceFactory.addReferenceProperty(replyToEpr,
-					Constants.REQUESTER_ID_PARAMETER, (String) context
-							.getProperty(AbstractContext.REQUESTER_ID));
+					Constants.REQUESTER_ID_PARAMETER, initiatorTransaction
+							.getRequesterID());
 			options.setReplyTo(replyToEpr);
 			OperationClient client = operation.createClient(serviceContext,
 					options);
@@ -125,7 +119,9 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
 			client.execute(false);
 		} else {
 			operation = new OutInAxisOperation();
-			operation.setName(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/ws/2003/09/wscoor","CreateCoordinationContextOperation"));
+			operation.setName(new javax.xml.namespace.QName(
+					"http://schemas.xmlsoap.org/ws/2003/09/wscoor",
+					"CreateCoordinationContextOperation"));
 			service.addOperation(operation);
 			OperationClient client = operation.createClient(serviceContext,
 					options);
@@ -134,15 +130,20 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
 			MessageContext msgContext = client
 					.getMessageContext(WSDLConstants.MESSAGE_LABEL_IN_VALUE);
 			OMElement response = msgContext.getEnvelope().getBody()
-					.getFirstChildWithName(new QName(Constants.WS_COOR,"CreateCoordinationContextResponse"));
-			OMElement contextElement = response.getFirstChildWithName(new QName(Constants.WS_COOR,"CoordinationContext"));
-			if (contextElement!=null) {
-				CoordinationContext coordinationContext = CoordinationContext.Factory.newContext(contextElement);
-				context.setCoordinationContext(coordinationContext);
-			}
-			else 
-			{
-				throw new KandulaGeneralException("CoordinationContext was not found in the CreareCoordinationContextResponse Message");
+					.getFirstChildWithName(
+							new QName(Constants.WS_COOR,
+									"CreateCoordinationContextResponse"));
+			OMElement contextElement = response
+					.getFirstChildWithName(new QName(Constants.WS_COOR,
+							"CoordinationContext"));
+			if (contextElement != null) {
+				CoordinationContext coordinationContext = CoordinationContext.Factory
+						.newContext(contextElement);
+				initiatorTransaction
+						.setCoordinationContext(coordinationContext);
+			} else {
+				throw new KandulaGeneralException(
+						"CoordinationContext was not found in the CreareCoordinationContextResponse Message");
 			}
 		}
 

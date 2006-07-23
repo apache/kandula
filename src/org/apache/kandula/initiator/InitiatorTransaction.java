@@ -17,19 +17,32 @@
 package org.apache.kandula.initiator;
 
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.kandula.Status;
 import org.apache.kandula.context.CoordinationContext;
+import org.apache.kandula.utility.EndpointReferenceFactory;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public class ATInitiatorTransaction {
+public class InitiatorTransaction {
+
+	private EndpointReference activationEPR;
 
 	private EndpointReference coordinationEPR;
 
+	private String requesterID;
+
+	private String coordinationType;
+
 	private CoordinationContext coordinationContext;
 
-	public ATInitiatorTransaction(EndpointReference coordinationEPR) {
-		this.coordinationEPR = coordinationEPR;
+	private int status = Status.CoordinatorStatus.STATUS_NONE;
+
+	public InitiatorTransaction(String coordinationType,
+			EndpointReference activationEPR) {
+		this.activationEPR = activationEPR;
+		this.coordinationType = coordinationType;
+		requesterID = EndpointReferenceFactory.getRandomStringOf18Characters();
 	}
 
 	/**
@@ -60,5 +73,33 @@ public class ATInitiatorTransaction {
 	 */
 	public void setCoordinationContext(CoordinationContext coordinationContext) {
 		this.coordinationContext = coordinationContext;
+	}
+
+	public final int getStatus() {
+		return status;
+	}
+
+	public final void setStatus(int value) {
+		status = value;
+	}
+
+	public String getRequesterID() {
+		return requesterID;
+	}
+
+	public void setRequesterID(String requesterID) {
+		this.requesterID = requesterID;
+	}
+
+	public String getCoordinationType() {
+		return coordinationType;
+	}
+
+	public EndpointReference getActivationEPR() {
+		return activationEPR;
+	}
+
+	public void setActivationEPR(EndpointReference activationEPR) {
+		this.activationEPR = activationEPR;
 	}
 }

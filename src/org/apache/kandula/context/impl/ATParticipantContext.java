@@ -21,21 +21,30 @@ import org.apache.kandula.Constants;
 import org.apache.kandula.Status;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.participant.KandulaResource;
+import org.apache.kandula.utility.EndpointReferenceFactory;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class ATParticipantContext extends AbstractContext {
 	KandulaResource resource;
-	
+	String ID;
+	EndpointReference coordinationEPR;
+
 	public ATParticipantContext() {
 		this.setStatus(Status.CoordinatorStatus.STATUS_ACTIVE);
+		ID = EndpointReferenceFactory
+		.getRandomStringOf18Characters();
 	}
-	
+
 	public EndpointReference getCoordinationEPR() {
-		return (EndpointReference) getProperty(ATActivityContext.COORDINATION_EPR);
+		return coordinationEPR;
 	}
 	
+	public void setCoordinationEPR(EndpointReference endpointReference) {
+		this.coordinationEPR =  endpointReference;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -44,16 +53,17 @@ public class ATParticipantContext extends AbstractContext {
 	public String getCoordinationType() {
 		return Constants.WS_AT;
 	}
-	
+
 	/**
 	 * @return Returns the transaction partcipant resource.
 	 */
 	public KandulaResource getResource() {
 		return resource;
 	}
-	
+
 	/**
-	 * @param setting the transaction participant resource
+	 * @param setting
+	 *            the transaction participant resource
 	 */
 	public void setResource(KandulaResource resource) {
 		this.resource = resource;
@@ -62,5 +72,13 @@ public class ATParticipantContext extends AbstractContext {
 	public String getRegistrationProtocol() {
 		return resource.getProtocol();
 	}
-	
+
+	public String getID() {
+		return ID;
+	}
+
+	public void setID(String id) {
+		ID = id;
+	}
+
 }

@@ -37,9 +37,8 @@ public class ParticipantPortTypeRawXMLStub extends AbstractATNotifierStub {
 	 * @throws AbstractKandulaException
 	 */
 	public ParticipantPortTypeRawXMLStub() throws AbstractKandulaException {
-		super(KandulaConfiguration.getInstance().getCoordinatorRepo(),
-				KandulaConfiguration.getInstance().getCoordinatorAxis2Conf(),
-				new AxisService("ParticipantPortType"));
+		super(KandulaConfiguration.getInstance()
+				.getCoordinatorAxis2ConfigurationContext());
 
 		// creating the operations
 		AxisOperation operation;
@@ -66,7 +65,6 @@ public class ParticipantPortTypeRawXMLStub extends AbstractATNotifierStub {
 
 	public void prepareOperation(EndpointReference targetEndpoint)
 			throws AbstractKandulaException {
-		// TODO must send reply TO epr
 		this.toEPR = targetEndpoint;
 		this.notify("Prepare", Constants.WS_AT_PREPARE, 0, null);
 
@@ -74,7 +72,6 @@ public class ParticipantPortTypeRawXMLStub extends AbstractATNotifierStub {
 
 	public void commitOperation(EndpointReference targetEndpoint)
 			throws AbstractKandulaException {
-		// TODO must send reply to epr
 		this.toEPR = targetEndpoint;
 		this.notify("Commit", Constants.WS_AT_COMMIT, 1, null);
 
@@ -82,7 +79,6 @@ public class ParticipantPortTypeRawXMLStub extends AbstractATNotifierStub {
 
 	public void rollbackOperation(EndpointReference targetEndpoint)
 			throws AbstractKandulaException {
-		// TODO must send reply to epr
 		this.toEPR = targetEndpoint;
 		this.notify("Rollback", Constants.WS_AT_ROLLBACK, 2, null);
 	}

@@ -18,8 +18,6 @@ package org.apache.kandula.storage;
 
 import java.util.HashMap;
 
-import org.apache.kandula.context.AbstractContext;
-
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
@@ -47,7 +45,7 @@ public class SimpleStore implements Store {
 	 * @see org.apache.kandula.storage.Store#getContext(java.lang.String)
 	 */
 	public Object get(Object id) {
-		return (AbstractContext) contextMap.get(id);
+		return contextMap.get(id);
 	}
 
 	/*

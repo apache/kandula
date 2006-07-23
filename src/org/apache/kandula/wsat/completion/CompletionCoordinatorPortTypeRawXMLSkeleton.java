@@ -40,7 +40,7 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
 	 * @param requestElement
 	 * @throws AxisFault
 	 */
-	public OMElement commitOperation(OMElement requestElement) throws AxisFault {
+	public void commitOperation(OMElement requestElement) throws AxisFault {
 		String activityId;
 		// log.info("Visited Commit operation");
 		StorageFactory.getInstance().setConfigurationContext(
@@ -49,19 +49,18 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
 				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
 		activityId = header.getFirstChildWithName(
 				Constants.TRANSACTION_ID_PARAMETER).getText();
-		// TODO do we need to check the incoming message
 		try {
 			ATCoordinator coordinator = new ATCoordinator();
 			coordinator.commitOperation(activityId);
 		} catch (AbstractKandulaException e) {
+			e.printStackTrace();
 			AxisFault fault = new AxisFault(e);
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
-		return null;
 	}
 
-	public OMElement rollbackOperation(OMElement requestElement)
+	public void rollbackOperation(OMElement requestElement)
 			throws AxisFault {
 
 		String activityId;
@@ -80,7 +79,6 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
-		return null;
 	}
 
 }
