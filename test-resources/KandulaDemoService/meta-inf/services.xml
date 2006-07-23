@@ -6,6 +6,6 @@
    	<parameter name="ServiceClass" locked="xsd:false">org.apache.kandula.integration.KandulaDemoService</parameter>
     <operation name="creditOperation">
 	    <parameter name="KandulaResource" locked="xsd:false">org.apache.kandula.integration.DummyResource</parameter>
-        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
+        <messageReceiver class="org.apache.axis2.receivers.RawXMLINOutMessageReceiver"/>
     </operation>
 </service>

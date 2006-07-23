@@ -4,23 +4,23 @@
     </description>
    <parameter name="ServiceClass" locked="xsd:false">org.apache.kandula.wsat.twopc.CoordinatorPortTypeRawXMLSkeleton</parameter>
     <operation name="abortedOperation">
-        <actionMapping>http://schemas.xmlsoap.org/ws/2004/10/wsat/Aborted</actionMapping>
+        <actionMapping>http://docs.oasis-open.org/ws-tx/wsat/2006/03/Aborted</actionMapping>
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
     </operation>
     <operation name="committedOperation">
-        <actionMapping>http://schemas.xmlsoap.org/ws/2004/10/wsat/Committed</actionMapping>
+        <actionMapping>http://docs.oasis-open.org/ws-tx/wsat/2006/03/Committed</actionMapping>
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
     </operation>
     <operation name="preparedOperation">
-        <actionMapping>http://schemas.xmlsoap.org/ws/2004/10/wsat/Prepared</actionMapping>
+        <actionMapping>http://docs.oasis-open.org/ws-tx/wsat/2006/03/Prepared</actionMapping>
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
     </operation>
     <operation name="readOnlyOperation">
-        <actionMapping>http://schemas.xmlsoap.org/ws/2004/10/wsat/ReadOnly</actionMapping>
+        <actionMapping>http://docs.oasis-open.org/ws-tx/wsat/2006/03/ReadOnly</actionMapping>
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
     </operation>
     <operation name="replayOperation">
-        <actionMapping>http://schemas.xmlsoap.org/ws/2004/10/wsat/Replay</actionMapping>
+        <actionMapping>http://docs.oasis-open.org/ws-tx/wsat/2006/03/Replay</actionMapping>
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
     </operation>
 </service>

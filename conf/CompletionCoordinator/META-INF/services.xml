@@ -4,11 +4,11 @@
     </description>
     <parameter name="ServiceClass" locked="xsd:false">org.apache.kandula.wsat.completion.CompletionCoordinatorPortTypeRawXMLSkeleton</parameter>
     <operation name="commitOperation">
-        <actionMapping>http://schemas.xmlsoap.org/ws/2004/10/wsat/Commit</actionMapping>
+        <actionMapping>http://docs.oasis-open.org/ws-tx/wsat/2006/03/Commit</actionMapping>
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
     </operation>
     <operation name="rollbackOperation">
-        <actionMapping>http://schemas.xmlsoap.org/ws/2004/10/wsat/Rollback</actionMapping>
+        <actionMapping>http://docs.oasis-open.org/ws-tx/wsat/2006/03/Rollback</actionMapping>
         <messageReceiver class="org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver"/>
     </operation>
 </service>
