@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
@@ -84,25 +85,30 @@ public class TestServiceStub extends org.apache.axis2.client.Stub {
 
 	}
 
-	public void commitOperation() throws IOException, AxisFault {
-
+	public void sendMessage(String name) throws AxisFault
+	{
 		Options options = new Options();
 		MessageContext messageContext = new MessageContext();
 		messageContext.setProperty(AddressingConstants.WS_ADDRESSING_VERSION,
 				AddressingConstants.Submission.WSA_NAMESPACE);
-		SOAPEnvelope env = createSOAPEnvelope();
+		
+		SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
+		SOAPEnvelope env = factory.getDefaultEnvelope();
+		OMNamespace namespace = factory.createOMNamespace("http://fabrikam123.com","tns");
+		OMElement testType = factory.createOMElement(name,namespace);
+		env.getBody().addChild(testType);
 		messageContext.setEnvelope(env);
-
-		options.setAction("Commit");
+		
+		options.setAction(name);
 		options.setTo(this.toEPR);
-
-		// messageSender
-		// .setSenderTransport(org.apache.axis2.Constants.TRANSPORT_HTTP);
 		OperationClient client = operations[0].createClient(serviceContext,
 				options);
 		client.addMessageContext(messageContext);
 		client.execute(true);
-
+	}
+	
+	public void commitOperation() throws IOException, AxisFault {
+		sendMessage("Commit");
 	}
 
 	public void rollbackOperation() throws IOException, AxisFault {

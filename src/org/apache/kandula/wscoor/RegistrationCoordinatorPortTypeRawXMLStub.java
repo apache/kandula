@@ -138,7 +138,7 @@ public class RegistrationCoordinatorPortTypeRawXMLStub extends
 							"CoordinatorProtocolService"));
 			if (serviceElement != null) {
 				EndpointReference coordinatorService = EndpointReferenceFactory
-						.endpointFromOM(serviceElement.getFirstElement());
+						.endpointFromOM(serviceElement);
 				// try to avoid following
 				InitiatorTransaction initiatorTransaction;
 				initiatorTransaction = (InitiatorTransaction) StorageFactory

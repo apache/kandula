@@ -18,7 +18,11 @@ package interop;
 
 import java.util.Map;
 
+import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
+import org.apache.axiom.om.OMNamespace;
+import org.apache.axiom.soap.SOAPEnvelope;
+import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.OperationContext;
@@ -51,20 +55,15 @@ public class testService {
 	}
 
 	public OMElement Commit(OMElement element) {
-		element.build();
-		element.detach();
-		return element;
+		return getResponseElement();
 	}
 
 	public OMElement Rollback(OMElement element) {
-		element.build();
-		element.detach();
-		return element;
+		return getResponseElement();
 	}
 
 	public OMElement Phase2Rollback(OMElement element) throws AxisFault {
-		element.build();
-		element.detach();
+
 		String reqID = (String) msgcts
 				.getProperty(AbstractContext.REQUESTER_ID);
 		Store store = StorageFactory.getInstance().getStore();
@@ -87,12 +86,11 @@ public class testService {
 		store.put(participantContext1.getID(), participantContext1);
 		ParticipantUtility.registerParticipant(participantContext1);
 
-		return element;
+		return getResponseElement();
 	}
 
 	public OMElement Readonly(OMElement element) throws AxisFault {
-		element.build();
-		element.detach();
+
 		String reqID = (String) msgcts
 				.getProperty(AbstractContext.REQUESTER_ID);
 		Store store = StorageFactory.getInstance().getStore();
@@ -115,12 +113,11 @@ public class testService {
 		store.put(participantContext1.getID(), participantContext1);
 		ParticipantUtility.registerParticipant(participantContext1);
 
-		return element;
+		return getResponseElement();
 	}
 
 	public OMElement VolatileAndDurable(OMElement element) throws AxisFault {
-		element.build();
-		element.detach();
+
 		String reqID = (String) msgcts
 				.getProperty(AbstractContext.REQUESTER_ID);
 		final Store store = StorageFactory.getInstance().getStore();
@@ -162,12 +159,11 @@ public class testService {
 			}
 		});
 		thread.start();
-		return element;
+		return getResponseElement();
 	}
 
 	public OMElement EarlyAborted(OMElement element) throws AxisFault {
-		element.build();
-		element.detach();
+
 		String reqID = (String) msgcts
 				.getProperty(AbstractContext.REQUESTER_ID);
 		Store store = StorageFactory.getInstance().getStore();
@@ -199,6 +195,13 @@ public class testService {
 			throw new AxisFault(e);
 		}
 
-		return element;
+		return getResponseElement();
+	}
+	private OMElement getResponseElement()
+	{
+		SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
+		OMNamespace namespace = factory.createOMNamespace("http://fabrikam123.com",null);
+		OMElement testType = factory.createOMElement("Response",namespace);
+		return testType;
 	}
 }

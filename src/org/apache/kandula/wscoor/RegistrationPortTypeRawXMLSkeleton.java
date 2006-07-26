@@ -93,13 +93,10 @@ public class RegistrationPortTypeRawXMLSkeleton {
 		SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
 		OMNamespace wsCoor = factory.createOMNamespace(
 				org.apache.kandula.Constants.WS_COOR, "wscoor");
-		OMElement protocolService = factory.createOMElement(
-				"CoordinatorProtocolService", wsCoor);
 		OMElement coordinatorProtocolService = factory.createOMElement(
 				"CoordinatorProtocolService", wsCoor);
 		EndpointReferenceFactory.endpointToOM(epr, coordinatorProtocolService,
 				factory);
-		protocolService.addChild(coordinatorProtocolService);
-		return protocolService;
+		return coordinatorProtocolService;
 	}
 }

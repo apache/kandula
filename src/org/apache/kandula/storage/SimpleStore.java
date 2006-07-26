@@ -17,12 +17,17 @@
 package org.apache.kandula.storage;
 
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.apache.kandula.context.impl.ATActivityContext;
+import org.apache.kandula.coordinator.at.ATCoordinator;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class SimpleStore implements Store {
-
+	Timer timer = new Timer();
 	private HashMap contextMap;
 
 	/*
@@ -37,6 +42,17 @@ public class SimpleStore implements Store {
 
 	public void put(Object id, Object context) {
 		contextMap.put(id, context);
+	}
+	
+	public void put(final Object id, final ATActivityContext context,long expires) {
+		contextMap.put(id, context);
+		timer.schedule(new TimerTask() {
+			public void run() {
+				forget(id);
+				ATCoordinator coordinator = new ATCoordinator();
+				coordinator.timeout(context);
+			}
+		}, expires);
 	}
 
 	/*

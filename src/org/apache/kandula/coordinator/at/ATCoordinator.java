@@ -334,7 +334,7 @@ public class ATCoordinator implements Registerable {
 	 * @param context
 	 * @throws Exception
 	 */
-	private void abortActivity(AbstractContext context)
+	public void abortActivity(AbstractContext context)
 			throws AbstractKandulaException {
 		ParticipantPortTypeRawXMLStub stub = new ParticipantPortTypeRawXMLStub();
 		ATActivityContext atContext = (ATActivityContext) context;
@@ -350,7 +350,6 @@ public class ATCoordinator implements Registerable {
 		CompletionInitiatorPortTypeRawXMLStub completionStub = new CompletionInitiatorPortTypeRawXMLStub(
 				atContext.getCompletionParticipant());
 		completionStub.abortedOperation();
-
 	}
 
 	/**
@@ -414,7 +413,7 @@ public class ATCoordinator implements Registerable {
 				}
 			}
 		}
-		
+
 		try {
 			Method method = ATCoordinator.class.getMethod("durablePrepare",
 					new Class[] { AbstractContext.class });
@@ -464,6 +463,30 @@ public class ATCoordinator implements Registerable {
 				throw new KandulaGeneralException(
 						"Internal Kandula Server Error ", e);
 			}
+		}
+	}
+
+	public void timeout(AbstractContext context){
+		ATActivityContext atContext = (ATActivityContext) context;
+		atContext.lock();
+		switch (atContext.getStatus()) {
+
+		case CoordinatorStatus.STATUS_ABORTING:
+		case CoordinatorStatus.STATUS_COMMITTING:
+		case CoordinatorStatus.STATUS_PREPARED_SUCCESS:
+			atContext.unlock();
+			break;
+		case CoordinatorStatus.STATUS_ACTIVE:
+		case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
+		case CoordinatorStatus.STATUS_PREPARING_DURABLE:
+			try {
+					abortActivity(context);
+				} catch (AbstractKandulaException e) {
+					e.printStackTrace();
+				}
+			break;
+		default:
+			atContext.unlock();
 		}
 	}
 }
