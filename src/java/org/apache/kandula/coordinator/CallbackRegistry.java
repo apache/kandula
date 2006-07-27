@@ -57,7 +57,7 @@ public class CallbackRegistry {
 
 		timer.schedule(new TimerTask() {
 			public void run() {
-				callbacks.remove(callback);
+				callbacks.remove(callback.getID());
 				try {
 					callback.timeout();
 				} catch (TimedOutException e) {
