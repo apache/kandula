@@ -123,7 +123,7 @@
         <dependency>
           <groupId>axis</groupId>
           <artifactId>axis</artifactId>
-          <version>1.3</version>	<!-- 1.3 or SNAPSHOT -->
+          <version>1.4</version>	<!-- 1.3 or SNAPSHOT -->
           <url>http://ws.apache.org/axis/</url>
           <properties>
             <module>true</module>
@@ -133,7 +133,7 @@
         <dependency>
           <groupId>axis</groupId>
           <artifactId>axis-jaxrpc</artifactId>
-          <version>1.3</version>	<!-- 1.3 or SNAPSHOT -->
+          <version>1.4</version>	<!-- 1.3 or SNAPSHOT -->
           <url>http://ws.apache.org/axis/</url>
           <properties>
             <module>true</module>
@@ -143,7 +143,7 @@
         <dependency>
           <groupId>axis</groupId>
           <artifactId>axis-saaj</artifactId>
-          <version>1.3</version>	<!-- 1.3 or SNAPSHOT -->
+          <version>1.4</version>	<!-- 1.3 or SNAPSHOT -->
           <url>http://ws.apache.org/axis/</url>
           <properties>
             <module>true</module>
@@ -163,7 +163,7 @@
         <dependency>
             <groupId>axis</groupId>
             <artifactId>axis-ant</artifactId>
-            <version>1.3</version>	<!-- 1.3 or SNAPSHOT -->
+            <version>1.4</version>	<!-- 1.3 or SNAPSHOT -->
             <properties>
                 <module>true</module>
             </properties>
@@ -196,37 +196,37 @@
             </properties>
      	</dependency>
 	
-	 	<dependency>
-            <groupId>geronimo-spec</groupId>
-            <artifactId>geronimo-spec-j2ee</artifactId>
-            <version>1.4-rc4</version>
-            <properties>
-                <module>true</module>
+ 	<dependency>
+           <groupId>geronimo</groupId>
+           <artifactId>geronimo-j2ee</artifactId>
+           <version>1.1</version>
+           <properties>
+               <module>true</module>
             </properties>
      	</dependency>
-     	
-	 	<dependency>
+
+ 	<dependency>
             <groupId>geronimo</groupId>
             <artifactId>geronimo-transaction</artifactId>
-            <version>1.0-M4</version>
+            <version>1.1</version>
             <properties>
                 <module>true</module>
             </properties>
      	</dependency>
 
-	 	<dependency>
-            <groupId>geronimo</groupId>
-            <artifactId>geronimo-kernel</artifactId>
-            <version>1.0-M4</version>
+	<dependency>
+            <groupId>geronimo-spec</groupId>
+            <artifactId>geronimo-spec-j2ee-1.4</artifactId>
+            <version>SNAPSHOT</version>
             <properties>
                 <module>true</module>
             </properties>
      	</dependency>
 
-	 	<dependency>
+	<dependency>
             <groupId>geronimo</groupId>
             <artifactId>geronimo-j2ee</artifactId>
-            <version>1.0-M4</version>
+            <version>1.1</version>
             <properties>
                 <module>true</module>
             </properties>
