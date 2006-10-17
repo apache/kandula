@@ -84,13 +84,7 @@ public class CallbackRegistry {
 		}
 	}
 
-	public synchronized void remove(Object callback) {
-		Set s = new HashSet(callbacks.keySet());
-		Iterator iter = s.iterator();
-		while (iter.hasNext()) {
-			Object key = iter.next();
-			if (callbacks.get(key) == callback)
-				callbacks.remove(key);
-		}
+	public synchronized void remove(Callback callback) {
+		callbacks.remove(callback.getID());
 	}
 }

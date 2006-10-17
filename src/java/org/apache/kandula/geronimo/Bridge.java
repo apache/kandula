@@ -36,7 +36,7 @@ public class Bridge {
 
 	private Bridge() {
 		try {
-			tm = new TransactionManagerImpl(TIMEOUT_S, null, null);
+			tm = new TransactionManagerImpl(TIMEOUT_S, null, null, null);
 		} catch (XAException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
