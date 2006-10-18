@@ -13,6 +13,7 @@ import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 
 import org.apache.geronimo.transaction.manager.TransactionManagerImpl;
+import org.apache.geronimo.transaction.manager.XidFactoryImpl;
 import org.apache.kandula.coordinator.CoordinationContext;
 import org.apache.kandula.wscoor.Expires;
 
@@ -36,7 +37,8 @@ public class Bridge {
 
 	private Bridge() {
 		try {
-			tm = new TransactionManagerImpl(TIMEOUT_S, null, null, null);
+			tm = new TransactionManagerImpl(TIMEOUT_S, new XidFactoryImpl(),
+					null, null);
 		} catch (XAException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
