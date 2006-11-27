@@ -44,7 +44,7 @@ public class CompletionCommitTest extends TestCase {
 		stub = new KandulaDemoServiceStub(
 				"target/initiator-repository",
 				new EndpointReference(
-						"http://localhost:8082/axis2/services/KandulaDemoService"));
+						"http://localhost:8081/axis2/services/KandulaDemoService"));
 	}
 
 	public CompletionCommitTest(String testName) throws Exception {
@@ -52,7 +52,7 @@ public class CompletionCommitTest extends TestCase {
 		stub = new KandulaDemoServiceStub(
 				"target/initiator-repository",
 				new EndpointReference(
-						"http://localhost:8082/axis2/services/KandulaDemoService"));
+						"http://localhost:8081/axis2/services/KandulaDemoService"));
 	}
 
 	protected void setUp() throws Exception {
