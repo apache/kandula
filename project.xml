@@ -173,6 +173,12 @@
 			<artifactId>axis2-adb</artifactId>
 			<version>${axis2.version}</version>
 		</dependency>
+		<dependency>
+           <groupId>org.apache.axis2</groupId>
+           <artifactId>addressing</artifactId>
+           <version>${axis2.version}</version>
+           <type>mar</type>
+ 		</dependency>
 
 		<!-- Following dependency was required due to the EndpointReferenceHelper class-->
 		<!-- dependency>

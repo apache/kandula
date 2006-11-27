@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="jar" xmlns:j="jelly:core" xmlns:maven="jelly:maven" xmlns:deploy="deploy" xmlns:ant="jelly:ant">
 
+    <ant:property name="repo.addressing.mar.full.name" value="${repo.addressing.mar.name}-${axis2.version}.mar" />
+    <ant:property name="repo.addressing.mar.path" value="${maven.repo.local}/${axis2.mar.groupid}/mars" />
+    <ant:property name="repo.addressing.mar" value="${repo.addressing.mar.path}/${repo.addressing.mar.full.name}" />
+	
 	<goal name="setclasspath">
 		<path id="test.classpath">
 			<path refid="maven.dependency.classpath" />
@@ -8,20 +12,10 @@
 	</goal>
 
 	<goal name="generate:code">
-		<java classname="org.apache.axis2.wsdl.WSDL2Java">
-			<arg value="-uri" />
-			<arg value="${basedir}/resources/MTOMSample.wsdl" />
-			<arg value="-ss" />
-			<arg value="-sd" />
-			<arg value="-p" />
-			<arg value="sample.mtom.service" />
-			<arg value="-o" />
-			<arg value="${service.dir}" />
-			<classpath refid="class.path" />
-		</java>
-		<copy file="${skeleton.path}" tofile="${service.dir}/${skeleton.path}" overwrite="true" />
-		<antcall target="jar.server" />
-		<copy file="${service.dir}/sample-mtom.aar" tofile="../../repository/services/sample-mtom.aar" overwrite="true" />
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+				<classpath refid="maven.dependency.classpath" />
+				<arg line=" -o target/src -g -ss -sd -uri temp/wsat.wsdl" />
+			</java>
 	</goal>
 
 	<postGoal name="test:compile">
@@ -90,7 +84,7 @@
 		<copy file="target/RegistrationCoordinator.aar" tofile="target/testing-repository/services/RegistrationCoordinator.aar" />
 		<mkdir dir="target/testing-repository/modules" />
 		<copy file="target/kandula-inflow-${pom.currentVersion}.mar" tofile="target/testing-repository/modules/kandula-inflow-${pom.currentVersion}.mar" />
-		<copy file="modules/addressing-${axis2.version}.mar" tofile="target/testing-repository/modules/addressing-${axis2.version}.mar" />
+		<copy file="${repo.addressing.mar}" toDir="target/testing-repository/modules/" />
 		<copy file="conf/coordinator-axis2.xml" tofile="target/testing-repository/axis2.xml" />
 
 		<echo message="----------------Creating KandulaDemoService.aar----------------" />
@@ -110,7 +104,7 @@
 		<mkdir dir="target/initiator-repository" />
 		<mkdir dir="target/initiator-repository/modules" />
 		<copy file="target/kandula-outflow-${pom.currentVersion}.mar" tofile="target/initiator-repository/modules/kandula-outflow-${pom.currentVersion}.mar" />
-		<copy file="modules/addressing-${axis2.version}.mar" tofile="target/initiator-repository/modules/addressing-${axis2.version}.mar" />
+		<copy file="${repo.addressing.mar}" toDir="target/initiator-repository/modules/" />
 		<copy file="conf/initiator-axis2.xml" tofile="target/initiator-repository/axis2.xml" />
 
 	</postGoal>
