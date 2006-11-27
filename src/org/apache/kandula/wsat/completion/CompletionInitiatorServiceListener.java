@@ -26,7 +26,6 @@ import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
 import org.apache.kandula.utility.KandulaListener;
@@ -64,7 +63,7 @@ public class CompletionInitiatorServiceListener {
 		String serviceName = "CompletionInitiatorPortType";
 		AxisService service = new AxisService(serviceName);
 		service.addParameter(new Parameter(
-				AbstractMessageReceiver.SERVICE_CLASS, className));
+				org.apache.axis2.Constants.SERVICE_CLASS, className));
 		service.setFileName((new File(className)).toURL());
 
 		QName committedOperationName = new QName(Constants.WS_COOR,

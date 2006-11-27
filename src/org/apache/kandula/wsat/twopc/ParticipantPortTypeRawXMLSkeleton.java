@@ -18,8 +18,7 @@ package org.apache.kandula.wsat.twopc;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.faults.AbstractKandulaException;
@@ -32,17 +31,10 @@ import org.apache.kandula.storage.Store;
  */
 
 public class ParticipantPortTypeRawXMLSkeleton {
-	private OperationContext opContext;
-
-	public void setOperationContext(OperationContext opContext) {
-		this.opContext = opContext;
-	}
-
 	public void prepareOperation(OMElement requestEle) throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
-				opContext.getServiceContext().getConfigurationContext());
-		OMElement header = opContext.getMessageContext(
-				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
+				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
+		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		String requesterID = header.getFirstChildWithName(
 				Constants.REQUESTER_ID_PARAMETER).getText();
 		Store store = StorageFactory.getInstance().getStore();
@@ -60,9 +52,8 @@ public class ParticipantPortTypeRawXMLSkeleton {
 
 	public void commitOperation(OMElement requestEle) throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
-				opContext.getServiceContext().getConfigurationContext());
-		OMElement header = opContext.getMessageContext(
-				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
+				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
+		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		String requesterID = header.getFirstChildWithName(
 				Constants.REQUESTER_ID_PARAMETER).getText();
 		Store store = StorageFactory.getInstance().getStore();
@@ -79,9 +70,8 @@ public class ParticipantPortTypeRawXMLSkeleton {
 
 	public void rollbackOperation(OMElement requestEle) throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
-				opContext.getServiceContext().getConfigurationContext());
-		OMElement header = opContext.getMessageContext(
-				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
+				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
+		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		String requesterID = header.getFirstChildWithName(
 				Constants.REQUESTER_ID_PARAMETER).getText();
 		Store store = StorageFactory.getInstance().getStore();

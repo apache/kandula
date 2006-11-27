@@ -19,8 +19,7 @@ package org.apache.kandula.wscoor;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.impl.ATParticipantContext;
 import org.apache.kandula.initiator.InitiatorTransaction;
@@ -32,19 +31,13 @@ import org.apache.kandula.utility.EndpointReferenceFactory;
  */
 
 public class RegistrationRequesterPortTypeRawXMLSkeleton {
-	private OperationContext opContext;
-
-	public void setOperationContext(OperationContext opContext) {
-		this.opContext = opContext;
-	}
 
 	public OMElement registerResponseOperation(OMElement responseElement)
 			throws AxisFault {
 
 		OMElement response = responseElement.getFirstElement();
 		if ("CoordinatorProtocolService".equals(response.getLocalName())) {
-			OMElement header = opContext.getMessageContext(
-					WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope()
+			OMElement header = MessageContext.getCurrentMessageContext().getEnvelope()
 					.getHeader();
 			String requesterID = header.getFirstChildWithName(
 					Constants.REQUESTER_ID_PARAMETER).getText();

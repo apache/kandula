@@ -18,8 +18,7 @@ package org.apache.kandula.wsat.completion;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
 import org.apache.kandula.coordinator.at.ATCoordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
@@ -30,12 +29,6 @@ import org.apache.kandula.storage.StorageFactory;
  */
 
 public class CompletionCoordinatorPortTypeRawXMLSkeleton {
-	private OperationContext opContext;
-
-	public void setOperationContext(OperationContext opContext) {
-		this.opContext = opContext;
-	}
-
 	/**
 	 * @param requestElement
 	 * @throws AxisFault
@@ -44,9 +37,8 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
 		String activityId;
 		// log.info("Visited Commit operation");
 		StorageFactory.getInstance().setConfigurationContext(
-				opContext.getServiceContext().getConfigurationContext());
-		OMElement header = opContext.getMessageContext(
-				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
+				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
+		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		activityId = header.getFirstChildWithName(
 				Constants.TRANSACTION_ID_PARAMETER).getText();
 		try {
@@ -65,10 +57,9 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
 
 		String activityId;
 		StorageFactory.getInstance().setConfigurationContext(
-				opContext.getServiceContext().getConfigurationContext());
+				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
 		// log.info("Visited rollback operation");
-		OMElement header = opContext.getMessageContext(
-				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
+		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		activityId = header.getFirstChildWithName(
 				Constants.TRANSACTION_ID_PARAMETER).getText();
 		try {

@@ -18,8 +18,7 @@ package org.apache.kandula.wsat.twopc;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
 import org.apache.kandula.coordinator.at.ATCoordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
@@ -30,12 +29,6 @@ import org.apache.kandula.storage.StorageFactory;
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 public class CoordinatorPortTypeRawXMLSkeleton {
-	private OperationContext opContext;
-
-	public void setOperationContext(OperationContext opContext) {
-		this.opContext = opContext;
-	}
-
 	/**
 	 * @param requestElement
 	 * @throws AbstractKandulaException
@@ -43,9 +36,8 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 	public void preparedOperation(OMElement requestElement)
 			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
-				opContext.getServiceContext().getConfigurationContext());
-		OMElement header = opContext.getMessageContext(
-				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
+				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
+		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		String activityId = header.getFirstChildWithName(
 				Constants.TRANSACTION_ID_PARAMETER).getText();
 		String enlistmentId = header.getFirstChildWithName(
@@ -68,9 +60,8 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 	public void abortedOperation(OMElement requestElement)
 			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
-				opContext.getServiceContext().getConfigurationContext());
-		OMElement header = opContext.getMessageContext(
-				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
+				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
+		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		String activityId = header.getFirstChildWithName(
 				Constants.TRANSACTION_ID_PARAMETER).getText();
 		String enlistmentId = header.getFirstChildWithName(
@@ -92,9 +83,8 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 	public void readOnlyOperation(OMElement requestElement)
 			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
-				opContext.getServiceContext().getConfigurationContext());
-		OMElement header = opContext.getMessageContext(
-				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
+				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
+		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		String activityId = header.getFirstChildWithName(
 				Constants.TRANSACTION_ID_PARAMETER).getText();
 		String enlistmentId = header.getFirstChildWithName(
@@ -116,9 +106,8 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 	public void committedOperation(OMElement requestElement)
 			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
-				opContext.getServiceContext().getConfigurationContext());
-		OMElement header = opContext.getMessageContext(
-				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
+				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
+		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		String activityId = header.getFirstChildWithName(
 				Constants.TRANSACTION_ID_PARAMETER).getText();
 		String enlistmentId = header.getFirstChildWithName(
@@ -139,7 +128,7 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 	 */
 	public void replayOperation(OMElement requestElement) throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
-				opContext.getServiceContext().getConfigurationContext());
+				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
 		System.out.println("Visited Replay operation");
 	}
 

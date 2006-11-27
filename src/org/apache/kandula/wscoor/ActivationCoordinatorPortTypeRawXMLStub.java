@@ -42,7 +42,6 @@ import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.OutInAxisOperation;
 import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.axis2.description.Parameter;
-import org.apache.axis2.receivers.AbstractMessageReceiver;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.axis2.wsdl.WSDLConstants;
 import org.apache.kandula.Constants;
@@ -176,7 +175,7 @@ public class ActivationCoordinatorPortTypeRawXMLStub extends
 		KandulaListener listener = KandulaListener.getInstance();
 		AxisService service = new AxisService(serviceName);
 		service.addParameter(new Parameter(
-				AbstractMessageReceiver.SERVICE_CLASS, className));
+				org.apache.axis2.Constants.SERVICE_CLASS, className));
 		service.setFileName((new File(className)).toURL());
 
 		responseOperationDesc = new InOnlyAxisOperation();

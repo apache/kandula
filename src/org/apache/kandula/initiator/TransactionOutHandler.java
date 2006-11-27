@@ -28,7 +28,7 @@ public class TransactionOutHandler extends AbstractHandler {
 
 	private static final long serialVersionUID = 4133392345837905499L;
 
-	public void invoke(MessageContext msgContext) throws AxisFault {
+	public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
 
 		InitiatorTransaction initiatorTransaction;
 		try {
@@ -46,5 +46,6 @@ public class TransactionOutHandler extends AbstractHandler {
 		} catch (AbstractKandulaException e) {
 			throw new AxisFault(e);
 		}
+		return InvocationResponse.CONTINUE;
 	}
 }

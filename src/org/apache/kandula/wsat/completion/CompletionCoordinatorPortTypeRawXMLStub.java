@@ -19,7 +19,6 @@ package org.apache.kandula.wsat.completion;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.OutOnlyAxisOperation;
 import org.apache.kandula.Constants;
 import org.apache.kandula.faults.AbstractKandulaException;

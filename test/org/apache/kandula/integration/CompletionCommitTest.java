@@ -20,8 +20,6 @@ package org.apache.kandula.integration;
  * @author <a href="mailto:thilina@opensource.lk">Thilina Gunarathne </a>
  */
 
-import interop.TestServiceStub;
-
 import java.io.File;
 
 import junit.framework.TestCase;
@@ -35,7 +33,7 @@ import org.apache.kandula.initiator.TransactionManager;
 
 public class CompletionCommitTest extends TestCase {
 
-	private String repository = "C:/Program Files/Apache Software Foundation/Tomcat 5.0/webapps/axis2/WEB-INF";
+	private String repository = "target/testing-repository";
 
 	private KandulaDemoServiceStub stub;
 
@@ -46,7 +44,7 @@ public class CompletionCommitTest extends TestCase {
 		stub = new KandulaDemoServiceStub(
 				"target/initiator-repository",
 				new EndpointReference(
-						"http://localhost:8082/axis2/services/TestService"));
+						"http://localhost:8082/axis2/services/KandulaDemoService"));
 	}
 
 	public CompletionCommitTest(String testName) throws Exception {
@@ -54,12 +52,12 @@ public class CompletionCommitTest extends TestCase {
 		stub = new KandulaDemoServiceStub(
 				"target/initiator-repository",
 				new EndpointReference(
-						"http://localhost:8082/axis2/services/TestService"));
+						"http://localhost:8082/axis2/services/KandulaDemoService"));
 	}
 
 	protected void setUp() throws Exception {
 		File file = new File(repository);
-		File configFile = new File(repository + "/conf/axis2.xml");
+		File configFile = new File(repository + "/axis2.xml");
 		if (!file.exists()) {
 			throw new Exception("repository directory "
 					+ file.getAbsolutePath() + " does not exists");
@@ -86,7 +84,7 @@ public class CompletionCommitTest extends TestCase {
 		TransactionManager tm = new TransactionManager(
 				Constants.WS_AT,
 				new EndpointReference(
-						"http://localhost:8082/axis2/services/ActivationCoordinator"),
+						"http://localhost:8081/axis2/services/ActivationCoordinator"),
 				"target/initiator-repository",
 				"target/initiator-repository/axis2.xml");
 		tm.begin(false);
@@ -101,7 +99,7 @@ public class CompletionCommitTest extends TestCase {
 //		// TransactionManager tm = new TransactionManager(
 //		// Constants.WS_AT,
 //		// new EndpointReference(
-//		// "http://localhost:8082/axis2/services/ActivationCoordinator"));
+//		// "http://localhost:8081/axis2/services/ActivationCoordinator"));
 //		// tm.begin("target/initiator-repository",
 //		// "target/initiator-repository/axis2.xml", false);
 //		// try {

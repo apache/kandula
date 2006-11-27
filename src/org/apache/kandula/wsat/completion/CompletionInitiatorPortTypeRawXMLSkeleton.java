@@ -18,8 +18,7 @@ package org.apache.kandula.wsat.completion;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
 import org.apache.kandula.Status;
 import org.apache.kandula.initiator.InitiatorTransaction;
@@ -30,18 +29,11 @@ import org.apache.kandula.storage.StorageFactory;
  */
 
 public class CompletionInitiatorPortTypeRawXMLSkeleton {
-	private OperationContext opContext;
-
-	public void setOperationContext(OperationContext opContext) {
-		this.opContext = opContext;
-	}
-
 	public void committedOperation(OMElement requestElement)
 			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
-				opContext.getServiceContext().getConfigurationContext());
-		OMElement header = opContext.getMessageContext(
-				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
+				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
+		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		String requesterID = header.getFirstChildWithName(
 				Constants.REQUESTER_ID_PARAMETER).getText();
 		InitiatorTransaction transaction = (InitiatorTransaction) StorageFactory
@@ -52,9 +44,8 @@ public class CompletionInitiatorPortTypeRawXMLSkeleton {
 	public void abortedOperation(OMElement requestElement)
 			throws AxisFault {
 		StorageFactory.getInstance().setConfigurationContext(
-				opContext.getServiceContext().getConfigurationContext());
-		OMElement header = opContext.getMessageContext(
-				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
+				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
+		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		String requesterID = header.getFirstChildWithName(
 				Constants.REQUESTER_ID_PARAMETER).getText();
 		InitiatorTransaction transaction = (InitiatorTransaction) StorageFactory

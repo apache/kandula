@@ -20,7 +20,6 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axiom.soap.SOAPEnvelope;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.description.AxisOperation;
-import org.apache.axis2.engine.DependencyManager;
 import org.apache.kandula.Constants;
 
 /**
@@ -39,9 +38,7 @@ public class ActivationPortTypeRawXMLSyncMessageReceiver extends
 			// get the implementation class for the Web Service
 			Object obj = getTheImplementationObject(msgContext);
 
-			// Inject the Message Context if it is asked for
-			DependencyManager.configureBusinessLogicProvider(obj, msgContext
-					.getOperationContext());
+		
 
 			ActivationPortTypeRawXMLSkeleton skel = (ActivationPortTypeRawXMLSkeleton) obj;
 			// Out Envelop

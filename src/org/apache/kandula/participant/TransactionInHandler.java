@@ -38,7 +38,7 @@ public class TransactionInHandler extends AbstractHandler {
 
 	// private ThreadLocal threadInfo = new ThreadLocal();
 
-	public void invoke(MessageContext msgContext) throws AxisFault {
+	public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
 		KandulaResource resource;
 		String wsaAction = msgContext.getWSAAction();
 		if ((wsaAction != Constants.WS_COOR_CREATE_COORDINATIONCONTEXT)
@@ -79,5 +79,6 @@ public class TransactionInHandler extends AbstractHandler {
 				ParticipantUtility.registerParticipant(context);
 			}
 		}
+		return InvocationResponse.CONTINUE;
 	}
 }

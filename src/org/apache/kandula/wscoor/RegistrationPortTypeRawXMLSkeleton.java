@@ -24,8 +24,7 @@ import org.apache.axiom.om.OMNamespace;
 import org.apache.axiom.soap.SOAPFactory;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.axis2.context.OperationContext;
-import org.apache.axis2.wsdl.WSDLConstants;
+import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
 import org.apache.kandula.coordinator.Coordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
@@ -37,11 +36,6 @@ import org.apache.kandula.utility.EndpointReferenceFactory;
  */
 
 public class RegistrationPortTypeRawXMLSkeleton {
-	private OperationContext opContext;
-
-	public void setOperationContext(OperationContext opContext) {
-		this.opContext = opContext;
-	}
 
 	public OMElement registerOperation(OMElement request) throws AxisFault {
 
@@ -49,7 +43,7 @@ public class RegistrationPortTypeRawXMLSkeleton {
 		EndpointReference participantEPR;
 		String activityId;
 		StorageFactory.getInstance().setConfigurationContext(
-				opContext.getServiceContext().getConfigurationContext());
+				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
 		/*
 		 * Extracting data from the received message
 		 */
@@ -61,8 +55,7 @@ public class RegistrationPortTypeRawXMLSkeleton {
 		participantEPR = EndpointReferenceFactory
 				.endpointFromOM(participantEPRElement);
 
-		OMElement header = opContext.getMessageContext(
-				WSDLConstants.MESSAGE_LABEL_IN_VALUE).getEnvelope().getHeader();
+		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		activityId = header.getFirstChildWithName(
 				Constants.TRANSACTION_ID_PARAMETER).getText();
 		/*
