@@ -13,9 +13,31 @@
 
 	<goal name="generate:code">
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
-				<classpath refid="maven.dependency.classpath" />
-				<arg line=" -o target/src -g -ss -sd -uri temp/wsat.wsdl" />
-			</java>
+			<classpath refid="maven.dependency.classpath" />
+			<arg line=" -o target -p org.apache.kandula.wsat.twopc -g -ss -sd -sn Participant2PCService -uri schema/wsat.wsdl" />
+		</java>
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+			<classpath refid="maven.dependency.classpath" />
+			<arg line=" -o target -p org.apache.kandula.wsat.twopc -g -ss -sd -sn Coordinator2PCService -uri schema/wsat.wsdl" />
+		</java>
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+			<classpath refid="maven.dependency.classpath" />
+			<arg line=" -o target -p org.apache.kandula.wsat.completion -g -ss -sd -sn CompletionInitiator -uri schema/wsat.wsdl" />
+		</java>
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+			<classpath refid="maven.dependency.classpath" />
+			<arg line=" -o target -p org.apache.kandula.wsat.completion -g -ss -sd -sn CompletionCoordinator -uri schema/wsat.wsdl" />
+		</java>
+		
+		
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+			<classpath refid="maven.dependency.classpath" />
+			<arg line=" -o target -p org.apache.kandula.wscoor -g  -ss -sd -sn RegistrationService -uri schema/wscoor.wsdl" />
+		</java>
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+			<classpath refid="maven.dependency.classpath" />
+			<arg line=" -o target -p org.apache.kandula.wscoor -g  -ss -sd -sn ActivationService -uri schema/wscoor.wsdl" />
+		</java>
 	</goal>
 
 	<postGoal name="test:compile">
