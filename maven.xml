@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="jar" xmlns:j="jelly:core" xmlns:maven="jelly:maven" xmlns:deploy="deploy" xmlns:ant="jelly:ant">
 
-    <ant:property name="repo.addressing.mar.full.name" value="${repo.addressing.mar.name}-${axis2.version}.mar" />
-    <ant:property name="repo.addressing.mar.path" value="${maven.repo.local}/${axis2.mar.groupid}/mars" />
-    <ant:property name="repo.addressing.mar" value="${repo.addressing.mar.path}/${repo.addressing.mar.full.name}" />
-	
+	<ant:property name="repo.addressing.mar.full.name" value="${repo.addressing.mar.name}-${axis2.version}.mar" />
+	<ant:property name="repo.addressing.mar.path" value="${maven.repo.local}/${axis2.mar.groupid}/mars" />
+	<ant:property name="repo.addressing.mar" value="${repo.addressing.mar.path}/${repo.addressing.mar.full.name}" />
+
 	<goal name="setclasspath">
 		<path id="test.classpath">
 			<path refid="maven.dependency.classpath" />
@@ -12,6 +12,17 @@
 	</goal>
 
 	<goal name="generate:code">
+		<!-- Code generating for the WS-Coordination WSDL -->
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+			<classpath refid="maven.dependency.classpath" />
+			<arg line=" -o target -p org.apache.kandula.wscoor -g  -ss -sd -sn RegistrationService -uri schema/wscoor.wsdl" />
+		</java>
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+			<classpath refid="maven.dependency.classpath" />
+			<arg line=" -o target -p org.apache.kandula.wscoor -g  -ss -sd -sn ActivationService -uri schema/wscoor.wsdl" />
+		</java>
+
+		<!-- Code generating for the WS-AT WSDL -->
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath" />
 			<arg line=" -o target -p org.apache.kandula.wsat.twopc -g -ss -sd -sn Participant2PCService -uri schema/wsat.wsdl" />
@@ -28,15 +39,23 @@
 			<classpath refid="maven.dependency.classpath" />
 			<arg line=" -o target -p org.apache.kandula.wsat.completion -g -ss -sd -sn CompletionCoordinator -uri schema/wsat.wsdl" />
 		</java>
-		
-		
+
+		<!-- Code generating for the WS-BA WSDL -->
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath" />
-			<arg line=" -o target -p org.apache.kandula.wscoor -g  -ss -sd -sn RegistrationService -uri schema/wscoor.wsdl" />
+			<arg line=" -o target -p org.apache.kandula.wsba -g -ss -sd -sn BAParticipantCompletionParticipantService -uri schema/wsba.wsdl" />
 		</java>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath" />
-			<arg line=" -o target -p org.apache.kandula.wscoor -g  -ss -sd -sn ActivationService -uri schema/wscoor.wsdl" />
+			<arg line=" -o target -p org.apache.kandula.wsba -g -ss -sd -sn BACoordinatorCompletionCoordinatorService -uri schema/wsba.wsdl" />
+		</java>
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+			<classpath refid="maven.dependency.classpath" />
+			<arg line=" -o target -p org.apache.kandula.wsba -g -ss -sd -sn BACoordinatorCompletionParticipantService -uri schema/wsba.wsdl" />
+		</java>
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+			<classpath refid="maven.dependency.classpath" />
+			<arg line=" -o target -p org.apache.kandula.wsba -g -ss -sd -sn BAParticipantCompletionCoordinatorService -uri schema/wsba.wsdl" />
 		</java>
 	</goal>
 
