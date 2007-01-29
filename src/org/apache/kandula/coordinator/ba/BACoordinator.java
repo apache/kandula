@@ -17,24 +17,10 @@
 package org.apache.kandula.coordinator.ba;
 
 
-import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
-import org.apache.kandula.Status;
-import org.apache.kandula.Status.BACoordinatorStatus;
 import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.context.impl.BAActivityContext;
 import org.apache.kandula.coordinator.Registerable;
 import org.apache.kandula.faults.AbstractKandulaException;
-import org.apache.kandula.faults.InvalidStateException;
-import org.apache.kandula.faults.KandulaGeneralException;
-import org.apache.kandula.wsba.BACoordinatorCompletionParticipantServiceStub;
-import org.apache.kandula.wsba.BAParticipantCompletionParticipantServiceStub;
-import org.oasis_open.docs.ws_tx.wsba._2006._06.Cancel;
-import org.oasis_open.docs.ws_tx.wsba._2006._06.Close;
-import org.oasis_open.docs.ws_tx.wsba._2006._06.Compensate;
-import org.oasis_open.docs.ws_tx.wsba._2006._06.Complete;
-import org.oasis_open.docs.ws_tx.wsba._2006._06.Exited;
-import org.oasis_open.docs.ws_tx.wsba._2006._06.Failed;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -68,25 +54,26 @@ public class BACoordinator implements Registerable
 	public EndpointReference register(AbstractContext context, String protocol,
 			EndpointReference participantEPR)throws AbstractKandulaException 
 	{
-		BAActivityContext baContext = (BAActivityContext) context;
-		baContext.lock();
-		int coordinatorStatus = baContext.getStatus();
-		if(coordinatorStatus ==(BACoordinatorStatus.STATUS_CLOSING))
-		{
-			baContext.unlock();
-			throw new InvalidStateException ("Coordinator is in closing status ");
-		}else if(coordinatorStatus ==(BACoordinatorStatus.STATUS_COMPENSATING))
-		{
-			baContext.unlock();
-			throw new InvalidStateException ("Coordinator is in compensating status ");
-		}
-		else
-		{
-			EndpointReference epr = baContext.addParticipant(participantEPR,
-					protocol);
-			baContext.unlock();
-			return epr;
-		}
+//		BAActivityContext baContext = (BAActivityContext) context;
+//		baContext.lock();
+//		int coordinatorStatus = baContext.getStatus();
+//		if(coordinatorStatus ==(BACoordinatorStatus.STATUS_CLOSING))
+//		{
+//			baContext.unlock();
+//			throw new InvalidStateException ("Coordinator is in closing status ");
+//		}else if(coordinatorStatus ==(BACoordinatorStatus.STATUS_COMPENSATING))
+//		{
+//			baContext.unlock();
+//			throw new InvalidStateException ("Coordinator is in compensating status ");
+//		}
+//		else
+//		{
+//			EndpointReference epr = baContext.addParticipant(participantEPR,
+//					protocol);
+//			baContext.unlock();
+//			return epr;
+//		}
+		return null;
 	}
 	
 	/**
