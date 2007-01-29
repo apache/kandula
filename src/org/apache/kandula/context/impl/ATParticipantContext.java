@@ -33,8 +33,7 @@ public class ATParticipantContext extends AbstractContext {
 
 	public ATParticipantContext() {
 		this.setStatus(Status.CoordinatorStatus.STATUS_ACTIVE);
-		ID = EndpointReferenceFactory
-		.getRandomStringOf18Characters();
+		ID = EndpointReferenceFactory.getRandomStringOf18Characters();
 	}
 
 	public EndpointReference getCoordinationEPR() {

@@ -63,8 +63,6 @@ public abstract class AbstractContext {
 
 	public abstract String getCoordinationType();
 
-	public abstract String getRegistrationProtocol();
-
 	public final Object getProperty(Object key) {
 		return propertyBag.get(key);
 	}

@@ -25,7 +25,7 @@ public interface Constants {
 
 	// WS-Coordination URI's
 
-	static final String WS_COOR = "http://docs.oasis-open.org/ws-tx/wscoor/2006/03";
+	static final String WS_COOR = "http://docs.oasis-open.org/ws-tx/wscoor/2006/06";
 
 	static final String WS_COOR_CREATE_COORDINATIONCONTEXT = WS_COOR+ "/CreateCoordinationContext";
 
@@ -67,10 +67,22 @@ public interface Constants {
 
 	// WS-BA URI's
 
-	static final String WS_BA = "http://docs.oasis-open.org/ws-tx/wsba/2006/03";;
+	static final String WS_BA = "http://docs.oasis-open.org/ws-tx/wsba/2006/03";
+	
+	static final String WS_BA_ATOMIC = WS_BA+ "/AtomicOutcome";
+	
+	static final String WS_BA_MIXED = WS_BA+"/MixedOutcome";
+	
+	//bims
+	
+	static final String WS_BA_PC = WS_BA+ "/ParticipantCompletion";
+
+	static final String WS_BA_CC = WS_BA+ "/CoordinatorCompletion";
 
 	// Kandula Specific
 	// Constants----------------------------------------------------------------------------------------------------
+	static String TRANSACTION_CONTEXT = "TransactionContext";
+	
 	static String KANDULA_URI = "http://ws.apache.org/kandula";
 
 	static String KANDULA_RESOURCE = "KandulaResource";
@@ -95,4 +107,10 @@ public interface Constants {
 	// This + Tx_ID will be unique for a participant
 	static final QName ENLISTMENT_ID_PARAMETER = new QName(KANDULA_URI,
 			"EnlistmentID", KANDULA_PRE);
+	//bims
+	//For the coordinator to identify seperate business
+	// activities
+	// Common to all the parties participating in a single distributed tx.
+	static final QName BA_ID_PARAMETER = new QName(KANDULA_URI,
+			"BusinessActivityID", KANDULA_PRE);
 }

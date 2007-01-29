@@ -18,7 +18,9 @@ package org.apache.kandula.context;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.kandula.context.impl.ADBCoordinationContext;
 import org.apache.kandula.context.impl.SimpleCoordinationContext;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type3;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -33,6 +35,10 @@ public interface CoordinationContext {
 				String coordinationType, EndpointReference epr) {
 			return new SimpleCoordinationContext(activityId, coordinationType,
 					epr);
+		}
+		
+		public static CoordinationContext newContext(CoordinationContext_type3 context_type3) {
+			return new ADBCoordinationContext(context_type3);
 		}
 
 		// public static CoordinationContext newInstance(Object contextType) {

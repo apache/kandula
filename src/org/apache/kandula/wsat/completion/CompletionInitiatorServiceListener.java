@@ -28,6 +28,8 @@ import org.apache.axis2.description.InOnlyAxisOperation;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.receivers.RawXMLINOnlyMessageReceiver;
 import org.apache.kandula.Constants;
+import org.apache.kandula.initiator.CompletionCallback;
+import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.utility.KandulaListener;
 
 /**
@@ -38,34 +40,30 @@ public class CompletionInitiatorServiceListener {
 	private static CompletionInitiatorServiceListener instance = null;
 
 	private EndpointReference epr = null;
+	
+	public static final String COMPLETION_CALLBACK="completionCallback";
 
-	private CompletionInitiatorServiceListener() {
+	public CompletionInitiatorServiceListener() {
 		super();
 	}
 
-	public static CompletionInitiatorServiceListener getInstance() {
-		if (instance == null) {
-			instance = new CompletionInitiatorServiceListener();
-		}
-		return instance;
-	}
-
-	public EndpointReference getEpr() throws IOException {
+	public EndpointReference getEpr(CompletionCallback callback) throws IOException {
 		if (epr == null) {
-			this.epr = setupListener();
+			this.epr = setupListener(callback);
 		}
 		return this.epr;
 	}
 
-	private EndpointReference setupListener() throws IOException {
+	private EndpointReference setupListener(CompletionCallback callback) throws IOException {		
 		String className = CompletionInitiatorPortTypeRawXMLSkeleton.class
 				.getName();
-		String serviceName = "CompletionInitiatorPortType";
+		String serviceName = "CompletionInitiatorPortType"+EndpointReferenceFactory.getRandomStringOf18Characters();
 		AxisService service = new AxisService(serviceName);
 		service.addParameter(new Parameter(
 				org.apache.axis2.Constants.SERVICE_CLASS, className));
+		service.addParameter(new Parameter(COMPLETION_CALLBACK, callback));
 		service.setFileName((new File(className)).toURL());
-
+		
 		QName committedOperationName = new QName(Constants.WS_COOR,
 				"committedOperation");
 		AxisOperation committedOperationDesc;

@@ -20,9 +20,11 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
+import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.coordinator.at.ATCoordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
-import org.apache.kandula.storage.StorageFactory;
+import org.apache.kandula.storage.StorageUtils;
+
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -36,14 +38,13 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
 	public void commitOperation(OMElement requestElement) throws AxisFault {
 		String activityId;
 		// log.info("Visited Commit operation");
-		StorageFactory.getInstance().setConfigurationContext(
-				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
 		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		activityId = header.getFirstChildWithName(
 				Constants.TRANSACTION_ID_PARAMETER).getText();
 		try {
 			ATCoordinator coordinator = new ATCoordinator();
-			coordinator.commitOperation(activityId);
+			ATActivityContext atContext = (ATActivityContext) StorageUtils.getContext(activityId);
+			coordinator.commitOperation(atContext);
 		} catch (AbstractKandulaException e) {
 			e.printStackTrace();
 			AxisFault fault = new AxisFault(e);
@@ -54,17 +55,20 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
 
 	public void rollbackOperation(OMElement requestElement)
 			throws AxisFault {
-
 		String activityId;
-		StorageFactory.getInstance().setConfigurationContext(
-				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
 		// log.info("Visited rollback operation");
 		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		activityId = header.getFirstChildWithName(
 				Constants.TRANSACTION_ID_PARAMETER).getText();
 		try {
 			ATCoordinator coordinator = new ATCoordinator();
-			coordinator.rollbackOperation(activityId);
+			ATActivityContext atContext = (ATActivityContext) StorageUtils.getContext(activityId);
+			// if store throws a Exception capture it
+			if (atContext == null) {
+				throw new IllegalStateException(
+						"No Activity Found for this Activity ID");
+			}
+			coordinator.rollbackOperation(atContext);
 		} catch (AbstractKandulaException e) {
 			AxisFault fault = new AxisFault(e);
 			fault.setFaultCode(e.getFaultCode());

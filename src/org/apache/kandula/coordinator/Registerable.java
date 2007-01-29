@@ -20,6 +20,7 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.coordinator.at.ATCoordinator;
+import org.apache.kandula.coordinator.ba.BACoordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.InvalidProtocolException;
 
@@ -31,9 +32,10 @@ public interface Registerable {
 		public static Registerable newRegisterable(String coordinationType)
 				throws InvalidProtocolException {
 			if (Constants.WS_AT.equals(coordinationType)) {
-
 				return new ATCoordinator();
-
+			} else if ((Constants.WS_BA_ATOMIC.equals(coordinationType))
+					|| (Constants.WS_BA_MIXED.equals(coordinationType))) {
+				return new BACoordinator();
 			} else {
 				throw new InvalidProtocolException(
 						"Unsupported Coordination Type");

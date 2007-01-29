@@ -16,7 +16,9 @@
  */
 package org.apache.kandula.context;
 
+import org.apache.kandula.Constants;
 import org.apache.kandula.context.impl.ATActivityContext;
+import org.apache.kandula.context.impl.BAActivityContext;
 import org.apache.kandula.faults.InvalidProtocolException;
 
 /**
@@ -34,6 +36,10 @@ public class ContextFactory {
 		if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(context
 				.getCoordinationType())) {
 			return new ATActivityContext(context);
+		}else if(org.apache.kandula.Constants.WS_BA_ATOMIC.equalsIgnoreCase(context
+				.getCoordinationType()))
+		{
+			return new BAActivityContext(context);
 		} else {
 			throw new InvalidProtocolException("Unsupported Protocol Type");
 		}
@@ -43,7 +49,12 @@ public class ContextFactory {
 			throws InvalidProtocolException {
 		if (org.apache.kandula.Constants.WS_AT.equalsIgnoreCase(protocol)) {
 			return new ATActivityContext();
-		} else {
+		}else if (org.apache.kandula.Constants.WS_BA_ATOMIC.equalsIgnoreCase(protocol)) {
+			return new BAActivityContext(Constants.WS_BA_ATOMIC);
+		}else if (org.apache.kandula.Constants.WS_BA_MIXED.equalsIgnoreCase(protocol)) {
+			return new BAActivityContext(Constants.WS_BA_MIXED);
+		} 
+		else {
 			throw new InvalidProtocolException("Unsupported Protocol Type");
 		}
 	}

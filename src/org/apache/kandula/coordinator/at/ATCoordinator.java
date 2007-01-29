@@ -30,8 +30,6 @@ import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.InvalidStateException;
 import org.apache.kandula.faults.KandulaGeneralException;
 import org.apache.kandula.participant.Vote;
-import org.apache.kandula.storage.StorageFactory;
-import org.apache.kandula.storage.Store;
 import org.apache.kandula.wsat.completion.CompletionInitiatorPortTypeRawXMLStub;
 import org.apache.kandula.wsat.twopc.ParticipantPortTypeRawXMLStub;
 
@@ -41,11 +39,7 @@ import org.apache.kandula.wsat.twopc.ParticipantPortTypeRawXMLStub;
 
 public class ATCoordinator implements Registerable {
 
-	private Store store;
-
 	public ATCoordinator() {
-		StorageFactory storageFactory = StorageFactory.getInstance();
-		store = storageFactory.getStore();
 	}
 
 	/**
@@ -104,10 +98,9 @@ public class ATCoordinator implements Registerable {
 	 * 
 	 * @throws Exception
 	 */
-	public void commitOperation(String id) throws AbstractKandulaException {
+	public void commitOperation(ATActivityContext atContext) throws AbstractKandulaException {
 		CompletionInitiatorPortTypeRawXMLStub stub;
-		ATActivityContext atContext = (ATActivityContext) store.get(id);
-
+		
 		if (atContext == null) {
 			throw new IllegalStateException(
 					"No Activity Found for this Activity ID");
@@ -171,15 +164,8 @@ public class ATCoordinator implements Registerable {
 	 * 
 	 * @throws Exception
 	 */
-	public void rollbackOperation(String id) throws AbstractKandulaException {
+	public void rollbackOperation(ATActivityContext atContext) throws AbstractKandulaException {
 		CompletionInitiatorPortTypeRawXMLStub stub;
-		ATActivityContext atContext = (ATActivityContext) store.get(id);
-
-		// if store throws a Exception capture it
-		if (atContext == null) {
-			throw new IllegalStateException(
-					"No Activity Found for this Activity ID");
-		}
 		/*
 		 * Check for states TODO Do we need to lock the activity
 		 */
@@ -229,12 +215,10 @@ public class ATCoordinator implements Registerable {
 	 * @throws AbstractKandulaException
 	 */
 	// TODO seperate these TWO and check states for each case
-	public void countVote(String activityID, Vote vote, String enlistmentID)
+	public void countVote(ATActivityContext atContext, Vote vote, String enlistmentID)
 			throws AbstractKandulaException {
-		ATActivityContext context = (ATActivityContext) store.get(activityID);
-		ATParticipantInformation participant = context
+		ATParticipantInformation participant = atContext
 				.getParticipant(enlistmentID);
-
 		if (Vote.PREPARED.equals(vote)) {
 			participant.setStatus(Status.CoordinatorStatus.STATUS_PREPARED);
 		} else if (Vote.READ_ONLY.equals(vote)) {
@@ -244,21 +228,21 @@ public class ATCoordinator implements Registerable {
 		 * There can be a two invocations of the callback methode due to race
 		 * conditions at decrement preparing and count preparing
 		 */
-		synchronized (context) {
-			context.decrementPreparingParticipantCount();
-			if (!context.hasMorePreparing()) {
-				context.lock();
-				if (!(context.getStatus() == Status.CoordinatorStatus.STATUS_ABORTING)) {
-					context.unlock();
-					Method method = context.getCallBackMethod();
+		synchronized (atContext) {
+			atContext.decrementPreparingParticipantCount();
+			if (!atContext.hasMorePreparing()) {
+				atContext.lock();
+				if (!(atContext.getStatus() == Status.CoordinatorStatus.STATUS_ABORTING)) {
+					atContext.unlock();
+					Method method = atContext.getCallBackMethod();
 					try {
-						method.invoke(this, new Object[] { context });
+						method.invoke(this, new Object[] { atContext });
 					} catch (Exception e) {
 						throw new KandulaGeneralException(
 								"Internal Server Error", e);
 					}
 				} else {
-					context.unlock();
+					atContext.unlock();
 				}
 			}
 		}
@@ -277,9 +261,8 @@ public class ATCoordinator implements Registerable {
 	 * @param enlistmentID
 	 * @throws AbstractKandulaException
 	 */
-	public void abortedOperation(String activityID, String enlistmentID)
+	public void abortedOperation(ATActivityContext atContext, String enlistmentID)
 			throws AbstractKandulaException {
-		ATActivityContext atContext = (ATActivityContext) store.get(activityID);
 		synchronized (atContext) {
 			atContext.lock();
 			switch (atContext.getStatus()) {
@@ -320,10 +303,9 @@ public class ATCoordinator implements Registerable {
 	 * @param enlistmentID
 	 * @throws AbstractKandulaException
 	 */
-	public void countParticipantOutcome(String activityID, String enlistmentID)
+	public void countParticipantOutcome(ATActivityContext atContext, String enlistmentID)
 			throws AbstractKandulaException {
-		ATActivityContext context = (ATActivityContext) store.get(activityID);
-		context.removeParticipant(enlistmentID);
+		atContext.removeParticipant(enlistmentID);
 	}
 
 	/**

@@ -16,22 +16,36 @@
  */
 package org.apache.kandula.initiator;
 
+import java.io.IOException;
+import java.rmi.RemoteException;
+
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
+import org.apache.axis2.databinding.types.URI;
+import org.apache.axis2.databinding.types.URI.MalformedURIException;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.kandula.Constants;
 import org.apache.kandula.Status;
+import org.apache.kandula.context.CoordinationContext;
+import org.apache.kandula.context.impl.ADBCoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
-import org.apache.kandula.faults.InvalidStateException;
 import org.apache.kandula.faults.KandulaGeneralException;
-import org.apache.kandula.storage.StorageFactory;
-import org.apache.kandula.storage.Store;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.wsat.completion.CompletionCoordinatorPortTypeRawXMLStub;
-import org.apache.kandula.wscoor.ActivationCoordinatorPortTypeRawXMLStub;
-import org.apache.kandula.wscoor.RegistrationCoordinatorPortTypeRawXMLStub;
+import org.apache.kandula.wsat.completion.CompletionInitiatorServiceListener;
+import org.apache.kandula.wscoor.ActivationServiceStub;
+import org.apache.kandula.wscoor.RegistrationServiceStub;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContext;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponse;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponseType;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextType;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.Register;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponse;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
+import org.xmlsoap.schemas.ws._2004._08.addressing.AttributedURI;
+import org.xmlsoap.schemas.ws._2004._08.addressing.EndpointReferenceType;
 
 /**
  * @author Dasarath Weeratunge
@@ -39,15 +53,12 @@ import org.apache.kandula.wscoor.RegistrationCoordinatorPortTypeRawXMLStub;
  */
 
 public class TransactionManager {
-
-	private static ThreadLocal threadInfo;
-
+	
+	private static ThreadLocal threadInfo = new ThreadLocal();
 	private ConfigurationContext configurationContext;
 
-	public TransactionManager(String coordinationType,
-			EndpointReference coordinatorEPR, String axis2Home, String axis2Xml)
+	public TransactionManager(String axis2Home, String axis2Xml)
 			throws AbstractKandulaException {
-
 		try {
 			configurationContext = ConfigurationContextFactory
 					.createConfigurationContextFromFileSystem(axis2Home,
@@ -57,74 +68,57 @@ public class TransactionManager {
 		} catch (AxisFault e1) {
 			throw new KandulaGeneralException(e1);
 		}
-
-		threadInfo = new ThreadLocal();
-		InitiatorTransaction initiatorTransaction = new InitiatorTransaction(
-				coordinationType, coordinatorEPR);
-		if (threadInfo.get() != null)
-			throw new IllegalStateException();
-		threadInfo.set(initiatorTransaction.getRequesterID());
-		Store store = StorageFactory.getInstance().getInitiatorStore();
-		store.put(initiatorTransaction.getRequesterID(), initiatorTransaction);
-	}
-
-	public void begin() throws Exception {
-		begin(false);
 	}
 
 	/**
 	 * @throws Exception
 	 */
-	public void begin(boolean async) throws Exception {
+	public void begin(String coordinatorAddress) throws Exception {
 
-		InitiatorTransaction initiatorTransaction = getTransaction();
-		String id = initiatorTransaction.getRequesterID();
-		ActivationCoordinatorPortTypeRawXMLStub activationCoordinator = new ActivationCoordinatorPortTypeRawXMLStub(
-				configurationContext, initiatorTransaction.getActivationEPR());
-		activationCoordinator.createCoordinationContextOperation(
-				initiatorTransaction, async);
-		while (async & initiatorTransaction.getCoordinationContext() == null) {
-			// allow other threads to execute
-			Thread.sleep(10);
+		if (threadInfo.get()!=null)
+		{
+			throw new IllegalStateException();
 		}
-		RegistrationCoordinatorPortTypeRawXMLStub registrationCoordinator = new RegistrationCoordinatorPortTypeRawXMLStub(
-				configurationContext, initiatorTransaction
-						.getCoordinationContext().getRegistrationService());
-		// TODO make this unaware of the protocol
-		EndpointReference registrationRequeterPortEPR = EndpointReferenceFactory
-				.getInstance().getCompletionInitiatorEndpoint(id);
-		registrationCoordinator.registerOperation(Constants.WS_AT_COMPLETION,
-				initiatorTransaction.getRequesterID(),
-				registrationRequeterPortEPR, async);
-		while (async & initiatorTransaction.getCoordinationEPR() == null) {
-			Thread.sleep(10);
-		}
+		InitiatorContext initiatorTransaction = new InitiatorContext(Constants.WS_AT,coordinatorAddress);
+		CoordinationContext coordinationContext = createTransaction(initiatorTransaction);
+		initiatorTransaction.setCoordinationContext(coordinationContext);
+		threadInfo.set(initiatorTransaction);
 	}
 
+
+
 	public void commit() throws Exception {
-		InitiatorTransaction initiatorTransaction = getTransaction();
-		EndpointReference coordinationEPR = initiatorTransaction
-				.getCoordinationEPR();
+		InitiatorContext initiatorTransaction = getTransaction();
+		CompletionCallback completionCallback = new CompletionCallback(initiatorTransaction);
+		// Register for completion
+		EndpointReference coordinationEPR = registerForCompletion(initiatorTransaction,completionCallback);
+		initiatorTransaction.setCoordinationEPR(coordinationEPR);		
+
 		CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(
 				configurationContext, coordinationEPR);
 		stub.commitOperation();
-		while ((initiatorTransaction.getStatus() != Status.CoordinatorStatus.STATUS_COMMITTING)
-				& (initiatorTransaction.getStatus() != Status.CoordinatorStatus.STATUS_ABORTING)) {
+		while (!completionCallback.isComplete())
 			Thread.sleep(10);
-		}
-		if ((initiatorTransaction.getStatus() == Status.CoordinatorStatus.STATUS_ABORTING)) {
+			
+		if ((completionCallback.getResult() == Status.CoordinatorStatus.STATUS_ABORTING)) {
+			forgetTransaction();
 			throw new Exception("Aborted");
 		}
 		forgetTransaction();
 	}
 
 	public void rollback() throws Exception {
-		InitiatorTransaction initiatorTransaction = getTransaction();
-		EndpointReference coordinationEPR = initiatorTransaction
-				.getCoordinationEPR();
+		InitiatorContext initiatorTransaction = getTransaction();		
+		// Register for completion
+		CompletionCallback completionCallback = new CompletionCallback(initiatorTransaction);
+		// Register for completion
+		EndpointReference coordinationEPR = registerForCompletion(initiatorTransaction,completionCallback);
+		initiatorTransaction.setCoordinationEPR(coordinationEPR);	
 		CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(
 				configurationContext, coordinationEPR);
 		stub.rollbackOperation();
+		while (!completionCallback.isComplete())
+			Thread.sleep(10);
 		forgetTransaction();
 	}
 
@@ -145,18 +139,53 @@ public class TransactionManager {
 	// threadInfo.set(null);
 	// }
 
-	public static InitiatorTransaction getTransaction()
+	private static InitiatorContext getTransaction()
 			throws AbstractKandulaException {
 		Object key = threadInfo.get();
-		InitiatorTransaction context = (InitiatorTransaction) StorageFactory
-				.getInstance().getInitiatorStore().get(key);
-		if (context == null) {
-			throw new InvalidStateException("No Activity Found");
+		if (key!= null)
+		{
+			return (InitiatorContext)key;
 		}
-		return context;
+		return null;
 	}
 
 	public static void forgetTransaction() {
 		threadInfo.set(null);
+	}
+	
+	private EndpointReference registerForCompletion(InitiatorContext initiatorTransaction, CompletionCallback completionCallback) throws AxisFault, IOException, MalformedURIException, RemoteException {
+		RegistrationServiceStub registrationCoordinator = new RegistrationServiceStub(
+				configurationContext,null);
+		registrationCoordinator._getServiceClient().setTargetEPR(initiatorTransaction
+				.getCoordinationContext().getRegistrationService());
+		//setup the listener
+		CompletionInitiatorServiceListener listener = new CompletionInitiatorServiceListener();
+		EndpointReference registrationRequeterPortEPR =listener.getEpr(completionCallback);
+		
+		Register register = new Register();
+		RegisterType registerType = new RegisterType();
+		registerType.setProtocolIdentifier(new URI(Constants.WS_AT_COMPLETION));
+		registerType.setParticipantProtocolService(EndpointReferenceFactory.getADBEPRTypeFromEPR(registrationRequeterPortEPR));
+		register.setRegister(registerType);
+		//Actual WS call for registeration
+		RegisterResponse registerResponse = registrationCoordinator
+				.RegisterOperation(register);
+		EndpointReference coordinationEPR = EndpointReferenceFactory
+				.getEPR(registerResponse.getRegisterResponse()
+						.getCoordinatorProtocolService());
+		return coordinationEPR;
+	}
+
+	private CoordinationContext createTransaction(InitiatorContext initiatorTransaction) throws AxisFault, MalformedURIException, RemoteException {
+		ActivationServiceStub activationCoordinator = new ActivationServiceStub(
+				configurationContext,initiatorTransaction.getActivationEPR());
+		CreateCoordinationContext context = new CreateCoordinationContext();
+		CreateCoordinationContextType createCoordinationContextType = new CreateCoordinationContextType();
+		createCoordinationContextType.setCoordinationType(new URI(initiatorTransaction.getCoordinationType()));
+		context.setCreateCoordinationContext(createCoordinationContextType);
+		CreateCoordinationContextResponse response = activationCoordinator.CreateCoordinationContextOperation(context);
+		CreateCoordinationContextResponseType createCoordinationContextResponse = response.getCreateCoordinationContextResponse();
+		CoordinationContext coordinationContext = new ADBCoordinationContext(createCoordinationContextResponse.getCoordinationContext());
+		return coordinationContext;
 	}
 }

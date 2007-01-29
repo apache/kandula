@@ -193,10 +193,6 @@ public class ATActivityContext extends AbstractContext {
 		return Constants.WS_AT;
 	}
 
-	public String getRegistrationProtocol() {
-		return null;
-	}
-
 	/**
 	 * @param callBackMethod
 	 *            the method to call when all the participats have been

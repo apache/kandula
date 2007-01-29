@@ -58,4 +58,61 @@ public abstract interface Status {
 		static final int STATUS_VOLATILE_PREPARING = 20;
 
 	}
+	interface BACoordinatorStatus {
+
+		static final int STATUS_CLOSING = 30;
+
+		static final int STATUS_COMPENSATING = 31;
+		
+		static final int STATUS_ACTIVE = 32;
+		
+		static final int STATUS_CANCELLING = 33;
+		
+		static final int STATUS_COMPLETED = 34;
+		
+		static final int STATUS_FAULTING_COMPENSATING = 35;
+		
+		static final int STATUS_FAULTING_ACTIVE = 36;
+		
+		static final int STATUS_EXITING = 37;
+		
+		static final int STATUS_ENDED = 38;
+			
+		static final int STATUS_CANCELLING_ACTIVE = 39;
+		
+		static final int STATUS_FAULTING = 40;
+		
+		static final int STATUS_COMPLETING = 41;
+		
+		static final int STATUS_CANCELING_COMPLETING = 42;
+		
+		static final int STATUS_FAULTING_COMPLETED = 43;
+	}
+	
+	interface BAParticipantStatus {
+
+			static final int STATUS_CLOSING = 44;
+
+			static final int STATUS_COMPENSATING = 45;
+			
+			static final int STATUS_ACTIVE = 46;
+			
+			static final int STATUS_CANCELLING = 47;
+			
+			static final int STATUS_COMPLETED = 48;
+			
+			static final int STATUS_FAULTING_COMPENSATING = 49;
+			
+			static final int STATUS_FAULTING_ACTIVE_COMPLETED = 50;
+			
+			static final int STATUS_EXITING = 51;
+			
+			static final int STATUS_ENDED = 52;
+				
+			static final int STATUS_CANCELLING_ACTIVE = 53;
+			
+			static final int STATUS_COMPLETING = 55;
+			
+			static final int STATUS_FAULTING = 56;
+	}
 }

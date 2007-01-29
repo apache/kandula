@@ -21,19 +21,15 @@ import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.ContextFactory;
 import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
-import org.apache.kandula.storage.StorageFactory;
-import org.apache.kandula.storage.Store;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 
 public class Coordinator {
-	private Store store;
 
 	public Coordinator() {
-		StorageFactory storageFactory = StorageFactory.getInstance();
-		store = storageFactory.getStore();
+		
 	}
 
 	/**
@@ -49,7 +45,6 @@ public class Coordinator {
 			CoordinationContext coorContext) throws AbstractKandulaException {
 		ContextFactory factory = ContextFactory.getInstance();
 		AbstractContext context = factory.createActivity(coorContext);
-		store.put(context.getCoordinationContext().getActivityID(), context);
 		return context;
 	}
 
@@ -68,12 +63,7 @@ public class Coordinator {
 		ContextFactory factory = ContextFactory.getInstance();
 		AbstractContext context = factory.createActivity(coordinationType);
 		context.getCoordinationContext().setExpires(expires);
-		store.put(context.getCoordinationContext().getActivityID(), context);
 		return context;
-	}
-
-	private AbstractContext getCoordinationContext(String id) {
-		return (AbstractContext) store.get(id);
 	}
 
 	/**
@@ -87,15 +77,8 @@ public class Coordinator {
 	 *         repective protocol coordinators.
 	 * @throws AbstractKandulaException
 	 */
-	public EndpointReference registerParticipant(String id, String protocol,
+	public EndpointReference registerParticipant(AbstractContext context, String protocol,
 			EndpointReference participantEPR) throws AbstractKandulaException {
-
-		AbstractContext context = getCoordinationContext(id);
-		if (context == null) {
-			throw new IllegalStateException(
-					"No Activity Found for this Activity ID");
-		}
-
 		Registerable registerableCoordinator = Registerable.Factory
 				.newRegisterable(context.getCoordinationType());
 		return registerableCoordinator.register(context, protocol,

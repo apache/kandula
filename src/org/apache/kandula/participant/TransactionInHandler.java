@@ -29,8 +29,8 @@ import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.context.impl.ATParticipantContext;
 import org.apache.kandula.context.impl.SimpleCoordinationContext;
-import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
+import org.apache.kandula.storage.StorageUtils;
 
 public class TransactionInHandler extends AbstractHandler {
 
@@ -45,8 +45,6 @@ public class TransactionInHandler extends AbstractHandler {
 				&& (wsaAction != Constants.WS_COOR_REGISTER)
 				&& (wsaAction != Constants.WS_AT_COMMIT)
 				&& (wsaAction != Constants.WS_AT_ROLLBACK)) {
-			StorageFactory.getInstance().setConfigurationContext(
-					msgContext.getServiceContext().getConfigurationContext());
 			ATParticipantContext context = new ATParticipantContext();
 			SOAPHeader header = msgContext.getEnvelope().getHeader();
 			OMElement coordinationElement = header
@@ -60,15 +58,13 @@ public class TransactionInHandler extends AbstractHandler {
 					coordinationElement);
 			context.setCoordinationContext(coorContext);
 
-			Store store = StorageFactory.getInstance().getStore();
-			store.put(context.getID(), context);
+			StorageUtils.putContext(context,context.getID(),msgContext);
 			msgContext.setProperty(AbstractContext.REQUESTER_ID,context.getID());
 			Parameter resourceFile =  msgContext.getParameter(
 					Constants.KANDULA_RESOURCE);
 			
 			//Resource not given. Registration delayed to the business logic
 			if (resourceFile != null) {
-
 				try {
 					resource = (KandulaResource) Class.forName((String)resourceFile.getValue())
 							.newInstance();
@@ -76,7 +72,7 @@ public class TransactionInHandler extends AbstractHandler {
 					throw new AxisFault(e);
 				}
 				context.setResource(resource);
-				ParticipantUtility.registerParticipant(context);
+				ParticipantUtility.registerParticipant(context,msgContext);
 			}
 		}
 		return InvocationResponse.CONTINUE;

@@ -19,37 +19,41 @@ package org.apache.kandula.wsat.completion;
 import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
-import org.apache.kandula.Constants;
+import org.apache.axis2.description.Parameter;
 import org.apache.kandula.Status;
-import org.apache.kandula.initiator.InitiatorTransaction;
-import org.apache.kandula.storage.StorageFactory;
+import org.apache.kandula.initiator.CompletionCallback;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
 
 public class CompletionInitiatorPortTypeRawXMLSkeleton {
-	public void committedOperation(OMElement requestElement)
-			throws AxisFault {
-		StorageFactory.getInstance().setConfigurationContext(
-				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
-		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
-		String requesterID = header.getFirstChildWithName(
-				Constants.REQUESTER_ID_PARAMETER).getText();
-		InitiatorTransaction transaction = (InitiatorTransaction) StorageFactory
-				.getInstance().getInitiatorStore().get(requesterID);
-		transaction.setStatus(Status.CoordinatorStatus.STATUS_COMMITTING);
+
+	public void committedOperation(OMElement requestElement) throws AxisFault {
+		Parameter parameter = MessageContext.getCurrentMessageContext()
+				.getAxisService().getParameter(
+						CompletionInitiatorServiceListener.COMPLETION_CALLBACK);
+		if (parameter != null) {
+			CompletionCallback callback = (CompletionCallback) parameter
+					.getValue();
+			callback.setStatus(Status.CoordinatorStatus.STATUS_COMMITTING);
+			callback.setComplete(true);
+		} else {
+			// TODO let's do something
+		}
 	}
 
-	public void abortedOperation(OMElement requestElement)
-			throws AxisFault {
-		StorageFactory.getInstance().setConfigurationContext(
-				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
-		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
-		String requesterID = header.getFirstChildWithName(
-				Constants.REQUESTER_ID_PARAMETER).getText();
-		InitiatorTransaction transaction = (InitiatorTransaction) StorageFactory
-				.getInstance().getInitiatorStore().get(requesterID);
-		transaction.setStatus(Status.CoordinatorStatus.STATUS_ABORTING);
+	public void abortedOperation(OMElement requestElement) throws AxisFault {
+		Parameter parameter = MessageContext.getCurrentMessageContext()
+				.getAxisService().getParameter(
+						CompletionInitiatorServiceListener.COMPLETION_CALLBACK);
+		if (parameter != null) {
+			CompletionCallback callback = (CompletionCallback) parameter
+					.getValue();
+			callback.setStatus(Status.CoordinatorStatus.STATUS_ABORTING);
+			callback.setComplete(true);
+		} else {
+			// TODO let's do something
+		}
 	}
 }

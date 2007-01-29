@@ -23,8 +23,7 @@ import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.participant.ParticipantTransactionCoordinator;
-import org.apache.kandula.storage.StorageFactory;
-import org.apache.kandula.storage.Store;
+import org.apache.kandula.storage.StorageUtils;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
@@ -32,13 +31,10 @@ import org.apache.kandula.storage.Store;
 
 public class ParticipantPortTypeRawXMLSkeleton {
 	public void prepareOperation(OMElement requestEle) throws AxisFault {
-		StorageFactory.getInstance().setConfigurationContext(
-				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
 		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		String requesterID = header.getFirstChildWithName(
 				Constants.REQUESTER_ID_PARAMETER).getText();
-		Store store = StorageFactory.getInstance().getStore();
-		AbstractContext context = (AbstractContext) store.get(requesterID);
+		AbstractContext context = StorageUtils.getContext(requesterID);
 		ParticipantTransactionCoordinator txManager = new ParticipantTransactionCoordinator();
 		try {
 			txManager.prepare(context);
@@ -51,13 +47,10 @@ public class ParticipantPortTypeRawXMLSkeleton {
 	}
 
 	public void commitOperation(OMElement requestEle) throws AxisFault {
-		StorageFactory.getInstance().setConfigurationContext(
-				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
 		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		String requesterID = header.getFirstChildWithName(
 				Constants.REQUESTER_ID_PARAMETER).getText();
-		Store store = StorageFactory.getInstance().getStore();
-		AbstractContext context = (AbstractContext) store.get(requesterID);
+		AbstractContext context = StorageUtils.getContext(requesterID);
 		ParticipantTransactionCoordinator participantTxManager = new ParticipantTransactionCoordinator();
 		try {
 			participantTxManager.commit(context);
@@ -69,13 +62,10 @@ public class ParticipantPortTypeRawXMLSkeleton {
 	}
 
 	public void rollbackOperation(OMElement requestEle) throws AxisFault {
-		StorageFactory.getInstance().setConfigurationContext(
-				MessageContext.getCurrentMessageContext().getServiceContext().getConfigurationContext());
 		OMElement header = MessageContext.getCurrentMessageContext().getEnvelope().getHeader();
 		String requesterID = header.getFirstChildWithName(
 				Constants.REQUESTER_ID_PARAMETER).getText();
-		Store store = StorageFactory.getInstance().getStore();
-		AbstractContext context = (AbstractContext) store.get(requesterID);
+		AbstractContext context = StorageUtils.getContext(requesterID);
 		ParticipantTransactionCoordinator txManager = new ParticipantTransactionCoordinator();
 		try {
 			txManager.rollback(context);

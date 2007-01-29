@@ -20,31 +20,45 @@ import org.apache.axiom.soap.SOAPHeader;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.kandula.Constants;
+import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.CoordinationContext;
-import org.apache.kandula.faults.AbstractKandulaException;
 
 public class TransactionOutHandler extends AbstractHandler {
-
+	
+	/**
+	 * Field log
+	 */
+	private static final Log log = LogFactory.getLog(TransactionOutHandler.class);
+	
+	private static ThreadLocal threadInfo = new ThreadLocal();
+	
 	private static final long serialVersionUID = 4133392345837905499L;
-
+	
 	public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
-
-		InitiatorTransaction initiatorTransaction;
-		try {
-			String wsaAction = msgContext.getWSAAction();
-			if ((wsaAction != Constants.WS_COOR_CREATE_COORDINATIONCONTEXT)
-					&& (wsaAction != Constants.WS_COOR_REGISTER)
-					&& (wsaAction != Constants.WS_AT_COMMIT)
-					&& (wsaAction != Constants.WS_AT_ROLLBACK)) {
-				initiatorTransaction = TransactionManager.getTransaction();
-				SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
-				CoordinationContext coorContext = initiatorTransaction
-						.getCoordinationContext();
-				soapHeader.addChild(coorContext.toOM());
+		
+		InitiatorContext initiatorTransaction;
+		String wsaAction = msgContext.getWSAAction();
+		if ((wsaAction != Constants.WS_COOR_CREATE_COORDINATIONCONTEXT)
+				&& (wsaAction != Constants.WS_COOR_REGISTER)
+				&& (wsaAction != Constants.WS_AT_COMMIT) && (wsaAction != Constants.WS_AT_ROLLBACK)) {
+			Object context = threadInfo.get();
+			if (context==null)
+			{
+				context = msgContext.getProperty(Constants.TRANSACTION_CONTEXT);
 			}
-		} catch (AbstractKandulaException e) {
-			throw new AxisFault(e);
+			// We let the message to pass through if no transaction is found in the thread or in msgContext
+			if (context != null) {
+				AbstractContext txContext = (AbstractContext) context;
+				SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
+				CoordinationContext coorContext = txContext.getCoordinationContext();
+				soapHeader.addChild(coorContext.toOM());
+			} else {
+				log.debug("Transaction Handler Engaged. " +
+						"But no transaction information was found in the thread.");
+			}
 		}
 		return InvocationResponse.CONTINUE;
 	}

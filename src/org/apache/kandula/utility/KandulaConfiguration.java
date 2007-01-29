@@ -26,10 +26,13 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.deployment.DeploymentException;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.KandulaGeneralException;
-import org.apache.kandula.storage.StorageFactory;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
+ */
+/**
+ * @author thilina
+ *
  */
 public class KandulaConfiguration {
 	static final String PROPERTY_FILE = "endpoints.conf";
@@ -157,22 +160,27 @@ public class KandulaConfiguration {
 		return instance;
 	}
 
+	
+	/**
+	 * @return a ConfigurationContext according to the coordinator Axis2.xml & repository configured.
+	 * @throws AbstractKandulaException
+	 */
 	public ConfigurationContext getPariticipantAxis2ConfigurationContext()
 			throws AbstractKandulaException {
 		try {
 			if (coordinatorAxis2Conf != null && coordinatorAxis2Conf != "")
-
+			{
 				return ConfigurationContextFactory
 						.createConfigurationContextFromFileSystem(
 								participantRepository, participantAxis2Xml);
-			else {
-				return StorageFactory.getInstance().getConfigurationContext();
 			}
+			
 		} catch (DeploymentException e) {
 			throw new KandulaGeneralException(e);
 		} catch (AxisFault e1) {
 			throw new KandulaGeneralException(e1);
 		}
+		return null;
 	}
 
 	public String getParticipantRepository() {
@@ -187,18 +195,17 @@ public class KandulaConfiguration {
 			throws AbstractKandulaException {
 		try {
 			if (coordinatorAxis2Conf != null && coordinatorAxis2Conf != "")
-
+			{
 				return ConfigurationContextFactory
 						.createConfigurationContextFromFileSystem(
 								coordinatorRepo, coordinatorAxis2Conf);
-			else {
-				return StorageFactory.getInstance().getConfigurationContext();
 			}
 		} catch (DeploymentException e) {
 			throw new KandulaGeneralException(e);
 		} catch (AxisFault e1) {
 			throw new KandulaGeneralException(e1);
 		}
+		return null;
 	}
 
 	public String getCoordinatorRepo() {

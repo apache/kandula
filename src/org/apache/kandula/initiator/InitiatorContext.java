@@ -18,19 +18,19 @@ package org.apache.kandula.initiator;
 
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Status;
+import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.CoordinationContext;
-import org.apache.kandula.utility.EndpointReferenceFactory;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public class InitiatorTransaction {
+public class InitiatorContext extends AbstractContext {
 
-	private EndpointReference activationEPR;
+	private String activationEPR;
 
 	private EndpointReference coordinationEPR;
 
-	private String requesterID;
+//	private String requesterID;
 
 	private String coordinationType;
 
@@ -38,11 +38,10 @@ public class InitiatorTransaction {
 
 	private int status = Status.CoordinatorStatus.STATUS_NONE;
 
-	public InitiatorTransaction(String coordinationType,
-			EndpointReference activationEPR) {
+	public InitiatorContext(String coordinationType,
+			String activationEPR) {
 		this.activationEPR = activationEPR;
 		this.coordinationType = coordinationType;
-		requesterID = EndpointReferenceFactory.getRandomStringOf18Characters();
 	}
 
 	/**
@@ -60,46 +59,23 @@ public class InitiatorTransaction {
 		this.coordinationEPR = coordinationEPR;
 	}
 
-	/**
-	 * @return Returns the coordinationContext.
-	 */
-	public CoordinationContext getCoordinationContext() {
-		return coordinationContext;
-	}
-
-	/**
-	 * @param coordinationContext
-	 *            The coordinationContext to set.
-	 */
-	public void setCoordinationContext(CoordinationContext coordinationContext) {
-		this.coordinationContext = coordinationContext;
-	}
-
-	public final int getStatus() {
-		return status;
-	}
-
-	public final void setStatus(int value) {
-		status = value;
-	}
-
-	public String getRequesterID() {
-		return requesterID;
-	}
-
-	public void setRequesterID(String requesterID) {
-		this.requesterID = requesterID;
-	}
+//	public String getRequesterID() {
+//		return requesterID;
+//	}
+//
+//	public void setRequesterID(String requesterID) {
+//		this.requesterID = requesterID;
+//	}
 
 	public String getCoordinationType() {
 		return coordinationType;
 	}
 
-	public EndpointReference getActivationEPR() {
+	public String getActivationEPR() {
 		return activationEPR;
 	}
 
-	public void setActivationEPR(EndpointReference activationEPR) {
+	public void setActivationEPR(String activationEPR) {
 		this.activationEPR = activationEPR;
 	}
 }
