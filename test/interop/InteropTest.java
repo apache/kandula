@@ -28,8 +28,7 @@ import org.apache.kandula.initiator.TransactionManager;
 
 public class InteropTest extends TestCase {
 
-	EndpointReference coordinator = new EndpointReference(
-			"http://127.0.0.1:8086/axis2/services/ActivationCoordinator");
+	String coordinatorEPR = "http://127.0.0.1:8086/axis2/services/ActivationCoordinator";
 
 	String axis2Repo = "target/initiator-repository";
 
@@ -49,39 +48,34 @@ public class InteropTest extends TestCase {
 	}
 
 	public void testCompletionCommit() throws Exception {
-		TransactionManager tm = new TransactionManager(Constants.WS_AT,
-				coordinator, axis2Repo, axis2XML);
-		tm.begin(false);
+		TransactionManager tm = new TransactionManager(axis2Repo, axis2XML);
+		tm.begin(coordinatorEPR);
 		tm.commit();
 	}
 
 	public void testCompletionRollback() throws Exception {
-		TransactionManager tm = new TransactionManager(Constants.WS_AT,
-				coordinator, axis2Repo, axis2XML);
-		tm.begin(false);
+		TransactionManager tm = new TransactionManager( axis2Repo, axis2XML);
+		tm.begin(coordinatorEPR);
 		tm.rollback();
 	}
 
 	public void testCommit() throws Exception {
-		TransactionManager tm = new TransactionManager(Constants.WS_AT,
-				coordinator, axis2Repo, axis2XML);
-		tm.begin(false);
+		TransactionManager tm = new TransactionManager(axis2Repo, axis2XML);
+		tm.begin(coordinatorEPR);
 		stub.commitOperation();
 		tm.commit();
 	}
 
 	public void testRollback() throws Exception {
-		TransactionManager tm = new TransactionManager(Constants.WS_AT,
-				coordinator, axis2Repo, axis2XML);
-		tm.begin(true);
+		TransactionManager tm = new TransactionManager(axis2Repo, axis2XML);
+		tm.begin(coordinatorEPR);
 		stub.rollbackOperation();
 		tm.rollback();
 	}
 
 	public void testPhase2Rollback() throws Exception {
-		TransactionManager tm = new TransactionManager(Constants.WS_AT,
-				coordinator, axis2Repo, axis2XML);
-		tm.begin(false);
+		TransactionManager tm = new TransactionManager(axis2Repo, axis2XML);
+		tm.begin(coordinatorEPR);
 		stub.phase2RollbackOperation();
 
 		boolean done = false;
@@ -94,24 +88,21 @@ public class InteropTest extends TestCase {
 	}
 
 	public void testReadonly() throws Exception {
-		TransactionManager tm = new TransactionManager(Constants.WS_AT,
-				coordinator, axis2Repo, axis2XML);
-		tm.begin(false);
+		TransactionManager tm = new TransactionManager(axis2Repo, axis2XML);
+		tm.begin(coordinatorEPR);
 		stub.readonlyOperation();
 		tm.commit();
 	}
 
 	public void testVolatileAndDurable() throws Exception {
-		TransactionManager tm = new TransactionManager(Constants.WS_AT,
-				coordinator, axis2Repo, axis2XML);
-		tm.begin(false);
+		TransactionManager tm = new TransactionManager(axis2Repo, axis2XML);
+		tm.begin(coordinatorEPR);
 		stub.readonlyOperation();
 		tm.commit();
 	}
 	public void testEarlyAborted() throws Exception {
-		TransactionManager tm = new TransactionManager(Constants.WS_AT,
-				coordinator, axis2Repo, axis2XML);
-		tm.begin(false);
+		TransactionManager tm = new TransactionManager(axis2Repo, axis2XML);
+		tm.begin(coordinatorEPR);
 		stub.earlyAbortedOperation();
 		Thread.sleep(5000);
 	}

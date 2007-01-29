@@ -34,8 +34,8 @@ import org.apache.kandula.context.impl.ATParticipantContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.participant.KandulaResource;
 import org.apache.kandula.participant.ParticipantUtility;
-import org.apache.kandula.storage.StorageFactory;
 import org.apache.kandula.storage.Store;
+import org.apache.kandula.storage.StorageUtils;
 import org.apache.kandula.wsat.twopc.CoordinatorPortTypeRawXMLStub;
 
 /**
@@ -65,9 +65,8 @@ public class testService {
 
 		String reqID = (String) msgcts
 				.getProperty(AbstractContext.REQUESTER_ID);
-		Store store = StorageFactory.getInstance().getStore();
-		ATParticipantContext participantContext = (ATParticipantContext) store
-				.get(reqID);
+		ATParticipantContext participantContext = (ATParticipantContext) StorageUtils
+				.getContext(reqID);
 		CoordinationContext coordinationContext = participantContext
 				.getCoordinationContext();
 
@@ -75,15 +74,16 @@ public class testService {
 		participantContext2.setCoordinationContext(coordinationContext);
 		KandulaResource resource1 = new Phase2RollbackTestVolatileResource();
 		participantContext2.setResource(resource1);
-		store.put(participantContext2.getID(), participantContext2);
-		ParticipantUtility.registerParticipant(participantContext2);
+		StorageUtils.putContext(participantContext2);
+		MessageContext currentMessageContext = MessageContext.getCurrentMessageContext();
+		ParticipantUtility.registerParticipant(participantContext2,currentMessageContext);
 
 		ATParticipantContext participantContext1 = new ATParticipantContext();
 		participantContext1.setCoordinationContext(coordinationContext);
 		KandulaResource resource = new RollbackTestResource();
 		participantContext1.setResource(resource);
-		store.put(participantContext1.getID(), participantContext1);
-		ParticipantUtility.registerParticipant(participantContext1);
+		StorageUtils.putContext(participantContext1);
+		ParticipantUtility.registerParticipant(participantContext1,currentMessageContext);
 
 		return getResponseElement();
 	}
@@ -92,9 +92,8 @@ public class testService {
 
 		String reqID = (String) msgcts
 				.getProperty(AbstractContext.REQUESTER_ID);
-		Store store = StorageFactory.getInstance().getStore();
-		ATParticipantContext participantContext = (ATParticipantContext) store
-				.get(reqID);
+		ATParticipantContext participantContext = (ATParticipantContext) StorageUtils
+		.getContext(reqID);
 		CoordinationContext coordinationContext = participantContext
 				.getCoordinationContext();
 
@@ -102,15 +101,16 @@ public class testService {
 		participantContext2.setCoordinationContext(coordinationContext);
 		KandulaResource resource1 = new DurableReadOnlyResource();
 		participantContext2.setResource(resource1);
-		store.put(participantContext2.getID(), participantContext2);
-		ParticipantUtility.registerParticipant(participantContext2);
+		StorageUtils.putContext(participantContext2);
+		MessageContext messageContext = MessageContext.getCurrentMessageContext();
+		ParticipantUtility.registerParticipant(participantContext2,messageContext);
 
 		ATParticipantContext participantContext1 = new ATParticipantContext();
 		participantContext1.setCoordinationContext(coordinationContext);
 		KandulaResource resource = new CommitTestResource();
 		participantContext1.setResource(resource);
-		store.put(participantContext1.getID(), participantContext1);
-		ParticipantUtility.registerParticipant(participantContext1);
+		StorageUtils.putContext(participantContext1);
+		ParticipantUtility.registerParticipant(participantContext1,messageContext);
 
 		return getResponseElement();
 	}
@@ -119,9 +119,8 @@ public class testService {
 
 		String reqID = (String) msgcts
 				.getProperty(AbstractContext.REQUESTER_ID);
-		final Store store = StorageFactory.getInstance().getStore();
-		ATParticipantContext participantContext = (ATParticipantContext) store
-				.get(reqID);
+		ATParticipantContext participantContext = (ATParticipantContext) StorageUtils
+		.getContext(reqID);
 		final CoordinationContext coordinationContext = participantContext
 				.getCoordinationContext();
 
@@ -129,8 +128,9 @@ public class testService {
 		participantContext2.setCoordinationContext(coordinationContext);
 		KandulaResource resource1 = new VolatileAndDurableTestVolatileResource();
 		participantContext2.setResource(resource1);
-		store.put(participantContext2.getID(), participantContext2);
-		ParticipantUtility.registerParticipant(participantContext2);
+		StorageUtils.putContext(participantContext2);
+		final MessageContext messageContext = MessageContext.getCurrentMessageContext();
+		ParticipantUtility.registerParticipant(participantContext2,messageContext);
 		Thread thread = new Thread(new Runnable() {
 			public void run() {
 				try {
@@ -139,17 +139,17 @@ public class testService {
 							.setCoordinationContext(coordinationContext);
 					KandulaResource resource = new CommitTestResource();
 					participantContext1.setResource(resource);
-					store.put(participantContext1.getID(), participantContext1);
+					StorageUtils.putContext(participantContext1);
 
 					Map referenceParametersmap = participantContext2
 							.getCoordinationEPR().getAllReferenceParameters();
 					String id = ((OMElement) referenceParametersmap
 							.get(Constants.TRANSACTION_ID_PARAMETER)).getText();
-					AbstractContext transaction = (AbstractContext) store
-							.get(id);
+					AbstractContext transaction = (AbstractContext) StorageUtils
+					.getContext(id);
 					while (!(transaction.getStatus() == Status.CoordinatorStatus.STATUS_PREPARING_VOLATILE)) {
 					}
-					ParticipantUtility.registerParticipant(participantContext1);
+					ParticipantUtility.registerParticipant(participantContext1,messageContext);
 
 				} catch (AxisFault e) {
 					// TODO Auto-generated catch block
@@ -165,9 +165,7 @@ public class testService {
 
 		String reqID = (String) msgcts
 				.getProperty(AbstractContext.REQUESTER_ID);
-		Store store = StorageFactory.getInstance().getStore();
-		ATParticipantContext participantContext = (ATParticipantContext) store
-				.get(reqID);
+		ATParticipantContext participantContext = (ATParticipantContext) StorageUtils.getContext(reqID);
 		CoordinationContext coordinationContext = participantContext
 				.getCoordinationContext();
 
@@ -175,15 +173,16 @@ public class testService {
 		participantContext2.setCoordinationContext(coordinationContext);
 		KandulaResource resource1 = new CommitTestResource();
 		participantContext2.setResource(resource1);
-		store.put(participantContext2.getID(), participantContext2);
-		ParticipantUtility.registerParticipant(participantContext2);
+		StorageUtils.putContext( participantContext2);
+		MessageContext messageContext = MessageContext.getCurrentMessageContext();
+		ParticipantUtility.registerParticipant(participantContext2,messageContext);
 
 		ATParticipantContext participantContext1 = new ATParticipantContext();
 		participantContext1.setCoordinationContext(coordinationContext);
 		KandulaResource resource = new VolatileReadOnlyResource();
 		participantContext1.setResource(resource);
-		store.put(participantContext1.getID(), participantContext1);
-		ParticipantUtility.registerParticipant(participantContext1);
+		StorageUtils.putContext(participantContext1);
+		ParticipantUtility.registerParticipant(participantContext1,messageContext);
 
 		CoordinatorPortTypeRawXMLStub stub;
 		try {

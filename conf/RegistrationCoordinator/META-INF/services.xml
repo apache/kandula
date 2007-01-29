@@ -1,10 +1,12 @@
+<serviceGroup>
 <service name="RegistrationCoordinator">
-    <description>
-        Coordination service.
-    </description>
-    <parameter name="ServiceClass" locked="xsd:false">org.apache.kandula.wscoor.RegistrationPortTypeRawXMLSkeleton</parameter>
-    <operation name="registerOperation">
-        <actionMapping>http://docs.oasis-open.org/ws-tx/wscoor/2006/03/Register</actionMapping>
-        <messageReceiver class="org.apache.kandula.wscoor.RegistrationPortTypeRawXMLSyncMessageReceiver"/>
-    </operation>
+<messageReceivers>
+<messageReceiver mep="http://www.w3.org/2004/08/wsdl/in-out" class="org.apache.kandula.wscoor.RegistrationServiceMessageReceiverInOut"/>
+</messageReceivers>
+<parameter name="ServiceClass" locked="false">org.apache.kandula.wscoor.RegistrationServiceSkeleton</parameter>
+<operation name="RegisterOperation" mep="http://www.w3.org/2004/08/wsdl/in-out">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wscoor/2006/06/Register</actionMapping>
+<outputActionMapping>http://docs.oasis-open.org/ws-tx/wscoor/2006/06/RegistrationPortType/RegisterOperationResponse</outputActionMapping>
+</operation>
 </service>
+</serviceGroup>

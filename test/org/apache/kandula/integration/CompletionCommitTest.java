@@ -28,7 +28,6 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
-import org.apache.kandula.Constants;
 import org.apache.kandula.initiator.TransactionManager;
 
 public class CompletionCommitTest extends TestCase {
@@ -81,14 +80,9 @@ public class CompletionCommitTest extends TestCase {
 	}
 
 	public void testEchoXMLASync() throws Exception {
-		TransactionManager tm = new TransactionManager(
-				Constants.WS_AT,
-				new EndpointReference(
-						"http://localhost:8081/axis2/services/ActivationCoordinator"),
-				"target/initiator-repository",
+		TransactionManager tm = new TransactionManager("target/initiator-repository",
 				"target/initiator-repository/axis2.xml");
-		tm.begin(false);
-		 
+		tm.begin("http://localhost:8081/axis2/services/ActivationCoordinator");
 		 stub.creditOperation();
 		 tm.commit();
 		Thread.sleep(5000);

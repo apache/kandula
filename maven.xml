@@ -11,18 +11,29 @@
 		</path>
 	</goal>
 
+    <preGoal name="java:compile">
+    	<attainGoal name="generate:code"/>
+        <path id="generated.src.path">
+            <pathelement location="target/src"/>
+        </path>
+        <maven:addPath id="maven.compile.src.set" refid="generated.src.path"/>
+    </preGoal>
+	
 	<goal name="generate:code">
 		<!-- Code generating for the WS-Coordination WSDL -->
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath" />
 			<arg line=" -o target -p org.apache.kandula.wscoor -g  -ss -sd -sn RegistrationService -uri schema/wscoor.wsdl" />
 		</java>
+		<delete file="target/src/org/apache/kandula/wscoor/RegistrationServiceSkeleton.java"/>
+		
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath" />
 			<arg line=" -o target -p org.apache.kandula.wscoor -g  -ss -sd -sn ActivationService -uri schema/wscoor.wsdl" />
 		</java>
-
-		<!-- Code generating for the WS-AT WSDL -->
+		<delete file="target/src/org/apache/kandula/wscoor/ActivationServiceSkeleton.java"/>
+		
+		<!-- Code generating for the WS-AT WSDL >
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath" />
 			<arg line=" -o target -p org.apache.kandula.wsat.twopc -g -ss -sd -sn Participant2PCService -uri schema/wsat.wsdl" />
@@ -38,9 +49,9 @@
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath" />
 			<arg line=" -o target -p org.apache.kandula.wsat.completion -g -ss -sd -sn CompletionCoordinator -uri schema/wsat.wsdl" />
-		</java>
+		</java-->
 
-		<!-- Code generating for the WS-BA WSDL -->
+		<!-- Code generating for the WS-BA WSDL >
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath" />
 			<arg line=" -o target -p org.apache.kandula.wsba -g -ss -sd -sn BAParticipantCompletionParticipantService -uri schema/wsba.wsdl" />
@@ -56,7 +67,7 @@
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath" />
 			<arg line=" -o target -p org.apache.kandula.wsba -g -ss -sd -sn BAParticipantCompletionCoordinatorService -uri schema/wsba.wsdl" />
-		</java>
+		</java-->
 	</goal>
 
 	<postGoal name="test:compile">
