@@ -16,9 +16,6 @@
  */
 package org.apache.kandula.participant;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class Vote {
 
 	public static Vote READ_ONLY = new Vote("VoteReadOnly");

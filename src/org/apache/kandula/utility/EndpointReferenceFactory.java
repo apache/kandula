@@ -41,10 +41,6 @@ import org.xmlsoap.schemas.ws._2004._08.addressing.AttributedURI;
 import org.xmlsoap.schemas.ws._2004._08.addressing.EndpointReferenceType;
 import org.xmlsoap.schemas.ws._2004._08.addressing.ReferenceParametersType;
 
-/**
- * @author <a href="mailto:thilina@apache.org"> Thilina Gunarathne </a>
- */
-
 public class EndpointReferenceFactory {
 
 	private static EndpointReferenceFactory instance = null;

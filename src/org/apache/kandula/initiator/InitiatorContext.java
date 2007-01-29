@@ -21,9 +21,6 @@ import org.apache.kandula.Status;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.CoordinationContext;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class InitiatorContext extends AbstractContext {
 
 	private String activationEPR;

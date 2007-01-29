@@ -20,9 +20,6 @@ import org.apache.kandula.Constants;
 import org.apache.kandula.participant.KandulaResource;
 import org.apache.kandula.participant.Vote;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class DummyResource implements KandulaResource {
 
 	/**

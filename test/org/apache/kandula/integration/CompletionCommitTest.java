@@ -40,30 +40,26 @@ public class CompletionCommitTest extends TestCase {
 
 	public CompletionCommitTest() throws Exception {
 		super(CompletionCommitTest.class.getName());
-		stub = new KandulaDemoServiceStub(
-				"target/initiator-repository",
-				new EndpointReference(
-						"http://localhost:8081/axis2/services/KandulaDemoService"));
+		stub = new KandulaDemoServiceStub("target/initiator-repository", new EndpointReference(
+				"http://localhost:8081/axis2/services/KandulaDemoService"));
 	}
 
 	public CompletionCommitTest(String testName) throws Exception {
 		super(testName);
-		stub = new KandulaDemoServiceStub(
-				"target/initiator-repository",
-				new EndpointReference(
-						"http://localhost:8081/axis2/services/KandulaDemoService"));
+		stub = new KandulaDemoServiceStub("target/initiator-repository", new EndpointReference(
+				"http://localhost:8081/axis2/services/KandulaDemoService"));
 	}
 
 	protected void setUp() throws Exception {
 		File file = new File(repository);
 		File configFile = new File(repository + "/axis2.xml");
 		if (!file.exists()) {
-			throw new Exception("repository directory "
-					+ file.getAbsolutePath() + " does not exists");
+			throw new Exception("repository directory " + file.getAbsolutePath()
+					+ " does not exists");
 		}
 		ConfigurationContext er = ConfigurationContextFactory
-				.createConfigurationContextFromFileSystem(file
-						.getAbsolutePath(), configFile.getAbsolutePath());
+				.createConfigurationContextFromFileSystem(file.getAbsolutePath(), configFile
+						.getAbsolutePath());
 
 		server = new SimpleHTTPServer(er, 8081);
 
@@ -83,24 +79,24 @@ public class CompletionCommitTest extends TestCase {
 		TransactionManager tm = new TransactionManager("target/initiator-repository",
 				"target/initiator-repository/axis2.xml");
 		tm.begin("http://localhost:8081/axis2/services/ActivationCoordinator");
-		 stub.creditOperation();
-		 tm.commit();
+		stub.creditOperation();
+		tm.commit();
 		Thread.sleep(5000);
-		
+
 	}
 
-//	public void testEchoXMLSync() throws Exception {
-//		// TransactionManager tm = new TransactionManager(
-//		// Constants.WS_AT,
-//		// new EndpointReference(
-//		// "http://localhost:8081/axis2/services/ActivationCoordinator"));
-//		// tm.begin("target/initiator-repository",
-//		// "target/initiator-repository/axis2.xml", false);
-//		// try {
-//		// stub.creditOperation();
-//		// } catch (Exception e) {
-//		// tm.rollback();
-//		// }
-//		// tm.commit();
-//	}
+	//	public void testEchoXMLSync() throws Exception {
+	//		// TransactionManager tm = new TransactionManager(
+	//		// Constants.WS_AT,
+	//		// new EndpointReference(
+	//		// "http://localhost:8081/axis2/services/ActivationCoordinator"));
+	//		// tm.begin("target/initiator-repository",
+	//		// "target/initiator-repository/axis2.xml", false);
+	//		// try {
+	//		// stub.creditOperation();
+	//		// } catch (Exception e) {
+	//		// tm.rollback();
+	//		// }
+	//		// tm.commit();
+	//	}
 }

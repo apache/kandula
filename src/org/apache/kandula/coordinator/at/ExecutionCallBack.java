@@ -19,10 +19,6 @@ package org.apache.kandula.coordinator.at;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 
-/**
- * @author <a href="mailto:thilina@apache.org"> Thilina Gunarathne </a>
- */
-
 public interface ExecutionCallBack {
 
 	public void process(AbstractContext context)

@@ -22,9 +22,6 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Status;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public abstract class AbstractContext {
 
 	public static String ACTIVATION_EPR = "activationEPR";

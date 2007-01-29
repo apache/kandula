@@ -16,19 +16,10 @@
  */
 package org.apache.kandula.faults;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class InvalidProtocolException extends AbstractKandulaException {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2145946140688935653L;
 
-	/**
-	 * 
-	 */
 	public InvalidProtocolException() {
 		super();
 	}

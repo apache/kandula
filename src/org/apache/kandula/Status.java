@@ -16,9 +16,6 @@
  */
 package org.apache.kandula;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public abstract interface Status {
 	interface CoordinatorStatus {
 

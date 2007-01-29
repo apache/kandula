@@ -27,13 +27,6 @@ import org.apache.axis2.deployment.DeploymentException;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.KandulaGeneralException;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
-/**
- * @author thilina
- *
- */
 public class KandulaConfiguration {
 	static final String PROPERTY_FILE = "endpoints.conf";
 

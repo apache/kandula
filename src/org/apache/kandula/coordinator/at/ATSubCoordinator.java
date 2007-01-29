@@ -23,9 +23,6 @@ import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.InvalidProtocolException;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class ATSubCoordinator extends ATCoordinator {
 
 	public EndpointReference addParticipant(AbstractContext context,

@@ -26,9 +26,6 @@ import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class CoordinatorImplTest extends TestCase {
 
 	/*

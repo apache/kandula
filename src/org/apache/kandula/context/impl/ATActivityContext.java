@@ -32,9 +32,6 @@ import org.apache.kandula.faults.AlreadyRegisteredException;
 import org.apache.kandula.faults.InvalidProtocolException;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class ATActivityContext extends AbstractContext {
 
 	private Method callBackMethod = null;

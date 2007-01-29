@@ -33,10 +33,6 @@ import org.apache.kandula.participant.Vote;
 import org.apache.kandula.wsat.completion.CompletionInitiatorPortTypeRawXMLStub;
 import org.apache.kandula.wsat.twopc.ParticipantPortTypeRawXMLStub;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
-
 public class ATCoordinator implements Registerable {
 
 	public ATCoordinator() {

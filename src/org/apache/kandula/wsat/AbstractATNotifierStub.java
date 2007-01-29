@@ -50,18 +50,6 @@ public abstract class AbstractATNotifierStub {
 
 	protected EndpointReference toEPR;
 
-	// public AbstractATNotifierStub(ConfigurationContext configurationContext,
-	// AxisService service) throws AbstractKandulaException {
-	// this.service = service;
-	// try {
-	// configurationContext.getAxisConfiguration().addService(service);
-	// } catch (AxisFault e1) {
-	// throw new KandulaGeneralException(e1);
-	// }
-	// ServiceGroupContext sgc = new ServiceGroupContext(configurationContext,
-	// (AxisServiceGroup) this.service.getParent());
-	// this.serviceContext = new ServiceContext(service, sgc);
-	// }
 	public AbstractATNotifierStub(ConfigurationContext configurationContext)
 			throws AbstractKandulaException {
 		this.service = new AxisService("annonService" + this.hashCode());

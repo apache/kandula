@@ -16,9 +16,6 @@
  */
 package org.apache.kandula.faults;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class AlreadyRegisteredException extends AbstractKandulaException {
 
 	private static final long serialVersionUID = 354170092780305997L;

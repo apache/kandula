@@ -18,9 +18,6 @@ package org.apache.kandula;
 
 import javax.xml.namespace.QName;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public interface Constants {
 
 	// WS-Coordination URI's

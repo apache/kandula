@@ -22,9 +22,6 @@ import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.coordinator.Registerable;
 import org.apache.kandula.faults.AbstractKandulaException;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class BACoordinator implements Registerable 
 {
 	public BACoordinator() 

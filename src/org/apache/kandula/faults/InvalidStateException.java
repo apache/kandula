@@ -16,19 +16,10 @@
  */
 package org.apache.kandula.faults;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class InvalidStateException extends AbstractKandulaException {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2526517532679685749L;
 
-	/**
-	 * 
-	 */
 	public InvalidStateException() {
 		super();
 	}

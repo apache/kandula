@@ -22,10 +22,6 @@ import org.apache.kandula.context.ContextFactory;
 import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
-
 public class Coordinator {
 
 	public Coordinator() {

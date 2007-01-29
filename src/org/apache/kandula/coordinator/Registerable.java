@@ -24,9 +24,6 @@ import org.apache.kandula.coordinator.ba.BACoordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.InvalidProtocolException;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public interface Registerable {
 	public static final class Factory {
 		public static Registerable newRegisterable(String coordinationType)

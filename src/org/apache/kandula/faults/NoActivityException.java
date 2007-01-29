@@ -16,19 +16,10 @@
  */
 package org.apache.kandula.faults;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class NoActivityException extends AbstractKandulaException {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1625567169353147393L;
 
-	/**
-	 * 
-	 */
 	public NoActivityException() {
 		super();
 	}

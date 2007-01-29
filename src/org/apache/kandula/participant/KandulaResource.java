@@ -16,9 +16,6 @@
  */
 package org.apache.kandula.participant;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public interface KandulaResource {
 	public boolean commit();
 

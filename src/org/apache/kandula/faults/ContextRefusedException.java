@@ -16,9 +16,6 @@
  */
 package org.apache.kandula.faults;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class ContextRefusedException extends AbstractKandulaException {
 
 	/**

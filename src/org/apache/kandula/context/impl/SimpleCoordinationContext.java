@@ -27,9 +27,6 @@ import org.apache.kandula.Constants;
 import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class SimpleCoordinationContext implements CoordinationContext {
 	private String activityID;
 

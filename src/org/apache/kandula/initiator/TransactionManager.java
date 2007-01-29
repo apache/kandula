@@ -44,13 +44,6 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.Register;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponse;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
-import org.xmlsoap.schemas.ws._2004._08.addressing.AttributedURI;
-import org.xmlsoap.schemas.ws._2004._08.addressing.EndpointReferenceType;
-
-/**
- * @author Dasarath Weeratunge
- * @author <a href="mailto:thilina@apache.org"> Thilina Gunarathne </a>
- */
 
 public class TransactionManager {
 	

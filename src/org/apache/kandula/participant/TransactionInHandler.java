@@ -29,14 +29,11 @@ import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.context.impl.ATParticipantContext;
 import org.apache.kandula.context.impl.SimpleCoordinationContext;
-import org.apache.kandula.storage.Store;
 import org.apache.kandula.storage.StorageUtils;
 
 public class TransactionInHandler extends AbstractHandler {
 
 	private static final long serialVersionUID = 2098581248112968550L;
-
-	// private ThreadLocal threadInfo = new ThreadLocal();
 
 	public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
 		KandulaResource resource;

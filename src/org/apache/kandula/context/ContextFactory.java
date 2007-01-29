@@ -19,9 +19,6 @@ package org.apache.kandula.context;
 import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.faults.InvalidProtocolException;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class ContextFactory {
 	private static ContextFactory instance = new ContextFactory();
 

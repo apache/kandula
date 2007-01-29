@@ -23,9 +23,6 @@ import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.InvalidStateException;
 import org.apache.kandula.wsat.twopc.CoordinatorPortTypeRawXMLStub;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class ParticipantTransactionCoordinator {
 
 	public void prepare(AbstractContext context)

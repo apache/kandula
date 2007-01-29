@@ -18,9 +18,6 @@ package org.apache.kandula.coordinator.at;
 
 import junit.framework.TestCase;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class ATCoordinatorTest extends TestCase {
 
 	/*

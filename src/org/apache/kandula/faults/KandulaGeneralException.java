@@ -16,19 +16,10 @@
  */
 package org.apache.kandula.faults;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class KandulaGeneralException extends AbstractKandulaException {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3605851255933308674L;
 
-	/**
-	 * 
-	 */
 	public KandulaGeneralException(Exception e) {
 		super(e);
 	}

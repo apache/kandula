@@ -22,9 +22,6 @@ import org.apache.kandula.context.impl.ADBCoordinationContext;
 import org.apache.kandula.context.impl.SimpleCoordinationContext;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type3;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public interface CoordinationContext {
 	public static final class Factory {
 		public static CoordinationContext newContext(OMElement contextElement) {

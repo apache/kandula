@@ -16,9 +16,6 @@
  */
 package org.apache.kandula.storage;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public interface Store {
 	void put(Object id, Object context);
 

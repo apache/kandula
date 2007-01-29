@@ -18,9 +18,6 @@ package org.apache.kandula.context;
 
 import junit.framework.TestCase;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class ActivityContextTest extends TestCase {
 
 	public void testGetActivityID() {

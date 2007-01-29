@@ -23,9 +23,6 @@ import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.participant.KandulaResource;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
 public class ATParticipantContext extends AbstractContext {
 	KandulaResource resource;
 	String ID;

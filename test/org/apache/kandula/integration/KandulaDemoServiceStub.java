@@ -37,10 +37,6 @@ import org.apache.axis2.description.AxisService;
 import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.OutOnlyAxisOperation;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
-
 public class KandulaDemoServiceStub extends org.apache.axis2.client.Stub {
 
 	public static final String AXIS2_HOME = ".";
