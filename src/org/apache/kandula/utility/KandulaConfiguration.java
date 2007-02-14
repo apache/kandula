@@ -74,13 +74,16 @@ public class KandulaConfiguration {
 
 	String debug = "false";
 
+	private ConfigurationContext coordinatorConfigurationContext = null;
+
+	private ConfigurationContext participantConfigurationContext = null;
+
 	private KandulaConfiguration() {
 
 		String port = null;
 
 		String host = null;
-		InputStream in = getClass().getClassLoader().getResourceAsStream(
-				PROPERTY_FILE);
+		InputStream in = getClass().getClassLoader().getResourceAsStream(PROPERTY_FILE);
 		properties = new Properties();
 		try {
 			properties.load(in);
@@ -96,19 +99,16 @@ public class KandulaConfiguration {
 				debug = "true";
 			}
 
-			participantAxis2Xml = properties
-					.getProperty(PARTICIPANT_AXIS2_CONF);
+			participantAxis2Xml = properties.getProperty(PARTICIPANT_AXIS2_CONF);
 			// if (participantAxis2Xml == null) {
 			// participantAxis2Xml = "axis2.xml";
 			// }
 
-			kandulaListenerRepository = properties
-					.getProperty(KANDULA_LISTENER_REPO);
+			kandulaListenerRepository = properties.getProperty(KANDULA_LISTENER_REPO);
 			// if (kandulaListenerRepository == null) {
 			// kandulaListenerRepository = ".";
 			// }
-			kandulaListenerAxis2Xml = properties
-					.getProperty(KANDULA_LISTENER_AXIS2XML);
+			kandulaListenerAxis2Xml = properties.getProperty(KANDULA_LISTENER_AXIS2XML);
 			// if (kandulaListenerAxis2Xml == null) {
 			// kandulaListenerRepository += "/axis2.xml";
 			// }
@@ -153,27 +153,28 @@ public class KandulaConfiguration {
 		return instance;
 	}
 
-	
 	/**
 	 * @return a ConfigurationContext according to the coordinator Axis2.xml & repository configured.
 	 * @throws AbstractKandulaException
 	 */
 	public ConfigurationContext getPariticipantAxis2ConfigurationContext()
 			throws AbstractKandulaException {
-		try {
-			if (coordinatorAxis2Conf != null && coordinatorAxis2Conf != "")
-			{
-				return ConfigurationContextFactory
-						.createConfigurationContextFromFileSystem(
-								participantRepository, participantAxis2Xml);
+		if (participantConfigurationContext == null) {
+			try {
+				if (coordinatorAxis2Conf != null && coordinatorAxis2Conf != "") {
+
+					participantConfigurationContext = ConfigurationContextFactory
+							.createConfigurationContextFromFileSystem(participantRepository,
+									participantAxis2Xml);
+				}
+
+			} catch (DeploymentException e) {
+				throw new KandulaGeneralException(e);
+			} catch (AxisFault e1) {
+				throw new KandulaGeneralException(e1);
 			}
-			
-		} catch (DeploymentException e) {
-			throw new KandulaGeneralException(e);
-		} catch (AxisFault e1) {
-			throw new KandulaGeneralException(e1);
 		}
-		return null;
+		return participantConfigurationContext;
 	}
 
 	public String getParticipantRepository() {
@@ -186,19 +187,20 @@ public class KandulaConfiguration {
 
 	public ConfigurationContext getCoordinatorAxis2ConfigurationContext()
 			throws AbstractKandulaException {
-		try {
-			if (coordinatorAxis2Conf != null && coordinatorAxis2Conf != "")
-			{
-				return ConfigurationContextFactory
-						.createConfigurationContextFromFileSystem(
-								coordinatorRepo, coordinatorAxis2Conf);
+		if (coordinatorConfigurationContext == null) {
+			try {
+				if (coordinatorAxis2Conf != null && coordinatorAxis2Conf != "") {
+					coordinatorConfigurationContext = ConfigurationContextFactory
+							.createConfigurationContextFromFileSystem(coordinatorRepo,
+									coordinatorAxis2Conf);
+				}
+			} catch (DeploymentException e) {
+				throw new KandulaGeneralException(e);
+			} catch (AxisFault e1) {
+				throw new KandulaGeneralException(e1);
 			}
-		} catch (DeploymentException e) {
-			throw new KandulaGeneralException(e);
-		} catch (AxisFault e1) {
-			throw new KandulaGeneralException(e1);
 		}
-		return null;
+		return coordinatorConfigurationContext;
 	}
 
 	public String getCoordinatorRepo() {

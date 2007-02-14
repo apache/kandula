@@ -16,1782 +16,698 @@
  */
 package org.apache.kandula.coordinator.ba;
 
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.apache.axis2.addressing.EndpointReference;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.kandula.Constants;
+import org.apache.kandula.Status;
+import org.apache.kandula.Status.BACoordinatorStatus;
+import org.apache.kandula.ba.BusinessActivityCallBack;
 import org.apache.kandula.context.AbstractContext;
+import org.apache.kandula.context.impl.BAActivityContext;
 import org.apache.kandula.coordinator.Registerable;
 import org.apache.kandula.faults.AbstractKandulaException;
+import org.apache.kandula.faults.InvalidStateException;
+import org.apache.kandula.faults.KandulaGeneralException;
+import org.apache.kandula.storage.StorageUtils;
+import org.apache.kandula.utility.KandulaConfiguration;
+import org.apache.kandula.wsba.BACoordinatorCompletionParticipantServiceStub;
+import org.oasis_open.docs.ws_tx.wsba._2006._06.Cancel;
+import org.oasis_open.docs.ws_tx.wsba._2006._06.Close;
+import org.oasis_open.docs.ws_tx.wsba._2006._06.Compensate;
+import org.oasis_open.docs.ws_tx.wsba._2006._06.Complete;
+import org.oasis_open.docs.ws_tx.wsba._2006._06.Exited;
+import org.oasis_open.docs.ws_tx.wsba._2006._06.Failed;
+import org.oasis_open.docs.ws_tx.wsba._2006._06.NotificationType;
 
-public class BACoordinator implements Registerable 
-{
-	public BACoordinator() 
-	{
-	}
-	
-	//Start - Register
-	/*public EndpointReference register(AbstractContext context, String protocol,
-			EndpointReference participantEPR) throws AbstractKandulaException
-	{
-		EndpointReference registeredParticipantEPR = null;
-		BAActivityContext baContext = (BAActivityContext) context;
-		if(baContext.getCoordinationType().equals(Constants.WS_BA_ATOMIC))
-		{
-			AtomicBACoordinator atomicBACoordinator = new AtomicBACoordinator();
-			registeredParticipantEPR = atomicBACoordinator.registerBAAtomicParticipants(baContext,protocol,participantEPR);
-		}
-		if(baContext.getCoordinationType().equals(Constants.WS_BA_MIXED))
-		{
-			MixedBACoordinator mixedBACoordinator = new MixedBACoordinator();
-			registeredParticipantEPR = mixedBACoordinator.registerBAMixedParticipants(baContext,protocol,participantEPR);
-		}
-		return registeredParticipantEPR;
-	}*/
-	//End -Register
-	
+public class BACoordinator implements Registerable {
+
+	private static final Log log = LogFactory.getLog(BACoordinator.class);
+
 	public EndpointReference register(AbstractContext context, String protocol,
-			EndpointReference participantEPR)throws AbstractKandulaException 
-	{
-//		BAActivityContext baContext = (BAActivityContext) context;
-//		baContext.lock();
-//		int coordinatorStatus = baContext.getStatus();
-//		if(coordinatorStatus ==(BACoordinatorStatus.STATUS_CLOSING))
-//		{
-//			baContext.unlock();
-//			throw new InvalidStateException ("Coordinator is in closing status ");
-//		}else if(coordinatorStatus ==(BACoordinatorStatus.STATUS_COMPENSATING))
-//		{
-//			baContext.unlock();
-//			throw new InvalidStateException ("Coordinator is in compensating status ");
-//		}
-//		else
-//		{
-//			EndpointReference epr = baContext.addParticipant(participantEPR,
-//					protocol);
-//			baContext.unlock();
-//			return epr;
-//		}
-		return null;
+			EndpointReference participantEPR, String registrationID)
+			throws AbstractKandulaException {
+		BAActivityContext baContext = (BAActivityContext) context;
+		baContext.lock();
+		int coordinatorStatus = baContext.getStatus();
+		if (coordinatorStatus == (BACoordinatorStatus.STATUS_CLOSING)) {
+			baContext.unlock();
+			throw new InvalidStateException("Coordinator is in closing status ");
+		} else if (coordinatorStatus == (BACoordinatorStatus.STATUS_COMPENSATING)) {
+			baContext.unlock();
+			throw new InvalidStateException("Coordinator is in compensating status ");
+		} else {
+			EndpointReference epr = baContext.addParticipant(participantEPR, protocol,
+					registrationID);
+			baContext.unlock();
+			return epr;
+		}
+	}
+
+	/**
+	 * See Coordinator View of BusinessAgreement with Coordinator Completion
+	 * 
+	 * @param context
+	 * @param enlishmentID
+	 * @throws AbstractKandulaException
+	 */
+	public void completeOperation(BAActivityContext baContext) throws AbstractKandulaException {
+		baContext.lock();
+		switch (baContext.getStatus()) {
+		case BACoordinatorStatus.STATUS_ACTIVE:
+		case BACoordinatorStatus.STATUS_COMPLETING:
+			baContext.unlock();
+			baContext.setStatus(BACoordinatorStatus.STATUS_COMPLETING);
+			Hashtable coordinatorCompletionParticipants = baContext
+					.getCoordinatorCompletionParticipants();
+			Iterator participantIterator = coordinatorCompletionParticipants.values().iterator();
+			baContext.incrementCompletingParticipantCount(coordinatorCompletionParticipants.size());
+			BACoordinatorCompletionParticipantServiceStub participantServiceStub;
+			try {
+				participantServiceStub = new BACoordinatorCompletionParticipantServiceStub(
+						KandulaConfiguration.getInstance()
+								.getCoordinatorAxis2ConfigurationContext(), null);
+			} catch (Exception e1) {
+				log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+						+ " : completeOperation : " + e1);
+				throw new KandulaGeneralException(e1);
+			}
+			while (participantIterator.hasNext()) {
+				Object object = (participantIterator.next());
+				BAParticipantInformation participant = (BAParticipantInformation) object;
+				try {
+					participantServiceStub._getServiceClient().getOptions().setTo(
+							participant.getEpr());
+					Complete completeParam = new Complete();
+					completeParam.setComplete(new NotificationType());
+					participant.setStatus(BACoordinatorStatus.STATUS_COMPLETING);
+					participantServiceStub.CompleteOperation(completeParam);
+				} catch (Exception e) {
+					log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+							+ " : completeOperation :" + participant.getEnlistmentId() + " : " + e);
+					throw new KandulaGeneralException(e);
+				}
+			}
+			break;
+		case BACoordinatorStatus.STATUS_CANCELLING:
+		case BACoordinatorStatus.STATUS_COMPLETED:
+		case BACoordinatorStatus.STATUS_CLOSING:
+		case BACoordinatorStatus.STATUS_COMPENSATING:
+		case BACoordinatorStatus.STATUS_FAULTING:
+		case BACoordinatorStatus.STATUS_EXITING:
+		case BACoordinatorStatus.STATUS_ENDED:
+			baContext.unlock();
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : completeOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		default:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : completeOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state, Defaulting");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		}
+	}
+
+	protected void closeOperation(BAActivityContext baContext, String enlistmentID)
+			throws AbstractKandulaException {
+		BAParticipantInformation baParticipantInformation = baContext.getParticipant(enlistmentID);
+		BACoordinatorCompletionParticipantServiceStub participantServiceStub;
+		switch (baParticipantInformation.getStatus()) {
+		case BACoordinatorStatus.STATUS_ACTIVE:
+		case BACoordinatorStatus.STATUS_CANCELLING:
+		case BACoordinatorStatus.STATUS_COMPENSATING:
+		case BACoordinatorStatus.STATUS_FAULTING:
+		case BACoordinatorStatus.STATUS_EXITING:
+		case BACoordinatorStatus.STATUS_ENDED:
+		case BACoordinatorStatus.STATUS_COMPLETING:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : closeOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		case BACoordinatorStatus.STATUS_COMPLETED:
+		case BACoordinatorStatus.STATUS_CLOSING:
+			try {
+				participantServiceStub = new BACoordinatorCompletionParticipantServiceStub(
+						KandulaConfiguration.getInstance()
+								.getCoordinatorAxis2ConfigurationContext(), null);
+				participantServiceStub._getServiceClient().getOptions().setTo(
+						baParticipantInformation.getEpr());
+				Close closeParam = new Close();
+				closeParam.setClose(new NotificationType());
+				baParticipantInformation.setStatus(BACoordinatorStatus.STATUS_CLOSING);
+				participantServiceStub.CloseOperation(closeParam);
+			} catch (Exception e) {
+				log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+						+ " : close Operation :" + baParticipantInformation + " : " + e);
+				throw new KandulaGeneralException(e);
+			}
+			break;
+			default:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : closeOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state, Defaulting");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		}
 	}
 	
-	/**
-	 * Coordinator View of BusinessAgreement with Participant Completion
-	 */
-	//*********************************************************************************
-	/*
-	 * Handling Protocol Messages recieved by the Coordinator[sent by participant] </a>
-	 */
+
+	protected void compensateOperation(BAActivityContext baContext, String enlistmentID)
+			throws AbstractKandulaException {
+		BAParticipantInformation baParticipantInformation = baContext.getParticipant(enlistmentID);
+		BACoordinatorCompletionParticipantServiceStub participantServiceStub;
+		switch (baParticipantInformation.getStatus()) {
+		case BACoordinatorStatus.STATUS_ACTIVE:
+		case BACoordinatorStatus.STATUS_CANCELLING:
+		case BACoordinatorStatus.STATUS_CLOSING:
+		case BACoordinatorStatus.STATUS_FAULTING:
+		case BACoordinatorStatus.STATUS_EXITING:
+		case BACoordinatorStatus.STATUS_ENDED:
+		case BACoordinatorStatus.STATUS_COMPLETING:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : compensateOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		case BACoordinatorStatus.STATUS_COMPLETED:
+		case BACoordinatorStatus.STATUS_COMPENSATING:
+			try {
+				participantServiceStub = new BACoordinatorCompletionParticipantServiceStub(
+						KandulaConfiguration.getInstance()
+								.getCoordinatorAxis2ConfigurationContext(), null);
+				participantServiceStub._getServiceClient().getOptions().setTo(
+						baParticipantInformation.getEpr());
+				Compensate compensate = new Compensate();
+				compensate.setCompensate(new NotificationType());
+				baParticipantInformation.setStatus(BACoordinatorStatus.STATUS_COMPENSATING);
+				participantServiceStub.CompensateOperation(compensate);
+			} catch (Exception e) {
+				log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+						+ " : compensateOperation :" + baParticipantInformation + " : " + e);
+				throw new KandulaGeneralException(e);
+			}
+			break;
+			default:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : compensateOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state, Defaulting");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		}
+	}
 	
-//	1. Start Exit
-//	If a exit is recieved the the coordinator removes that participant from the list
-//	public void PCExitOperation(AbstractContext context, String enlishmentID)
-//	throws AbstractKandulaException 
-//	{
-//			BAActivityContext baContext = (BAActivityContext) context;
-//			baContext.lock();
-//			BAParticipantInformation baParticipantInfo = baContext.getParticipant(enlishmentID);
-//			switch(baContext.getStatus())
-//			{
-//			
-//			case BACoordinatorStatus.STATUS_ACTIVE:
-//				try{		
-//					baContext.removeParticipant(enlishmentID);
-//					int existingCount = baContext.getParticipantCount();
-//					baContext.setParticipantCount(existingCount--);
-//					baParticipantInfo.setStatus(Status.BACoordinatorStatus.STATUS_EXITING);
-//					baContext.setStatus(BACoordinatorStatus.STATUS_EXITING);
-//					baContext.unlock();
-//					this.PCExitedOperation(baContext,enlishmentID);
-//					}
-//				catch(Exception e)
-//				{
-//					throw new KandulaGeneralException(e);
-//				}
-//								
-//			case BACoordinatorStatus.STATUS_CANCELLING:
-//				try{		
-//					baContext.removeParticipant(enlishmentID);
-//					int existingCount = baContext.getParticipantCount();
-//					baContext.setParticipantCount(existingCount--);
-//					// Take an iterator
-//					baParticipantInfo.setStatus(Status.BACoordinatorStatus.STATUS_EXITING);
-//					baContext.setStatus(BACoordinatorStatus.STATUS_EXITING);
-//					baContext.unlock();
-//					this.PCExitedOperation(baContext,enlishmentID);
-//					
-//					}
-//				catch(Exception e)
-//				{
-//					throw new KandulaGeneralException(e);
-//				}
-//				
-//			case BACoordinatorStatus.STATUS_ENDED:
-//				try{		
-//					baContext.unlock();
-//					this.PCExitedOperation(baContext,enlishmentID);
-//					}
-//				catch(Exception e)
-//				{
-//					throw new KandulaGeneralException(e);
-//				}
-//								
-//				case BACoordinatorStatus.STATUS_COMPLETED:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in completed state");
-//				
-//				case BACoordinatorStatus.STATUS_CLOSING:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in closing state");
-//					
-//				case BACoordinatorStatus.STATUS_COMPENSATING:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in compensating state");
-//					
-//				case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in faulting compensatingstate");
-//					
-//				case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in faulting active state");	
-//					
-//				case BACoordinatorStatus.STATUS_EXITING:
-//					baContext.unlock();
-//			}
-//		}
-//	//End Exit
-//	
-//	//2. start Completed
-//	public void PCCompletedOperation(BAActivityContext baContext, String enlishmentID)
-//	throws AbstractKandulaException 
-//	{
-//			switch(baContext.getStatus())
-//			{			
-//			case BACoordinatorStatus.STATUS_COMPLETED:
-//				baContext.unlock();
-//				
-//			case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//				"Coordinator is in faulting active state");	
-//				
-//			case BACoordinatorStatus.STATUS_EXITING:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//				"Coordinator is in exiting active state");	
-//				
-//			case BACoordinatorStatus.STATUS_ENDED:
-//				baContext.unlock();
-//		}
-//	}						
-//	//EndCompleted
-//	
-//	// 3. Start - Fault
-//	public void PCFaultOperation(AbstractContext context, String enlishmentID)
-//	throws AbstractKandulaException 
-//	{
-//			BAActivityContext baContext = (BAActivityContext) context;
-//			baContext.lock();
-//			BAParticipantInformation baParticipantInformation= baContext.getParticipant(enlishmentID);
-//			switch(baContext.getStatus())
-//			{			
-//			case BACoordinatorStatus.STATUS_ACTIVE:
-//				try{		
-//					baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING_ACTIVE);
-//					baContext.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING_ACTIVE);
-//					baContext.unlock();
-//					}
-//				catch(Exception e)
-//				{
-//					throw new KandulaGeneralException(e);
-//				}
-//				
-//			case BACoordinatorStatus.STATUS_CANCELLING:
-//				try{		
-//					baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING_ACTIVE);
-//					baContext.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING_ACTIVE);
-//					baContext.unlock();
-//					}
-//				catch(Exception e)
-//				{
-//					throw new KandulaGeneralException(e);
-//				}
-//				
-//			case BACoordinatorStatus.STATUS_COMPENSATING:
-//				try{		
-//					
-//					baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING_COMPENSATING);
-//					baContext.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING_COMPENSATING);
-//					baContext.unlock();
-//					}
-//				catch(Exception e)
-//				{
-//					throw new KandulaGeneralException(e);
-//				}
-//				
-//				
-//			case BACoordinatorStatus.STATUS_COMPLETED:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in completed state");
-//				
-//			case BACoordinatorStatus.STATUS_CLOSING:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in closing state");
-//				
-//			case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
-//				baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//				baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING);
-//				baContext.unlock();
-//				this.PCFaultedOperation(baContext,enlishmentID);
-//				
-//				
-//			case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
-//				baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//				baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING);
-//				baContext.unlock();
-//				this.PCFaultedOperation(baContext,enlishmentID);
-//				
-//				
-//			case BACoordinatorStatus.STATUS_ENDED:
-//				baContext.unlock();
-//				this.PCFaultedOperation(baContext,enlishmentID);
-//				
-//			}
-//	}
-//	//End - Fault
-//	
-//	//4. Canceled
-//	public void PCCanceledOperation(BAActivityContext baContext,String enlishmentID)
-//	throws AbstractKandulaException 
-//	{
-//		switch(baContext.getStatus())
-//			{
-//			case BACoordinatorStatus.STATUS_ACTIVE:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in Active state");
-//				
-//				case BACoordinatorStatus.STATUS_COMPLETED:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in completed state");
-//					
-//				case BACoordinatorStatus.STATUS_CLOSING:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in cLOSING state");
-//				
-//				case BACoordinatorStatus.STATUS_COMPENSATING:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in compensating state");
-//					
-//				case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in faulting Compensating state");
-//					
-//				case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in faulting active state");
-//					
-//				case BACoordinatorStatus.STATUS_EXITING:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in exiting state");
-//				
-//				case BACoordinatorStatus.STATUS_ENDED:
-//					baContext.unlock();				
-//			}
-//		}
-//	//End Canceled
-//	
-//	//5.Start -Closed
-//	public void PCClosedOperation(BAActivityContext baContext,String enlishmentID)
-//	throws AbstractKandulaException 
-//	{
-//		BAParticipantInformation baPaticipantInformation = baContext.getParticipant(enlishmentID);
-//		switch(baContext.getStatus())
-//			{
-//			case BACoordinatorStatus.STATUS_ACTIVE:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in Active state");
-//				
-//			case BACoordinatorStatus.STATUS_CANCELLING:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in canceling state");
-//				
-//				case BACoordinatorStatus.STATUS_COMPLETED:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in completed state");
-//					
-//				case BACoordinatorStatus.STATUS_CLOSING:
-//					baPaticipantInformation.setStatus(BACoordinatorStatus.STATUS_ENDED);
-//					baContext.setStatus(BACoordinatorStatus.STATUS_ENDED);
-//					baContext.unlock();
-//					
-//				case BACoordinatorStatus.STATUS_COMPENSATING:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in compensating state");
-//					
-//				case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in faulting Compensating state");
-//					
-//				case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in faulting active state");
-//					
-//				case BACoordinatorStatus.STATUS_EXITING:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in exiting state");
-//				
-//				case BACoordinatorStatus.STATUS_ENDED:
-//					baContext.unlock();	
-//			}
-//		}
-//	//End Closed
-//	
-//	// Start - Compensated
-//	public void PCCompensatedOperation(BAActivityContext baContext,String enlishmentID)
-//	throws AbstractKandulaException 
-//	{
-//		BAParticipantInformation baPaticipantInformation = baContext.getParticipant(enlishmentID);
-//			switch(baContext.getStatus())
-//			{
-//			case BACoordinatorStatus.STATUS_ACTIVE:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in Active state");
-//				
-//			case BACoordinatorStatus.STATUS_CANCELLING:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in canceling state");
-//				
-//				case BACoordinatorStatus.STATUS_COMPLETED:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in completed state");
-//					
-//				case BACoordinatorStatus.STATUS_CLOSING:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in closing state");
-//				
-//				case BACoordinatorStatus.STATUS_COMPENSATING:
-//					baPaticipantInformation.setStatus(BACoordinatorStatus.STATUS_ENDED);
-//					baContext.setStatus(BACoordinatorStatus.STATUS_ENDED);
-//					baContext.unlock();
-//					
-//				case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in faulting Compensating state");
-//					
-//				case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in faulting active state");
-//					
-//				case BACoordinatorStatus.STATUS_EXITING:
-//					baContext.unlock();
-//					throw new InvalidStateException(
-//							"Coordinator is in exiting state");
-//				
-//				case BACoordinatorStatus.STATUS_ENDED:
-//					baContext.unlock();			
-//			}
-//		}
-//	//End -Compensated
-//
-///**
-// * Handling Protocol Messages sent by the Coordinator[recieved by participant] </a>
-// */
-//		
-////start - Cancel	
-//public void PCCancelOperation(AbstractContext context,String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	BAActivityContext baContext = (BAActivityContext) context;
-//	baContext.lock();
-//	BAParticipantInformation cancelingParticipant = baContext.getParticipant(enlishmentID);
-//	BAParticipantCompletionParticipantServiceStub pcpsStub;
-//	switch(baContext.getStatus())
-//	{
-//	case BACoordinatorStatus.STATUS_ACTIVE:
-//		try{
-//			pcpsStub = new BAParticipantCompletionParticipantServiceStub(((cancelingParticipant.getEpr()).toString()));
-//			Cancel	cancelParam	= new Cancel();
-//			pcpsStub.CancelOperation(cancelParam);
-//			baContext.setStatus(BACoordinatorStatus.STATUS_CANCELLING_ACTIVE);
-//			cancelingParticipant.setStatus(BACoordinatorStatus.STATUS_CANCELLING_ACTIVE);
-//			baContext.unlock();
-//		}
-//		catch(AxisFault e)
-//		{
-//			throw new KandulaGeneralException(e);
-//		}
-//		catch(Exception e)
-//		{
-//			//TODO
-//		}
-//		
-//		case BACoordinatorStatus.STATUS_CANCELLING:
-//			try{
-//							
-//					pcpsStub = new BAParticipantCompletionParticipantServiceStub(((cancelingParticipant.getEpr()).toString()));
-//					Cancel	cancelParam	= new Cancel();
-//					pcpsStub.CancelOperation(cancelParam);
-//					baContext.unlock();
-//				}
-//			catch(AxisFault e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			catch(Exception e)
-//			{
-//				//TODO
-//			}
-//					
-//		case BACoordinatorStatus.STATUS_COMPLETED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in completed state");
-//			
-//		case BACoordinatorStatus.STATUS_CLOSING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in closing state");
-//					
-//		case BACoordinatorStatus.STATUS_COMPENSATING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in compensated state");
-//			
-//		case BACoordinatorStatus.STATUS_FAULTING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in faulting state");
-//			
-//		case BACoordinatorStatus.STATUS_EXITING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in exiting state");
-//	
-//		case BACoordinatorStatus.STATUS_ENDED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in ended state");					
-//	}
-//}//End Cancel
-//
-////Start Colse
-//public void PCCloseOperation(BAActivityContext baContext, String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	BAParticipantInformation baParticipantInformation = baContext.getParticipant(enlishmentID);
-//	baContext.lock();
-//	BAParticipantCompletionParticipantServiceStub pcpsStub;
-//	switch(baContext.getStatus())
-//	{
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in active state");
-//					
-//		case BACoordinatorStatus.STATUS_CANCELLING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in cancelling state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETED:
-//			try{
-//					String participantEndpointReference = baParticipantInformation.getEpr().toString();		
-//					pcpsStub = new BAParticipantCompletionParticipantServiceStub(participantEndpointReference);
-//					Close	closeParam	= new Close();
-//					pcpsStub.CloseOperation(closeParam);
-//					baParticipantInformation.setStatus(BACoordinatorStatus.STATUS_CLOSING);
-//					baContext.unlock();
-//				}
-//			catch(AxisFault e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			catch(Exception e)
-//			{
-//				//TODO
-//			}
-//			
-//		case BACoordinatorStatus.STATUS_CLOSING:
-//			try{
-//							
-//				String participantEndpointReference = baParticipantInformation.getEpr().toString();		
-//				pcpsStub = new BAParticipantCompletionParticipantServiceStub(participantEndpointReference);
-//				Close	closeParam	= new Close();
-//				pcpsStub.CloseOperation(closeParam);
-//				baParticipantInformation.setStatus(BACoordinatorStatus.STATUS_CLOSING);
-//				baContext.unlock();
-//				}
-//			catch(AxisFault e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			catch(Exception e)
-//			{
-//				//TODO
-//			}						
-//		
-//		case BACoordinatorStatus.STATUS_COMPENSATING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in compensating state");
-//			
-//		case BACoordinatorStatus.STATUS_FAULTING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in faulting state");
-//			
-//		case BACoordinatorStatus.STATUS_EXITING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in exiting state");
-//		
-//		case BACoordinatorStatus.STATUS_ENDED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in exiting state");
-//	}
-//}//End - Close
-//
-////Start - Compensate
-//public void PCCompensateOperation(BAActivityContext baContext, String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	BAParticipantInformation baParticipantInformation = baContext.getParticipant(enlishmentID);
-//	baContext.lock();
-//	BAParticipantCompletionParticipantServiceStub pcpsStub;
-//	switch(baContext.getStatus())
-//	{
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in active state");
-//					
-//		case BACoordinatorStatus.STATUS_CANCELLING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in cancelling state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETED:
-//			try{
-//					String participantEndpointReference = baParticipantInformation.getEpr().toString();		
-//					pcpsStub = new BAParticipantCompletionParticipantServiceStub(participantEndpointReference);
-//					Compensate	compensateParam	= new Compensate();
-//					pcpsStub.CompensateOperation(compensateParam);
-//					baParticipantInformation.setStatus(BACoordinatorStatus.STATUS_COMPENSATING);
-//					baContext.unlock();
-//				}
-//			catch(AxisFault e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			catch(Exception e)
-//			{
-//				//TODO
-//			}
-//			
-//		case BACoordinatorStatus.STATUS_CLOSING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in cancelling state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPENSATING:
-//			try{
-//				String participantEndpointReference = baParticipantInformation.getEpr().toString();		
-//				pcpsStub = new BAParticipantCompletionParticipantServiceStub(participantEndpointReference);
-//				Compensate	compensateParam	= new Compensate();
-//				pcpsStub.CompensateOperation(compensateParam);
-//				baParticipantInformation.setStatus(BACoordinatorStatus.STATUS_COMPENSATING);
-//				baContext.unlock();
-//			}
-//		catch(AxisFault e)
-//		{
-//			throw new KandulaGeneralException(e);
-//		}
-//		catch(Exception e)
-//		{
-//			//TODO
-//		}
-//			
-//		case BACoordinatorStatus.STATUS_FAULTING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in faulting state");
-//			
-//		case BACoordinatorStatus.STATUS_EXITING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in exiting state");
-//		
-//		case BACoordinatorStatus.STATUS_ENDED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in exiting state");
-//	}
-//}//End - Compensate
-//
-////Start Faulted
-//public void PCFaultedOperation(BAActivityContext baContext, String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	baContext.lock();
-//	BAParticipantInformation baParticipantInformation = baContext.getParticipant(enlishmentID);
-//	BAParticipantCompletionParticipantServiceStub pcpsStub;
-//	switch(baContext.getStatus())
-//	{
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in active state");
-//		
-//		case BACoordinatorStatus.STATUS_CANCELLING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in cancelling state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in completed state");
-//		
-//		case BACoordinatorStatus.STATUS_CLOSING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in closing state");
-//		
-//		case BACoordinatorStatus.STATUS_COMPENSATING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in compensating state");
-//		
-//		case BACoordinatorStatus.STATUS_FAULTING:
-//			try{
-//				String participantEndpointReference = baParticipantInformation.getEpr().toString();		
-//				pcpsStub = new BAParticipantCompletionParticipantServiceStub(participantEndpointReference);
-//				Failed	failedParam	= new Failed();
-//				pcpsStub.FailedOperation(failedParam);
-//				baContext.setStatus(BACoordinatorStatus.STATUS_ENDED);
-//				baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_ENDED);
-//				baContext.unlock();
-//			}
-//		catch(AxisFault e)
-//		{
-//			throw new KandulaGeneralException(e);
-//		}
-//		catch(Exception e)
-//		{
-//			//TODO
-//		}
-//	
-//		case BACoordinatorStatus.STATUS_EXITING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in exiting state");
-//		
-//		case BACoordinatorStatus.STATUS_ENDED:
-//			try{
-//				String participantEndpointReference = baParticipantInformation.getEpr().toString();		
-//				pcpsStub = new BAParticipantCompletionParticipantServiceStub(participantEndpointReference);
-//				Failed	failedParam	= new Failed();
-//				pcpsStub.FailedOperation(failedParam);
-//				baContext.unlock();
-//			}
-//		catch(AxisFault e)
-//		{
-//			throw new KandulaGeneralException(e);
-//		}
-//		catch(Exception e)
-//		{
-//			//TODO
-//		}
-//	}	
-//}
-////End Faulted
-//
-////Start - Exited 
-//public void PCExitedOperation(AbstractContext context, String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	BAParticipantCompletionParticipantServiceStub pcpsStub;
-//	BAActivityContext baContext = (BAActivityContext) context;
-//	baContext.lock();
-//	BAParticipantInformation exitingParticipant = baContext.getParticipant(enlishmentID);
-//	
-//	switch(baContext.getStatus())
-//	{
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in active state");
-//			
-//		case BACoordinatorStatus.STATUS_CANCELLING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in canceling state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in completed state");					
-//					
-//		case BACoordinatorStatus.STATUS_CLOSING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in closing state");	
-//					
-//		case BACoordinatorStatus.STATUS_COMPENSATING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in compensating state");
-//						
-//		case BACoordinatorStatus.STATUS_FAULTING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in faulting state");
-//			
-//		case BACoordinatorStatus.STATUS_EXITING:
-//			try{ 		
-//					pcpsStub = new BAParticipantCompletionParticipantServiceStub(((exitingParticipant.getEpr()).toString()));
-//					Exited  exitedParam = new Exited();
-//					pcpsStub.ExitedOperation(exitedParam);
-//					exitingParticipant.setStatus(Status.BACoordinatorStatus.STATUS_ENDED);
-//					baContext.setStatus(BACoordinatorStatus.STATUS_ENDED);
-//					baContext.unlock();
-//				}
-//			catch(AxisFault e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			catch(Exception e)
-//			{
-//				//TODO
-//			}			
-//		case BACoordinatorStatus.STATUS_ENDED:
-//		try{
-//			pcpsStub = new BAParticipantCompletionParticipantServiceStub(((exitingParticipant.getEpr()).toString()));
-//			Exited  exitedParam = new Exited();
-//			pcpsStub.ExitedOperation(exitedParam);
-//			baContext.setStatus(Status.BACoordinatorStatus.STATUS_ENDED);
-//			baContext.unlock();
-//		}
-//		catch(AxisFault e)
-//		{
-//			throw new KandulaGeneralException(e);
-//		}
-//		catch(Exception e)
-//		{
-//			//TODO
-//		}
-//	}
-//}
-////End Exited
-//
-////***********************************************************************************
-///**
-// * Coordinator View of BusinessAgreement with Coordinator Completion
-// */
-//
-///**
-// * Handling Protocol Messages recieved by the Coordinator[sent by participant] </a>
-// */
-////1. Start CCExit
-//public void CCExitOperation(AbstractContext context, String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//		BAActivityContext baContext = (BAActivityContext) context;
-//		baContext.lock();
-//		BAParticipantInformation baParticipantInfo = baContext.getParticipant(enlishmentID);
-//		switch(baContext.getStatus())
-//		{
-//		
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			try{		
-//				baContext.removeParticipant(enlishmentID);
-//				int existingCount = baContext.getParticipantCount();
-//				baContext.setParticipantCount(existingCount--);
-//				baParticipantInfo.setStatus(Status.BACoordinatorStatus.STATUS_EXITING);
-//				baContext.setStatus(BACoordinatorStatus.STATUS_EXITING);
-//				baContext.unlock();
-//				this.CCExitedOperation(baContext,enlishmentID);
-//				
-//				}
-//			catch(Exception e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//							
-//		case BACoordinatorStatus.STATUS_CANCELLING:
-//			try{		
-//				baContext.removeParticipant(enlishmentID);
-//				int existingCount = baContext.getParticipantCount();
-//				baContext.setParticipantCount(existingCount--);
-//				baParticipantInfo.setStatus(Status.BACoordinatorStatus.STATUS_EXITING);
-//				baContext.setStatus(BACoordinatorStatus.STATUS_EXITING);
-//				baContext.unlock();
-//				this.CCExitedOperation(baContext,enlishmentID);
-//				}
-//			catch(Exception e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//				
-//		case BACoordinatorStatus.STATUS_CANCELING_COMPLETING:
-//			try{		
-//				baContext.removeParticipant(enlishmentID);
-//				int existingCount = baContext.getParticipantCount();
-//				baContext.setParticipantCount(existingCount--);
-//				baParticipantInfo.setStatus(Status.BACoordinatorStatus.STATUS_EXITING);
-//				baContext.setStatus(BACoordinatorStatus.STATUS_EXITING);
-//				baContext.unlock();
-//				this.CCExitedOperation(baContext,enlishmentID);
-//				
-//				}
-//			catch(Exception e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			
-//			case BACoordinatorStatus.STATUS_COMPLETED:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in completed state");
-//			
-//			case BACoordinatorStatus.STATUS_CLOSING:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in closing state");
-//				
-//			case BACoordinatorStatus.STATUS_COMPENSATING:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in compensating state");
-//				
-//			case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in faulting compensatingstate");
-//				
-//			case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in faulting active state");	
-//				
-//			case BACoordinatorStatus.STATUS_EXITING:
-//				baContext.unlock();
-//				
-//			case BACoordinatorStatus.STATUS_ENDED:
-//				try{		
-//					baContext.unlock();
-//					this.CCExitedOperation(baContext,enlishmentID);
-//					}
-//				catch(Exception e)
-//				{
-//					throw new KandulaGeneralException(e);
-//				}
-//		}
-//	}
-////End CCExit
-//
-////2. start CCCompleted
-//public void CCCompletedOperation(BAActivityContext baContext, String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	BAParticipantInformation baParticipantInformation= baContext.getParticipant(enlishmentID);
-//		switch(baContext.getStatus())
-//		{
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in active state");	
-//			
-//		case BACoordinatorStatus.STATUS_CANCELLING_ACTIVE:
-//			baContext.setStatus(BACoordinatorStatus.STATUS_CANCELLING);
-//			baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_CANCELLING);
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in canceling active state");	
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETED:
-//			baContext.unlock();
-//			
-//		case BACoordinatorStatus.STATUS_CLOSING:
-//			baContext.unlock();
-//			CCCloseOperation(baContext,enlishmentID);
-//			throw new InvalidStateException(
-//			"Coordinator is in faulting active state");	
-//			
-//		case BACoordinatorStatus.STATUS_COMPENSATING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in compensating state");
-//			
-//		case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
-//			baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//			baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING);
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in faulting compensating state");	
-//			
-//		case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
-//			baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//			baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING);
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in faulting compensating state");	
-//			
-//		case BACoordinatorStatus.STATUS_EXITING:
-//			baContext.unlock();
-//		
-//		case BACoordinatorStatus.STATUS_ENDED:
-//			baContext.unlock();
-//	}
-//}						
-////End - CCCompleted
-//
-//// 3. Start - Fault
-//public void CCFaultOperation(AbstractContext context, String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//		BAActivityContext baContext = (BAActivityContext) context;
-//		baContext.lock();
-//		BAParticipantInformation baParticipantInformation= baContext.getParticipant(enlishmentID);
-//		switch(baContext.getStatus())
-//		{			
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			try{		
-//				baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING_ACTIVE);
-//				baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING_ACTIVE);
-//				baContext.unlock();
-//				this.CCFaultedOperation(baContext,enlishmentID);
-//				
-//				}
-//			catch(Exception e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			
-//		case BACoordinatorStatus.STATUS_CANCELLING_ACTIVE:
-//			try{		
-//				baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING_ACTIVE);
-//				baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING_ACTIVE);
-//				baContext.unlock();
-//				this.CCFaultedOperation(baContext,enlishmentID);
-//				
-//				}
-//			catch(Exception e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			
-//		case BACoordinatorStatus.STATUS_CANCELING_COMPLETING:
-//			try{		
-//				baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING_ACTIVE);
-//				baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING_ACTIVE);
-//				baContext.unlock();
-//				this.CCFaultedOperation(baContext,enlishmentID);
-//				
-//				}
-//			catch(Exception e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETING:
-//			try{		
-//				baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING_ACTIVE);
-//				baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING_ACTIVE);
-//				baContext.unlock();
-//				this.CCFaultedOperation(baContext,enlishmentID);
-//				}
-//			catch(Exception e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in completed state");
-//			
-//		case BACoordinatorStatus.STATUS_CLOSING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in closing state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPENSATING:
-//			try{		
-//				baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING_COMPENSATING);
-//				baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING_COMPENSATING);
-//				this.CCFaultedOperation(baContext,enlishmentID);
-//				baContext.unlock();
-//				}
-//			catch(Exception e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//				
-//		case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
-//			baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//			baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING);
-//			baContext.unlock();
-//			
-//		case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
-//			baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//			baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING);
-//			baContext.unlock();
-//			this.PCFaultedOperation(baContext,enlishmentID);
-//			
-//		case BACoordinatorStatus.STATUS_ENDED:
-//			baContext.unlock();
-//			
-//		case BACoordinatorStatus.STATUS_EXITING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in exiting state");
-//			
-//		}
-//}
-////End - Fault
-//
-////4. Canceled
-//public void CCCanceledOperation(BAActivityContext baContext,String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	BAParticipantInformation baParticipantInformation = baContext.getParticipant(enlishmentID);
-//	switch(baContext.getStatus())
-//		{
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in Active state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in completing state");
-//			
-//			case BACoordinatorStatus.STATUS_COMPLETED:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in completed state");
-//				
-//			case BACoordinatorStatus.STATUS_CLOSING:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in closing state");
-//			
-//			case BACoordinatorStatus.STATUS_COMPENSATING:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in compensating state");
-//				
-//			case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
-//				baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//				baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING);
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in faulting Compensating state");
-//				
-//			case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
-//				baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//				baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_FAULTING);
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in faulting active state");
-//				
-//			case BACoordinatorStatus.STATUS_EXITING:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in exiting state");
-//			
-//			case BACoordinatorStatus.STATUS_ENDED:
-//				baContext.unlock();				
-//		}
-//	}
-////End Canceled
-//
-////5.Start -Closed
-//public void CCClosedOperation(BAActivityContext baContext,String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	BAParticipantInformation baPaticipantInformation = baContext.getParticipant(enlishmentID);
-//	switch(baContext.getStatus())
-//		{
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in Active state");
-//				
-//		case BACoordinatorStatus.STATUS_CANCELLING_ACTIVE:
-//			baPaticipantInformation.setStatus(BACoordinatorStatus.STATUS_CANCELLING);
-//			baContext.setStatus(BACoordinatorStatus.STATUS_CANCELLING);
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in canceling active state");
-//			
-//		case BACoordinatorStatus.STATUS_CANCELING_COMPLETING:
-//			baPaticipantInformation.setStatus(BACoordinatorStatus.STATUS_CANCELLING);
-//			baContext.setStatus(BACoordinatorStatus.STATUS_CANCELLING);
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in canceling completing state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in completing state");
-//			
-//			case BACoordinatorStatus.STATUS_COMPLETED:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in completed state");
-//				
-//			case BACoordinatorStatus.STATUS_CLOSING:
-//				baPaticipantInformation.setStatus(BACoordinatorStatus.STATUS_ENDED);
-//				baContext.setStatus(BACoordinatorStatus.STATUS_ENDED);
-//				baContext.unlock();
-//				
-//			case BACoordinatorStatus.STATUS_COMPENSATING:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in compensating state");
-//				
-//			case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
-//				baPaticipantInformation.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//				baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in faulting Compensating state");
-//				
-//			case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
-//				baPaticipantInformation.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//				baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in faulting active state");
-//				
-//			case BACoordinatorStatus.STATUS_EXITING:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in exiting state");
-//			
-//			case BACoordinatorStatus.STATUS_ENDED:
-//				baContext.unlock();	
-//		}
-//	}
-////End Closed
-//
-//// Start - Compensated
-//public void CCCompensatedOperation(BAActivityContext baContext,String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	BAParticipantInformation baPaticipantInformation = baContext.getParticipant(enlishmentID);
-//		switch(baContext.getStatus())
-//		{
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in Active state");
-//				
-//		case BACoordinatorStatus.STATUS_CANCELLING_ACTIVE:
-//			baPaticipantInformation.setStatus(BACoordinatorStatus.STATUS_CANCELLING);
-//			baContext.setStatus(BACoordinatorStatus.STATUS_CANCELLING);
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in canceling active state");
-//			
-//		case BACoordinatorStatus.STATUS_CANCELING_COMPLETING:
-//			baPaticipantInformation.setStatus(BACoordinatorStatus.STATUS_CANCELLING);
-//			baContext.setStatus(BACoordinatorStatus.STATUS_CANCELLING);
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in canceling completing state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in completing state");
-//			
-//			case BACoordinatorStatus.STATUS_COMPLETED:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in completed state");
-//				
-//			case BACoordinatorStatus.STATUS_CLOSING:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in closing state");
-//				
-//			case BACoordinatorStatus.STATUS_COMPENSATING:
-//				baPaticipantInformation.setStatus(BACoordinatorStatus.STATUS_ENDED);
-//				baContext.setStatus(BACoordinatorStatus.STATUS_ENDED);
-//				baContext.unlock();
-//				
-//			case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
-//				baPaticipantInformation.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//				baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in faulting Compensating state");
-//				
-//			case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
-//				baPaticipantInformation.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//				baContext.setStatus(BACoordinatorStatus.STATUS_FAULTING);
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in faulting active state");
-//				
-//			case BACoordinatorStatus.STATUS_EXITING:
-//				baContext.unlock();
-//				throw new InvalidStateException(
-//						"Coordinator is in exiting state");
-//			
-//			case BACoordinatorStatus.STATUS_ENDED:
-//				baContext.unlock();
-//		}
-//	}
-////End -Compensated
-//
-///**
-// * Handling Protocol Messages sent by the Coordinator[sent by participant] </a>
-// */
-//
-//public void CCCancelOperation(AbstractContext context,String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	BAActivityContext baContext = (BAActivityContext) context;
-//	baContext.lock();
-//	BAParticipantInformation cancelingParticipant = baContext.getParticipant(enlishmentID);
-//	BACoordinatorCompletionParticipantServiceStub ccpsStub;
-//	switch(baContext.getStatus())
-//	{
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			try{
-//				ccpsStub = new BACoordinatorCompletionParticipantServiceStub(((cancelingParticipant.getEpr()).toString()));
-//				Cancel	cancelParam	= new Cancel();
-//				ccpsStub.CancelOperation(cancelParam);
-//				baContext.setStatus(BACoordinatorStatus.STATUS_CANCELLING_ACTIVE);
-//				cancelingParticipant.setStatus(BACoordinatorStatus.STATUS_CANCELLING_ACTIVE);
-//				baContext.unlock();
-//			}
-//			catch(AxisFault e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			catch(Exception e)
-//			{
-//				//TODO
-//			}
-//		case BACoordinatorStatus.STATUS_CANCELLING:
-//			try{
-//							
-//				ccpsStub = new BACoordinatorCompletionParticipantServiceStub(((cancelingParticipant.getEpr()).toString()));
-//					Cancel	cancelParam	= new Cancel();
-//					ccpsStub.CancelOperation(cancelParam);
-//					baContext.unlock();
-//				}
-//			catch(AxisFault e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			catch(Exception e)
-//			{
-//				//TODO
-//			}
-//				
-//		
-//		case BACoordinatorStatus.STATUS_COMPLETING:
-//			try{
-//							
-//					ccpsStub = new BACoordinatorCompletionParticipantServiceStub(((cancelingParticipant.getEpr()).toString()));
-//					Cancel	cancelParam	= new Cancel();
-//					ccpsStub.CancelOperation(cancelParam);
-//					baContext.setStatus(BACoordinatorStatus.STATUS_CANCELING_COMPLETING);
-//					cancelingParticipant.setStatus(BACoordinatorStatus.STATUS_CANCELING_COMPLETING);
-//					baContext.unlock();
-//				}
-//			catch(AxisFault e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			catch(Exception e)
-//			{
-//				//TODO
-//			}
-//		
-//		case BACoordinatorStatus.STATUS_COMPLETED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in completed state");
-//			
-//		case BACoordinatorStatus.STATUS_CLOSING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in closing state");
-//					
-//		case BACoordinatorStatus.STATUS_COMPENSATING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in compensated state");
-//			
-//		case BACoordinatorStatus.STATUS_FAULTING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in faulting state");
-//			
-//		case BACoordinatorStatus.STATUS_EXITING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in exiting state");
-//	
-//		case BACoordinatorStatus.STATUS_ENDED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in ended state");					
-//	}
-//}//End Cancel
-//
-////Start - Complete
-//public void CCCompleteOperation(AbstractContext context,String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	BAActivityContext baContext = (BAActivityContext) context;
-//	baContext.lock();
-//	BAParticipantInformation cancelingParticipant = baContext.getParticipant(enlishmentID);
-//	BACoordinatorCompletionParticipantServiceStub ccpsStub;
-//	switch(baContext.getStatus())
-//	{
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			try{
-//				ccpsStub = new BACoordinatorCompletionParticipantServiceStub(((cancelingParticipant.getEpr()).toString()));
-//				Complete	completeParam	= new Complete();
-//				ccpsStub.CompleteOperation(completeParam);
-//				baContext.setStatus(BACoordinatorStatus.STATUS_COMPLETING);
-//				cancelingParticipant.setStatus(BACoordinatorStatus.STATUS_COMPLETING);
-//				baContext.unlock();
-//			}
-//			catch(AxisFault e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			catch(Exception e)
-//			{
-//				//TODO
-//			}
-//		case BACoordinatorStatus.STATUS_CANCELLING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in cancelling state");	
-//		
-//		case BACoordinatorStatus.STATUS_COMPLETING:
-//			try{
-//				ccpsStub = new BACoordinatorCompletionParticipantServiceStub(((cancelingParticipant.getEpr()).toString()));
-//				Complete	completeParam	= new Complete();
-//				ccpsStub.CompleteOperation(completeParam);
-//				baContext.setStatus(BACoordinatorStatus.STATUS_COMPLETING);
-//				cancelingParticipant.setStatus(BACoordinatorStatus.STATUS_COMPLETING);
-//				baContext.unlock();
-//			}
-//			catch(AxisFault e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			catch(Exception e)
-//			{
-//				//TODO
-//			}
-//		case BACoordinatorStatus.STATUS_COMPLETED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in completed state");	
-//		
-//		case BACoordinatorStatus.STATUS_CLOSING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in closing state");	
-//		
-//		case BACoordinatorStatus.STATUS_COMPENSATING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in compensating state");	
-//			
-//		case BACoordinatorStatus.STATUS_FAULTING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in faulting state");
-//			
-//		case BACoordinatorStatus.STATUS_EXITING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in exiting state");
-//			
-//		case BACoordinatorStatus.STATUS_ENDED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in ended state");	
-//	}
-//}
-////End - Complete
-//
-////Start - Close
-//public void CCCloseOperation(BAActivityContext baContext,String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	BAParticipantInformation baParticipantInformation = baContext.getParticipant(enlishmentID);
-//	baContext.lock();
-//	BACoordinatorCompletionParticipantServiceStub ccpsStub;
-//	switch(baContext.getStatus())
-//	{
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in active state");
-//					
-//		case BACoordinatorStatus.STATUS_CANCELLING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in cancelling state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in completing state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETED:
-//			try{
-//					String participantEndpointReference = baParticipantInformation.getEpr().toString();		
-//					ccpsStub = new BACoordinatorCompletionParticipantServiceStub(participantEndpointReference);
-//					Close	closeParam	= new Close();
-//					ccpsStub.CloseOperation(closeParam);
-//					baParticipantInformation.setStatus(BACoordinatorStatus.STATUS_CLOSING);
-//					baContext.unlock();
-//				}
-//			catch(AxisFault e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			catch(Exception e)
-//			{
-//				//TODO
-//			}
-//			
-//		case BACoordinatorStatus.STATUS_CLOSING:
-//			try{
-//							
-//				String participantEndpointReference = baParticipantInformation.getEpr().toString();		
-//				ccpsStub = new BACoordinatorCompletionParticipantServiceStub(participantEndpointReference);
-//				Close	closeParam	= new Close();
-//				ccpsStub.CloseOperation(closeParam);
-//				baParticipantInformation.setStatus(BACoordinatorStatus.STATUS_CLOSING);
-//				baContext.unlock();
-//				}
-//			catch(AxisFault e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			catch(Exception e)
-//			{
-//				//TODO
-//			}						
-//		
-//		case BACoordinatorStatus.STATUS_COMPENSATING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in compensating state");
-//			
-//		case BACoordinatorStatus.STATUS_FAULTING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in faulting state");
-//			
-//		case BACoordinatorStatus.STATUS_EXITING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in exiting state");
-//		
-//		case BACoordinatorStatus.STATUS_ENDED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in exiting state");
-//	}
-//}
-////End - Close
-//
-////Start - Compensate
-//public void CCCompensateOperation(BAActivityContext baContext,String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	BAParticipantInformation baParticipantInformation = baContext.getParticipant(enlishmentID);
-//	baContext.lock();
-//	BACoordinatorCompletionParticipantServiceStub ccpsStub;
-//	switch(baContext.getStatus())
-//	{
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in active state");
-//					
-//		case BACoordinatorStatus.STATUS_CANCELLING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in cancelling state");
-//		
-//		case BACoordinatorStatus.STATUS_COMPLETING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in completing state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETED:
-//			try{
-//					String participantEndpointReference = baParticipantInformation.getEpr().toString();		
-//					ccpsStub = new BACoordinatorCompletionParticipantServiceStub(participantEndpointReference);
-//					Compensate	compensateParam	= new Compensate();
-//					ccpsStub.CompensateOperation(compensateParam);
-//					baParticipantInformation.setStatus(BACoordinatorStatus.STATUS_COMPENSATING);
-//					baContext.unlock();
-//				}
-//			catch(AxisFault e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			catch(Exception e)
-//			{
-//				//TODO
-//			}
-//			
-//		case BACoordinatorStatus.STATUS_CLOSING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in cancelling state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPENSATING:
-//			try{
-//				String participantEndpointReference = baParticipantInformation.getEpr().toString();		
-//				ccpsStub = new BACoordinatorCompletionParticipantServiceStub(participantEndpointReference);
-//				Compensate	compensateParam	= new Compensate();
-//				ccpsStub.CompensateOperation(compensateParam);
-//				baParticipantInformation.setStatus(BACoordinatorStatus.STATUS_COMPENSATING);
-//				baContext.unlock();
-//			}
-//		catch(AxisFault e)
-//		{
-//			throw new KandulaGeneralException(e);
-//		}
-//		catch(Exception e)
-//		{
-//			//TODO
-//		}
-//			
-//		case BACoordinatorStatus.STATUS_FAULTING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in faulting state");
-//			
-//		case BACoordinatorStatus.STATUS_EXITING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in exiting state");
-//		
-//		case BACoordinatorStatus.STATUS_ENDED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in exiting state");
-//	}
-//}
-////End - compensate
-////Start -Failed
-//public void CCFaultedOperation(BAActivityContext baContext, String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	baContext.lock();
-//	BAParticipantInformation baParticipantInformation = baContext.getParticipant(enlishmentID);
-//	BACoordinatorCompletionParticipantServiceStub ccpsStub;
-//	switch(baContext.getStatus())
-//	{
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in active state");
-//		
-//		case BACoordinatorStatus.STATUS_CANCELLING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in cancelling state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in completing state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in completed state");
-//		
-//		case BACoordinatorStatus.STATUS_CLOSING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in closing state");
-//		
-//		case BACoordinatorStatus.STATUS_COMPENSATING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in compensating state");
-//		
-//		case BACoordinatorStatus.STATUS_FAULTING:
-//			try{
-//				String participantEndpointReference = baParticipantInformation.getEpr().toString();		
-//				ccpsStub = new BACoordinatorCompletionParticipantServiceStub(participantEndpointReference);
-//				Failed	failedParam	= new Failed();
-//				ccpsStub.FailedOperation(failedParam);
-//				baContext.setStatus(BACoordinatorStatus.STATUS_ENDED);
-//				baParticipantInformation.setStatus(Status.BACoordinatorStatus.STATUS_ENDED);
-//				baContext.unlock();
-//			}
-//		catch(AxisFault e)
-//		{
-//			throw new KandulaGeneralException(e);
-//		}
-//		catch(Exception e)
-//		{
-//			//TODO
-//		}
-//	
-//		case BACoordinatorStatus.STATUS_EXITING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in exiting state");
-//		
-//		case BACoordinatorStatus.STATUS_ENDED:
-//			try{
-//				String participantEndpointReference = baParticipantInformation.getEpr().toString();		
-//				ccpsStub = new BACoordinatorCompletionParticipantServiceStub(participantEndpointReference);
-//				Failed	failedParam	= new Failed();
-//				ccpsStub.FailedOperation(failedParam);
-//				baContext.unlock();
-//			}
-//		catch(AxisFault e)
-//		{
-//			throw new KandulaGeneralException(e);
-//		}
-//		catch(Exception e)
-//		{
-//			//TODO
-//		}
-//	}	
-//
-//}
-////End - Failed
-////Start - Exited
-//public void CCExitedOperation(AbstractContext context,String enlishmentID)
-//throws AbstractKandulaException 
-//{
-//	BACoordinatorCompletionParticipantServiceStub ccpsStub;
-//	BAActivityContext baContext = (BAActivityContext) context;
-//	baContext.lock();
-//	BAParticipantInformation exitingParticipant = baContext.getParticipant(enlishmentID);
-//	
-//	switch(baContext.getStatus())
-//	{
-//		case BACoordinatorStatus.STATUS_ACTIVE:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in active state");
-//			
-//		case BACoordinatorStatus.STATUS_CANCELLING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in canceling state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in canceling state");
-//			
-//		case BACoordinatorStatus.STATUS_COMPLETED:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//				"Coordinator is in completed state");					
-//					
-//		case BACoordinatorStatus.STATUS_CLOSING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in closing state");	
-//					
-//		case BACoordinatorStatus.STATUS_COMPENSATING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//			"Coordinator is in compensating state");
-//						
-//		case BACoordinatorStatus.STATUS_FAULTING:
-//			baContext.unlock();
-//			throw new InvalidStateException(
-//					"Coordinator is in faulting state");
-//			
-//		case BACoordinatorStatus.STATUS_EXITING:
-//			try{ 		
-//					ccpsStub = new BACoordinatorCompletionParticipantServiceStub(((exitingParticipant.getEpr()).toString()));
-//					Exited  exitedParam = new Exited();
-//					ccpsStub.ExitedOperation(exitedParam);
-//					exitingParticipant.setStatus(Status.BACoordinatorStatus.STATUS_ENDED);
-//					baContext.setStatus(BACoordinatorStatus.STATUS_ENDED);
-//					baContext.unlock();
-//				}
-//			catch(AxisFault e)
-//			{
-//				throw new KandulaGeneralException(e);
-//			}
-//			catch(Exception e)
-//			{
-//				//TODO
-//			}			
-//		case BACoordinatorStatus.STATUS_ENDED:
-//		try{
-//			ccpsStub = new BACoordinatorCompletionParticipantServiceStub(((exitingParticipant.getEpr()).toString()));
-//			Exited  exitedParam = new Exited();
-//			ccpsStub.ExitedOperation(exitedParam);
-//			baContext.setStatus(Status.BACoordinatorStatus.STATUS_ENDED);
-//			baContext.unlock();
-//		}
-//		catch(AxisFault e)
-//		{
-//			throw new KandulaGeneralException(e);
-//		}
-//		catch(Exception e)
-//		{
-//			//TODO
-//		}
-//	}
+	public void compensatedOperation(BAActivityContext baContext, String enlistmentID) throws AbstractKandulaException {
+		BAParticipantInformation baPaticipantInformation = baContext.getParticipant(enlistmentID);
+		switch (baPaticipantInformation.getStatus()) {
+		case BACoordinatorStatus.STATUS_ACTIVE:
+		case BACoordinatorStatus.STATUS_COMPLETED:
+		case BACoordinatorStatus.STATUS_CLOSING:
+		case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
+		case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
+		case BACoordinatorStatus.STATUS_EXITING:
+		case BACoordinatorStatus.STATUS_CANCELLING:
+		case BACoordinatorStatus.STATUS_CANCELLING_ACTIVE:
+		case BACoordinatorStatus.STATUS_CANCELLING_COMPLETING:
+		case BACoordinatorStatus.STATUS_COMPLETING:
+		case BACoordinatorStatus.STATUS_FAULTING_COMPLETING:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : compensatedOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
 
-//}
-//End - Exited
+		case BACoordinatorStatus.STATUS_COMPENSATING:
+			baPaticipantInformation.setStatus(BACoordinatorStatus.STATUS_ENDED);
+			baContext.removeParticipant(baPaticipantInformation.getEnlistmentId());
+			if ((baContext.getcoordinatorCompletionParticipantsCount() == 0)
+					&& (baContext.getparticipantCompletionParticipantCount() == 0)) {
+				baContext.setStatus(BACoordinatorStatus.STATUS_ENDED);
+				StorageUtils.forgetContext(baContext.getCoordinationContext().getActivityID());
+			}
+			break;
+		case BACoordinatorStatus.STATUS_ENDED:
+			break;
+		default:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : compensatedOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state, Defaulting");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		}
+	}
+
+	/**
+	 * Send the wsba:cancel message to the given participant
+	 * 
+	 * @param baContext
+	 * @param cancelingParticipant
+	 * @throws AbstractKandulaException
+	 */
+	public void cancelOperation(BAActivityContext baContext,
+			BAParticipantInformation cancelingParticipant) throws AbstractKandulaException {
+		baContext.lock();
+		switch (baContext.getStatus()) {
+		case BACoordinatorStatus.STATUS_COMPLETED:
+		case BACoordinatorStatus.STATUS_CLOSING:
+		case BACoordinatorStatus.STATUS_COMPENSATING:
+		case BACoordinatorStatus.STATUS_FAULTING:
+		case BACoordinatorStatus.STATUS_EXITING:
+		case BACoordinatorStatus.STATUS_ENDED:
+			baContext.unlock();
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : cancelOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		case BACoordinatorStatus.STATUS_ACTIVE:
+		case BACoordinatorStatus.STATUS_CANCELLING:
+			baContext.unlock();
+			cancelingParticipant.setStatus(BACoordinatorStatus.STATUS_CANCELLING_ACTIVE);
+			try {
+				sendCancelMessage(cancelingParticipant);
+			} catch (Exception e) {
+				log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+						+ " : cancelOperation :" + cancelingParticipant + " : " + e);
+				throw new KandulaGeneralException(e);
+			}
+			break;
+		case BACoordinatorStatus.STATUS_COMPLETING:
+			baContext.unlock();
+			cancelingParticipant.setStatus(BACoordinatorStatus.STATUS_CANCELLING_COMPLETING);
+			try {
+				sendCancelMessage(cancelingParticipant);
+			} catch (Exception e) {
+				log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+						+ " : cancelOperation :" + cancelingParticipant + " : " + e);
+				throw new KandulaGeneralException(e);
+			}
+			break;
+		default:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : cancelOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state, Defaulting");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		}
+
+	}
+
+	private void sendCancelMessage(BAParticipantInformation participantInformation)
+			throws AbstractKandulaException, RemoteException {
+		BACoordinatorCompletionParticipantServiceStub participantServiceStub;
+		participantServiceStub = new BACoordinatorCompletionParticipantServiceStub(
+				KandulaConfiguration.getInstance().getCoordinatorAxis2ConfigurationContext(), null);
+		participantServiceStub._getServiceClient().getOptions().setTo(
+				participantInformation.getEpr());
+		Cancel cancel = new Cancel();
+		cancel.setCancel(new NotificationType());
+		participantServiceStub.CancelOperation(cancel);
+	}
+
+	public void canceledOperation(BAActivityContext baContext, String enlistmentID)
+			throws AbstractKandulaException {
+		BAParticipantInformation cancelingParticipant = baContext.getParticipant(enlistmentID);
+		switch (cancelingParticipant.getStatus()) {
+		case BACoordinatorStatus.STATUS_ACTIVE:
+		case BACoordinatorStatus.STATUS_COMPLETED:
+		case BACoordinatorStatus.STATUS_COMPLETING:
+		case BACoordinatorStatus.STATUS_CLOSING:
+		case BACoordinatorStatus.STATUS_COMPENSATING:
+		case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
+		case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
+		case BACoordinatorStatus.STATUS_FAULTING_COMPLETING:
+		case BACoordinatorStatus.STATUS_EXITING:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : canceledOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		case BACoordinatorStatus.STATUS_ENDED:
+			break;
+		case BACoordinatorStatus.STATUS_CANCELLING:
+		case BACoordinatorStatus.STATUS_CANCELLING_ACTIVE:
+			cancelingParticipant.setStatus(BACoordinatorStatus.STATUS_ENDED);
+			baContext.removeParticipant(enlistmentID);
+		break;
+		case BACoordinatorStatus.STATUS_CANCELLING_COMPLETING:
+			baContext.decrementCompletingParticipantCount();
+			cancelingParticipant.setStatus(BACoordinatorStatus.STATUS_ENDED);
+			baContext.removeParticipant(enlistmentID);
+			break;
+		default:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : canceledOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state, Defaulting");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		}
+	}
+	
+
+	public void exitOperation(BAActivityContext baContext, String enlistmentID)
+			throws AbstractKandulaException {
+		BAParticipantInformation cancelingParticipant = baContext.getParticipant(enlistmentID);
+		switch (cancelingParticipant.getStatus()) {
+		case BACoordinatorStatus.STATUS_COMPLETED:
+		case BACoordinatorStatus.STATUS_CLOSING:
+		case BACoordinatorStatus.STATUS_COMPENSATING:
+		case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
+		case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
+		case BACoordinatorStatus.STATUS_FAULTING_COMPLETING:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : exitOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		case BACoordinatorStatus.STATUS_EXITING:
+			break;
+		case BACoordinatorStatus.STATUS_ENDED:
+			//resend exited
+			break;
+		case BACoordinatorStatus.STATUS_ACTIVE:
+		case BACoordinatorStatus.STATUS_CANCELLING_ACTIVE:
+		case BACoordinatorStatus.STATUS_CANCELLING_COMPLETING:
+		case BACoordinatorStatus.STATUS_COMPLETING:
+		case BACoordinatorStatus.STATUS_CANCELLING:
+			cancelingParticipant.setStatus(BACoordinatorStatus.STATUS_EXITING);
+			exited(baContext,cancelingParticipant);
+			baContext.removeParticipant(enlistmentID);
+			
+		break;
+		default:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : exitOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state, Defaulting");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		}
+	}
+	
+	protected void exited(BAActivityContext baContext, BAParticipantInformation baParticipantInformation) throws AbstractKandulaException {
+		BACoordinatorCompletionParticipantServiceStub participantServiceStub;
+		switch (baParticipantInformation.getStatus()) {
+		case BACoordinatorStatus.STATUS_ACTIVE:
+		case BACoordinatorStatus.STATUS_CANCELLING:
+		case BACoordinatorStatus.STATUS_COMPENSATING:
+		case BACoordinatorStatus.STATUS_FAULTING:
+		case BACoordinatorStatus.STATUS_COMPLETED:
+		case BACoordinatorStatus.STATUS_CLOSING:
+		case BACoordinatorStatus.STATUS_COMPLETING:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : exited Operation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+
+		case BACoordinatorStatus.STATUS_EXITING:
+		case BACoordinatorStatus.STATUS_ENDED:
+			try {
+				participantServiceStub = new BACoordinatorCompletionParticipantServiceStub(
+						KandulaConfiguration.getInstance()
+								.getCoordinatorAxis2ConfigurationContext(), null);
+				participantServiceStub._getServiceClient().getOptions().setTo(
+						baParticipantInformation.getEpr());
+				Exited exited = new Exited();
+				exited.setExited(new NotificationType());
+				baParticipantInformation.setStatus(BACoordinatorStatus.STATUS_ENDED);
+				participantServiceStub.ExitedOperation(exited);
+			} catch (Exception e) {
+				log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+						+ " : exited Operation :" + baParticipantInformation + " : " + e);
+				throw new KandulaGeneralException(e);
+			}
+			break;
+			default:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : exited operation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state, Defaulting");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		}
+	}
 
 
+	public void closedOperation(BAActivityContext baContext, String enlistmentID)
+			throws AbstractKandulaException {
+		BAParticipantInformation baPaticipantInformation = baContext.getParticipant(enlistmentID);
+		switch (baPaticipantInformation.getStatus()) {
+		case BACoordinatorStatus.STATUS_ACTIVE:
+		case BACoordinatorStatus.STATUS_COMPLETED:
+		case BACoordinatorStatus.STATUS_COMPENSATING:
+		case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
+		case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
+		case BACoordinatorStatus.STATUS_EXITING:
+		case BACoordinatorStatus.STATUS_CANCELLING_ACTIVE:
+		case BACoordinatorStatus.STATUS_CANCELLING_COMPLETING:
+		case BACoordinatorStatus.STATUS_COMPLETING:
+		case BACoordinatorStatus.STATUS_FAULTING_COMPLETING:
+		case BACoordinatorStatus.STATUS_CANCELLING:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : closedOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		case BACoordinatorStatus.STATUS_ENDED:
+			break;
+		case BACoordinatorStatus.STATUS_CLOSING:
+			baPaticipantInformation.setStatus(BACoordinatorStatus.STATUS_ENDED);
+			baContext.removeParticipant(enlistmentID);
+			if ((baContext.getcoordinatorCompletionParticipantsCount() == 0)
+					&& (baContext.getparticipantCompletionParticipantCount() == 0)) {
+				baContext.setStatus(BACoordinatorStatus.STATUS_ENDED);
+				StorageUtils.forgetContext(baContext.getCoordinationContext().getActivityID());
+			}
+			break;
+		}
+	}
 
+	// 3. Start - Fault
+	public void faultOperation(BAActivityContext baContext, String enlistmentID)
+			throws AbstractKandulaException {
+		BAParticipantInformation cancelingParticipant = baContext.getParticipant(enlistmentID);
+		switch (cancelingParticipant.getStatus()) {
+		case BACoordinatorStatus.STATUS_COMPLETED:
+		case BACoordinatorStatus.STATUS_CLOSING:
+		case BACoordinatorStatus.STATUS_EXITING:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : faultOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		
+		case BACoordinatorStatus.STATUS_ENDED:
+			faultedOperation(baContext,cancelingParticipant);
+			break;
+		case BACoordinatorStatus.STATUS_COMPENSATING:
+			cancelingParticipant.setStatus(BACoordinatorStatus.STATUS_FAULTING_COMPENSATING);
+			faultedOperation(baContext,cancelingParticipant);
+			break;
+		case BACoordinatorStatus.STATUS_ACTIVE:
+		case BACoordinatorStatus.STATUS_CANCELLING_ACTIVE:
+		case BACoordinatorStatus.STATUS_CANCELLING_COMPLETING:
+		case BACoordinatorStatus.STATUS_COMPLETING:
+		case BACoordinatorStatus.STATUS_CANCELLING:
+			cancelingParticipant.setStatus(BACoordinatorStatus.STATUS_FAULTING_ACTIVE);
+			faultedOperation(baContext,cancelingParticipant);
+		break;
+		case BACoordinatorStatus.STATUS_FAULTING:
+		case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
+		case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
+		case BACoordinatorStatus.STATUS_FAULTING_COMPLETING:
+			break;
+		default:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : faultOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state, Defaulting");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		}
+	}
 
+	protected void faultedOperation(BAActivityContext baContext,BAParticipantInformation baParticipantInformation) throws AbstractKandulaException {
+		BACoordinatorCompletionParticipantServiceStub participantServiceStub;
+		switch (baParticipantInformation.getStatus()) {
+		case BACoordinatorStatus.STATUS_ACTIVE:
+		case BACoordinatorStatus.STATUS_CANCELLING:
+		case BACoordinatorStatus.STATUS_COMPLETING:
+		case BACoordinatorStatus.STATUS_COMPLETED:
+		case BACoordinatorStatus.STATUS_CLOSING:
+		case BACoordinatorStatus.STATUS_COMPENSATING:
+		case BACoordinatorStatus.STATUS_EXITING:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : faultedOperation : Coordinator is in" + baContext.getStatus()
+					+ " (invalid) state");
+			throw new InvalidStateException("Coordinator is in" + baContext.getStatus() + "state");
+		case BACoordinatorStatus.STATUS_ENDED:
+		case BACoordinatorStatus.STATUS_FAULTING:
+		case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
+		case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
+		case BACoordinatorStatus.STATUS_FAULTING_COMPLETING:
+		case BACoordinatorStatus.STATUS_FAULTING_COMPLETED:
+			try {
+				participantServiceStub = new BACoordinatorCompletionParticipantServiceStub(
+						KandulaConfiguration.getInstance()
+								.getCoordinatorAxis2ConfigurationContext(), null);
+				participantServiceStub._getServiceClient().getOptions().setTo(
+						baParticipantInformation.getEpr());
+				Failed failed = new Failed();
+				failed.setFailed(new NotificationType());
+				baParticipantInformation.setStatus(BACoordinatorStatus.STATUS_ENDED);
+				baContext.removeParticipant(baParticipantInformation.getEnlistmentId());
+				participantServiceStub.FailedOperation(failed);
+			} catch (Exception e) {
+				log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+						+ " : faultedOperation :" + baParticipantInformation + " : " + e);
+				throw new KandulaGeneralException(e);
+			}
+			break;
+			default:
+			log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+					+ " : faultedOperation : Coordinator is in" + baParticipantInformation.getStatus()
+					+ " (invalid) state, Defaulting");
+			throw new InvalidStateException("Coordinator is in" + baParticipantInformation.getStatus() + "state");
+		}
+	}
+
+	/**
+	 * If the coordinator received a Completed message - then it checks whether
+	 * all the participants have finished. This is done by checking whether
+	 * allparticipantcount is equal to the failed + completed
+	 * participants.(Since cancelled and exited participant are removed from the
+	 * list). If all have finished If all are completed - send close to all If
+	 * even one is faulted - send compensate for all
+	 * 
+	 * @param baContext
+	 * @param enlistmentID
+	 * @throws AbstractKandulaException
+	 */
+	public void completedOperation(final BAActivityContext baContext, String enlistmentID) throws AbstractKandulaException {
+		if (baContext == null) {
+			throw new IllegalStateException("No Activity Found for this Activity ID");
+		}
+		BAParticipantInformation baParticipantInformation = baContext.getParticipant(enlistmentID);
+	
+		if (baParticipantInformation.getProtocol().equals(Constants.WS_BA_PC)) {
+			switch (baParticipantInformation.getStatus()) {
+			case BACoordinatorStatus.STATUS_COMPLETED:
+			case BACoordinatorStatus.STATUS_FAULTING_COMPENSATING:
+			case BACoordinatorStatus.STATUS_ENDED:
+				break;
+			case BACoordinatorStatus.STATUS_ACTIVE:
+			case BACoordinatorStatus.STATUS_CANCELLING:
+				baParticipantInformation.setStatus(BACoordinatorStatus.STATUS_COMPLETED);
+				baContext.decrementCompletingParticipantCount();
+				if (!baContext.hasMoreCompleting()) {
+					baContext.setStatus(BACoordinatorStatus.STATUS_COMPLETED);
+					log.debug("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+							+ " : " + "Decision to close.");
+					BusinessActivityCallBack callBack = baContext.getCallBack();
+					callBack.onComplete();
+				}
+				break;
+			case BACoordinatorStatus.STATUS_CLOSING:
+				closeOperation(baContext, baParticipantInformation.getEnlistmentId());
+				break;
+			case BACoordinatorStatus.STATUS_COMPENSATING:
+				compensateOperation(baContext, baParticipantInformation.getEnlistmentId());
+				break;
+			case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
+			case BACoordinatorStatus.STATUS_EXITING:
+				log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+						+ " : atCompleted : Coordinator is in" + baContext.getStatus()
+						+ " (invalid) state");
+				throw new InvalidStateException("Coordinator is in" + baContext.getStatus()
+						+ "state");
+			default:
+				log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+						+ " : atCompleted : Coordinator is in" + baContext.getStatus()
+						+ " (invalid) state, Defaulting");
+				throw new InvalidStateException("Coordinator is in" + baContext.getStatus()
+						+ "state");
+			}
+		} else if (baParticipantInformation.getProtocol().equals(Constants.WS_BA_CC)) {
+			switch (baParticipantInformation.getStatus()) {
+			case BACoordinatorStatus.STATUS_COMPLETED:
+			case BACoordinatorStatus.STATUS_FAULTING:
+			case BACoordinatorStatus.STATUS_ENDED:
+				break;
+	
+			case BACoordinatorStatus.STATUS_CANCELLING_COMPLETING:
+			case BACoordinatorStatus.STATUS_COMPLETING:
+				baParticipantInformation.setStatus(BACoordinatorStatus.STATUS_COMPLETED);
+				baContext.decrementCompletingParticipantCount();
+				if (!baContext.hasMoreCompleting()) {
+					baContext.setStatus(BACoordinatorStatus.STATUS_COMPLETED);
+					log.debug("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+							+ " : " + "Decision to close.");
+					Runnable threadedTask = new Runnable() {
+						public void run() {
+							BusinessActivityCallBack callBack = baContext.getCallBack();
+							callBack.onComplete();
+						}
+					};
+					Thread thread = new Thread(threadedTask);
+					thread.start();
+				}
+				break;
+			case BACoordinatorStatus.STATUS_CLOSING:
+				closeOperation(baContext, baParticipantInformation.getEnlistmentId());
+				break;
+			case BACoordinatorStatus.STATUS_COMPENSATING:
+				compensateOperation(baContext, baParticipantInformation.getEnlistmentId());
+				break;
+			case BACoordinatorStatus.STATUS_FAULTING_ACTIVE:
+			case BACoordinatorStatus.STATUS_FAULTING_COMPLETING:
+			case BACoordinatorStatus.STATUS_EXITING:
+			case BACoordinatorStatus.STATUS_ACTIVE:
+			case BACoordinatorStatus.STATUS_CANCELLING_ACTIVE:
+				log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+						+ " : atCompleted : Coordinator is in" + baContext.getStatus()
+						+ " (invalid) state");
+				throw new InvalidStateException("Coordinator is in" + baContext.getStatus()
+						+ "state");
+			default:
+				log.fatal("WS_BA : " + baContext.getCoordinationContext().getActivityID()
+						+ " : atCompleted : Coordinator is in" + baContext.getStatus()
+						+ " (invalid) state, Defaulting");
+				throw new InvalidStateException("Coordinator is in" + baContext.getStatus()
+						+ "state");
+	
+			}
+		}
+	}
+	/**
+	 * After all the participants have completed sucessfully send close to all
+	 * 
+	 * @param baContext
+	 * @throws AbstractKandulaException
+	 */
+	public void closeAllOperation(BAActivityContext baContext) throws AbstractKandulaException {
+		Iterator allParticipants = baContext.getAllParticipants();
+		baContext.setStatus(Status.BACoordinatorStatus.STATUS_CLOSING);
+		while (allParticipants.hasNext()) {
+			BAParticipantInformation participantInformation = (BAParticipantInformation) allParticipants
+					.next();
+			String enlistmentId = participantInformation.getEnlistmentId();
+			closeOperation(baContext, enlistmentId);
+		}
+	}
+
+	// After all the cparticipants have finished and if a even one faulted
+	// occured send compensate to all
+	public void compensateAllOperation(BAActivityContext baContext) throws AbstractKandulaException {
+		baContext.lock();
+		Iterator allparticipants = baContext.getAllParticipants();
+		baContext.setStatus(Status.BACoordinatorStatus.STATUS_COMPENSATING);
+		while (allparticipants.hasNext()) {
+			BAParticipantInformation pInformation = (BAParticipantInformation) allparticipants
+					.next();
+			String nextEnlistmentId = pInformation.getEnlistmentId();
+			compensateOperation(baContext, nextEnlistmentId);
+		}
+	}
+	
+	public void finalizeMixedOutcomeActivity(BAActivityContext context, ArrayList closeParticipantsList,ArrayList compensateParticipantsList) throws AbstractKandulaException
+	{
+		Iterator iterator1 = compensateParticipantsList.iterator();
+		while (iterator1.hasNext()) {
+			BAParticipantInformation participantInformation = (BAParticipantInformation) iterator1.next();
+		    compensateOperation(context,participantInformation.getEnlistmentId());
+		}
+		Iterator iterator = closeParticipantsList.iterator();
+		while (iterator.hasNext()) {
+			BAParticipantInformation participantInformation = (BAParticipantInformation) iterator.next();
+		    closeOperation(context,participantInformation.getEnlistmentId());
+		}
+	}
 }

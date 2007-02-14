@@ -41,7 +41,7 @@ public class ADBCoordinationContext implements CoordinationContext {
 		return element.getText();
 	}
 	public Object getCoordinationContextType() {
-		return this;
+		return context_type3;
 	}
 	public String getCoordinationType() {
 		return context_type3.getCoordinationType().getPath();

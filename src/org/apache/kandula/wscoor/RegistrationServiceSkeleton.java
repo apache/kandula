@@ -51,6 +51,7 @@ public class RegistrationServiceSkeleton {
 		String protocolIdentifier;
 		EndpointReference participantEPR;
 		String activityId;
+		String participantId=null;
 		/*
 		 * Extracting data from the received message
 		 */
@@ -63,6 +64,11 @@ public class RegistrationServiceSkeleton {
 				.getEnvelope().getHeader();
 		activityId = header.getFirstChildWithName(
 				Constants.TRANSACTION_ID_PARAMETER).getText();
+		OMElement participantIDElement = header.getFirstChildWithName(
+				Constants.PARTICIPANT_ID_PARAMETER);
+		if (participantIDElement != null) {
+			participantId = participantIDElement.getText();
+		}
 		/*
 		 * Registering the participant for the activity for the given protocol
 		 */
@@ -75,10 +81,10 @@ public class RegistrationServiceSkeleton {
 						"No Activity Found for this Activity ID");
 			}
 			EndpointReference epr = coordinator.registerParticipant(context,
-					protocolIdentifier, participantEPR);
+					protocolIdentifier, participantEPR,participantId);
 			
 			RegisterResponseType registerResponseType = new RegisterResponseType();
-			registerResponseType.setCoordinatorProtocolService(EndpointReferenceFactory.getADBEPRTypeFromEPR(epr));
+			registerResponseType.setCoordinatorProtocolService(EndpointReferenceFactory.getEPRTypeFromEPR(epr));
 			RegisterResponse registerResponse = new RegisterResponse();
 			registerResponse.setRegisterResponse(registerResponseType);
 			return registerResponse;

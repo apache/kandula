@@ -21,9 +21,12 @@ import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.ContextFactory;
 import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
+import org.apache.kandula.storage.SimpleStore;
+import org.apache.kandula.storage.Store;
 
 public class Coordinator {
 
+	public static Store store= new SimpleStore();
 	public Coordinator() {
 		
 	}
@@ -41,6 +44,7 @@ public class Coordinator {
 			CoordinationContext coorContext) throws AbstractKandulaException {
 		ContextFactory factory = ContextFactory.getInstance();
 		AbstractContext context = factory.createActivity(coorContext);
+		store.put(context.getCoordinationContext().getActivityID(),context);
 		return context;
 	}
 
@@ -59,6 +63,7 @@ public class Coordinator {
 		ContextFactory factory = ContextFactory.getInstance();
 		AbstractContext context = factory.createActivity(coordinationType);
 		context.getCoordinationContext().setExpires(expires);
+		store.put(context.getCoordinationContext().getActivityID(),context);
 		return context;
 	}
 
@@ -74,10 +79,10 @@ public class Coordinator {
 	 * @throws AbstractKandulaException
 	 */
 	public EndpointReference registerParticipant(AbstractContext context, String protocol,
-			EndpointReference participantEPR) throws AbstractKandulaException {
+			EndpointReference participantEPR, String participantID) throws AbstractKandulaException {
 		Registerable registerableCoordinator = Registerable.Factory
 				.newRegisterable(context.getCoordinationType());
 		return registerableCoordinator.register(context, protocol,
-				participantEPR);
+				participantEPR,participantID);
 	}
 }

@@ -14,11 +14,11 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.participant;
+package org.apache.kandula.participant.at;
 
 import org.apache.kandula.Status;
 import org.apache.kandula.context.AbstractContext;
-import org.apache.kandula.context.impl.ATParticipantContext;
+import org.apache.kandula.context.impl.ParticipantContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.InvalidStateException;
 import org.apache.kandula.wsat.twopc.CoordinatorPortTypeRawXMLStub;
@@ -28,7 +28,7 @@ public class ParticipantTransactionCoordinator {
 	public void prepare(AbstractContext context)
 			throws AbstractKandulaException {
 		CoordinatorPortTypeRawXMLStub stub;
-		ATParticipantContext atContext = (ATParticipantContext) context;
+		ParticipantContext atContext = (ParticipantContext) context;
 		atContext.lock();
 		switch (context.getStatus()) {
 		case (Status.CoordinatorStatus.STATUS_NONE):
@@ -52,7 +52,7 @@ public class ParticipantTransactionCoordinator {
 		case (Status.CoordinatorStatus.STATUS_ACTIVE):
 			atContext.setStatus(Status.CoordinatorStatus.STATUS_PREPARING);
 			atContext.unlock();
-			KandulaResource resource = atContext.getResource();
+			KandulaAtomicResource resource = (KandulaAtomicResource)atContext.getResource();
 			Vote vote = resource.prepare();
 			stub = new CoordinatorPortTypeRawXMLStub(atContext
 					.getCoordinationEPR());
@@ -71,8 +71,8 @@ public class ParticipantTransactionCoordinator {
 	}
 
 	public void commit(AbstractContext context) throws AbstractKandulaException {
-		ATParticipantContext atContext = (ATParticipantContext) context;
-		boolean outcome = atContext.getResource().commit();
+		ParticipantContext atContext = (ParticipantContext) context;
+		boolean outcome = ((KandulaAtomicResource)atContext.getResource()).commit();
 		CoordinatorPortTypeRawXMLStub stub = new CoordinatorPortTypeRawXMLStub(
 				atContext.getCoordinationEPR());
 		if (outcome) {
@@ -107,8 +107,8 @@ public class ParticipantTransactionCoordinator {
 	}
 
 	public void rollback(AbstractContext context) throws AbstractKandulaException {
-		ATParticipantContext atContext = (ATParticipantContext) context;
-		atContext.getResource().rollback();
+		ParticipantContext atContext = (ParticipantContext) context;
+		((KandulaAtomicResource)atContext.getResource()).rollback();
 		CoordinatorPortTypeRawXMLStub stub = new CoordinatorPortTypeRawXMLStub(
 				atContext.getCoordinationEPR());
 		stub.abortedOperation();

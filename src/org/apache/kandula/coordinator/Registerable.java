@@ -44,5 +44,5 @@ public interface Registerable {
 	}
 
 	public EndpointReference register(AbstractContext context, String protocol,
-			EndpointReference participantEPR) throws AbstractKandulaException;
+			EndpointReference participantEPR, String enlistmentID) throws AbstractKandulaException;
 }

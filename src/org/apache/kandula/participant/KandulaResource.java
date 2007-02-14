@@ -16,13 +16,10 @@
  */
 package org.apache.kandula.participant;
 
+import org.apache.kandula.context.impl.ParticipantContext;
+
 public interface KandulaResource {
-	public boolean commit();
-
-	public void rollback();
-
-	public Vote prepare();
-
-	public String getProtocol();
+	public void init(ParticipantContext context);
 	
+	public String getProtocol();
 }

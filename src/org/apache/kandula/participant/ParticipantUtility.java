@@ -26,7 +26,7 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.databinding.types.URI;
 import org.apache.kandula.Constants;
-import org.apache.kandula.context.impl.ATParticipantContext;
+import org.apache.kandula.context.impl.ParticipantContext;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 import org.apache.kandula.utility.KandulaConfiguration;
@@ -40,7 +40,7 @@ import org.xmlsoap.schemas.ws._2004._08.addressing.ReferenceParametersType;
 
 public class ParticipantUtility {
 	public static void registerParticipant(
-			ATParticipantContext participantContext,
+			ParticipantContext participantContext,
 			MessageContext messageContext) throws AxisFault {
 		try {
 			ConfigurationContext axis2ConfigurationContext = KandulaConfiguration
@@ -50,8 +50,8 @@ public class ParticipantUtility {
 						.getConfigurationContext();
 			}
 			EndpointReference participantProtocolService = EndpointReferenceFactory
-					.getInstance().get2PCParticipantEndpoint(
-							participantContext.getID());
+					.getInstance().getParticipantEndpoint(
+							participantContext.getID(),participantContext.getRegistrationProtocol());
 
 			RegistrationServiceStub registrationCoordinator = new RegistrationServiceStub(
 					axis2ConfigurationContext, null);

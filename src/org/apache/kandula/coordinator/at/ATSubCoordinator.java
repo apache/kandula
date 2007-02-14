@@ -34,7 +34,7 @@ public class ATSubCoordinator extends ATCoordinator {
 				// have to register with the parent coordinator
 				atContext.setSubDurableRegistered(true);
 			}
-			return atContext.addParticipant(participantEPR, protocol);
+			return atContext.addParticipant(participantEPR, protocol,null);
 		}
 
 		else if (protocol.equals(Constants.WS_AT_VOLATILE2PC)) {
@@ -42,7 +42,8 @@ public class ATSubCoordinator extends ATCoordinator {
 				// have to register with the parent coordinator
 				atContext.setSubDurableRegistered(true);
 			}
-			return atContext.addParticipant(participantEPR, protocol);
+			//FIXME null
+			return atContext.addParticipant(participantEPR, protocol,null);
 		} else
 			throw new InvalidProtocolException();
 	}

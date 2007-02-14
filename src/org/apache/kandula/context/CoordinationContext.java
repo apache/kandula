@@ -38,10 +38,6 @@ public interface CoordinationContext {
 			return new ADBCoordinationContext(context_type3);
 		}
 
-		// public static CoordinationContext newInstance(Object contextType) {
-		// return new XmlBeansTypeCoordinationContext(contextType);
-		// }
-
 		private Factory() {
 		} // No instance of this class allowed
 	}

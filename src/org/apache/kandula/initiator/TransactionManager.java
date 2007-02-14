@@ -1,18 +1,16 @@
 /*
- * Copyright  2004 The Apache Software Foundation.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- *
+ * Copyright 2004 The Apache Software Foundation.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ * 
  */
 package org.apache.kandula.initiator;
 
@@ -37,6 +35,7 @@ import org.apache.kandula.wsat.completion.CompletionCoordinatorPortTypeRawXMLStu
 import org.apache.kandula.wsat.completion.CompletionInitiatorServiceListener;
 import org.apache.kandula.wscoor.ActivationServiceStub;
 import org.apache.kandula.wscoor.RegistrationServiceStub;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type3;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContext;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponse;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponseType;
@@ -46,16 +45,15 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterResponse;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.RegisterType;
 
 public class TransactionManager {
-	
+
 	private static ThreadLocal threadInfo = new ThreadLocal();
+
 	private ConfigurationContext configurationContext;
 
-	public TransactionManager(String axis2Home, String axis2Xml)
-			throws AbstractKandulaException {
+	public TransactionManager(String axis2Home, String axis2Xml) throws AbstractKandulaException {
 		try {
 			configurationContext = ConfigurationContextFactory
-					.createConfigurationContextFromFileSystem(axis2Home,
-							axis2Xml);
+					.createConfigurationContextFromFileSystem(axis2Home, axis2Xml);
 		} catch (DeploymentException e) {
 			throw new KandulaGeneralException(e);
 		} catch (AxisFault e1) {
@@ -68,31 +66,30 @@ public class TransactionManager {
 	 */
 	public void begin(String coordinatorAddress) throws Exception {
 
-		if (threadInfo.get()!=null)
-		{
+		if (threadInfo.get() != null) {
 			throw new IllegalStateException();
 		}
-		InitiatorContext initiatorTransaction = new InitiatorContext(Constants.WS_AT,coordinatorAddress);
+		InitiatorContext initiatorTransaction = new InitiatorContext(Constants.WS_AT,
+				coordinatorAddress);
 		CoordinationContext coordinationContext = createTransaction(initiatorTransaction);
 		initiatorTransaction.setCoordinationContext(coordinationContext);
 		threadInfo.set(initiatorTransaction);
 	}
 
-
-
 	public void commit() throws Exception {
 		InitiatorContext initiatorTransaction = getTransaction();
 		CompletionCallback completionCallback = new CompletionCallback(initiatorTransaction);
 		// Register for completion
-		EndpointReference coordinationEPR = registerForCompletion(initiatorTransaction,completionCallback);
-		initiatorTransaction.setCoordinationEPR(coordinationEPR);		
+		EndpointReference coordinationEPR = registerForCompletion(initiatorTransaction,
+				completionCallback);
+		initiatorTransaction.setCoordinationEPR(coordinationEPR);
 
 		CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(
 				configurationContext, coordinationEPR);
 		stub.commitOperation();
 		while (!completionCallback.isComplete())
 			Thread.sleep(10);
-			
+
 		if ((completionCallback.getResult() == Status.CoordinatorStatus.STATUS_ABORTING)) {
 			forgetTransaction();
 			throw new Exception("Aborted");
@@ -101,12 +98,13 @@ public class TransactionManager {
 	}
 
 	public void rollback() throws Exception {
-		InitiatorContext initiatorTransaction = getTransaction();		
+		InitiatorContext initiatorTransaction = getTransaction();
 		// Register for completion
 		CompletionCallback completionCallback = new CompletionCallback(initiatorTransaction);
 		// Register for completion
-		EndpointReference coordinationEPR = registerForCompletion(initiatorTransaction,completionCallback);
-		initiatorTransaction.setCoordinationEPR(coordinationEPR);	
+		EndpointReference coordinationEPR = registerForCompletion(initiatorTransaction,
+				completionCallback);
+		initiatorTransaction.setCoordinationEPR(coordinationEPR);
 		CompletionCoordinatorPortTypeRawXMLStub stub = new CompletionCoordinatorPortTypeRawXMLStub(
 				configurationContext, coordinationEPR);
 		stub.rollbackOperation();
@@ -132,12 +130,10 @@ public class TransactionManager {
 	// threadInfo.set(null);
 	// }
 
-	private static InitiatorContext getTransaction()
-			throws AbstractKandulaException {
+	public static InitiatorContext getTransaction() throws AbstractKandulaException {
 		Object key = threadInfo.get();
-		if (key!= null)
-		{
-			return (InitiatorContext)key;
+		if (key != null) {
+			return (InitiatorContext) key;
 		}
 		return null;
 	}
@@ -145,40 +141,48 @@ public class TransactionManager {
 	public static void forgetTransaction() {
 		threadInfo.set(null);
 	}
-	
-	private EndpointReference registerForCompletion(InitiatorContext initiatorTransaction, CompletionCallback completionCallback) throws AxisFault, IOException, MalformedURIException, RemoteException {
+
+	private EndpointReference registerForCompletion(InitiatorContext initiatorTransaction,
+			CompletionCallback completionCallback) throws AxisFault, IOException,
+			MalformedURIException, RemoteException {
 		RegistrationServiceStub registrationCoordinator = new RegistrationServiceStub(
-				configurationContext,null);
-		registrationCoordinator._getServiceClient().setTargetEPR(initiatorTransaction
-				.getCoordinationContext().getRegistrationService());
-		//setup the listener
+				configurationContext, null);
+		registrationCoordinator._getServiceClient().setTargetEPR(
+				initiatorTransaction.getCoordinationContext().getRegistrationService());
+		// setup the listener
 		CompletionInitiatorServiceListener listener = new CompletionInitiatorServiceListener();
-		EndpointReference registrationRequeterPortEPR =listener.getEpr(completionCallback);
-		
+		EndpointReference registrationRequeterPortEPR = listener.getEpr(completionCallback);
+
 		Register register = new Register();
 		RegisterType registerType = new RegisterType();
 		registerType.setProtocolIdentifier(new URI(Constants.WS_AT_COMPLETION));
-		registerType.setParticipantProtocolService(EndpointReferenceFactory.getADBEPRTypeFromEPR(registrationRequeterPortEPR));
+		registerType.setParticipantProtocolService(EndpointReferenceFactory
+				.getEPRTypeFromEPR(registrationRequeterPortEPR));
 		register.setRegister(registerType);
-		//Actual WS call for registeration
-		RegisterResponse registerResponse = registrationCoordinator
-				.RegisterOperation(register);
-		EndpointReference coordinationEPR = EndpointReferenceFactory
-				.getEPR(registerResponse.getRegisterResponse()
-						.getCoordinatorProtocolService());
+		// Actual WS call for registeration
+		RegisterResponse registerResponse = registrationCoordinator.RegisterOperation(register);
+		EndpointReference coordinationEPR = EndpointReferenceFactory.getEPR(registerResponse
+				.getRegisterResponse().getCoordinatorProtocolService());
 		return coordinationEPR;
 	}
 
-	private CoordinationContext createTransaction(InitiatorContext initiatorTransaction) throws AxisFault, MalformedURIException, RemoteException {
+	private CoordinationContext createTransaction(InitiatorContext initiatorTransaction)
+			throws AxisFault, MalformedURIException, RemoteException {
 		ActivationServiceStub activationCoordinator = new ActivationServiceStub(
-				configurationContext,initiatorTransaction.getActivationEPR());
+				configurationContext, initiatorTransaction.getActivationEPR());
 		CreateCoordinationContext context = new CreateCoordinationContext();
 		CreateCoordinationContextType createCoordinationContextType = new CreateCoordinationContextType();
-		createCoordinationContextType.setCoordinationType(new URI(initiatorTransaction.getCoordinationType()));
+		createCoordinationContextType.setCoordinationType(new URI(initiatorTransaction
+				.getCoordinationType()));
 		context.setCreateCoordinationContext(createCoordinationContextType);
-		CreateCoordinationContextResponse response = activationCoordinator.CreateCoordinationContextOperation(context);
-		CreateCoordinationContextResponseType createCoordinationContextResponse = response.getCreateCoordinationContextResponse();
-		CoordinationContext coordinationContext = new ADBCoordinationContext(createCoordinationContextResponse.getCoordinationContext());
+		CreateCoordinationContextResponse response = activationCoordinator
+				.CreateCoordinationContextOperation(context);
+		CreateCoordinationContextResponseType createCoordinationContextResponse = response
+				.getCreateCoordinationContextResponse();
+		CoordinationContext_type3 coordinationContextType = createCoordinationContextResponse.getCoordinationContext();
+		coordinationContextType.setExtraAttributes(null);
+		CoordinationContext coordinationContext = new ADBCoordinationContext(
+				coordinationContextType);
 		return coordinationContext;
 	}
 }

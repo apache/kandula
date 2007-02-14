@@ -23,7 +23,7 @@ import org.apache.kandula.Constants;
 import org.apache.kandula.context.impl.ATActivityContext;
 import org.apache.kandula.coordinator.at.ATCoordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
-import org.apache.kandula.participant.Vote;
+import org.apache.kandula.participant.at.Vote;
 import org.apache.kandula.storage.StorageUtils;
 
 /**

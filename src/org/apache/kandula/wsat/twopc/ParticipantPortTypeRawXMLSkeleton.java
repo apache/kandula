@@ -22,7 +22,7 @@ import org.apache.axis2.context.MessageContext;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.faults.AbstractKandulaException;
-import org.apache.kandula.participant.ParticipantTransactionCoordinator;
+import org.apache.kandula.participant.at.ParticipantTransactionCoordinator;
 import org.apache.kandula.storage.StorageUtils;
 
 /**

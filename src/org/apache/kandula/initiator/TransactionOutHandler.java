@@ -18,11 +18,8 @@ package org.apache.kandula.initiator;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.StAXUtils;
@@ -36,7 +33,6 @@ import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
-import org.apache.kandula.faults.KandulaGeneralException;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type3;
 import org.xmlsoap.schemas.ws._2004._08.addressing.ReferenceParametersType;
 
@@ -47,13 +43,10 @@ public class TransactionOutHandler extends AbstractHandler {
 	 */
 	private static final Log log = LogFactory.getLog(TransactionOutHandler.class);
 
-	private static ThreadLocal threadInfo = new ThreadLocal();
-
 	private static final long serialVersionUID = 4133392345837905499L;
 
 	public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
 
-		InitiatorContext initiatorTransaction;
 		String wsaAction = msgContext.getWSAAction();
 		if ((wsaAction != Constants.WS_COOR_CREATE_COORDINATIONCONTEXT)
 				&& (wsaAction != Constants.WS_COOR_REGISTER)
@@ -62,8 +55,7 @@ public class TransactionOutHandler extends AbstractHandler {
 			try {
 				context = TransactionManager.getTransaction();
 			} catch (AbstractKandulaException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new AxisFault(e);
 			}
 			if (context == null) {
 				context = msgContext.getProperty(Constants.Configuration.TRANSACTION_CONTEXT);
@@ -98,8 +90,11 @@ public class TransactionOutHandler extends AbstractHandler {
 					referenceParametersType.addExtraElement(omElement);
 					soapHeader.addChild(context_type32.getOMElement(new QName(Constants.WS_COOR,
 							"CoordinationContext"), soapHeader.getOMFactory()));
+					log.info("Transaction Context found for message ID" + msgContext.getMessageID()
+							+ ". Participant ID :" + registrationID);
 				} else {
 					soapHeader.addChild(coorContext.toOM());
+					log.info("Transaction Context found for message ID" + msgContext.getMessageID());
 				}
 
 			} else {
@@ -108,18 +103,5 @@ public class TransactionOutHandler extends AbstractHandler {
 			}
 		}
 		return InvocationResponse.CONTINUE;
-	}
-
-	private static void addParticipantIdentifier(OMElement coorContext, String participantID) {
-		// Opps.. OMSourcedElementImpl.build() is broken
-		coorContext.getFirstOMChild();
-		OMElement registrationEPRElement = coorContext.getFirstChildWithName(new QName(
-				"RegistrationService", Constants.WS_COOR));
-		OMElement refParameters = registrationEPRElement.getFirstChildWithName(new QName(
-				"ReferenceParameters", "http://schemas.xmlsoap.org/ws/2004/08/addressing"));
-		OMElement omElement = registrationEPRElement.getOMFactory().createOMElement(
-				Constants.PARTICIPANT_ID_PARAMETER, null);
-		omElement.setText(participantID);
-		refParameters.addChild(omElement);
 	}
 }

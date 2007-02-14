@@ -69,7 +69,7 @@ public class ActivationServiceSkeleton {
 			Coordinator coordinator = new Coordinator();
 			AbstractContext context = coordinator.createCoordinationContext(coordinationType,
 					expiresL);
-			StorageUtils.putContext(context);
+//			StorageUtils.putContext(context);
 
 			CoordinationContext coordinationContext = context.getCoordinationContext();
 
@@ -82,7 +82,7 @@ public class ActivationServiceSkeleton {
 			coordinationContext_type3.setExpires(expires_type0);
 
 			coordinationContext_type3.setRegistrationService(EndpointReferenceFactory
-					.getADBEPRTypeFromEPR(coordinationContext.getRegistrationService()));
+					.getEPRTypeFromEPR(coordinationContext.getRegistrationService()));
 
 			Identifier_type1 identifier_type1 = new Identifier_type1();
 			identifier_type1.setAnyURI(new URI("http", "thilina"));

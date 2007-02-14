@@ -20,15 +20,18 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
 import org.apache.kandula.Status;
 import org.apache.kandula.context.AbstractContext;
+import org.apache.kandula.faults.KandulaGeneralException;
 import org.apache.kandula.participant.KandulaResource;
+import org.apache.kandula.participant.at.KandulaAtomicResource;
+import org.apache.kandula.participant.ba.KandulaBusinessActivityResource;
 import org.apache.kandula.utility.EndpointReferenceFactory;
 
-public class ATParticipantContext extends AbstractContext {
+public class ParticipantContext extends AbstractContext {
 	KandulaResource resource;
 	String ID;
 	EndpointReference coordinationEPR;
 
-	public ATParticipantContext() {
+	public ParticipantContext() {
 		this.setStatus(Status.CoordinatorStatus.STATUS_ACTIVE);
 		ID = EndpointReferenceFactory.getRandomStringOf18Characters();
 	}
@@ -60,9 +63,17 @@ public class ATParticipantContext extends AbstractContext {
 	/**
 	 * @param setting
 	 *            the transaction participant resource
+	 * @throws KandulaGeneralException 
 	 */
-	public void setResource(KandulaResource resource) {
-		this.resource = resource;
+	public void setResource(KandulaResource resource) throws KandulaGeneralException {
+		if (((this.getCoordinationContext().getCoordinationType().equals(Constants.WS_AT)) & (resource instanceof KandulaAtomicResource)) |((this.getCoordinationContext().getCoordinationType().equals(Constants.WS_BA_ATOMIC)) & (resource instanceof KandulaBusinessActivityResource)) )
+		{
+			resource.init(this);
+			this.resource = resource;
+		}else
+		{
+			throw new KandulaGeneralException("Invalid Resource");
+		}
 	}
 
 	public String getRegistrationProtocol() {
@@ -76,5 +87,4 @@ public class ATParticipantContext extends AbstractContext {
 	public void setID(String id) {
 		ID = id;
 	}
-
 }

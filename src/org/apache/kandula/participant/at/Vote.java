@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.apache.kandula.participant;
+package org.apache.kandula.participant.at;
 
 public class Vote {
 

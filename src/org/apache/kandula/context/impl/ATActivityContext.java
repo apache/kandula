@@ -87,9 +87,10 @@ public class ATActivityContext extends AbstractContext {
 	 * @throws AbstractKandulaException
 	 */
 	public EndpointReference addParticipant(EndpointReference participantEPR,
-			String protocol) throws AbstractKandulaException {
-		String enlistmentID = EndpointReferenceFactory
-				.getRandomStringOf18Characters();
+			String protocol,String enlistmentID) throws AbstractKandulaException {
+		 if (enlistmentID == null) {
+			enlistmentID = EndpointReferenceFactory.getRandomStringOf18Characters();
+		}
 		if (Constants.WS_AT_VOLATILE2PC.equals(protocol)) {
 			addVolatileParticipant(participantEPR, enlistmentID);
 			return EndpointReferenceFactory.getInstance()

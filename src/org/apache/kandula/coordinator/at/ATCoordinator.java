@@ -29,7 +29,7 @@ import org.apache.kandula.coordinator.Registerable;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.InvalidStateException;
 import org.apache.kandula.faults.KandulaGeneralException;
-import org.apache.kandula.participant.Vote;
+import org.apache.kandula.participant.at.Vote;
 import org.apache.kandula.wsat.completion.CompletionInitiatorPortTypeRawXMLStub;
 import org.apache.kandula.wsat.twopc.ParticipantPortTypeRawXMLStub;
 
@@ -45,7 +45,7 @@ public class ATCoordinator implements Registerable {
 	 *      java.lang.String, org.apache.axis2.addressing.EndpointReference)
 	 */
 	public EndpointReference register(AbstractContext context, String protocol,
-			EndpointReference participantEPR) throws AbstractKandulaException {
+			EndpointReference participantEPR,String enlistmentID) throws AbstractKandulaException {
 		ATActivityContext atContext = (ATActivityContext) context;
 		atContext.lock();
 		switch (atContext.getStatus()) {
@@ -72,7 +72,7 @@ public class ATCoordinator implements Registerable {
 		case CoordinatorStatus.STATUS_ACTIVE:
 		case CoordinatorStatus.STATUS_PREPARING_VOLATILE:
 			EndpointReference epr = atContext.addParticipant(participantEPR,
-					protocol);
+					protocol,enlistmentID);
 			atContext.unlock();
 			return epr;
 		case CoordinatorStatus.STATUS_NONE:

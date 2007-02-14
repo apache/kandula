@@ -24,14 +24,22 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.description.Parameter;
 import org.apache.axis2.handlers.AbstractHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.CoordinationContext;
-import org.apache.kandula.context.impl.ATParticipantContext;
+import org.apache.kandula.context.impl.ParticipantContext;
 import org.apache.kandula.context.impl.SimpleCoordinationContext;
+import org.apache.kandula.participant.ba.ParticipantOutHandler;
 import org.apache.kandula.storage.StorageUtils;
 
 public class TransactionInHandler extends AbstractHandler {
+	/**
+	 * Field log
+	 */
+	private static final Log log = LogFactory.getLog(ParticipantOutHandler.class);
+
 
 	private static final long serialVersionUID = 2098581248112968550L;
 
@@ -42,7 +50,7 @@ public class TransactionInHandler extends AbstractHandler {
 				&& (wsaAction != Constants.WS_COOR_REGISTER)
 				&& (wsaAction != Constants.WS_AT_COMMIT)
 				&& (wsaAction != Constants.WS_AT_ROLLBACK)) {
-			ATParticipantContext context = new ATParticipantContext();
+			ParticipantContext context = new ParticipantContext();
 			SOAPHeader header = msgContext.getEnvelope().getHeader();
 			OMElement coordinationElement = header
 					.getFirstChildWithName(new QName(Constants.WS_COOR,
@@ -57,18 +65,19 @@ public class TransactionInHandler extends AbstractHandler {
 
 			StorageUtils.putContext(context,context.getID(),msgContext);
 			msgContext.setProperty(AbstractContext.REQUESTER_ID,context.getID());
-			Parameter resourceFile =  msgContext.getParameter(
-					Constants.KANDULA_RESOURCE);
+			msgContext.getOperationContext().setProperty(AbstractContext.REQUESTER_ID,context.getID());
+			Parameter resourceFile =  msgContext.getParameter(Constants.KANDULA_RESOURCE);
 			
 			//Resource not given. Registration delayed to the business logic
 			if (resourceFile != null) {
 				try {
-					resource = (KandulaResource) Class.forName((String)resourceFile.getValue())
+					resource = (KandulaResource) Class.forName((String) resourceFile.getValue())
 							.newInstance();
+					context.setResource(resource);
 				} catch (Exception e) {
+					log.fatal("TransactionInHandler: Activity ID :"+context.getCoordinationContext().getActivityID()+" : "+e);
 					throw new AxisFault(e);
 				}
-				context.setResource(resource);
 				ParticipantUtility.registerParticipant(context,msgContext);
 			}
 		}

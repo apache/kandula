@@ -68,10 +68,10 @@ public class EndpointReferenceFactory {
 	}
 
 	public EndpointReference getCompletionEndpoint(String id) {
-
 		EndpointReference epr = new EndpointReference(configuration.getLocationForEPR()
 				+ "/axis2/services/CompletionCoordinator");
 		EndpointReferenceFactory.addReferenceProperty(epr, Constants.TRANSACTION_ID_PARAMETER, id);
+
 		return epr;
 	}
 
@@ -87,11 +87,25 @@ public class EndpointReferenceFactory {
 		return epr;
 	}
 
-	public EndpointReference get2PCParticipantEndpoint(String id) {
-
-		EndpointReference epr = new EndpointReference(configuration.getLocationForEPR()
-				+ "/axis2/services/AtomicTransactionParticipant");
-		EndpointReferenceFactory.addReferenceProperty(epr, Constants.REQUESTER_ID_PARAMETER, id);
+	public EndpointReference getParticipantEndpoint(String id, String protocol) {
+		EndpointReference epr = null;
+		if (protocol.equals(Constants.WS_AT_VOLATILE2PC)
+				|| protocol.equals(Constants.WS_AT_DURABLE2PC)) {
+			epr = new EndpointReference(configuration.getLocationForEPR()
+					+ "/axis2/services/AtomicTransactionParticipant");
+			EndpointReferenceFactory
+					.addReferenceProperty(epr, Constants.REQUESTER_ID_PARAMETER, id);
+		} else if (protocol.equals(Constants.WS_BA_CC)) {
+			epr = new EndpointReference(configuration.getLocationForEPR()
+					+ "/axis2/services/BACoordinatorCompletionParticipantService");
+			EndpointReferenceFactory
+					.addReferenceProperty(epr, Constants.REQUESTER_ID_PARAMETER, id);
+		} else if (protocol.equals(Constants.WS_BA_CC)) {
+			epr = new EndpointReference(configuration.getLocationForEPR()
+					+ "/axis2/services/BAParticipantCompletionParticipantService");
+			EndpointReferenceFactory
+					.addReferenceProperty(epr, Constants.REQUESTER_ID_PARAMETER, id);
+		}
 		return epr;
 	}
 
@@ -138,7 +152,7 @@ public class EndpointReferenceFactory {
 		return new String(sb2.toString().substring(begin, begin + 18)).toUpperCase();
 	}
 
-	public static void addReferenceProperty(EndpointReference epr, QName key, String Value) {
+	public static void addReferenceProperty(EndpointReference epr, QName key, String value) {
 		// We'll have to live with reference parameters for the moment
 		// Since Axis2 Addressing does not support ref properties well
 		HashMap refProperties;
@@ -147,7 +161,7 @@ public class EndpointReferenceFactory {
 		}
 		OMLinkedListImplFactory factory = new OMLinkedListImplFactory();
 		OMElement omElement = factory.createOMElement(key, null);
-		omElement.setText(Value);
+		omElement.setText(value);
 		refProperties.put(key, omElement);
 		epr.setReferenceParameters(refProperties);
 	}
@@ -175,18 +189,18 @@ public class EndpointReferenceFactory {
 		return epr;
 	}
 
-	public static void endpointToOM(EndpointReference epr, OMElement parentEPR, SOAPFactory factory) {
+	public static void endpointToOM(EndpointReference epr, OMElement parentElement, SOAPFactory factory) {
 		OMNamespace wsAddressing = factory.createOMNamespace(
 				AddressingConstants.Submission.WSA_NAMESPACE,
 				AddressingConstants.WSA_DEFAULT_PREFIX);
 		OMElement addressElement = factory.createOMElement("Address", wsAddressing);
 		addressElement.setText(epr.getAddress());
-		parentEPR.addChild(addressElement);
+		parentElement.addChild(addressElement);
 		Map referenceValues = epr.getAllReferenceParameters();
 		if (referenceValues != null) {
 			OMElement refPropertyElement = factory.createOMElement("ReferenceParameters",
 					wsAddressing);
-			parentEPR.addChild(refPropertyElement);
+			parentElement.addChild(refPropertyElement);
 			Iterator iterator = referenceValues.keySet().iterator();
 			while (iterator.hasNext()) {
 				QName key = (QName) iterator.next();
@@ -200,7 +214,7 @@ public class EndpointReferenceFactory {
 		}
 	}
 
-	public static OMElement endpointToOM(EndpointReference epr) {
+	public static OMElement endpointAddressToOM(EndpointReference epr) {
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		OMNamespace wsAddressing = factory.createOMNamespace(
 				AddressingConstants.Submission.WSA_NAMESPACE,
@@ -211,32 +225,59 @@ public class EndpointReferenceFactory {
 		return addressElement;
 	}
 
-	// bims
-	public EndpointReference getAtoimcOutcomeCoordinatorEndpoint(String activityId,
+	public EndpointReference getAtomicOutcomePCCoordinatorEndpoint(String activityId,
 			String enlistmentId) {
 		// Activity ID to find Activity Context , EnlistmentID to find
 		// participant in activity
 		EndpointReference epr = new EndpointReference(configuration.getLocationForEPR()
-				+ "/axis2/services/AtomicBACoordinator");
+				+ "/axis2/services/BAParticipantCompletionCoordinatorService");
+		EndpointReferenceFactory.addReferenceProperty(epr, Constants.TRANSACTION_ID_PARAMETER, activityId);
+		EndpointReferenceFactory.addReferenceProperty(epr, Constants.ENLISTMENT_ID_PARAMETER,
+				enlistmentId);
+		return epr;
+	}
+
+	public EndpointReference getMixedOutcomePCCoordinatorEndpoint(String activityId,
+			String enlistmentId) {
+		// Activity ID to find Activity Context , EnlistmentID to find
+		// participant in activity
+		EndpointReference epr = new EndpointReference(configuration.getLocationForEPR()
+				+ "/axis2/services/BAParticipantCompletionCoordinatorService");
+		EndpointReferenceFactory.addReferenceProperty(epr, Constants.BA_ID_PARAMETER, activityId);
+		EndpointReferenceFactory.addReferenceProperty(epr, Constants.ENLISTMENT_ID_PARAMETER,
+				enlistmentId);
+		return epr;
+	}
+	
+	public EndpointReference getAtomicOutcomeCCCoordinatorEndpoint(String activityId,
+			String enlistmentId) {
+		// Activity ID to find Activity Context , EnlistmentID to find
+		// participant in activity
+		EndpointReference epr = new EndpointReference(configuration.getLocationForEPR()
+				+ "/axis2/services/BACoordinatorCompletionCoordinatorService");
+		EndpointReferenceFactory.addReferenceProperty(epr, Constants.TRANSACTION_ID_PARAMETER, activityId);
+		EndpointReferenceFactory.addReferenceProperty(epr, Constants.ENLISTMENT_ID_PARAMETER,
+				enlistmentId);
+		return epr;
+	}
+
+	public EndpointReference getMixedOutcomeCCCoordinatorEndpoint(String activityId,
+			String enlistmentId) {
+		// Activity ID to find Activity Context , EnlistmentID to find
+		// participant in activity
+		EndpointReference epr = new EndpointReference(configuration.getLocationForEPR()
+				+ "/axis2/services/BACoordinatorCompletionCoordinatorService");
 		EndpointReferenceFactory.addReferenceProperty(epr, Constants.BA_ID_PARAMETER, activityId);
 		EndpointReferenceFactory.addReferenceProperty(epr, Constants.ENLISTMENT_ID_PARAMETER,
 				enlistmentId);
 		return epr;
 	}
 
-	// bims
-	public EndpointReference getMixedOutcomeCoordinatorEndpoint(String activityId,
-			String enlistmentId) {
-		// Activity ID to find Activity Context , EnlistmentID to find
-		// participant in activity
-		EndpointReference epr = new EndpointReference(configuration.getLocationForEPR()
-				+ "/axis2/services/MixedBACoordinator");
-		EndpointReferenceFactory.addReferenceProperty(epr, Constants.BA_ID_PARAMETER, activityId);
-		EndpointReferenceFactory.addReferenceProperty(epr, Constants.ENLISTMENT_ID_PARAMETER,
-				enlistmentId);
-		return epr;
-	}
-
+	/**
+	 * Util method to convert ADB generated EPR to a org.apache.axis2.addressing.EndpointReference 
+	 * @param endpointReferenceType
+	 * @return
+	 */
 	public static EndpointReference getEPR(EndpointReferenceType endpointReferenceType) {
 		EndpointReference endpointReference = new EndpointReference(endpointReferenceType
 				.getAddress().getAnyURI().toString());
@@ -257,7 +298,7 @@ public class EndpointReferenceFactory {
 	 * @return
 	 * @throws MalformedURIException
 	 */
-	public static EndpointReferenceType getADBEPRTypeFromEPR(EndpointReference endpointReference)
+	public static EndpointReferenceType getEPRTypeFromEPR(EndpointReference endpointReference)
 			throws MalformedURIException {
 		EndpointReferenceType endpointReferenceType = new EndpointReferenceType();
 		AttributedURI attributedURI = new AttributedURI();
