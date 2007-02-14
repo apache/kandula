@@ -190,7 +190,7 @@
         <dependency>
             <groupId>addressing</groupId>
             <artifactId>addressing</artifactId>
-            <version>SNAPSHOT</version>
+        <version>SNAPSHOT</version>
             <properties>
                 <module>true</module>
             </properties>
@@ -217,7 +217,7 @@
 	<dependency>
             <groupId>geronimo-spec</groupId>
             <artifactId>geronimo-spec-j2ee-1.4</artifactId>
-            <version>SNAPSHOT</version>
+            <version>rc4</version>
             <properties>
                 <module>true</module>
             </properties>
