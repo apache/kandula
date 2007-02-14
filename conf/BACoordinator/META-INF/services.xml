@@ -1,0 +1,70 @@
+<!-- This file was auto-generated from WSDL -->
+<!-- by the Apache Axis2 version: #axisVersion# #today# -->
+<serviceGroup>
+<service name="BACoordinatorCompletionCoordinatorService">
+<messageReceivers>
+<messageReceiver mep="http://www.w3.org/2006/01/wsdl/in-only" class="org.apache.kandula.wsba.BACoordinatorCompletionCoordinatorServiceMessageReceiverInOnly"/>
+</messageReceivers>
+<parameter name="ServiceClass" locked="false">org.apache.kandula.wsba.BACoordinatorCompletionCoordinatorServiceSkeleton</parameter>
+<operation name="CompensatedOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/CompensatedOperation</actionMapping>
+</operation>
+<operation name="ClosedOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/ClosedOperation</actionMapping>
+</operation>
+<operation name="ExitOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/ExitOperation</actionMapping>
+</operation>
+<operation name="CompletedOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/CompletedOperation</actionMapping>
+</operation>
+<operation name="CannotComplete" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/CannotComplete</actionMapping>
+</operation>
+<operation name="GetStatusOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/GetStatusOperation</actionMapping>
+</operation>
+<operation name="FailOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/FailOperation</actionMapping>
+</operation>
+<operation name="StatusOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/StatusOperation</actionMapping>
+</operation>
+<operation name="CanceledOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/CanceledOperation</actionMapping>
+</operation>
+</service>
+<service name="BAParticipantCompletionCoordinatorService">
+<messageReceivers>
+<messageReceiver mep="http://www.w3.org/2006/01/wsdl/in-only" class="org.apache.kandula.wsba.BAParticipantCompletionCoordinatorServiceMessageReceiverInOnly"/>
+</messageReceivers>
+<parameter name="ServiceClass" locked="false">org.apache.kandula.wsba.BAParticipantCompletionCoordinatorServiceSkeleton</parameter>
+<operation name="CompensatedOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/CompensatedOperation</actionMapping>
+</operation>
+<operation name="ClosedOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/ClosedOperation</actionMapping>
+</operation>
+<operation name="ExitOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/ExitOperation</actionMapping>
+</operation>
+<operation name="CompletedOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/CompletedOperation</actionMapping>
+</operation>
+<operation name="CannotComplete" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/CannotComplete</actionMapping>
+</operation>
+<operation name="GetStatusOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/GetStatusOperation</actionMapping>
+</operation>
+<operation name="FailOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/FailOperation</actionMapping>
+</operation>
+<operation name="StatusOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/StatusOperation</actionMapping>
+</operation>
+<operation name="CanceledOperation" mep="http://www.w3.org/2006/01/wsdl/in-only">
+<actionMapping>http://docs.oasis-open.org/ws-tx/wsba/2006/06/CanceledOperation</actionMapping>
+</operation>
+</service>
+</serviceGroup>

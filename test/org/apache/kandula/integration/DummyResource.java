@@ -18,9 +18,10 @@ package org.apache.kandula.integration;
 
 import org.apache.kandula.Constants;
 import org.apache.kandula.participant.KandulaResource;
-import org.apache.kandula.participant.Vote;
+import org.apache.kandula.participant.at.KandulaAtomicResource;
+import org.apache.kandula.participant.at.Vote;
 
-public class DummyResource implements KandulaResource {
+public class DummyResource extends KandulaAtomicResource {
 
 	/**
 	 * 

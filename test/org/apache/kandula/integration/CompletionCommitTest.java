@@ -29,6 +29,8 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.kandula.initiator.TransactionManager;
+import org.apache.kandula.integration.xsd.CreditOperation;
+import org.apache.kandula.integration.xsd.DebitOperation;
 
 public class CompletionCommitTest extends TestCase {
 
@@ -39,15 +41,16 @@ public class CompletionCommitTest extends TestCase {
 	private SimpleHTTPServer server;
 
 	public CompletionCommitTest() throws Exception {
-		super(CompletionCommitTest.class.getName());
-		stub = new KandulaDemoServiceStub("target/initiator-repository", new EndpointReference(
-				"http://localhost:8081/axis2/services/KandulaDemoService"));
+		this(CompletionCommitTest.class.getName());
 	}
 
 	public CompletionCommitTest(String testName) throws Exception {
 		super(testName);
-		stub = new KandulaDemoServiceStub("target/initiator-repository", new EndpointReference(
-				"http://localhost:8081/axis2/services/KandulaDemoService"));
+		ConfigurationContext configurationContext = ConfigurationContextFactory
+		.createConfigurationContextFromFileSystem("target/initiator-repository", "target/initiator-repository"
+				+ "/axis2.xml");
+
+		stub = new KandulaDemoServiceStub(configurationContext, "http://localhost:8081/axis2/services/KandulaDemoService");
 	}
 
 	protected void setUp() throws Exception {
@@ -74,15 +77,23 @@ public class CompletionCommitTest extends TestCase {
 	protected void tearDown() throws Exception {
 		server.stop();
 	}
+	
+//	public void testRegistration() throws Exception {
+//		TransactionManager tm = new TransactionManager("target/initiator-repository",
+//				"target/initiator-repository/axis2.xml");
+//		tm.begin("http://localhost:8082/axis2/services/ActivationCoordinator");
+//		tm.commit();
+//		Thread.sleep(5000);
+//	}
 
-	public void testEchoXMLASync() throws Exception {
+	public void testCompletionCommit() throws Exception {
 		TransactionManager tm = new TransactionManager("target/initiator-repository",
 				"target/initiator-repository/axis2.xml");
 		tm.begin("http://localhost:8081/axis2/services/ActivationCoordinator");
-		stub.creditOperation();
+		stub.creditOperation(new CreditOperation());
+		stub.debitOperation(new DebitOperation());
 		tm.commit();
 		Thread.sleep(5000);
-
 	}
 
 	//	public void testEchoXMLSync() throws Exception {

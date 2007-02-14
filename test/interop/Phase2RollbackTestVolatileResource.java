@@ -18,12 +18,13 @@ package interop;
 
 import org.apache.kandula.Constants;
 import org.apache.kandula.participant.KandulaResource;
-import org.apache.kandula.participant.Vote;
+import org.apache.kandula.participant.at.KandulaAtomicResource;
+import org.apache.kandula.participant.at.Vote;
 
 /**
  * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
  */
-public class Phase2RollbackTestVolatileResource implements KandulaResource {
+public class Phase2RollbackTestVolatileResource extends KandulaAtomicResource {
 
 	/**
 	 * 

@@ -17,6 +17,7 @@
 package org.apache.kandula.integration;
 
 import org.apache.axiom.om.OMElement;
+import org.apache.axis2.AxisFault;
 
 public class KandulaDemoService {
 
@@ -35,10 +36,20 @@ public class KandulaDemoService {
 	}
 
 
-	public OMElement debitOperation(OMElement element) {
+	public OMElement debitOperation(OMElement element) throws AxisFault {
 		element.build();
 		element.detach();
-//		System.out.println("done com");
+//		MessageContext msgcts = MessageContext.getCurrentMessageContext();
+//		String reqID = (String) msgcts.getProperty(AbstractContext.REQUESTER_ID);
+//		ParticipantContext participantContext = (ParticipantContext) StorageUtils
+//		.getContext(reqID);
+//		KandulaBusinessActivityResource resource = (KandulaBusinessActivityResource)participantContext.getResource();
+//		try {
+//			resource.exit();
+//		} catch (AbstractKandulaException e) {
+//			throw new AxisFault(e);
+//		}
+//		throw new AxisFault("thilina");
 		return element;
 	}
 

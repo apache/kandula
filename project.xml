@@ -10,7 +10,6 @@
 	<!-- a short but descriptive name for the project -->
 	<name>Apache Kandula2</name>
 
-	<!-- The version of the project under development, e.g. 1.1, 1.2, 2.0-SNAPSHOT -->
 	<currentVersion>SNAPSHOT</currentVersion>
 
 	<!-- details about the organization that 'owns' the project -->
@@ -25,14 +24,17 @@
 	<package>org.apache.kandula</package>
 	<logo />
 	<description>
-		Kandula will provide an open-source implementation of WS-Coordination,
-		WS-AtomicTransaction and WS-BusinessActivity based on Axis. The initial
-		implementation will be in Java using Axis/Java. In addition to providing
-		an implementation, a major focus of this project would be to ensure
-		interoperability with other implementations of above specifications.
+		Kandula will provide an open-source implementation of
+		WS-Coordination, WS-AtomicTransaction and WS-BusinessActivity
+		based on Axis. The initial implementation will be in Java using
+		Axis/Java. In addition to providing an implementation, a major
+		focus of this project would be to ensure interoperability with
+		other implementations of above specifications.
 	</description>
 	<!-- a short description of what the project does -->
-	<shortDescription>WS-Coor, WS-AT and WS-BA implementation</shortDescription>
+	<shortDescription>
+		WS-Coor, WS-AT and WS-BA implementation
+	</shortDescription>
 
 	<!-- the project home page -->
 	<url>http://ws.apache.org/kandula/</url>
@@ -41,7 +43,9 @@
 	</issueTrackingUrl>
 	<siteAddress>ws.apache.org</siteAddress>
 	<siteDirectory>/kandula/</siteDirectory>
-	<distributionDirectory>/www/ws.apache.org/builds/</distributionDirectory>
+	<distributionDirectory>
+		/www/ws.apache.org/builds/
+	</distributionDirectory>
 
 	<repository>
 		<connection>
@@ -61,7 +65,9 @@
 		<mailingList>
 			<name>Kandula Developer List</name>
 			<subscribe>kandula-dev-subscribe@ws.apache.org</subscribe>
-			<unsubscribe>kandula-dev-unsubscribe@ws.apache.org</unsubscribe>
+			<unsubscribe>
+				kandula-dev-unsubscribe@ws.apache.org
+			</unsubscribe>
 			<archive>
 				http://nagoya.apache.org/eyebrowse/SummarizeList?listId=221
 			</archive>
@@ -179,11 +185,11 @@
 			<version>${axis2.version}</version>
 		</dependency>
 		<dependency>
-           <groupId>org.apache.axis2</groupId>
-           <artifactId>addressing</artifactId>
-           <version>${axis2.version}</version>
-           <type>mar</type>
- 		</dependency>
+			<groupId>org.apache.axis2</groupId>
+			<artifactId>addressing</artifactId>
+			<version>${axis2.version}</version>
+			<type>mar</type>
+		</dependency>
 
 		<!-- Following dependency was required due to the EndpointReferenceHelper class-->
 		<!-- dependency>
@@ -239,6 +245,14 @@
 				<module>true</module>
 			</properties>
 		</dependency>
+	    <dependency>
+          <groupId>commons-fileupload</groupId>
+          <artifactId>commons-fileupload</artifactId>
+          <version>${commons.fileupload.version}</version>
+          <properties>
+              <module>true</module>
+          </properties>
+       </dependency>   
 		<dependency>
 			<groupId>httpcomponents-httpcore</groupId>
 			<artifactId>jakarta-httpcore</artifactId>
@@ -293,9 +307,8 @@
 		<unitTest>
 			<includes>
 				<include>**/CompletionCommitTest.java</include>
+				<include>**/BA*Test.java</include>
 			</includes>
-
-
 			<resources>
 				<resource>
 					<directory>${basedir}/test-resources</directory>

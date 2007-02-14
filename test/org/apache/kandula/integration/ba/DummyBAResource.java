@@ -14,42 +14,42 @@
  *  limitations under the License.
  *
  */
-package interop;
+package org.apache.kandula.integration.ba;
 
 import org.apache.kandula.Constants;
-import org.apache.kandula.participant.KandulaResource;
-import org.apache.kandula.participant.at.KandulaAtomicResource;
-import org.apache.kandula.participant.at.Vote;
+import org.apache.kandula.faults.AbstractKandulaException;
+import org.apache.kandula.participant.ba.KandulaBusinessActivityResource;
 
-/**
- * @author <a href="mailto:thilina@opensource.lk"> Thilina Gunarathne </a>
- */
-public class DurableReadOnlyResource extends KandulaAtomicResource{
+public class DummyBAResource extends KandulaBusinessActivityResource {
 
 	/**
 	 * 
 	 */
-	public DurableReadOnlyResource() {
+	public DummyBAResource() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public boolean commit() {
-		System.out.println("Commited");
+	public String getProtocol() {
+		return Constants.WS_BA_CC;
+	}
+
+	public boolean compensate() {
+		System.out.println("Compensated");
 		return true;
 	}
 
-	public void rollback() {
-		System.out.println("rollback");
+	public void complete() throws  AbstractKandulaException{
+		System.out.println("Complete");
+		return;
 	}
 
-	public Vote prepare() {
-		return Vote.READ_ONLY;
+	public void close() {
+		System.out.println("Close");
 	}
 
-	public String getProtocol() {
-		return Constants.WS_AT_DURABLE2PC;
+	public void cancel() {
+		System.out.println("Cancel");
 	}
-
 
 }

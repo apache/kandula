@@ -18,7 +18,7 @@
 		</path>
 		<maven:addPath id="maven.compile.src.set" refid="generated.src.path" />
 	</preGoal>
-
+	
 	<goal name="generate:code">
 		<!-- Code generating for the WS-Coordination WSDL -->
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
@@ -54,23 +54,38 @@
 		<!-- Code generating for the WS-BA WSDL -->
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath" />
-			<arg line=" -o target -p org.apache.kandula.wsba -g -ss -sd -sn BAParticipantCompletionParticipantService -uri schema/wsba.wsdl" />
+			<arg line=" -o target -p org.apache.kandula.wsba -g -ss -a -sd -sn BAParticipantCompletionParticipantService -uri schema/wsba.wsdl" />
 		</java>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath" />
-			<arg line=" -o target -p org.apache.kandula.wsba -g -ss -sd -sn BACoordinatorCompletionCoordinatorService -uri schema/wsba.wsdl" />
+			<arg line=" -o target -p org.apache.kandula.wsba -g -ss -a -sd -sn BACoordinatorCompletionCoordinatorService -uri schema/wsba.wsdl" />
 		</java>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath" />
-			<arg line=" -o target -p org.apache.kandula.wsba -g -ss -sd -sn BACoordinatorCompletionParticipantService -uri schema/wsba.wsdl" />
+			<arg line=" -o target -p org.apache.kandula.wsba -g -ss -a -sd -sn BACoordinatorCompletionParticipantService -uri schema/wsba.wsdl" />
 		</java>
 		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
 			<classpath refid="maven.dependency.classpath" />
-			<arg line=" -o target -p org.apache.kandula.wsba -g -ss -sd -sn BAParticipantCompletionCoordinatorService -uri schema/wsba.wsdl" />
+			<arg line=" -o target -p org.apache.kandula.wsba -g -ss -a -sd -sn BAParticipantCompletionCoordinatorService -uri schema/wsba.wsdl" />
+		</java>
+		<delete>
+			<fileset dir="target/src/org/apache/kandula/wsba">
+				<include name="*Skeleton.java" />
+			</fileset>
+		</delete>
+
+		<!-- Code generating for the Testing Service -->
+		<java classname="org.apache.axis2.wsdl.WSDL2Java" fork="true">
+			<classpath refid="maven.dependency.classpath" />
+			<arg line=" -o target -p org.apache.kandula.integration -g -ss -sd -uri test-resources/KandulaDemoService/KandulaDemoService.wsdl" />
 		</java>
 	</goal>
-
+	
 	<postGoal name="test:compile">
+		<attainGoal name="create:packages" />
+	</postGoal>
+
+	<goal name="create:packages">
 		<mkdir dir="${basedir}/target/lib" />
 		<deploy:copy-deps todir="${basedir}/target/lib" />
 
@@ -111,6 +126,20 @@
 		<jar jarfile="target/RegistrationCoordinator.aar" basedir="target/services/RegistrationCoordinator">
 			<include name="**" />
 		</jar>
+		
+		<echo message="----------------Creating BACoordinator.aar----------------" />
+		<mkdir dir="target/services/BACoordinator/META-INF" />
+		<copy file="conf/BACoordinator/META-INF/services.xml" tofile="target/services/BACoordinator/META-INF/services.xml" />
+		<jar jarfile="target/BACoordinator.aar" basedir="target/services/BACoordinator">
+			<include name="**" />
+		</jar>
+		
+		<echo message="----------------Creating BACoordinatorCompletionParticipant.aar----------------" />
+		<mkdir dir="target/services/BACoordinatorCompletionParticipant/META-INF" />
+		<copy file="conf/BACoordinatorCompletionParticipant/META-INF/services.xml" tofile="target/services/BACoordinatorCompletionParticipant/META-INF/services.xml" />
+		<jar jarfile="target/BACoordinatorCompletionParticipant.aar" basedir="target/services/BACoordinatorCompletionParticipant">
+			<include name="**" />
+		</jar>
 
 		<echo message="----------------Creating Kandula-inflow.mar----------------" />
 		<mkdir dir="target/modules/kandula-inflow/META-INF" />
@@ -134,23 +163,28 @@
 		<copy file="target/AtomicTransactionParticipant.aar" tofile="target/testing-repository/services/AtomicTransactionParticipant.aar" />
 		<copy file="target/CompletionCoordinator.aar" tofile="target/testing-repository/services/CompletionCoordinator.aar" />
 		<copy file="target/RegistrationCoordinator.aar" tofile="target/testing-repository/services/RegistrationCoordinator.aar" />
+		<copy file="target/BACoordinator.aar" tofile="target/testing-repository/services/BACoordinator.aar" />
+		<copy file="target/BACoordinatorCompletionParticipant.aar" tofile="target/testing-repository/services/BACoordinatorCompletionParticipant.aar" />
 		<mkdir dir="target/testing-repository/modules" />
 		<copy file="target/kandula-inflow-${pom.currentVersion}.mar" tofile="target/testing-repository/modules/kandula-inflow-${pom.currentVersion}.mar" />
 		<copy file="${repo.addressing.mar}" toDir="target/testing-repository/modules/" />
 		<copy file="conf/coordinator-axis2.xml" tofile="target/testing-repository/axis2.xml" />
 
 		<echo message="----------------Creating KandulaDemoService.aar----------------" />
-		<ant:copy todir="${samples.dir}/version/src">
-			<ant:fileset dir="src">
-				<ant:include name="sample/axisversion/**" />
-			</ant:fileset>
-		</ant:copy>
 		<mkdir dir="target/services/KandulaDemoService/META-INF" />
 		<copy file="test-resources/KandulaDemoService/META-INF/services.xml" tofile="target/services/KandulaDemoService/META-INF/services.xml" />
 		<jar jarfile="target/KandulaDemoService.aar" basedir="target/services/KandulaDemoService">
 			<include name="**" />
 		</jar>
 		<copy file="target/KandulaDemoService.aar" tofile="target/testing-repository/services/KandulaDemoService.aar" />
+
+		<echo message="----------------Creating KandulaBADemoService.aar----------------" />
+		<mkdir dir="target/services/KandulaBADemoService/META-INF" />
+		<copy file="test-resources/KandulaDemoService/META-INF/services1.xml" tofile="target/services/KandulaBADemoService/META-INF/services.xml" />
+		<jar jarfile="target/KandulaBADemoService.aar" basedir="target/services/KandulaBADemoService">
+			<include name="**" />
+		</jar>
+		<copy file="target/KandulaBADemoService.aar" tofile="target/testing-repository/services/KandulaBADemoService.aar" />
 
 		<echo message="-----------Creating Initiator test repository----------" />
 		<mkdir dir="target/initiator-repository" />
@@ -159,6 +193,6 @@
 		<copy file="${repo.addressing.mar}" toDir="target/initiator-repository/modules/" />
 		<copy file="conf/initiator-axis2.xml" tofile="target/initiator-repository/axis2.xml" />
 
-	</postGoal>
+	</goal>
 
 </project>

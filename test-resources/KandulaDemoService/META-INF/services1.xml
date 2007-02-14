@@ -1,15 +1,15 @@
-<service name="KandulaDemoService">
+<service name="KandulaBADemoService">
     <description>
         Sample service for Testing
     </description>
     <module ref="kandula-inflow"/>
    	<parameter name="ServiceClass" locked="xsd:false">org.apache.kandula.integration.KandulaDemoService</parameter>
     <operation name="creditOperation">
-	    <parameter name="KandulaResource" locked="xsd:false">org.apache.kandula.integration.DummyResource</parameter>
+	    <parameter name="KandulaResource" locked="xsd:false">org.apache.kandula.integration.ba.DummyBAResource</parameter>
         <messageReceiver class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
     </operation>
     <operation name="debitOperation">
-	    <parameter name="KandulaResource" locked="xsd:false">org.apache.kandula.integration.DummyResource</parameter>
+	    <parameter name="KandulaResource" locked="xsd:false">org.apache.kandula.integration.ba.DummyBAResource</parameter>
         <messageReceiver class="org.apache.axis2.rpc.receivers.RPCMessageReceiver"/>
     </operation>
 </service>

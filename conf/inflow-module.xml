@@ -4,4 +4,14 @@
             <order phase="OperationInPhase"/>
         </handler>
     </inflow>
+    <outflow>
+        <handler name="ParticipantOutHandler" class="org.apache.kandula.participant.ba.ParticipantOutHandler">
+            <order phase="OperationOutPhase"/>
+        </handler>
+    </outflow>
+    <OutFaultFlow>
+        <handler name="ParticipantOutFaultHandler" class="org.apache.kandula.participant.ba.ParticipantOutFaultHandler">
+            <order phase="OperationOutFaultPhase"/>
+        </handler>
+    </OutFaultFlow>
 </module>
