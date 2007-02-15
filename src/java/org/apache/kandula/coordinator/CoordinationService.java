@@ -36,7 +36,7 @@ public class CoordinationService implements ActivationPortTypeRPC {
 	private CoordinationService() {
 	}
 
-	private CoordinationContext createCoordinationContext(
+	public CoordinationContext createCoordinationContext(
 			String coordinationType, long timeout)
 			throws UnsupportedCoordinationTypeException, MalformedURIException {
 		if (!ATCoordinator.COORDINATION_TYPE_ID.equals(coordinationType))
@@ -116,7 +116,7 @@ public class CoordinationService implements ActivationPortTypeRPC {
 		long timeout = 0;
 		if (ex != null)
 			timeout = ex.get_value().longValue() * 1000;
-		CoordinationContext ctx;
+		CoordinationContext ctx = null;
 		try {
 			ctx = createCoordinationContext(t, timeout);
 		} catch (MalformedURIException e) {

@@ -26,7 +26,7 @@ public class CallbackRegistry {
 			"http://ws.apache.org/kandula", "CallbackRef");
 
 	// FIXME:
-	public static final int DEFAULT_TIMEOUT_MILLIS = 180 * 1000;
+	public static final int DEFAULT_TIMEOUT_MILLIS = 20 * 1000;
 
 	private static Timer timer = new Timer();
 
@@ -53,7 +53,7 @@ public class CallbackRegistry {
 			timeout = DEFAULT_TIMEOUT_MILLIS;
 
 		System.out.println("[CallbackRegistry] registerCallback: timeout= "
-				+ timeout);
+				+ timeout + " callbacks.size= " + callbacks.size());
 
 		timer.schedule(new TimerTask() {
 			public void run() {
@@ -61,7 +61,7 @@ public class CallbackRegistry {
 				try {
 					callback.timeout();
 				} catch (TimedOutException e) {
-					e.printStackTrace();
+					//	e.printStackTrace();
 				}
 			}
 		}, timeout);
