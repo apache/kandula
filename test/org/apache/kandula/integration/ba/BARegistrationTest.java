@@ -73,20 +73,4 @@ public class BARegistrationTest extends TestCase {
 		EndpointReference epr= coordinator.registerParticipant(businessActivity.getContext(),Constants.WS_BA_CC,new EndpointReference("http://ws.apache.org/axis2"),null);
 		assertNotNull(epr);
 	}
-	
-
-//	public void testEchoXMLSync() throws Exception {
-//		// TransactionManager tm = new TransactionManager(
-//		// Constants.WS_AT,
-//		// new EndpointReference(
-//		// "http://localhost:8081/axis2/services/ActivationCoordinator"));
-//		// tm.begin("target/initiator-repository",
-//		// "target/initiator-repository/axis2.xml", false);
-//		// try {
-//		// stub.creditOperation();
-//		// } catch (Exception e) {
-//		// tm.rollback();
-//		// }
-//		// tm.commit();
-//	}
 }

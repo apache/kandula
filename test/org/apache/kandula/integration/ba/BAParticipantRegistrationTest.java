@@ -25,7 +25,7 @@ import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.kandula.Constants;
 import org.apache.kandula.ba.MixedBusinessActivity;
-import org.apache.kandula.integration.KandulaDemoServiceStub;
+import org.apache.kandula.integration.KandulaDemoServiceKandulaDemoServiceSOAP11Port_httpStub;
 import org.apache.kandula.integration.xsd.CreditOperation;
 import org.apache.kandula.integration.xsd.DebitOperation;
 
@@ -33,7 +33,7 @@ public class BAParticipantRegistrationTest extends TestCase {
 
 	private String repository = "target/testing-repository";
 
-	private KandulaDemoServiceStub stub;
+	private KandulaDemoServiceKandulaDemoServiceSOAP11Port_httpStub stub;
 
 	private SimpleHTTPServer server;
 
@@ -47,7 +47,7 @@ public class BAParticipantRegistrationTest extends TestCase {
 				.createConfigurationContextFromFileSystem("target/initiator-repository",
 						"target/initiator-repository" + "/axis2.xml");
 
-		stub = new KandulaDemoServiceStub(configurationContext,
+		stub = new KandulaDemoServiceKandulaDemoServiceSOAP11Port_httpStub(configurationContext,
 				"http://localhost:8081/axis2/services/KandulaBADemoService");
 	}
 
