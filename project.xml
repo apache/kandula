@@ -302,7 +302,7 @@
 	<build>
 		<nagEmailAddress>kandula-dev@ws.apache.org</nagEmailAddress>
 		<sourceDirectory>src</sourceDirectory>
-		<unitTestSourceDirectory>test</unitTestSourceDirectory>
+		<!--unitTestSourceDirectory>test</unitTestSourceDirectory>
 
 		<unitTest>
 			<includes>
@@ -327,7 +327,7 @@
 					</includes>
 				</resource>
 			</resources>
-		</unitTest>
+		</unitTest-->
 
 		<resources>
 			<resource>
