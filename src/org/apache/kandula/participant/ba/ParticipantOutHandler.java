@@ -38,7 +38,7 @@ public class ParticipantOutHandler extends AbstractHandler {
 						participantContext.setStatus(Status.BAParticipantStatus.STATUS_COMPLETING);
 						coordinator.completed(participantContext);
 					} catch (AbstractKandulaException e) {
-						throw new AxisFault(e);
+                        throw AxisFault.makeFault(e);
 					}
 				}
 			}

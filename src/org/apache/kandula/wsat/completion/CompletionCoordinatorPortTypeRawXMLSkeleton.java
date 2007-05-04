@@ -47,7 +47,7 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
 			coordinator.commitOperation(atContext);
 		} catch (AbstractKandulaException e) {
 			e.printStackTrace();
-			AxisFault fault = new AxisFault(e);
+			AxisFault fault = AxisFault.makeFault(e);
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
@@ -70,7 +70,7 @@ public class CompletionCoordinatorPortTypeRawXMLSkeleton {
 			}
 			coordinator.rollbackOperation(atContext);
 		} catch (AbstractKandulaException e) {
-			AxisFault fault = new AxisFault(e);
+			AxisFault fault = AxisFault.makeFault(e); 
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}

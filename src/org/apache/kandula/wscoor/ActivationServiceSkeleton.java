@@ -94,11 +94,11 @@ public class ActivationServiceSkeleton {
 			response.setCreateCoordinationContextResponse(createCoordinationContextResponseType);
 			return response;
 		} catch (AbstractKandulaException e) {
-			AxisFault fault = new AxisFault(e);
+			AxisFault fault = AxisFault.makeFault(e);
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		} catch (MalformedURIException e) {
-			AxisFault fault = new AxisFault(e);
+			AxisFault fault = AxisFault.makeFault(e);
 			throw fault;
 		}
 

@@ -1,7 +1,7 @@
 <module name="kandula-outflow">
-    <outflow>
+    <OutFlow>
         <handler name="TransactionOutHandler" class="org.apache.kandula.initiator.TransactionOutHandler">
             <order phase="MessageOut"/>
         </handler>
-    </outflow>
+    </OutFlow>
 </module>

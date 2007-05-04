@@ -87,7 +87,7 @@ public class testService {
 			
 			return getResponseElement();
 		} catch (KandulaGeneralException e) {
-			throw new AxisFault(e);
+			throw AxisFault.makeFault(e);
 		}
 	}
 	
@@ -115,7 +115,7 @@ public class testService {
 			
 			return getResponseElement();
 		} catch (KandulaGeneralException e) {
-			throw new AxisFault(e);
+			throw AxisFault.makeFault(e);
 		}
 	}
 	
@@ -165,7 +165,7 @@ public class testService {
 			thread.start();
 			return getResponseElement();
 		} catch (KandulaGeneralException e) {
-			throw new AxisFault(e);
+			throw AxisFault.makeFault(e);
 		}	
 	}
 		public OMElement EarlyAborted(OMElement element) throws AxisFault {
@@ -197,11 +197,11 @@ public class testService {
 						.getCoordinationEPR());
 				stub.abortedOperation();
 			} catch (AbstractKandulaException e) {
-				throw new AxisFault(e);
+				throw AxisFault.makeFault(e);
 			}
 			return getResponseElement();
 		} catch (KandulaGeneralException e) {
-			throw new AxisFault(e);
+			throw AxisFault.makeFault(e);
 		}
 	}	private OMElement getResponseElement() {
 		SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();

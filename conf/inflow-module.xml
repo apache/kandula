@@ -1,14 +1,14 @@
 <module name="kandula-inflow">
-    <inflow>
+    <InFlow>
         <handler name="TransactionInHandler" class="org.apache.kandula.participant.TransactionInHandler">
             <order phase="OperationInPhase"/>
         </handler>
-    </inflow>
-    <outflow>
+    </InFlow>
+    <OutFlow>
         <handler name="ParticipantOutHandler" class="org.apache.kandula.participant.ba.ParticipantOutHandler">
             <order phase="OperationOutPhase"/>
         </handler>
-    </outflow>
+    </OutFlow>
     <OutFaultFlow>
         <handler name="ParticipantOutFaultHandler" class="org.apache.kandula.participant.ba.ParticipantOutFaultHandler">
             <order phase="OperationOutFaultPhase"/>

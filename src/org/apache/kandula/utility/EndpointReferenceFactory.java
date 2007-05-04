@@ -170,15 +170,15 @@ public class EndpointReferenceFactory {
 		EndpointReference epr;
 
 		epr = new EndpointReference(eprElement.getFirstChildWithName(
-				new QName(AddressingConstants.Submission.WSA_NAMESPACE,
+				new QName(Constants.WSA_NAMESPACE,
 						AddressingConstants.EPR_ADDRESS)).getText());
-		HashMap referenceProperties = new HashMap();
-		OMElement referencePropertiesElement = eprElement.getFirstChildWithName(new QName(
-				"ReferenceParameters"));
-		if (referencePropertiesElement != null) {
-			Iterator propertyIter = referencePropertiesElement.getChildElements();
-			while (propertyIter.hasNext()) {
-				OMElement element = (OMElement) propertyIter.next();
+        HashMap referenceProperties = new HashMap();
+        OMElement referencePropertiesElement = eprElement.getFirstChildWithName(new QName(
+                Constants.WSA_NAMESPACE, "ReferenceParameters"));
+        if (referencePropertiesElement != null) {
+            Iterator propertyIter = referencePropertiesElement.getChildElements();
+            while (propertyIter.hasNext()) {
+                OMElement element = (OMElement) propertyIter.next();
 
 				// TODO do we need to detach the OMElement
 				referenceProperties.put(element.getQName(), element.cloneOMElement());
@@ -191,7 +191,7 @@ public class EndpointReferenceFactory {
 
 	public static void endpointToOM(EndpointReference epr, OMElement parentElement, SOAPFactory factory) {
 		OMNamespace wsAddressing = factory.createOMNamespace(
-				AddressingConstants.Submission.WSA_NAMESPACE,
+				Constants.WSA_NAMESPACE,
 				AddressingConstants.WSA_DEFAULT_PREFIX);
 		OMElement addressElement = factory.createOMElement("Address", wsAddressing);
 		addressElement.setText(epr.getAddress());
@@ -217,7 +217,7 @@ public class EndpointReferenceFactory {
 	public static OMElement endpointAddressToOM(EndpointReference epr) {
 		OMFactory factory = OMAbstractFactory.getOMFactory();
 		OMNamespace wsAddressing = factory.createOMNamespace(
-				AddressingConstants.Submission.WSA_NAMESPACE,
+				Constants.WSA_NAMESPACE,
 				AddressingConstants.WSA_DEFAULT_PREFIX);
 		OMElement addressElement = factory.createOMElement("Address", wsAddressing);
 		addressElement.setText(epr.getAddress());

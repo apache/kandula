@@ -37,7 +37,7 @@ public class BAParticipantCompletionCoordinatorServiceSkeleton {
 		} catch (AbstractKandulaException e) {
 			log.fatal("WS_BA : message " + MessageContext.getCurrentMessageContext().getMessageID()
 					+ " : CompletedOperation :" + e);
-			throw new AxisFault(e);
+			throw AxisFault.makeFault(e);
 		}
 	}
 
@@ -60,7 +60,7 @@ public class BAParticipantCompletionCoordinatorServiceSkeleton {
 		} catch (AbstractKandulaException e) {
 			log.fatal("WS_BA : message " + MessageContext.getCurrentMessageContext().getMessageID()
 					+ " : ClosedOperation :" + e);
-			throw new AxisFault(e);
+			throw AxisFault.makeFault(e);
 		}
 	}
 
@@ -82,7 +82,7 @@ public class BAParticipantCompletionCoordinatorServiceSkeleton {
 		} catch (AbstractKandulaException e) {
 			log.fatal("WS_BA : message " + MessageContext.getCurrentMessageContext().getMessageID()
 					+ " : CanceledOperation :" + e);
-			throw new AxisFault(e);
+			throw AxisFault.makeFault(e);
 		}
 
 	}

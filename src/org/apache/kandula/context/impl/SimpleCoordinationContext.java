@@ -42,11 +42,11 @@ public class SimpleCoordinationContext implements CoordinationContext {
 		super();
 		this.contextElement = contextElement;
 		activityID = contextElement.getFirstChildWithName(
-				new QName("Identifier")).getText();
+				new QName(Constants.WS_COOR,"Identifier")).getText();
 		coordinationType = contextElement.getFirstChildWithName(
-				new QName("CoordinationType")).getText();
+				new QName(Constants.WS_COOR,"CoordinationType")).getText();
 		OMElement registrationElement = contextElement
-				.getFirstChildWithName(new QName("RegistrationService"));
+				.getFirstChildWithName(new QName(Constants.WS_COOR,"RegistrationService"));
 		registrationServiceEpr = EndpointReferenceFactory
 				.endpointFromOM(registrationElement);
 	}

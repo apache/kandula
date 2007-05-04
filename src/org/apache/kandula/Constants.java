@@ -18,6 +18,8 @@ package org.apache.kandula;
 
 import javax.xml.namespace.QName;
 
+import org.apache.axis2.addressing.AddressingConstants;
+
 public class Constants {
 
 	// WS-Coordination URI's
@@ -75,6 +77,8 @@ public class Constants {
 	public static final String WS_BA_PC = WS_BA+ "/ParticipantCompletion";
 
 	public static final String WS_BA_CC = WS_BA+ "/CoordinatorCompletion";
+    
+    public static final String WSA_NAMESPACE = AddressingConstants.Submission.WSA_NAMESPACE;
 
 	// Kandula Specific
 	// Constants-------------------------------------------------------------

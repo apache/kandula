@@ -39,7 +39,7 @@ public class ParticipantPortTypeRawXMLSkeleton {
 		try {
 			txManager.prepare(context);
 		} catch (AbstractKandulaException e) {
-			AxisFault fault = new AxisFault(e);
+			AxisFault fault = AxisFault.makeFault(e);
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
@@ -55,7 +55,7 @@ public class ParticipantPortTypeRawXMLSkeleton {
 		try {
 			participantTxManager.commit(context);
 		} catch (AbstractKandulaException e) {
-			AxisFault fault = new AxisFault(e);
+			AxisFault fault = AxisFault.makeFault(e);
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
@@ -70,7 +70,7 @@ public class ParticipantPortTypeRawXMLSkeleton {
 		try {
 			txManager.rollback(context);
 		} catch (AbstractKandulaException e) {
-			AxisFault fault = new AxisFault(e);
+			AxisFault fault = AxisFault.makeFault(e);
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}

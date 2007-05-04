@@ -35,7 +35,7 @@ public class ParticipantOutFaultHandler extends AbstractHandler {
 					try {
 						coordinator.fault(participantContext);
 					} catch (AbstractKandulaException e) {
-						throw new AxisFault(e);
+						throw AxisFault.makeFault(e);
 					}
 				}
 			}

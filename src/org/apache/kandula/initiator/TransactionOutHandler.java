@@ -48,14 +48,14 @@ public class TransactionOutHandler extends AbstractHandler {
 	public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
 
 		String wsaAction = msgContext.getWSAAction();
-		if ((wsaAction != Constants.WS_COOR_CREATE_COORDINATIONCONTEXT)
-				&& (wsaAction != Constants.WS_COOR_REGISTER)
-				&& (wsaAction != Constants.WS_AT_COMMIT) && (wsaAction != Constants.WS_AT_ROLLBACK)) {
+		if (!(Constants.WS_COOR_CREATE_COORDINATIONCONTEXT.equals(wsaAction))
+				&& !(Constants.WS_COOR_REGISTER.equals(wsaAction))
+				&& !(Constants.WS_AT_COMMIT.equals(wsaAction)) && !(Constants.WS_AT_ROLLBACK.equals(wsaAction))) {
 			Object context = null;
 			try {
 				context = TransactionManager.getTransaction();
 			} catch (AbstractKandulaException e) {
-				throw new AxisFault(e);
+				throw  AxisFault.makeFault(e);
 			}
 			if (context == null) {
 				context = msgContext.getProperty(Constants.Configuration.TRANSACTION_CONTEXT);
@@ -80,7 +80,7 @@ public class TransactionOutHandler extends AbstractHandler {
 										byteArrayOutputStream.toByteArray())));
 						context_type32.setExtraAttributes(null);
 					} catch (Exception e) {
-						throw new AxisFault(e);
+						throw AxisFault.makeFault(e);
 					}
 					ReferenceParametersType referenceParametersType = context_type32
 							.getRegistrationService().getReferenceParameters();

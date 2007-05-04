@@ -61,7 +61,7 @@ public class BACoordinatorCompletionParticipantServiceSkeleton {
 			} catch (AbstractKandulaException e) {
 				log.fatal("WS_BA : Message ID : " + MessageContext.getCurrentMessageContext().getMessageID()
 						+ " : close Operation :" + e);
-				throw new AxisFault(e);
+				throw AxisFault.makeFault(e);
 			}
 		} else {
 			AxisFault e = new AxisFault(
@@ -89,7 +89,7 @@ public class BACoordinatorCompletionParticipantServiceSkeleton {
 				} catch (AbstractKandulaException e) {
 					log.fatal("WS_BA : " + context.getCoordinationContext().getActivityID()
 							+ " : Complete Operation :" + e);
-					throw new AxisFault(e);
+					throw AxisFault.makeFault(e);
 				}
 			} else {
 				log.fatal("WS_BA : Message ID "
@@ -123,7 +123,7 @@ public class BACoordinatorCompletionParticipantServiceSkeleton {
 				} catch (AbstractKandulaException e) {
 					log.fatal("WS_BA : " + context.getCoordinationContext().getActivityID()
 							+ " : CancelOperation :" + e);
-					throw new AxisFault(e);
+					throw AxisFault.makeFault(e);
 				}
 			} else
 			// participant context migt have been already removed by an earlier
@@ -160,7 +160,7 @@ public class BACoordinatorCompletionParticipantServiceSkeleton {
 				} catch (AbstractKandulaException e) {
 					log.fatal("WS_BA : " + context.getCoordinationContext().getActivityID()
 							+ " : ExitedOperation :" + e);
-					throw new AxisFault(e);
+					throw AxisFault.makeFault(e);
 				}
 			} else
 			// participant context migt have been already removed by an earlier
@@ -202,7 +202,7 @@ public class BACoordinatorCompletionParticipantServiceSkeleton {
 			} catch (AbstractKandulaException e) {
 				log.fatal("WS_BA : Message ID : " + MessageContext.getCurrentMessageContext().getMessageID()
 						+ " : CompensateOperation :" + e);
-				throw new AxisFault(e);
+				throw AxisFault.makeFault(e);
 			}
 		} else {
 			AxisFault e = new AxisFault(
@@ -231,7 +231,7 @@ public class BACoordinatorCompletionParticipantServiceSkeleton {
 				} catch (AbstractKandulaException e) {
 					log.fatal("WS_BA : " + context.getCoordinationContext().getActivityID()
 							+ " : FailedOperation :" + e);
-					throw new AxisFault(e);
+					throw AxisFault.makeFault(e);
 				}
 			} else
 			// participant context migt have been already removed by an earlier

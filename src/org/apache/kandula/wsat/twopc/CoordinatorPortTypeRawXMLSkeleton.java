@@ -47,7 +47,7 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 			coordinator.countVote(atContext, Vote.PREPARED, enlistmentId);
 		} catch (AbstractKandulaException e) {
 			e.printStackTrace();
-			AxisFault fault = new AxisFault(e);
+			AxisFault fault = AxisFault.makeFault(e);
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
@@ -69,7 +69,7 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 			ATActivityContext atContext = (ATActivityContext) StorageUtils.getContext(activityId);
 			coordinator.abortedOperation(atContext, enlistmentId);
 		} catch (AbstractKandulaException e) {
-			AxisFault fault = new AxisFault(e);
+			AxisFault fault = AxisFault.makeFault(e);
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
@@ -91,7 +91,7 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 			ATActivityContext atContext = (ATActivityContext) StorageUtils.getContext(activityId);
 			coordinator.countVote(atContext, Vote.READ_ONLY, enlistmentId);
 		} catch (AbstractKandulaException e) {
-			AxisFault fault = new AxisFault(e);
+			AxisFault fault = AxisFault.makeFault(e);
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}
@@ -113,7 +113,7 @@ public class CoordinatorPortTypeRawXMLSkeleton {
 			ATActivityContext atContext = (ATActivityContext) StorageUtils.getContext(activityId);
 			coordinator.countParticipantOutcome(atContext, enlistmentId);
 		} catch (AbstractKandulaException e) {
-			AxisFault fault = new AxisFault(e);
+			AxisFault fault = AxisFault.makeFault(e);
 			fault.setFaultCode(e.getFaultCode());
 			throw fault;
 		}

@@ -24,9 +24,9 @@ import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type3;
 
 public interface CoordinationContext {
 	public static final class Factory {
-		public static CoordinationContext newContext(OMElement contextElement) {
-			return new SimpleCoordinationContext(contextElement);
-		}
+//		public static CoordinationContext newContext(OMElement contextElement) {
+//			return new SimpleCoordinationContext(contextElement);
+//		}
 
 		public static CoordinationContext newContext(String activityId,
 				String coordinationType, EndpointReference epr) {

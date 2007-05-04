@@ -46,10 +46,9 @@ public class TransactionInHandler extends AbstractHandler {
 	public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
 		KandulaResource resource;
 		String wsaAction = msgContext.getWSAAction();
-		if ((wsaAction != Constants.WS_COOR_CREATE_COORDINATIONCONTEXT)
-				&& (wsaAction != Constants.WS_COOR_REGISTER)
-				&& (wsaAction != Constants.WS_AT_COMMIT)
-				&& (wsaAction != Constants.WS_AT_ROLLBACK)) {
+		if (!(Constants.WS_COOR_CREATE_COORDINATIONCONTEXT.equals(wsaAction))
+                        && !(Constants.WS_COOR_REGISTER.equals(wsaAction))
+                        && !(Constants.WS_AT_COMMIT.equals(wsaAction)) && !(Constants.WS_AT_ROLLBACK.equals(wsaAction))){
 			ParticipantContext context = new ParticipantContext();
 			SOAPHeader header = msgContext.getEnvelope().getHeader();
 			OMElement coordinationElement = header
@@ -76,9 +75,13 @@ public class TransactionInHandler extends AbstractHandler {
 					context.setResource(resource);
 				} catch (Exception e) {
 					log.fatal("TransactionInHandler: Activity ID :"+context.getCoordinationContext().getActivityID()+" : "+e);
-					throw new AxisFault(e);
+					throw AxisFault.makeFault(e);
 				}
+                try{
 				ParticipantUtility.registerParticipant(context,msgContext);
+                }catch (Exception e ){
+                    System.out.println(e);
+                }
 			}
 		}
 		return InvocationResponse.CONTINUE;

@@ -86,10 +86,9 @@ public class ParticipantUtility {
 							.getCoordinatorProtocolService()));
 
 		} catch (IOException e) {
-			throw new AxisFault(e);
+			throw AxisFault.makeFault(e);
 		} catch (AbstractKandulaException e) {
-			AxisFault e1 = new AxisFault(e);
-			throw e1;
+			throw AxisFault.makeFault(e);
 		}
 	}
 }

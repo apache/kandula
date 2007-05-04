@@ -89,10 +89,11 @@ public class CompletionCommitTest extends TestCase {
 		TransactionManager tm = new TransactionManager("target/initiator-repository",
 				"target/initiator-repository/axis2.xml");
 		tm.begin("http://localhost:8081/axis2/services/ActivationCoordinator");
+        stub._getServiceClient().getOptions().setTimeOutInMilliSeconds(100000);
 		stub.creditOperation(new CreditOperation());
 		stub.debitOperation(new DebitOperation());
 		tm.commit();
-		Thread.sleep(5000);
+//		Thread.sleep(1000);
 	}
 
 	//	public void testEchoXMLSync() throws Exception {
