@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+	<properties>
+		<author>Hannes Erven and Georg Hicker</author>
+		<title>WS-BusinessActivity for Kandula_1 How-To</title>
+	</properties>
+
+	<body>
+
+	<section name="Business Activity basics">
+		<p align="justify">A WS-BA Business Activity is a coordination context with relaxed constraints compared to
+		WS-AT Atomic Transaction. The most important differences are:
+		<ul>
+			<li><b>Atomicity:</b> the work done in the context need not appear to be atomic to the outside, e.g. intermediate results
+					may be seen by an observer.
+			</li>
+			<li><b>Consistency:</b> while the state after the transaction finished should be consistent with business rules, it is not
+					required that all participants share a common outcome.<br />
+					In WS-AT transactions, all participants agree to either commit
+					or roll back. The decision is made for all participants.<br />
+					By contrast, WS-BA allows for the separate management of every participant, so while one participant
+					is told to cancel, other participants may complete and close their work.
+			</li>
+		</ul>
+		</p>
+	</section>
+
+	<section name="Step 1: Adopting the Web Service Interface Definition (WSDL)">
+
+		<p align="justify">When a web service client invites a business partner into a WS-Coordination transaction, they send them
+		a WS-Coordination coordination context object that includes the address of the coordination service, the transaction's identifier
+		and other data the coordination service requires.</p>
+
+		<p align="justify">The web service provider needs to allow a WS-Coordination Coordination Context object to be included with the
+		business request:
+		<blockquote><code><pre>
+			&lt;wsdl:definitions
+				xmlns:wscoor="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
+				...
+			&gt;
+				&lt;wsdl:types&gt;
+					&lt;xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+						&lt;xsd:element name="applicationRequest"&gt;
+								&lt;!-- This element needs to be added --&gt;
+								<B>&lt;xsd:element ref="wscoor:CoordinationContext" /&gt;</B>
+		
+								&lt;!-- All other application elements need not be modified --&gt;
+								&lt;xsd:element name="flightNo" type="..." .../&gt;
+								...
+						&lt;/xsd:element&gt;
+					&lt;/xsd:schema&gt;
+				&lt;/wsdl:definitions&gt;
+		
+				&lt;!-- The rest of the definitions also need not be modified --&gt;
+		
+			&lt;/wsdl:types&gt;
+		</pre></code></blockquote>
+
+		</p>
+	</section>
+
+
+	<section name="Step 2: Implementing the Service">
+		<p align="justify">
+			A WS-BA enabled web service needs to do only two things:
+			<ul>
+				<li>After receiving a CoordinationContext from the client, register yourself in the transaction.</li>
+				<li>When receiving commands from the Coordinator, do your business and report back.</li>
+			</ul>
+		</p>
+		<p align="justify">
+			Apache Kandula provides two classes for registering participants with a coordination context:
+			<ul>
+				<li><b>org.apache.kandula.coordinator.ba.participant.BAwPCParticipant</b>,
+					for registering for the Participant Completion Protocol.
+					<br />
+					Participants need to start performing their
+					work immediately and report Completed by invoking <code>this.tellCompleted()</code> when done.
+				</li>
+				<li><b>org.apache.kandula.coordinator.ba.participant.BAwCCParticipant</b>,
+					for registering for the Coordinator Completion Protocol.
+					<br />
+					Participants need to implement the onComplete method and perform their work there. Completed
+					is reported by returning a corresponding value.
+				</li>
+			</ul>
+		</p>
+		<p align="justify">
+			Your participant implementation needs to extend one of those classes and implement the abstract methods. Thats it!
+		</p>
+
+		<subsection name="Implementing the abstract methods of the participant classes">
+			<p align="justify">The following sections document what your implementation of kandula's abstract methods is required to do.</p>
+		</subsection>
+
+		<subsection name="onComplete">
+			<p align="justify">This method is only applicable for the Coordination Completion participant. When it is invoked, the
+				coordinator tells you to actually perform the requested work.<br />
+				Return <code>ParticipantCompleteResult.COMPLETED</code> when you were able to complete your work as requested, or
+				<code>ParticipantCompleteResult.HANDLED_BY_APPLICATION</code> if you like not to report something back at the
+				moment. You need to call one of the <code>tell...()</code> methods to send your response to the coordinator at any
+				time you wish.
+			</p>
+		</subsection>
+
+		<subsection name="onCancel">
+			<p align="justify">When the coordinator sends Cancel, it asks you to cancel all outstanding work. If you were able
+			to successfully abort and cancel everything, return <code>ParticipantCancelResult.CANCELED</code>. After the coordinator
+			acknowledges the receipt of Canceled, the participant is no longer needed.
+			</p>
+			<p align="justify">If the service is unable to cancel, it should have reported Completed before.</p>
+		</subsection>
+
+		<subsection name="onClose">
+			<p align="justify">
+				After having reported Completed, either from <code>onComplete</code> or by having invoked
+				<code>tellCompleted()</code>, the business partner decided to go for it. Perform whatever it takes
+				to finalize your work and return <code>ParticipantCloseResult.CLOSED</code> when done.
+			</p>
+			<p align="justify">Please note that the service may not report any fault at this stage! You must successfully complete!</p>
+		</subsection>
+
+		<subsection name="onCompensate">
+		<p align="justify">
+			After having reported Completed, either from <code>onComplete</code> or by having invoked
+			<code>tellCompleted()</code>, the business partner decided to throw away your work. Perform whatever it takes
+			to compensate previous actions and return <code>ParticipantCompensateResult.COMPENSATED</code> when done.
+		</p>
+		<p align="justify">If compensation is not possible, you need to return <code>ParticipantCompensateResult.FAULTED</code>
+			and humans must investigate the issue. This should almost never happen.
+		</p>
+		</subsection>
+		
+		<subsection name="onFinish">
+		<p align="justify">
+			The coordinator informs you that the result of your work, whatever it is, was acknowledged and that you may forget
+			about the transaction. This means the participant object may now be destroyed.
+		</p>
+		</subsection>
+	</section>
+
+	<section name="Step 3: Implementing the Client">
+		<p align="justify">
+		</p>
+	</section>
+	
+	<section name="Step 4: Adding business logic to the client">
+		<p align="justify">
+		</p>
+	</section>
+
+	<section name="Step 5: Deploying and Testing">
+		<p align="justify">
+		</p>
+	</section>
+
+	<section name="Running the samples">
+		<p align="justify">
+			To try out the samples provided with Kandula-1, you need the following prerequisites:
+			<ul>
+				<li>Apache Tomcat with Apache Axis installed</li>
+				<li>Kandula Sources from SVN checked out</li>
+			</ul>
+		</p>
+		<p align="justify">
+			The WS-BA examples require you to have two Tomcat Servers running, one acting as the
+			coordination service and one as the participants. The initiator will run independently
+			as JUnit test cases or a Swing application.
+		</p>
+
+		<subsection name="Building">
+			<p align="justify">
+				Build Kandula as usual with "maven". Build the BusinessActivity-Testsuite and the Holiday example
+				by running "ant" in the "samples/holiday" or "samples/ba-testsuite" directories.
+			</p>
+			<p align="justify">
+				Copy the jar-files from the respective "build" directories into the axis/lib folders of your
+				Axis installation.
+			</p>
+		</subsection>
+		<subsection name="Preparing the Tomcats">
+			<p align="justify">
+				If you run Kandula from an IDE such as eclipse, you can typically manage multiple configurations
+				there. The Eclipse Web Tools Projects, for example, offers to set different "base" directories with
+				different axis installations.
+			</p>
+			<p align="justify">
+				The easiest way to have two Tomcat instances running is to copy the whole "Tomcat"-directory. This tutorial
+				will refer to the "Coordination Server" and to the "Participant Server".
+			</p>
+			<p align="justify">
+				First, we configure the Coordination Server. It does not require the two JAR files from holiday and
+				ba-testsuite. Copy the "src/conf/server-only-config_with_WSBA.wsdd" to the axis/WEB-INF folder and
+				rename it to "server-config.wsdd". If the file already exists, replace it with that one.
+				Next, copy the kandula.properties and the client-config.wsdd files from src/conf/ to the
+				axis/WEB-INF/classes directory.
+				<br />
+				Now we have to make sure the correct ports are configured. Open the Tomcat/conf/server.xml file with
+				your favorite text editor, scan for the <br />
+					&lt;Connector ...&gt;<br />
+				line and make sure the port is set to 8280. If you don't want to use the TCP Monitor (which you only do
+				if you know what this is), set it to 8281.
+				<br />
+				Next, open the copy of the kandula.properties and make sure the following entries are set: <br />
+				<pre>kandula.localService=http://localhost:8281/axis/services/ <br />kandula.preferredCoordinationService=http://localhost:<B>8281</B>/axis/services/</pre>
+				The kandula.localService property shall point to the endpoint the coordination services are running,
+				and be fully qualified. It is used to generate the endpoint addresses that is sent to the peers. The
+				kandula.preferredCoordinationService property tells Kandula at which coordination service it shall
+				create new coordination contexts; at the coordinator, this should point to itself.
+			</p>
+			<p>
+				The Coordination Server is now ready!<br />
+				Start it up by invoking the Tomcat/bin/startup script and verify that the Axis List Services page
+				shows the "coordinator", "kandula_BA_PC_coordinator" and some more services named like that.
+			</p>
+			<p align="justify">
+				Second, we configure the Participant Service. This server requires the Kandula, ba-testsuite and holiday
+				jar files in its axis/web-inf/lib directory. Copy the "server-participant-only-with-test-config_with_WSBA.wsdd"
+				from the src/conf directory to the axis/WEB-INF folder and
+				rename it to "server-config.wsdd". If the file already exists, replace it with that one.
+				Next, copy the kandula.properties and the client-config.wsdd files from src/conf/ to the
+				axis/WEB-INF/classes directory.
+				<br />
+				Now we have to make sure the correct ports are configured. Open the Tomcat/conf/server.xml file with
+				your favorite text editor, scan for the <br />
+					&lt;Connector ...&gt;<br />
+				line and make sure the port is set to 8180. If you don't want to use the TCP Monitor (which you only do
+				if you know what this is), set it to 8181.
+				<br />
+				Next, open the copy of the kandula.properties and make sure the following entries are set: <br />
+				<pre>kandula.localService=http://localhost:<B>8181</B>/axis/services/ <br />kandula.preferredCoordinationService=http://localhost:8281/axis/services/</pre>
+				The kandula.localService property shall point to the endpoint the participant services are running,
+				and be fully qualified. It is used to generate the endpoint addresses that is sent to the peers.
+				The
+				kandula.preferredCoordinationService property tells Kandula at which coordination service it shall
+				create new coordination contexts.
+			</p>
+			<p>
+				The Participant Server is now ready!<br />
+				Start it up by invoking the Tomcat/bin/startup script and verify that the Axis List Services page
+				shows the "participant", "kandula_BA_PC_participant" and some more services named like that.
+			</p>
+			<p align="justify">
+				Start up now the TCP Port Monitor, if you chose to use it.
+			</p>
+		</subsection>
+		<subsection name="Run!">
+			<p align="justify">
+				After having started both servers, the port monitor if configured and verifying everything is OK,
+				start the holiday demo by issuing "ant run"
+				in the holiday folder.
+			</p>
+			<p align="justify">
+				The holiday example consists of two rental providers that offer cars and rooms for rent. When starting
+				up the client, you must first chose whether you'd like atomic or mixed outcome.
+			</p>
+			<p align="justify">
+				Select "car" or "room" from the dropdown and hit the "Search for offers" button. The client now fetches
+				offers from the remote web service on the participant web server. You may search for multiple different
+				offers, also cars and rooms mixed. Choose some of the offers from the list, and hit the "add selected offer
+				to basket" button to put the offer into the basket. The client now contacts the remote web service again,
+				but this time provides the CoordinationContext to enrol a participant. The Rental Web Service immediatly
+				enroles for the transaction.
+			</p>
+			<p align="justify">
+				To check the state of the business activity, switch to the "basket" tab and hit the "refresh basket" button.
+				Depending on mixed or atomic outcome, the available buttons at the bottom change. With mixed outcome, select
+				one or more participants from the basket and hit the "complete", "close", etc. buttons to send the
+				corresponding messages to the participants. Refresh will always refresh the participant list.
+				If you press buttons to send messages that are not applicable in the current state of the context or participant,
+				there is no error message but the command is silently ignored.
+			</p>
+		</subsection>
+	</section>
+</body>
+</document>
