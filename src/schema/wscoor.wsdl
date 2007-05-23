@@ -70,14 +70,14 @@ No other rights are granted by implication, estoppel or otherwise.
 			</wsdl:input>
 		</wsdl:operation>
 	</wsdl:binding>
-    
+
   <wsdl:portType name="RegistrationCoordinatorPortType">
     <wsdl:operation name="RegisterOperation">
       <wsdl:input message="wscoor:Register"
         wsa:Action="http://schemas.xmlsoap.org/ws/2004/10/wscoor/Register"/>
     </wsdl:operation>
   </wsdl:portType>
-  
+
     <wsdl:binding name="RegistrationCoordinator" type="wscoor:RegistrationCoordinatorPortType">
 		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
 		<wsdl:operation name="RegisterOperation">
@@ -105,11 +105,11 @@ No other rights are granted by implication, estoppel or otherwise.
 			</wsdl:input>
 		</wsdl:operation>
 	</wsdl:binding>
-    
-  
-  
-  
-  
+
+
+
+
+
   <!-- Optional Syncronous RPC Port Types -->
   <wsdl:portType name="ActivationPortTypeRPC">
     <wsdl:operation name="CreateCoordinationContextOperation">
@@ -132,8 +132,8 @@ No other rights are granted by implication, estoppel or otherwise.
 <wsdl:binding name="ActivationPortTypeRPCBinding" type="wscoor:ActivationPortTypeRPC">
 		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
 		<wsdl:operation name="CreateCoordinationContextOperation">
-			<soap:operation soapAction="http://xxx"/>
-			<wsdl:input>				
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wscoor/CreateCoordinationContext"/>
+			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
 			<wsdl:output>
@@ -145,7 +145,7 @@ No other rights are granted by implication, estoppel or otherwise.
 <wsdl:binding name="RegistrationPortTypeRPCBinding" type="wscoor:RegistrationPortTypeRPC">
 		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
 		<wsdl:operation name="RegisterOperation">
-			<soap:operation soapAction="http://xxx"/>
+			<soap:operation soapAction="http://schemas.xmlsoap.org/ws/2004/10/wscoor/Register"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -155,26 +155,6 @@ No other rights are granted by implication, estoppel or otherwise.
 		</wsdl:operation>
 </wsdl:binding>
 
-<wsdl:service name="xxx">
-		<wsdl:port binding="wscoor:ActivationCoordinator" name="ActivationCoordinator">
-      			<soap:address location="http://localhost:8081/axis/services/ActivationCoordinator"/>
-   		</wsdl:port>
-		<wsdl:port binding="wscoor:ActivationRequester" name="ActivationRequester">
-      			<soap:address location="http://localhost:8081/axis/services/ActivationRequester"/>
-   		</wsdl:port>
-   				<wsdl:port binding="wscoor:RegistrationCoordinator" name="RegistrationCoordinator">
-      			<soap:address location="http://localhost:8081/axis/services/RegistrationCoordinator"/>
-   		</wsdl:port>
-		<wsdl:port binding="wscoor:RegistrationRequester" name="RegistrationRequester">
-      			<soap:address location="http://localhost:8081/axis/services/RegistrationRequester"/>
-   		</wsdl:port>
-		<wsdl:port binding="wscoor:ActivationPortTypeRPCBinding" name="ActivationRPC">
-      			<soap:address location="http://localhost:8081/axis/services/ActivationRPC"/>
-   		</wsdl:port>
-		<wsdl:port binding="wscoor:RegistrationPortTypeRPCBinding" name="RegistrationRPC">
-      			<soap:address location="http://localhost:8081/axis/services/RegistrationRPC"/>
-   		</wsdl:port>
-</wsdl:service>
-
 </wsdl:definitions>
+
 

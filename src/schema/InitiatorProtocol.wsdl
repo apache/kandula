@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+	xmlns="http://big.tuwien.ac.at/xxx"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
+	xmlns:wsba="http://schemas.xmlsoap.org/ws/2004/10/wsba"
+	xmlns:wscoor="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	name="TellMeWhatToDoDemoService"
+	targetNamespace="http://big.tuwien.ac.at/xxx"
+	xmlns:tns="http://big.tuwien.ac.at/xxx"
+>
+  <wsdl:types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://big.tuwien.ac.at/xxx">
+	      <xs:import namespace="http://schemas.xmlsoap.org/ws/2004/10/wsba" schemaLocation="../schema/wsba.xsd"/>
+	      <xs:import namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" schemaLocation="../schema/addr.xsd"/>
+	      <xs:import namespace="http://schemas.xmlsoap.org/ws/2004/10/wscoor" schemaLocation="../schema/wscoor.xsd" />
+
+			<xsd:complexType name="BAParticipantReferenceType">
+				<xsd:sequence>
+					<xsd:element name="participantMatchcode" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:complexType>
+
+			<xsd:complexType name="BAParticipantType" nillable="false">
+				<xsd:sequence>
+        			<xsd:element name="participantMatchcode" type="BAParticipantReferenceType" minOccurs="1" maxOccurs="1"/>
+        			<xsd:element ref="wsba:Status"  minOccurs="1" maxOccurs="1"/>
+        			<xsd:element name="resultState" type="wsba:StatusType"  minOccurs="1" maxOccurs="1"/>
+        			<xsd:element name="protocol" type="xsd:anyURI" minOccurs="1" maxOccurs="1" />
+        			<!-- maybe we extend this by more information, e.g. registration time, last message, ... -->
+				</xsd:sequence>
+			</xsd:complexType>
+
+        	<xsd:complexType name="BAParticipantRefListType">
+        		<xsd:sequence>
+        			<xsd:element name="participant" type="BAParticipantReferenceType" minOccurs="1" maxOccurs="unbounded"/>
+        		</xsd:sequence>
+        	</xsd:complexType>
+
+        	<xsd:complexType name="BAParticipantListWithStateType">
+        		<xsd:sequence>
+        			<xsd:element name="participant" type="BAParticipantType" minOccurs="0" maxOccurs="unbounded"/>
+        		</xsd:sequence>
+        	</xsd:complexType>
+
+        	<xsd:complexType name="getCoordCtxWCodeReqType">
+				<xsd:sequence>
+					<xsd:element name="matchcode" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+				</xsd:sequence>
+        	</xsd:complexType>
+
+			<xsd:complexType name="listParticipantsReqType" />
+		</xsd:schema>
+	</wsdl:types>
+
+	<wsdl:message name="cancelParticipantsReq">
+		<wsdl:part name="participantsToCancel" type="BAParticipantRefListType"/>
+	</wsdl:message>
+
+	<wsdl:message name="cancelOrCompensateAllParticipantsReq">
+	</wsdl:message>
+
+	<wsdl:message name="closeAllParticipantsReq">
+	</wsdl:message>
+
+	<wsdl:message name="participantListWithStateResponse">
+		<wsdl:part name="participantList" type="tns:BAParticipantListWithStateType"/>
+	</wsdl:message>
+
+	<wsdl:message name="closeParticipantsReq">
+		<wsdl:part name="participantsToClose" type="tns:BAParticipantRefListType"/>
+	</wsdl:message>
+
+	<wsdl:message name="compensateParticipantsReq">
+		<wsdl:part name="participantsToCompensate" type="tns:BAParticipantRefListType"/>
+	</wsdl:message>
+
+	<wsdl:message name="completeParticipantsReq">
+		<wsdl:part name="participantsToComplete" type="tns:BAParticipantRefListType"/>
+	</wsdl:message>
+
+	<wsdl:message name="getCoordinationContextWithMatchcodeReqMsg">
+		<wsdl:part name="getCoordinationContextWithMatchcode" type="tns:getCoordCtxWCodeReqType" />
+	</wsdl:message>
+
+	<wsdl:message name="CreateCoordinationContextResponse">
+		<wsdl:part name="parameters" element="wscoor:CreateCoordinationContextResponse"/>
+	</wsdl:message>
+
+	<wsdl:message name="listParticipantsReq">
+		<wsdl:part name="listParticipants" type="listParticipantsReqType" />
+	</wsdl:message>
+
+	<!-- port type for mixed outcome coordination contexts -->
+	<wsdl:portType name="CoordinatorInitiatorPortType_MixedOutcome_StubInterface">
+		<!-- operations commons to mixed and atomic port types -->
+		<wsdl:operation name="getCoordinationContextWithMatchcode">
+			<wsdl:input message="tns:getCoordinationContextWithMatchcodeReqMsg"	/>
+			<wsdl:output message="tns:CreateCoordinationContextResponse" />
+		</wsdl:operation>
+
+		<wsdl:operation name="listParticipants">
+			<wsdl:input message="tns:listParticipantsReq" />
+			<wsdl:output message="tns:participantListWithStateResponse" />
+		</wsdl:operation>
+		<!-- operations specific for mixed port type -->
+		<wsdl:operation name="completeParticipants">
+			<wsdl:input message="tns:completeParticipantsReq"/>
+			<wsdl:output message="tns:participantListWithStateResponse"/>
+		</wsdl:operation>
+
+		<!-- operations specific for mixed port type -->
+		<wsdl:operation name="cancelParticipants">
+			<wsdl:input message="tns:cancelParticipantsReq"/>
+			<wsdl:output message="tns:participantListWithStateResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="closeParticipants">
+			<wsdl:input message="tns:closeParticipantsReq"/>
+			<wsdl:output message="tns:participantListWithStateResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="compensateParticipants">
+			<wsdl:input message="tns:compensateParticipantsReq"/>
+			<wsdl:output message="tns:participantListWithStateResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<!-- port type for atomic outcome coordination contexts -->
+	<wsdl:portType name="CoordinatorInitiatorPortType_AtomicOutcome_StubInterface">
+		<!-- operations commons to mixed and atomic port types -->
+		<wsdl:operation name="getCoordinationContextWithMatchcode">
+			<wsdl:input message="tns:getCoordinationContextWithMatchcodeReqMsg" />
+			<wsdl:output message="tns:CreateCoordinationContextResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="listParticipants">
+			<wsdl:input message="tns:listParticipantsReq" />
+			<wsdl:output message="tns:participantListWithStateResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="completeParticipants">
+			<wsdl:input message="tns:completeParticipantsReq"/>
+			<wsdl:output message="tns:participantListWithStateResponse"/>
+		</wsdl:operation>
+
+		<!-- operations specific for atomic port type -->
+		<wsdl:operation name="cancelOrCompensateAllParticipants">
+			<wsdl:input message="tns:cancelOrCompensateAllParticipantsReq"/>
+			<wsdl:output message="tns:participantListWithStateResponse"/>
+		</wsdl:operation>
+		<!-- operations specific for atomic port type -->
+		<wsdl:operation name="closeAllParticipants">
+			<wsdl:input message="tns:closeAllParticipantsReq"/>
+			<wsdl:output message="tns:participantListWithStateResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+
+
+	<wsdl:binding name="CoordinatorInitiator_Mixed_Binding" type="CoordinatorInitiatorPortType_MixedOutcome_StubInterface">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+		<wsdl:operation name="getCoordinationContextWithMatchcode">
+			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#getCoordinationContextWithMatchcode" />
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="listParticipants">
+			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#listParticipants"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="completeParticipants">
+			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#completeParticipants"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+
+		<wsdl:operation name="cancelParticipants">
+			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#cancelParticipants"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="closeParticipants">
+			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#cancelParticipants"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="compensateParticipants">
+			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#cancelParticipants"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<wsdl:binding name="CoordinatorInitiator_Atomic_Binding" type="CoordinatorInitiatorPortType_AtomicOutcome_StubInterface">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+		<wsdl:operation name="getCoordinationContextWithMatchcode">
+			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#getCoordinationContextWithMatchcode"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="listParticipants">
+			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#listParticipants"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+		<wsdl:operation name="completeParticipants">
+			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#completeParticipants"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+
+		<wsdl:operation name="cancelOrCompensateAllParticipants">
+			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#cancelAllParticipants"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="closeAllParticipants">
+			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#closeAllParticipants"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+
+
+	<wsdl:service name="CoordinatorInitiatorService">
+		<wsdl:port binding="CoordinatorInitiator_Mixed_Binding" name="CoordinatorInitiatorPort_MixedOutcome">
+			<soap:address location="http://localhost:8181/axis/services/CoordinatorInitiatorService"/>
+		</wsdl:port>
+		<wsdl:port binding="CoordinatorInitiator_Atomic_Binding" name="CoordinatorInitiatorPort_AtomicOutcome">
+			<soap:address location="http://localhost:8181/axis/services/CoordinatorInitiatorService"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

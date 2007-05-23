@@ -325,7 +325,6 @@ No other rights are granted by implication, estoppel or otherwise.
 	<wsdl:binding name="CoordinatorRPCBinding" type="wsat:CoordinatorPortTypeRPC">
 		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
 		<wsdl:operation name="ReplayOperation">
-			<soap:operation soapAction="http://foo"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -334,7 +333,6 @@ No other rights are granted by implication, estoppel or otherwise.
 			</wsdl:output>
 		</wsdl:operation>
 		<wsdl:operation name="AbortedOperation">
-			<soap:operation soapAction="http://foo"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -343,7 +341,6 @@ No other rights are granted by implication, estoppel or otherwise.
 			</wsdl:output>
 		</wsdl:operation>
 		<wsdl:operation name="ReadOnlyOperation">
-			<soap:operation soapAction="http://foo"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -352,8 +349,9 @@ No other rights are granted by implication, estoppel or otherwise.
 			</wsdl:output>
 		</wsdl:operation>
 	</wsdl:binding>
+	
 
-	<wsdl:service name="foo">
+	<wsdl:service name="KandulaATservice">
 		<wsdl:port binding="wsat:ParticipantBinding" name="Participant">
       			<soap:address location="http://localhost:8081/axis/services/Participant"/>
    		</wsdl:port>
@@ -365,7 +363,7 @@ No other rights are granted by implication, estoppel or otherwise.
    		</wsdl:port>
 		<wsdl:port binding="wsat:CompletionCoordinatorBinding" name="CompletionCoordinator">
    			<soap:address location="http://localhost:8081/axis/services/CompletionCoordinator"/>
-   		</wsdl:port>   					
+   		</wsdl:port>
 		<wsdl:port binding="wsat:ParticipantRPCBinding" name="ParticipantRPC">
       			<soap:address location="http://localhost:8081/axis/services/ParticipantRPC"/>
    		</wsdl:port>

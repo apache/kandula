@@ -36,13 +36,9 @@ No other rights are granted by implication, estoppel or otherwise.
       <xsd:element ref="wscoor:Expires" minOccurs="0"/>
       <xsd:element name="CoordinationType" type="xsd:anyURI"/>
       <xsd:element name="RegistrationService" type="wsa:EndpointReferenceType"/>
-      <!--////////////-->    
-      <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>    
     </xsd:sequence>
     <xsd:anyAttribute namespace="##other" processContents="lax"/>    
   </xsd:complexType>
-  
-  <!--
   <xsd:element name="CoordinationContext">
     <xsd:complexType>
       <xsd:complexContent>
@@ -54,49 +50,34 @@ No other rights are granted by implication, estoppel or otherwise.
       </xsd:complexContent>
     </xsd:complexType>
   </xsd:element>
-  -->
-  
   <xsd:complexType name="CreateCoordinationContextType">
     <xsd:sequence>
-      <xsd:element ref="wscoor:Expires" minOccurs="0"/>      
-      <!--
-	      <xsd:element name="CurrentContext" minOccurs="0">
-    	    <xsd:complexType>
-          	<xsd:complexContent>
-        	    <xsd:extension base="wscoor:CoordinationContextType">
-            	  <xsd:sequence>
-                	<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
-              	</xsd:sequence>
-       	     </xsd:extension>
-        	  </xsd:complexContent>
-        	</xsd:complexType>        
-      	</xsd:element>
-      -->
-      <xsd:element name="CurrentContext" type="wscoor:CoordinationContextType" minOccurs="0"/>
-      
+      <xsd:element ref="wscoor:Expires" minOccurs="0"/>
+      <xsd:element name="CurrentContext" minOccurs="0">
+        <xsd:complexType>
+          <xsd:complexContent>
+            <xsd:extension base="wscoor:CoordinationContextType">
+              <xsd:sequence>
+                <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+              </xsd:sequence>
+            </xsd:extension>
+          </xsd:complexContent>
+        </xsd:complexType>
+      </xsd:element>
       <xsd:element name="CoordinationType" type="xsd:anyURI"/>
       <xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
     <xsd:anyAttribute namespace="##other" processContents="lax"/>
   </xsd:complexType>
-  
   <xsd:element name="CreateCoordinationContext" type="wscoor:CreateCoordinationContextType"/>
-  
   <xsd:complexType name="CreateCoordinationContextResponseType">
     <xsd:sequence>
-      <!--
-      	<xsd:element ref="wscoor:CoordinationContext"/>
-      -->
-      <xsd:element name="CoordinationContext" type="wscoor:CoordinationContextType"/>
-      
-      
+      <xsd:element ref="wscoor:CoordinationContext"/>
       <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
     </xsd:sequence>
     <xsd:anyAttribute namespace="##other" processContents="lax"/>
   </xsd:complexType>
-  
   <xsd:element name="CreateCoordinationContextResponse" type="wscoor:CreateCoordinationContextResponseType"/>
-  
   <xsd:complexType name="RegisterType">
     <xsd:sequence>
       <xsd:element name="ProtocolIdentifier" type="xsd:anyURI"/>
@@ -114,7 +95,6 @@ No other rights are granted by implication, estoppel or otherwise.
     <xsd:anyAttribute namespace="##other" processContents="lax"/>
   </xsd:complexType>
   <xsd:element name="RegisterResponse" type="wscoor:RegisterResponseType"/>
-  
   <xsd:simpleType name="ErrorCodes">
     <xsd:restriction base="xsd:QName">
       <xsd:enumeration value="wscoor:AlreadyRegistered"/>
