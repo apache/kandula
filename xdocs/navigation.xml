@@ -1,9 +1,8 @@
-
-<project name="Kandula">
-  <title>Kandula</title>
+<project name="Kandula-1">
+  <title>Kandula-1</title>
   <body>
-    <menu name="Kandula">
-		<item name="Architecture Guide" href="architecture-guide.html"/>
+    <menu name="Kandula-1">
+		<item name="WS-AT How-To" href="ws-at--how_to_use.html"/>
 		<item name="WS-BA How-To" href="ws-ba--how_to_use.html"/>
     </menu>
   </body>

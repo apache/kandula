@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+	<properties>
+		<author>Dasarath Weeratunge (dweeratu@cs.purdue.edu)</author>
+		<title>WS-AtomicTransaction for Kandula-1 How-To</title>
+	</properties>
+<body>
+        <section name="Atomic Transaction basics">
+                <p>
+                    Think of a hypothetical web service that provides banking services. The service
+                    provides 2 operations: a credit operation and a debit operation. Now if the two
+                    operations are to be used to perform a monetary transfer between two accounts, it
+                    must be ensured that both operations succeed. Under these circumstances, the web
+                    services coordination framework can be used to ensure the atomicity of operations.</p>
+                <p>
+                    The sample code below shows how a non-J2EE client may use the Kandula implementation
+                    in this scenario.</p>
+                <source>
+import org.apache.kandula.coordinator.at.TransactionManagerImpl;
+
+public class ...  {
+    
+    public ... foo(....) {
+        Bank bank= new BankServiceLocator().getBank();
+        TransactionManagerImpl tm =
+            TransactionManagerImpl.getInstance();
+        tm.begin();
+        try {
+            bank.credit(1001, 10);
+            bank.debit(1002, 10);
+        }catch (Exception e) {
+            tm.rollback();
+        }
+        tm.commit();
+    }
+}
+</source>
+                <p>
+                    Though the web services coordination framework is platform independent, participant
+                    services unavoidably need to use platform-specific technologies to perform transactional
+                    work. For instance, if the banking service mentioned above is implemented in J2EE,
+                    its would use JTA. Hence in the context of coordinated activities, the underlying
+                    JTA runtime is required to coordinate with an external coordinator to decide if
+                    and when to make any work performed as part of such activities, persistent. In this
+                    scenario, Kandula interposes between the local JTA implementation and external coordinator
+                    to allow transactions to be propagated to and from J2EE to web services domain.</p>
+                <p>
+                    To illustrate the point further, consider how the same use case illustrated above
+                    would be implemented by a J2EE client.</p>
+                <source>
+public class ... implements SessionBean {
+    private SessionContext ctx;
+
+    public ... foo(....) {
+        Bank bank= new BankServiceLocator().getBank();
+        UserTransaction ut= ctx.getUserTransaction();
+        ut.begin();
+        try {
+            bank.credit(1001, 10);
+            bank.debit(1002, 10);
+        }catch (Exception e) {
+            ut.rollback();
+        }
+        ut.commit();
+    }
+}
+</source> 
+                <p>
+                    Notice that the component uses JTA to ensure atomicity of operations. At runtime
+                    however, the transaction context of the calling thread is propagated to the remote
+                    service using the web services coordination framework.</p>
+</section>               
+<section name="How to download and build">
+                <ol>
+                    <li>
+                        <p>
+                            Checkout Kandula1 from the svn repository using an svn client at the following URL:
+                            <a href="https://svn.apache.org/repos/asf/webservices/kandula/branches/Kandula_1/">https://svn.apache.org/repos/asf/webservices/kandula/branches/Kandula_1/</a>.
+                            Let us call the directory to which you checked out Kandula1, <tt>KANDULA_HOME</tt>.</p>
+                    </li>
+                    <li>
+                        <p>
+                            Download and install Apache Tomcat. (5.0 or later required).</p>
+                    </li>
+                    <li>
+                        <p>
+                            Download and install Apache Axis (1.3 or later required). Do NOT deploy Kandula
+                            on a version of Axis different from the version on which it was built. Rebuild Kandula
+                            if this is required on the required version by modifying the build files. However,
+                            you may use different Axis versions on client/server ends.</p>
+                    </li>
+                    <li>
+                        <p>
+                            Download and install Apache Maven 1.x (2.0 not supported).</p>
+                    </li>
+                    <li>
+                        <p>
+                            Download and install Apache Ant (1.6.5 or later).</p>
+                    </li>
+                    <li>
+                        <p>
+                            Set the kandula.context property in <tt>%KANDULA_HOME%/src/conf/kandula.properties</tt>,
+                            to the context under which services are deployed in Axis. Normally this is: <tt>http://localhost:8080/axis/services/</tt></p>
+                    </li>
+                    <li>
+                        <p>
+                            Build Kandula using Maven. Use the command <tt>maven</tt> in <tt>%KANDULA_HOME%</tt>.
+                            This will create the directory <tt>%KANDULA_HOME%/target</tt>. You will find the
+                            <tt>kandula-0.2-SNAPSHOT.jar</tt> along with all other required <tt>*.jar</tt> files
+                            in the directory <tt>%KANDULA_HOME%/target/lib</tt>.</p>
+                    </li>
+                    <li>
+                        <p>
+                            To build the sample applications, move to each of the sample directories in <tt>%KANDULA_HOME%/src/samples/</tt>
+                            and use the command <tt>ant dist</tt>.</p>
+                    </li>
+                </ol>
+</section>
+<section name="How to deploy">
+                <ol>
+                    <li>
+                        <p>
+                            Move all Apache Axis jars from <tt>%AXIS_DEPLOY%/WEB-INF/lib</tt> to <tt>%TOMCAT_HOME%/shared/lib</tt>.</p>
+                    </li>
+                    <li>
+                        <p>
+                            Move all <tt>geronimo-*.jar</tt> files, <tt>addressing-SNAPSHOT.jar</tt> and <tt>kandula-0.2-SNAPSHOT.jar</tt>
+                            to <tt>%TOMCAT_HOME%/shared/lib</tt>.</p>
+                    </li>
+                    <li>
+                        <p>
+                            Copy the <tt>*.jar</tt> file in the <tt>build</tt> directory of each sample application
+                            to <tt>%AXIS_DEPLOY%/WEB-INF/lib</tt>.</p>
+                    </li>
+                    <li>
+                        <p>
+                            Copy the <tt>server-config.wsdd</tt> file in <tt>%KANDULA_HOME%/src/conf/</tt> to
+                            <tt>%AXIS_DEPLOY%/WEB-INF/</tt>.</p>
+                    </li>
+                    <li>
+                        <p>
+                            Copy the <tt>client-config.wsdd</tt> file in <tt>%KANDULA_HOME%/src/conf/</tt> to
+                            <tt>%AXIS_DEPLOY%/WEB-INF/classes</tt>.</p>
+                    </li>
+                    <li>
+                        <p>
+                            Start Tomcat. To assure that Kandula has been properly deployed, first list all
+                            deployed services in Axis from the "Happy Axis" page and then verify that you can
+                            view the WSDL of each service.</p>
+                    </li>
+                </ol>
+</section>
+<section name="How to run the sample applications">
+                <p>
+                    Sample applications reside in the directory <tt>%KANDULA_HOME%/src/samples</tt>.
+                    The Axis artifacts necessary to deploy all the samples are also included in <tt>%KANDULA_HOME%/src/conf/server-config.wsdd</tt>.
+                    Hence unless you deploy the samples along with Kandula, you need to remove those
+                    elements from the <tt>server-config.wsdd</tt> file copied to <tt>%AXIS_DEPLOY%/WEB-INF/</tt>
+                    before you start Tomcat. Further, different samples use different handlers. You
+                    need to change your handler configuration as appropriate when you try out a particular
+                    sample application.</p>
+                <subsection name="How to setup the TCP sniffer">
+                <p>
+                    The default configuration of Kandula assumes that you will use a TCP sniffer such
+                    as the "tcpmon" tool that comes with Apache Axis to monitor TCP traffic while running
+                    the sample applications. We also assume that Tomcat would be run on port <tt>8080</tt>
+                    and services in Axis are deployed under the URL: <tt>http://localhost:8080/axis/services/</tt>.
+                    Hence, to facilitate monitoring of traffic, all Stubs in Kandula forward messages
+                    that would otherwise be forwarded to port 8080 to port 8081.</p>
+                <p>
+                    Therefore, inorder to run the samples (or any other application that uses Kandula
+                    in the default setting) you MUST forward port 8081 (of your local machine) to port
+                    8080.</p>
+                <p>
+                    You can change this behaviour by editing the WSDL files in <tt>%KANDULA_HOME%/src/schema/</tt>
+                    and rebuilding Kandula thereafter.</p>
+	</subsection>
+        <subsection name="Test-suite1">
+                <p>
+                    This sample application demostrates how to use Kandula to initiate and terminate
+                    transactions using the WS-AtomicTransaction protocol. It also demostrates the behaviour
+                    of Kandula under a number of failure scenarios. Note that we use pseudo XAResouces
+                    instead of actual applications such as Databases, Messaging etc. to simplify the
+                    testing process. Hence the application explicitly enlists all XAResources used in
+                    operations. This would not be the case with real applications however. The container
+                    would normally takecare of this for you, transparently.</p>
+                <p>
+                    The most important aspect of this sample application is that it demostrates how
+                    Kandula can be used to expose transactional resources in a J2EE environment via
+                    the web services transaction management framework. After the revision of code in
+                    December 2005, Kandula1 now supports ONLY the "Geronimo" Transaction Manager. The
+                    required jars are automatically downloaded by Maven during the build process.</p>
+                <p>
+                    To run the sample, do the following.</p>
+                <ol>
+                    <li>
+                        <p>
+                            First ensure that the transaction handler used in your <tt>%AXIS_DEPLOY%/WEB-INF/classes/client-config.wsdd</tt>
+                            is <tt>org.apache.kandula.geronimo.TxHandler</tt>.
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Next open up the JUnit test case provided in the <tt>src</tt> directory in your
+                            favourite IDE. This file contains a number of test cases. Each test case should
+                            be run on its own. If you run a number of test cases this would result in a whole
+                            lot of messages which would be rather difficult to interpret. Also note that some
+                            of the test scenarios are positive tests while some others are negative. A short
+                            description of the success criteria of most of the test cases can be found in the
+                            <tt>success-criteria.txt</tt> file in <tt>%KANDULA_HOME%/src/samples/test-suite1/</tt>.</p>
+                    </li>
+                    <li>
+                        <p>
+                            To run the test cases use the standard JUnit test harness of your IDE.</p>
+                    </li>
+                </ol>
+</subsection>
+<subsection name="InteropIBM">
+                <p>
+                    The objective of this sample application is to test Kandula against IBM WS-AtomicTransaction
+                    implementation for interoperability. For details on interoperability test, please
+                    refer to the documentation available from: <a href="http://wsi.alphaworks.ibm.com:8080/interop/index.html">
+                        http://wsi.alphaworks.ibm.com:8080/interop/index.html</a> . We suggest that
+                    you read through this specification before moving on since some of the terminology
+                    used in the following section is explained in the specification.</p>
+                <p>
+                    The sample allows you to exercies Kandula in both IA (Initiator Application) and
+                    PA (Participant Application) configurations. We have successfully tested Kandula
+                    in IA role against the IBM implementation in PA role for all scenarios except those
+                    that involve WS-Security. Testing under the opposite configuration is still under
+                    way. From the tests carried out thus far, Kandula in PA role interoperates with
+                    IBM successfully in all scenarios upto Section 5.0 of the test scenario specification.</p>
+                <p>
+                    To run this sample, you need to use <tt>org.apache.kandula.coordinator.at.TxHandler</tt>
+                    in your <tt>%AXIS_DEPLOY%/WEB-INF/classes/client-config.wsdd</tt>. Most importantly
+                    you MUST have an externally visible URL for your web container. If not, you may
+                    setup and HTTP tunnel. However, in this case you must set the <tt>kandula.context</tt>
+                    property to the externally visible URL. If neither option is available, you may
+                    still run the sample using Kandula in both IA and PA configurations simultaniously.
+                    The resulting message exchanges SHOULD still comply with the documented success
+                    criteria.</p>
+                <p>
+                    Further, in this particular scenario, the Kandula1 Stubs are pre-configured to forward
+                    any messages addressed to <tt>http://wsi.alphaworks.ibm.com:8080/</tt> to <tt>http://localhost:8082/</tt>.
+                    This allows you to monitor all outgoing traffic. So before you run the sample forward
+                    the port 8082 of your local machine to <tt>http://wsi.alphaworks.ibm.com:8080/</tt></p>
+                <p>
+                    To test Kandula in PA role follow the steps below.</p>
+                <ol>
+                    <li>
+                        <p>
+                            Deploy the sample and start Tomcat. Ensure that InteropService is listed (along
+                            with its operations) under deployed services in Axis and that you are able to view
+                            the WSDL.</p>
+                    </li>
+                    <li>
+                        <p>
+                            Open the page <a href="http://wsi.alphaworks.ibm.com:8080/wstx/interop.jsp">http://wsi.alphaworks.ibm.com:8080/wstx/interop.jsp</a>
+                            in your web browser.</p>
+                    </li>
+                    <li>
+                        <p>
+                            Enter the URL of your "InteropService" as the participant destination. Here, if
+                            you want to monitor incoming traffic, change the port from 8080 to 8081 when entering
+                            the URL and forward port 8081 to 8080 as before.</p>
+                    </li>
+                    <li>
+                        <p>
+                            Select the test scenario you want to run. Do not select scenarios from Sections
+                            5.0 or later since these have not been tested yet under this setting.</p>
+                    </li>
+                    <li>
+                        <p>
+                            Select run test.</p>
+                    </li>
+                </ol>
+</subsection>
+</section>
+</body>
+</document>
