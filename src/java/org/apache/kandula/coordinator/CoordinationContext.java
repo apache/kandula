@@ -35,7 +35,12 @@ import org.apache.kandula.wscoor.CoordinationContextTypeIdentifier;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-public class CoordinationContext extends CoordinationContextType {
+public class CoordinationContext extends org.apache.kandula.wscoor.CoordinationContext {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8381946008795050470L;
+
 	private static final Name COORDINATION_CONTEXT = new PrefixedQName(
 			"http://schemas.xmlsoap.org/ws/2004/10/wscoor",
 			"CoordinationContext", "wscoor");
@@ -61,7 +66,6 @@ public class CoordinationContext extends CoordinationContextType {
 			"ReferenceProperties", "wsa");
 
 	public CoordinationContext(CoordinationContextType c) {
-		this.set_any(c.get_any());
 		this.setCoordinationType(c.getCoordinationType());
 		this.setExpires(c.getExpires());
 		this.setIdentifier(c.getIdentifier());
@@ -73,6 +77,16 @@ public class CoordinationContext extends CoordinationContextType {
 		setIdentifier(new CoordinationContextTypeIdentifier(id));
 		setRegistrationService(epr);
 		setCoordinationType(new URI(coordinationType));
+	}
+
+	public CoordinationContext(
+			final CoordinationContextTypeIdentifier id, 
+			final URI coordinationType,
+			final EndpointReference epr
+	) {
+		setIdentifier(id);
+		setRegistrationService(epr);
+		setCoordinationType(coordinationType);
 	}
 
 	public CoordinationContext(SOAPElement el) {
@@ -100,7 +114,7 @@ public class CoordinationContext extends CoordinationContextType {
 	}
 
 	public static boolean is(SOAPElement e) {
-		return e.getElementName().equals(COORDINATION_CONTEXT);
+		return COORDINATION_CONTEXT.equals( e.getElementName() );
 	}
 
 	public void toSOAPHeaderElement(SOAPHeader header) {
