@@ -16,17 +16,12 @@
  */
 package org.apache.kandula.coordinator.at;
 
-import javax.xml.namespace.QName;
-
-import org.apache.kandula.coordinator.Coordinator;
+import org.apache.kandula.coordinator.Callback;
 import org.apache.kandula.wsat.CompletionCoordinatorPortType;
 import org.apache.kandula.wsat.CoordinatorPortType;
 
-public interface ATCoordinator extends Coordinator, CoordinatorPortType,
-		CompletionCoordinatorPortType {
-
-	final QName PARTICIPANT_REF = new QName("http://ws.apache.org/kandula",
-			"ParticipantRef");
+public interface ATCoordinator extends CoordinatorPortType,
+		CompletionCoordinatorPortType, Callback {
 
 	final String COORDINATION_TYPE_ID = "http://schemas.xmlsoap.org/ws/2004/10/wsat";
 

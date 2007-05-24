@@ -13,30 +13,69 @@ import org.apache.kandula.wscoor.RegistrationPortTypeRPC;
  * @author Dasarath Weeratunge
  *  
  */
-public interface Coordinator extends RegistrationPortTypeRPC, Callback {
+public abstract class Coordinator implements RegistrationPortTypeRPC, Callback {
 
-	AxisFault ALREADY_REGISTERED_SOAP_FAULT = new AxisFault(
+	public final static QName PARTICIPANT_REF = new QName(
+			"http://ws.apache.org/kandula", "ParticipantRef"
+	);
+
+	public static AxisFault ALREADY_REGISTERED_SOAP_FAULT(){
+		return  new AxisFault(
 			new QName("http://schemas.xmlsoap.org/ws/2004/10/wscoor",
 					"AlreadyRegistered"),
 			"The participant has already registered for the same protocol.",
 			null, null);
+	}
 
-	AxisFault INVALID_PROTOCOL_SOAP_FAULT = new AxisFault(new QName(
+	public static AxisFault INVALID_PROTOCOL_SOAP_FAULT(){ 
+		return new AxisFault(new QName(
 			"http://schemas.xmlsoap.org/ws/2004/10/wscoor", "InvalidProtocol"),
 			"The protocol is invalid or is not supported by the coordinator.",
 			null, null);
+	}
 
-	AxisFault INVALID_STATE_SOAP_FAULT = new AxisFault(new QName(
+	public static AxisFault INVALID_STATE_SOAP_FAULT(){
+		return  new AxisFault(new QName(
 			"http://schemas.xmlsoap.org/ws/2004/10/wscoor", "InvalidState"),
 			"The message was invalid for the current state of the activity.",
 			null, null);
-
-	AxisFault INVALID_PARAMETERS_SOAP_FAULT = new AxisFault(
+	}
+	public static AxisFault INVALID_STATE_SOAP_FAULT(final String faultDetail){
+		final AxisFault af = new AxisFault(new QName(
+			"http://schemas.xmlsoap.org/ws/2004/10/wscoor", "InvalidState"),
+			"The message was invalid for the current state of the activity.",
+			null, null);
+		
+		af.setFaultDetailString(faultDetail);
+		
+		return af;
+	}
+	
+	public static AxisFault CONTEXT_REFUSED_SOAP_FAULT(){ 
+		return new AxisFault(new QName(
+			"http://schemas.xmlsoap.org/ws/2004/10/wscoor", "ContextRefused"),
+			"The coordination context that was provided could not be accepted.",
+			null, null);
+	}
+	
+	public static AxisFault INVALID_PARAMETERS_SOAP_FAULT(){
+		return new AxisFault(
 			new QName("http://schemas.xmlsoap.org/ws/2004/10/wscoor",
 					"InvalidParameters"),
 			"The message contained invalid parameters and could not be processed.",
 			null, null);
-
-	CoordinationContext getCoordinationContext();
-
+	}
+	public static AxisFault INVALID_PARAMETERS_SOAP_FAULT(final String faultDetail){
+		final AxisFault af = new AxisFault(
+			new QName("http://schemas.xmlsoap.org/ws/2004/10/wscoor",
+					"InvalidParameters"),
+			"The message contained invalid parameters and could not be processed.",
+			null, null);
+		
+		af.setFaultDetailString(faultDetail);
+		
+		return af;
+	}
+	
+	abstract CoordinationContext getCoordinationContext();
 }

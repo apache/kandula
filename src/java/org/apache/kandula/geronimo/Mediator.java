@@ -132,6 +132,9 @@ public class Mediator extends AbstractParticipant implements NamedXAResource {
 
 	public int getStatus() {
 		try {
+			if (this.tx == null)
+				return Status.STATUS_NO_TRANSACTION;
+			
 			switch (tx.getStatus()) {
 			case Status.STATUS_ACTIVE:
 			case Status.STATUS_MARKED_ROLLBACK:

@@ -83,21 +83,21 @@ public class TransactionImpl {
 
 		public synchronized void committedOperation(Notification parameters) {
 			committed = true;
-			notify();
+			notifyAll();
 		}
 
 		public synchronized void abortedOperation(Notification parameters) {
 			aborted = true;
-			notify();
+			notifyAll();
 		}
 
 		public synchronized void timeout() {
 			timedOut = true;
-			notify();
+			notifyAll();
 		}
 
 		public synchronized void onFault(Name code) {
-			notify();
+			notifyAll();
 		}
 
 		public String getID() {

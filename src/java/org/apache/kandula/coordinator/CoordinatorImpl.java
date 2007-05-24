@@ -22,7 +22,7 @@ import org.apache.kandula.wscoor.RegisterType;
  * @author Dasarath Weeratunge
  *  
  */
-public abstract class CoordinatorImpl implements Coordinator {
+public abstract class CoordinatorImpl extends Coordinator {
 
 	private String id;
 
@@ -57,13 +57,13 @@ public abstract class CoordinatorImpl implements Coordinator {
 				new EndpointReference(params.getParticipantProtocolService()));
 
 		} catch (InvalidCoordinationProtocolException e) {
-			throw INVALID_PROTOCOL_SOAP_FAULT;
+			throw INVALID_PROTOCOL_SOAP_FAULT();
 
 		} catch (IllegalStateException e) {
-			throw INVALID_STATE_SOAP_FAULT;
+			throw INVALID_STATE_SOAP_FAULT();
 
 		} catch (IllegalArgumentException e) {
-			throw INVALID_PARAMETERS_SOAP_FAULT;
+			throw INVALID_PARAMETERS_SOAP_FAULT();
 		}
 
 		RegisterResponseType r = new RegisterResponseType();

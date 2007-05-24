@@ -136,7 +136,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			return;
 
 		case AT2PCStatus.COMMITTING:
-			trigger(participantRef, INVALID_STATE_SOAP_FAULT);
+			trigger(participantRef, INVALID_STATE_SOAP_FAULT());
 			return;
 
 		case AT2PCStatus.ABORTING:
@@ -156,7 +156,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			return;
 
 		case AT2PCStatus.COMMITTING:
-			trigger(participantRef, INVALID_STATE_SOAP_FAULT);
+			trigger(participantRef, INVALID_STATE_SOAP_FAULT());
 			return;
 
 		case AT2PCStatus.ABORTING:
@@ -204,7 +204,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 
 		case AT2PCStatus.NONE:
 			if (volatile2PCParticipants.containsKey(participantRef))
-				trigger(participantRef, INVALID_STATE_SOAP_FAULT);
+				trigger(participantRef, INVALID_STATE_SOAP_FAULT());
 			else {
 				epr = (EndpointReference) durable2PCParticipants.get(participantRef);
 				if (epr == null)
@@ -233,7 +233,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 		switch (status) {
 		case AT2PCStatus.ACTIVE:
 			try {
-				trigger(participantRef, INVALID_STATE_SOAP_FAULT);
+				trigger(participantRef, INVALID_STATE_SOAP_FAULT());
 			} finally {
 				rollback();
 			}
@@ -263,7 +263,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 
 		case AT2PCStatus.ABORTING:
 			if (volatile2PCParticipants.remove(participantRef) != null)
-				trigger(participantRef, INVALID_STATE_SOAP_FAULT);
+				trigger(participantRef, INVALID_STATE_SOAP_FAULT());
 			else {
 				epr = (EndpointReference) durable2PCParticipants.remove(participantRef);
 				if (epr == null)
@@ -281,7 +281,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 
 		case AT2PCStatus.NONE:
 			if (volatile2PCParticipants.containsKey(participantRef))
-				trigger(participantRef, INVALID_STATE_SOAP_FAULT);
+				trigger(participantRef, INVALID_STATE_SOAP_FAULT());
 			else {
 				epr = (EndpointReference) durable2PCParticipants.get(participantRef);
 				if (epr == null)
@@ -303,7 +303,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 		case AT2PCStatus.PREPARING_VOLATILE:
 		case AT2PCStatus.PREPARING_DURABLE:
 			try {
-				trigger(participantRef, INVALID_STATE_SOAP_FAULT);
+				trigger(participantRef, INVALID_STATE_SOAP_FAULT());
 			} finally {
 				rollback();
 			}
@@ -314,7 +314,7 @@ public class ATCoordinatorImpl extends CoordinatorImpl implements ATCoordinator 
 			return;
 
 		case AT2PCStatus.ABORTING:
-			trigger(participantRef, INVALID_STATE_SOAP_FAULT);
+			trigger(participantRef, INVALID_STATE_SOAP_FAULT());
 			return;
 
 		case AT2PCStatus.NONE:

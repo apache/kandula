@@ -58,7 +58,7 @@ public class CoordinationService implements ActivationPortTypeRPC {
 			String participantRef) {
 		EndpointReference epr = getEndpointReference(context + "coordinator", c);
 		epr.getProperties().add(
-			new MessageElement(ATCoordinator.PARTICIPANT_REF, participantRef));
+			new MessageElement(Coordinator.PARTICIPANT_REF, participantRef));
 		return epr;
 	}
 
@@ -76,12 +76,12 @@ public class CoordinationService implements ActivationPortTypeRPC {
 		return getEndpointReference(context + "faultDispatcher", callback);
 	}
 
-	public EndpointReference getFaultDispatcherService(Coordinator callback,
+	public EndpointReference getFaultDispatcherService(Callback callback,
 			String participantRef) {
 		EndpointReference epr = getEndpointReference(context
 				+ "faultDispatcher", callback);
 		epr.getProperties().add(
-			new MessageElement(ATCoordinator.PARTICIPANT_REF, participantRef));
+			new MessageElement(Coordinator.PARTICIPANT_REF, participantRef));
 		return epr;
 	}
 

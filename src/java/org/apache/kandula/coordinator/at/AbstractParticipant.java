@@ -170,7 +170,7 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 			return;
 
 		case AT2PCStatus.ABORTING:
-			throw Coordinator.INVALID_STATE_SOAP_FAULT;
+			throw Coordinator.INVALID_STATE_SOAP_FAULT();
 
 		case AT2PCStatus.COMMITTING:
 		}
@@ -201,7 +201,7 @@ public abstract class AbstractParticipant implements ParticipantPortType,
 			return;
 
 		case AT2PCStatus.COMMITTING:
-			throw Coordinator.INVALID_STATE_SOAP_FAULT;
+			throw Coordinator.INVALID_STATE_SOAP_FAULT();
 		}
 	}
 
