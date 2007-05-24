@@ -15,11 +15,12 @@
     	<ant:mkdir dir="${basedir}/target/lib"/>
     	<deploy:copy-deps todir="${basedir}/target/lib"/>
     </postGoal>
-    
+
     <preGoal name="java:compile">
-    
+
     	<mkdir dir="${maven.build.dir}/stubs/src"/>
-    		
+    	<deploy:copy-deps todir="${basedir}/target/lib"/>
+
     	<java classname="org.apache.axis.message.addressing.tools.wsdl.WSDL2Java"
     		failonerror="true" fork="yes">
     		<classpath>
@@ -36,25 +37,58 @@
     		failonerror="true" fork="yes">
     		<classpath>
     			<path refid="maven.dependency.classpath"/>
-    		</classpath>		 		
+    		</classpath>
     		<arg value="-o${maven.build.dir}/stubs/src"/>
     		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/08/addressing=org.apache.axis.message.addressing"/>
     		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/10/wsat=org.apache.kandula.wsat"/>
-    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/10/wscoor=org.apache.kandula.wscoor"/>    
+    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/10/wscoor=org.apache.kandula.wscoor"/>
     		<arg value="-xhttp://schemas.xmlsoap.org/ws/2004/08/addressing"/>
     		<arg value="${basedir}/src/schema/wsat.wsdl"/>
     	</java>
 
+		<!-- HE 2006-03-24 generate WSBA stubs and stuff -->
+    	<java classname="org.apache.axis.message.addressing.tools.wsdl.WSDL2Java"
+    		failonerror="true" fork="yes">
+    		<classpath>
+    			<path refid="maven.dependency.classpath"/>
+    		</classpath>
+    		<arg value="-o${maven.build.dir}/stubs/src"/>
+    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/08/addressing=org.apache.axis.message.addressing"/>
+    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/10/wsba=org.apache.kandula.wsba"/>
+    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/10/wscoor=org.apache.kandula.wscoor"/>
+    		<arg value="-xhttp://schemas.xmlsoap.org/ws/2004/08/addressing"/>
+    		<arg value="${basedir}/src/schema/wsba.wsdl"/>
+    	</java>
+
+		<!-- HE 2006-03-24 generate WS-BA-I stubs and stuff -->
+    	<java classname="org.apache.axis.message.addressing.tools.wsdl.WSDL2Java"
+    		failonerror="true" fork="yes">
+    		<classpath>
+    			<path refid="maven.dependency.classpath"/>
+    		</classpath>
+    		<arg value="-s" />
+    		<arg value="-o${maven.build.dir}/stubs/src"/>
+    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/08/addressing=org.apache.axis.message.addressing"/>
+    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/10/wsba=org.apache.kandula.wsba"/>
+    		<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/10/wscoor=org.apache.kandula.wscoor"/>
+    		<arg value="-Nhttp://www.big.tuwien.ac.at/projects/WS-BAI/=org.apache.kandula.wsbai"/>
+    		<arg value="-xhttp://schemas.xmlsoap.org/ws/2004/08/addressing"/>
+    		<arg value="-xhttp://schemas.xmlsoap.org/ws/2004/10/wsba"/>
+    		<arg value="-xhttp://schemas.xmlsoap.org/ws/2004/10/wscoor"/>
+    		<arg value="${basedir}/src/schema/InitiatorProtocol.wsdl"/>
+    	</java>
+
+
     	<ant:path
     		id="stubs.src.dir"
-    		location="${maven.build.dir}/stubs/src"/>    		
-    		
+    		location="${maven.build.dir}/stubs/src"/>
+
     	<maven:addPath
     		id="maven.compile.src.set"
-    		refid="stubs.src.dir"/>  
-    	
+    		refid="stubs.src.dir"/>
+
     </preGoal>
-    
+
     <goal name="build-samples">
     	<ant:ant antfile="build.xml" inheritall="true" inheritrefs="true" dir="src/samples/"/>
     </goal>

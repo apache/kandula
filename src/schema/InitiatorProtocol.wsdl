@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdl:definitions
-	xmlns="http://big.tuwien.ac.at/xxx"
+	xmlns="http://www.big.tuwien.ac.at/projects/WS-BAI/"
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
 	xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
 	xmlns:wsba="http://schemas.xmlsoap.org/ws/2004/10/wsba"
@@ -8,11 +8,11 @@
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	name="TellMeWhatToDoDemoService"
-	targetNamespace="http://big.tuwien.ac.at/xxx"
-	xmlns:tns="http://big.tuwien.ac.at/xxx"
+	targetNamespace="http://www.big.tuwien.ac.at/projects/WS-BAI/"
+	xmlns:tns="http://www.big.tuwien.ac.at/projects/WS-BAI/"
 >
   <wsdl:types>
-        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://big.tuwien.ac.at/xxx">
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.big.tuwien.ac.at/projects/WS-BAI/">
 	      <xs:import namespace="http://schemas.xmlsoap.org/ws/2004/10/wsba" schemaLocation="../schema/wsba.xsd"/>
 	      <xs:import namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" schemaLocation="../schema/addr.xsd"/>
 	      <xs:import namespace="http://schemas.xmlsoap.org/ws/2004/10/wscoor" schemaLocation="../schema/wscoor.xsd" />
@@ -159,7 +159,7 @@
 		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
 
 		<wsdl:operation name="getCoordinationContextWithMatchcode">
-			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#getCoordinationContextWithMatchcode" />
+			<soap:operation soapAction="http://www.big.tuwien.ac.at/projects/WS-BAI/#getCoordinationContextWithMatchcode" />
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -169,7 +169,7 @@
 		</wsdl:operation>
 
 		<wsdl:operation name="listParticipants">
-			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#listParticipants"/>
+			<soap:operation soapAction="http://www.big.tuwien.ac.at/projects/WS-BAI/#listParticipants"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -179,7 +179,7 @@
 		</wsdl:operation>
 
 		<wsdl:operation name="completeParticipants">
-			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#completeParticipants"/>
+			<soap:operation soapAction="http://www.big.tuwien.ac.at/projects/WS-BAI/#completeParticipants"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -190,7 +190,7 @@
 
 
 		<wsdl:operation name="cancelParticipants">
-			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#cancelParticipants"/>
+			<soap:operation soapAction="http://www.big.tuwien.ac.at/projects/WS-BAI/#cancelParticipants"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -200,7 +200,7 @@
 		</wsdl:operation>
 
 		<wsdl:operation name="closeParticipants">
-			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#cancelParticipants"/>
+			<soap:operation soapAction="http://www.big.tuwien.ac.at/projects/WS-BAI/#cancelParticipants"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -210,7 +210,7 @@
 		</wsdl:operation>
 
 		<wsdl:operation name="compensateParticipants">
-			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#cancelParticipants"/>
+			<soap:operation soapAction="http://www.big.tuwien.ac.at/projects/WS-BAI/#cancelParticipants"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -224,7 +224,7 @@
 		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
 
 		<wsdl:operation name="getCoordinationContextWithMatchcode">
-			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#getCoordinationContextWithMatchcode"/>
+			<soap:operation soapAction="http://www.big.tuwien.ac.at/projects/WS-BAI/#getCoordinationContextWithMatchcode"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -234,7 +234,7 @@
 		</wsdl:operation>
 
 		<wsdl:operation name="listParticipants">
-			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#listParticipants"/>
+			<soap:operation soapAction="http://www.big.tuwien.ac.at/projects/WS-BAI/#listParticipants"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -244,7 +244,7 @@
 		</wsdl:operation>
 
 		<wsdl:operation name="completeParticipants">
-			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#completeParticipants"/>
+			<soap:operation soapAction="http://www.big.tuwien.ac.at/projects/WS-BAI/#completeParticipants"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -255,7 +255,7 @@
 
 
 		<wsdl:operation name="cancelOrCompensateAllParticipants">
-			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#cancelAllParticipants"/>
+			<soap:operation soapAction="http://www.big.tuwien.ac.at/projects/WS-BAI/#cancelAllParticipants"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
@@ -264,7 +264,7 @@
 			</wsdl:output>
 		</wsdl:operation>
 		<wsdl:operation name="closeAllParticipants">
-			<soap:operation soapAction="http://big.tuwien.ac.at/xxx/#closeAllParticipants"/>
+			<soap:operation soapAction="http://www.big.tuwien.ac.at/projects/WS-BAI/#closeAllParticipants"/>
 			<wsdl:input>
 				<soap:body use="literal"/>
 			</wsdl:input>
