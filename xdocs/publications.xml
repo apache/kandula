@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<document>
+	<properties>
+		<author>The Apache Kandula Team</author>
+		<title>Publications in the Kandula environment</title>
+	</properties>
+
+	<body>
+
+	<section name="Introduction">
+		<p align="justify">This page provides a list of publications in the Kandula environment.
+		</p>
+	</section>
+
+	<section name="Publications Listings">
+		<ul>
+			<li>H. Erven, H. Hicker, C. Huemer and M. Zapletal:<br />
+				<b>"The Web Services–BusinessActivity–Initiator (WS-BA–I) Protocol: an
+Extension to the Web Services–BusinessActivity Specification"</b>, March 2007.<br />
+				Presented at the <a href="http://conferences.computer.org/icws/2007/">IEEE Int'l. Conference on Web Services 2007</a>,
+				<a href="http://stud4.tuwien.ac.at/~e0125577/WS-BA-I/20070424/WS-BusinessActivity-Initiator---Paper.pdf">PDF available</a> from tuwien.ac.at.<br />
+				<br />
+				<small>WS-BA-I enables the use of WS-BusinessActivity in a clear three-tier architecture. The autors provided
+					implementations of WS-BA and WS-BA-I to the Kandula project, which was also the first implemenation
+					of WS-BA-I.
+				</small>
+			</li>
+		</ul>
+	</section>
+</body>
+</document>
