@@ -89,6 +89,12 @@
         </license>
     </licenses>
   
+    <!-- Subversion SCM reference -->
+    <repository>
+    	<connection>scm:svn:http://svn.apache.org/repos/asf/webservices/kandula/branches/Kandula_1</connection>
+    	<url>http://svn.apache.org/viewvc/webservices/kandula/branches/Kandula_1/</url>
+    </repository>
+
   <!-- build information for the project -->
   <build>
     <nagEmailAddress>kandula-dev@ws.apache.org</nagEmailAddress>
