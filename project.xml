@@ -26,7 +26,7 @@
   <logo/>
   <description>Kandula will provide an open-source implementation of WS-Coordination, 
   	WS-AtomicTransaction and WS-BusinessActivity based on Axis. The initial implementation will be in 
-  	Java using Axis/Java. In addition to providing an implementation, a major focus of this project 
+  	Java using Axis/Java. In addition to providing an implementation, a major focus of this project
   	would be to ensure interoperability with other implementations of above specifications, 
   	particularly those by Microsoft (.NET) and IBM.
   </description>
@@ -58,7 +58,7 @@
             <archive>http://nagoya.apache.org/eyebrowse/SummarizeList?listId=221</archive>
         </mailingList>
     </mailingLists>
-  
+
   <!-- who the developers are for the project -->
   <developers>
         <developer>
@@ -66,14 +66,14 @@
             <id>dasarath</id>
             <email>dasarath@opensource.lk</email>
             <organization>Lanka Software Foundation (LSF), Sri Lanka.</organization>
-        </developer>      
+        </developer>
         <developer>
             <name>Sanjiva Weerawarana</name>
             <id>sanjiva</id>
             <email>sanjiva@opensource.lk</email>
             <organization>Lanka Software Foundation (LSF), Sri Lanka.</organization>
         </developer>
-<developer>
+        <developer>
             <name>Thilina Gunarathne</name>
             <id>thilina</id>
             <email>thilina@opensource.lk</email>
@@ -81,6 +81,25 @@
         </developer>
   </developers>
 
+  <contributors>
+        <contributor>
+            <name>Hannes Erven</name>
+            <email>hannes@erven.at</email>
+            <roles>
+                <role>WS-BA and WS-BA-I implementations for Kandula 1</role>
+            </roles>
+            <organization>Vienna University of Technology</organization>
+        </contributor>
+        <contributor>
+            <name>Georg Hicker</name>
+            <email>georg.hicker@reflex.at</email>
+            <roles>
+                <role>WS-BA and WS-BA-I implementations for Kandula 1</role>
+            </roles>
+            <organization>Vienna University of Technology</organization>
+        </contributor>
+  </contributors>
+  
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
