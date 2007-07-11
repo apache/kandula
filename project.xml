@@ -79,27 +79,21 @@
             <email>thilina@opensource.lk</email>
             <organization>{Lanka Software Foundation (LSF),University of Moratuwa} Sri Lanka.</organization>
         </developer>
+        <developer>
+            <name>Hannes Erven</name>
+            <id>herven</id>
+            <email>hannes@erven.at</email>
+            <organization>Vienna University of Technology</organization>
+        </developer>
+        <developer>
+            <name>Georg Hicker</name>
+            <id>ghicker</id>
+            <email>georg.hicker@reflex.at</email>
+            <organization>Vienna University of Technology</organization>
+        </developer>
   </developers>
 
-  <contributors>
-        <contributor>
-            <name>Hannes Erven</name>
-            <email>hannes@erven.at</email>
-            <roles>
-                <role>WS-BA and WS-BA-I implementations for Kandula 1</role>
-            </roles>
-            <organization>Vienna University of Technology</organization>
-        </contributor>
-        <contributor>
-            <name>Georg Hicker</name>
-            <email>georg.hicker@reflex.at</email>
-            <roles>
-                <role>WS-BA and WS-BA-I implementations for Kandula 1</role>
-            </roles>
-            <organization>Vienna University of Technology</organization>
-        </contributor>
-  </contributors>
-  
+
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
