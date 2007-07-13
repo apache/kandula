@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns="urn:ba.test.kandula.apache.org"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
+	xmlns:wsba="http://schemas.xmlsoap.org/ws/2004/10/wsba"
+	xmlns:wscoor="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	name="RentARoomHolidayService"
+	targetNamespace="urn:room.holiday.ba.demo.kandula.apache.org"
+	xmlns:tns="urn:room.holiday.ba.demo.kandula.apache.org">
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			targetNamespace="urn:room.holiday.ba.demo.kandula.apache.org">
+			<xs:import
+				namespace="http://schemas.xmlsoap.org/ws/2004/10/wsba"
+				schemaLocation="../../schema/wsba.xsd" />
+			<xs:import
+				namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing"
+				schemaLocation="../../schema/addr.xsd" />
+			<xs:import
+				namespace="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
+				schemaLocation="../../schema/wscoor.xsd" />
+
+			<xsd:element name="rentARoomOfferRequest" nillable="false">
+				<xsd:complexType name="rentARoomOfferRequestType">
+					<xsd:sequence>
+						<xsd:element ref="tns:roomRequirements" />
+						<xsd:element ref="tns:dateSpec" />
+						<xsd:element ref="tns:locSpec" />
+						<xsd:element name="renter"
+							type="tns:roomRentalPersonType" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+
+			<xsd:element name="rentARoomOfferResponse"
+				nillable="false">
+				<xsd:complexType name="rentARoomOfferResponseType">
+					<xsd:sequence>
+						<xsd:element name="metadata" type="xsd:string"
+							nillable="true" />
+						<xsd:element name="roomOffer"
+							type="tns:roomOfferType" minOccurs="0" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:complexType name="contextChoiceType">
+				<xsd:choice>
+					<xsd:element ref="wscoor:CoordinationContext" />
+				</xsd:choice>
+			</xsd:complexType>
+			<xsd:element name="rentARoomBookingRequest"
+				nillable="false">
+				<xsd:complexType name="rentARoomBookingType">
+					<xsd:sequence>
+						<xsd:element name="transactionalContext"
+							minOccurs="1" maxOccurs="1" type="tns:contextChoiceType" />
+						<xsd:element
+							ref="tns:roomBookingReference" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="rentARoomBookingResponse">
+				<xsd:complexType name="rentARoomDoBookingResponseType">
+					<xsd:sequence>
+						<xsd:element ref="tns:roomBookingReference" />
+						<xsd:element name="message" type="xsd:string" />
+						<xsd:element name="compensateUntil"
+							type="xsd:dateTime" />
+						<xsd:element name="state" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+
+
+			<xsd:element name="roomBookingReference" type="xsd:string" />
+
+			<xsd:complexType name="roomOfferType">
+				<xsd:sequence>
+					<xsd:element ref="tns:roomBookingReference" />
+					<xsd:element name="offerExpires" type="xsd:dateTime"
+						nillable="true" />
+
+					<xsd:element name="roomSpec" type="xsd:string" />
+					<xsd:element ref="tns:dateSpec" />
+					<xsd:element ref="tns:locSpec" />
+					<xsd:element name="price" type="xsd:decimal" />
+					<xsd:element name="payment" type="xsd:string"
+						minOccurs="1" maxOccurs="unbounded" />
+				</xsd:sequence>
+			</xsd:complexType>
+
+			<xsd:element name="dateSpec">
+				<xsd:complexType name="dateSpecType">
+					<xsd:sequence>
+						<xsd:element name="from" type="xsd:date" />
+						<xsd:element name="to" type="xsd:date" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="locSpec">
+				<xsd:complexType name="locSpecType">
+					<xsd:sequence>
+						<xsd:element name="location" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:element name="roomRequirements">
+				<xsd:complexType name="roomRequirementsType">
+					<xsd:sequence>
+						<xsd:element name="roomClass" type="xsd:string" />
+						<xsd:element name="minBeds"
+							type="xsd:positiveInteger" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+
+			<xsd:complexType name="roomRentalPersonType">
+				<xsd:element name="firstname" type="xsd:string" />
+				<xsd:element name="middlename" type="xsd:string" />
+				<xsd:element name="lastname" type="xsd:string" />
+				<xsd:element name="birthdate" type="xsd:date" />
+				<xsd:element name="lang" type="xsd:string" minOccurs="1"
+					maxOccurs="unbounded" />
+			</xsd:complexType>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="rentARoomOfferRequest">
+		<wsdl:part name="params" element="tns:rentARoomOfferRequest" />
+	</wsdl:message>
+	<wsdl:message name="rentARoomOfferResponse">
+		<wsdl:part name="params" element="tns:rentARoomOfferResponse" />
+	</wsdl:message>
+
+	<wsdl:message name="rentARoomDoBookingRequest">
+		<wsdl:part name="params" element="tns:rentARoomBookingRequest" />
+	</wsdl:message>
+	<wsdl:message name="rentARoomDoBookingResponse">
+		<wsdl:part name="params" element="tns:rentARoomBookingResponse" />
+	</wsdl:message>
+
+	<wsdl:portType name="RentARoomPortType">
+		<wsdl:operation name="getOffers">
+			<wsdl:input message="tns:rentARoomOfferRequest" />
+			<wsdl:output message="tns:rentARoomOfferResponse" />
+		</wsdl:operation>
+		<wsdl:operation name="doBooking">
+			<wsdl:input message="tns:rentARoomDoBookingRequest" />
+			<wsdl:output message="tns:rentARoomDoBookingResponse" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="RentARoomPortTypeBinding"
+		type="tns:RentARoomPortType">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="getOffers">
+			<soap:operation
+				soapAction="urn:holiday.ba.demo.kandula.apache.org/rentARoom/getOffers" />
+			<wsdl:input>
+				<soap:body
+					namespace="urn:holiday.ba.demo.kandula.apache.org"
+					parts="rentARoomOfferRequest" use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body
+					namespace="urn:holiday.ba.demo.kandula.apache.org"
+					parts="rentARoomOfferResponse" use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="doBooking">
+			<soap:operation
+				soapAction="urn:holiday.ba.demo.kandula.apache.org/rentARoom/doBooking" />
+			<wsdl:input>
+				<soap:body
+					namespace="urn:holiday.ba.demo.kandula.apache.org"
+					parts="rentARoomDoBookingRequest" use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body
+					namespace="urn:holiday.ba.demo.kandula.apache.org"
+					parts="rentARoomDoBookingResponse" use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="RentARoomServiceS">
+		<wsdl:port binding="tns:RentARoomPortTypeBinding"
+			name="RentARoomServicePort">
+			<soap:address
+				location="http://localhost:8181/axis/services/RentARoomService" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

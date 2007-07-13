@@ -1,0 +1,16 @@
+Main-Class: org.apache.kandula.demo.ba.holiday.client.RenterClient
+Class-Path: ./ext/client-config.wsdd ./ext/kandula.properties ./ext/ad
+ dressing-SNAPSHOT.jar ./ext/axis-1.4.jar ./ext/axis-ant-1.4.jar ./ext
+ /axis-jaxrpc-1.4.jar ./ext/axis-saaj-1.4.jar ./ext/commons-discovery-
+ 0.3-SNAPSHOT.jar ./ext/commons-logging-1.1.jar ./ext/geronimo-j2ee-1.
+ 1.jar ./ext/geronimo-kernel-1.2-SNAPSHOT.jar ./ext/geronimo-spec-j2ee
+ -1.4-rc4.jar ./ext/geronimo-transaction-1.2-SNAPSHOT.jar ./ext/junit-
+ 3.8.1.jar ./ext/kandula-0.2-SNAPSHOT.jar ./ext/lib/addressing-SNAPSHO
+ T.jar ./ext/lib/axis-1.4.jar ./ext/lib/axis-ant-1.4.jar ./ext/lib/axi
+ s-jaxrpc-1.4.jar ./ext/lib/axis-saaj-1.4.jar ./ext/lib/commons-discov
+ ery-0.3-SNAPSHOT.jar ./ext/lib/commons-logging-1.1.jar ./ext/lib/gero
+ nimo-j2ee-1.1.jar ./ext/lib/geronimo-kernel-1.2-SNAPSHOT.jar ./ext/li
+ b/geronimo-spec-j2ee-1.4-rc4.jar ./ext/lib/geronimo-transaction-1.2-S
+ NAPSHOT.jar ./ext/lib/junit-3.8.1.jar ./ext/lib/wsdl4j-1.5.3.jar ./ex
+ t/wsdl4j-1.5.3.jar
+

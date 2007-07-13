@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<project name="kandula ba demo: holiday"
+	 default="dist"
+	 basedir=".">
+
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="home.dir" value="../../.." />
+
+	<property file="${home.dir}/build.properties" />
+
+	<path id="base.classpath">
+		<fileset dir="${home.dir}/target" >
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${home.dir}/target/lib" >
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<taskdef resource="axis-tasks.properties"  classpathref="base.classpath" />
+
+	<target name="compile" depends="wsdl2java" >
+		<javac debug="true" srcdir="${src.dir};${build.dir}/src" destdir="${build.dir}">
+			<classpath refid="base.classpath" />
+		</javac>
+	</target>
+
+	<target name="clean" >
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="init" >
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.dir}/src" />
+	</target>
+
+
+	<target name="wsdl2java" depends="init">
+		<java classname="org.apache.axis.wsdl.WSDL2Java" failonerror="true" fork="yes">
+			<classpath>
+				<path refid="base.classpath" />
+			</classpath>
+			<arg value="-D" />
+
+			<!-- if deploy.wsdd is wanted uncomment the following line-->
+			<arg value="-s" />
+
+			<arg value="-o${build.dir}/src" />
+			<arg value="-Nurn:test=org.apache.kandula.demo.ba.holiday.car" />
+			<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/08/addressing=org.apache.axis.message.addressing"/>
+			<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/10/wsba=org.apache.kandula.wsba"/>
+			<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/10/wscoor=org.apache.kandula.wscoor"/>
+			<arg value="-xhttp://wsba.kandula.apache.org" />
+			<arg value="-xhttp://wscoor.kandula.apache.org" />
+			<arg value="-xhttp://schemas.xmlsoap.org/ws/2004/10/wsba" />
+			<arg value="-xhttp://schemas.xmlsoap.org/ws/2004/08/addressing" />
+			<arg value="-xhttp://schemas.xmlsoap.org/ws/2004/10/wscoor" />
+			<arg value="RentACar.wsdl" />
+		</java>
+		<java classname="org.apache.axis.wsdl.WSDL2Java" failonerror="true" fork="yes">
+			<classpath>
+				<path refid="base.classpath" />
+			</classpath>
+			<arg value="-D" />
+
+			<!-- if deploy.wsdd is wanted uncomment the following line-->
+			<arg value="-s" />
+
+			<arg value="-o${build.dir}/src" />
+			<arg value="-Nurn:test=org.apache.kandula.demo.ba.holiday.room" />
+			<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/08/addressing=org.apache.axis.message.addressing"/>
+			<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/10/wsba=org.apache.kandula.wsba"/>
+			<arg value="-Nhttp://schemas.xmlsoap.org/ws/2004/10/wscoor=org.apache.kandula.wscoor"/>
+			<arg value="-xhttp://wsba.kandula.apache.org" />
+			<arg value="-xhttp://wscoor.kandula.apache.org" />
+			<arg value="-xhttp://schemas.xmlsoap.org/ws/2004/10/wsba" />
+			<arg value="-xhttp://schemas.xmlsoap.org/ws/2004/08/addressing" />
+			<arg value="-xhttp://schemas.xmlsoap.org/ws/2004/10/wscoor" />
+			<arg value="RentARoom.wsdl" />
+		</java>
+	</target>
+
+	<target name="dist" depends="compile">
+		<copy todir="${build.dir}/ext">
+			<fileset dir="${home.dir}/target" >
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${home.dir}/target/lib" >
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+		<path id="extPath">
+			<fileset dir="${build.dir}/ext" >
+				<include name="**/*.jar" />
+			</fileset>
+		</path>
+		<property name="myclasspath" refid="extPath" />
+		<jar manifest="MANIFEST.MF" jarfile="${build.dir}/ba-demo-holiday.jar">
+			<fileset dir="${build.dir}">
+				<include name="**/*.class" />
+			</fileset>
+			<fileset dir="${home.dir}/src/conf" >
+				<include name="**/client-config.wsdd" />
+				<include name="**/kandula.properties"/>
+			</fileset>
+			<!-- <manifest>
+				<attribute name="Main-Class" value="org.apache.kandula.demo.ba.holiday.client.RenterClient" />
+				<attribute name="Class-Path" value="${myclasspath}"/>
+			</manifest> -->
+		</jar>
+	</target>
+
+	<target name="run">
+		<!-- Capture the path as a delimited property using the refid attribute -->
+		<!-- <property name="myclasspath" refid="base.classpath" /> -->
+		<!-- Emit the property to the ant console -->
+		<!-- <echo message="Classpath = ${myclasspath}" /> -->
+		<!-- get the source compile classpath in a printable form -->
+		<!--<pathconvert pathsep="${line.separator}|   |- "
+		             property="echo.path.compile"
+		             refid="extPath">
+		</pathconvert>
+		<echo message="|- compile classpath"/>
+		<echo message="|   |"/>
+		<echo message="|   |- ${echo.path.compile}"/> -->
+		<java jar="${build.dir}/ba-demo-holiday.jar" failonerror="true" fork="true"/>
+	</target>
+</project>

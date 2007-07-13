@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+	xmlns="urn:ba.test.kandula.apache.org"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
+	xmlns:wsba="http://schemas.xmlsoap.org/ws/2004/10/wsba"
+	xmlns:wscoor="http://schemas.xmlsoap.org/ws/2004/10/wscoor"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	name="TellMeWhatToDoDemoService"
+	targetNamespace="urn:ba.test.kandula.apache.org"
+	xmlns:tns="urn:ba.test.kandula.apache.org"
+>
+  <wsdl:types>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:ba.test.kandula.apache.org">
+	      <xs:import namespace="http://schemas.xmlsoap.org/ws/2004/10/wsba" schemaLocation="../../schema/wsba.xsd"/>
+	      <xs:import namespace="http://schemas.xmlsoap.org/ws/2004/08/addressing" schemaLocation="../../schema/addr.xsd"/>
+	      <xs:import namespace="http://schemas.xmlsoap.org/ws/2004/10/wscoor" schemaLocation="../../schema/wscoor.xsd" />
+
+			<xsd:element name="TestParticipantReference" type="xsd:string" nillable="false"/>
+
+        	<xsd:complexType name="TestRegisterResponseType">
+        		<xsd:sequence>
+        			<xsd:element name="TestRegisterResponse" type="wscoor:RegisterResponseType" />
+					<xsd:element ref="TestParticipantReference" />
+        		</xsd:sequence>
+        	</xsd:complexType>
+        	<xsd:complexType name="TestCanceledRequestType">
+        		<xsd:sequence>
+        			<xsd:element ref="wsba:Canceled" />
+					<xsd:element ref="TestParticipantReference" />
+        		</xsd:sequence>
+        	</xsd:complexType>
+        	<xsd:complexType name="TestClosedRequestType">
+        		<xsd:sequence>
+        			<xsd:element ref="wsba:Closed" />
+					<xsd:element ref="TestParticipantReference" />
+        		</xsd:sequence>
+        	</xsd:complexType>
+        	<xsd:complexType name="TestCompensatedRequestType">
+        		<xsd:sequence>
+        			<xsd:element ref="wsba:Compensated" />
+					<xsd:element ref="TestParticipantReference" />
+        		</xsd:sequence>
+        	</xsd:complexType>
+        	<xsd:complexType name="TestCompletedRequestType">
+        		<xsd:sequence>
+        			<xsd:element ref="wsba:Completed" />
+					<xsd:element ref="TestParticipantReference" />
+        		</xsd:sequence>
+        	</xsd:complexType>
+        	<xsd:complexType name="TestExitRequestType">
+        		<xsd:sequence>
+        			<xsd:element ref="wsba:Exit" />
+					<xsd:element ref="TestParticipantReference" />
+        		</xsd:sequence>
+        	</xsd:complexType>
+        	<xsd:complexType name="TestFaultRequestType">
+        		<xsd:sequence>
+        			<xsd:element ref="wsba:Fault" />
+					<xsd:element ref="TestParticipantReference" />
+        		</xsd:sequence>
+        	</xsd:complexType>
+        	<xsd:complexType name="TestGetStatusRequestType">
+        		<xsd:sequence>
+        			<xsd:element ref="wsba:Exit" />
+					<xsd:element ref="TestParticipantReference" />
+        		</xsd:sequence>
+        	</xsd:complexType>
+        	<xsd:complexType name="TestStatusRequestType">
+        		<xsd:sequence>
+        			<xsd:element ref="wsba:Exit" />
+					<xsd:element ref="TestParticipantReference" />
+        		</xsd:sequence>
+        	</xsd:complexType>
+
+        	<xsd:complexType name="GetStatesRequestType">
+        		<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+					<xsd:element ref="TestParticipantReference"
+						minOccurs="1" maxOccurs="unbounded" />
+        		</xsd:sequence>
+        	</xsd:complexType>
+        	<xsd:complexType name="GetStatesResponseType">
+        		<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+        			<xsd:element name="participantData" type="ParticipantReferenceWithStateType"
+						minOccurs="1" maxOccurs="unbounded" />
+        		</xsd:sequence>
+        	</xsd:complexType>
+
+			<xsd:complexType name="ParticipantReferenceWithStateType">
+				<xsd:sequence>
+					<xsd:element ref="TestParticipantReference" />
+					<xsd:element name="participantState" type="wsba:StateType" />
+				</xsd:sequence>
+			</xsd:complexType>
+
+
+        	<xsd:complexType name="GetEventsRequestType">
+        		<xsd:sequence>
+					<xsd:element ref="TestParticipantReference" />
+        		</xsd:sequence>
+        	</xsd:complexType>
+
+        	<xsd:complexType name="GetEventsResponseType">
+        		<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+					<xsd:element name="ParticipantEvent" type="EventType" minOccurs="0" maxOccurs="unbounded" />
+        		</xsd:sequence>
+        	</xsd:complexType>
+        	<xsd:complexType name="EventType" abstract="true">
+        		<xsd:sequence>
+	        		<xsd:element name="timestamp" type="xsd:date" />
+	        	</xsd:sequence>
+<!--        		<xsd:choice>
+        			<xsd:element name="messageEvent" type="EventType_Message" />
+        			<xsd:element name="statusEvent" type="EventType_Status" />
+        			<xsd:element name="faultEvent" type="EventType_Fault" />
+        		</xsd:choice>
+        		-->
+        	</xsd:complexType>
+        	<xsd:complexType name="EventType_Message">
+        		<xsd:complexContent>
+	        		<xsd:extension base="EventType">
+		        		<xsd:sequence>
+			       			<xsd:element name="messageType" type="xsd:QName"  nillable="false"/>
+			       			<xsd:element name="newState" type="wsba:StateType" nillable="false" />
+						</xsd:sequence>
+					</xsd:extension>
+        		</xsd:complexContent>
+        	</xsd:complexType>
+        	<xsd:complexType name="EventType_Status">
+        		<xsd:complexContent>
+	        		<xsd:extension base="EventType">
+		        		<xsd:sequence>
+		 	      			<xsd:element name="state" type="wsba:StateType"  nillable="false"/>
+		 	      		</xsd:sequence>
+					</xsd:extension>
+        		</xsd:complexContent>
+        	</xsd:complexType>
+        	<xsd:complexType name="EventType_Fault">
+        		<xsd:complexContent>
+	        		<xsd:extension base="EventType">
+		        		<xsd:sequence>
+		       				<xsd:element ref="wsba:Fault" />
+		        		</xsd:sequence>
+					</xsd:extension>
+        		</xsd:complexContent>
+        	</xsd:complexType>
+        </xsd:schema>
+    </wsdl:types>
+	<wsdl:message name="doTestRegisterOperationRequest">
+		<wsdl:part name="params" element="wscoor:Register"/>
+<!-- 		<wsdl:part name="protocolIdentifier" type="xs:string"/>
+		<wsdl:part name="registrationServiceEndpoint" type="wsa:EndpointReferenceType"/> -->
+	</wsdl:message>
+	<wsdl:message name="doTestRegisterOperationResponse">
+		<wsdl:part name="doTestRegisterResponse" type="TestRegisterResponseType"/>
+	</wsdl:message>
+	<wsdl:message name="doTestCompletedOperationRequest">
+		<wsdl:part name="doTestCompletedOperation" type="TestCompletedRequestType"/>
+	</wsdl:message>
+	<wsdl:message name="doTestCompletedOperationResponse">
+		<wsdl:part name="output" type="xs:boolean"/>
+	</wsdl:message>
+	<wsdl:message name="doTestFaultOperationRequest">
+		<wsdl:part name="doTestFaultOperation" type="TestFaultRequestType"/>
+	</wsdl:message>
+	<wsdl:message name="doTestFaultOperationResponse">
+		<wsdl:part name="output" type="xs:boolean"/>
+	</wsdl:message>
+	<wsdl:message name="doTestCompensatedOperationRequest">
+		<wsdl:part name="doTestCompensatedOperation" type="TestCompensatedRequestType"/>
+	</wsdl:message>
+	<wsdl:message name="doTestCompensatedOperationResponse">
+		<wsdl:part name="output" type="xs:boolean"/>
+	</wsdl:message>
+	<wsdl:message name="doTestClosedOperationRequest">
+		<wsdl:part  name="doTestClosedOperation" type="TestClosedRequestType"/>
+	</wsdl:message>
+	<wsdl:message name="doTestClosedOperationResponse">
+		<wsdl:part name="output" type="xs:boolean"/>
+	</wsdl:message>
+	<wsdl:message name="doTestCanceledOperationRequest">
+		<wsdl:part  name="doTestCanceledOperation" type="TestCanceledRequestType"/>
+	</wsdl:message>
+	<wsdl:message name="doTestCanceledOperationResponse">
+		<wsdl:part name="output" type="xs:boolean"/>
+	</wsdl:message>
+	<wsdl:message name="doTestExitOperationRequest">
+		<wsdl:part name="doTestExitOperation" type="TestExitRequestType"/>
+	</wsdl:message>
+	<wsdl:message name="doTestExitOperationResponse">
+		<wsdl:part name="output" type="xs:boolean"/>
+	</wsdl:message>
+	<wsdl:message name="doTestGetStatusOperationRequest">
+		<wsdl:part  name="doTestGetStatusOperation" type="TestGetStatusRequestType"/>
+	</wsdl:message>
+	<wsdl:message name="doTestGetStatusOperationResponse">
+		<wsdl:part name="output" type="xs:boolean"/>
+	</wsdl:message>
+	<wsdl:message name="doTestStatusOperationRequest">
+		<wsdl:part  name="doTestStatusOperation" type="TestStatusRequestType"/>
+	</wsdl:message>
+	<wsdl:message name="doTestStatusOperationResponse">
+		<wsdl:part name="output" type="xs:boolean"/>
+	</wsdl:message>
+	<wsdl:message name="closeOperationRequest">
+		<wsdl:part name="closeOperation" element="wsba:Close"/>
+	</wsdl:message>
+	<wsdl:message name="closeOperationResponse">
+	</wsdl:message>
+	<wsdl:message name="cancelOperationRequest">
+		<wsdl:part name="cancelOperation" element="wsba:Cancel"/>
+	</wsdl:message>
+	<wsdl:message name="cancelOperationResponse">
+	</wsdl:message>
+	<wsdl:message name="compensateOperationRequest">
+		<wsdl:part name="compensateOperation" element="wsba:Compensate"/>
+	</wsdl:message>
+	<wsdl:message name="compensateOperationResponse">
+	</wsdl:message>
+	<wsdl:message name="completeOperationRequest">
+		<wsdl:part name="completeOperation" element="wsba:Complete" />
+	</wsdl:message>
+	<wsdl:message name="completeOperationResponse">
+	</wsdl:message>
+	<wsdl:message name="faultedOperationRequest">
+		<wsdl:part name="param" element="wsba:Faulted"/>
+	</wsdl:message>
+	<wsdl:message name="faultedOperationResponse">
+	</wsdl:message>
+	<wsdl:message name="exitedOperationRequest">
+		<wsdl:part name="param" element="wsba:Exited"/>
+	</wsdl:message>
+	<wsdl:message name="exitedOperationResponse">
+	</wsdl:message>
+	<wsdl:message name="getStatusOperationRequest">
+		<wsdl:part name="param" element="wsba:GetStatus"/>
+	</wsdl:message>
+	<wsdl:message name="getStatusOperationResponse">
+	</wsdl:message>
+	<wsdl:message name="statusOperationRequest">
+		<wsdl:part name="param" element="wsba:Status"/>
+	</wsdl:message>
+	<wsdl:message name="statusOperationResponse">
+	</wsdl:message>
+	<wsdl:message name="GetEventsOperationRequest">
+		<wsdl:part name="GetEventsOperation" type="GetEventsRequestType"/>
+	</wsdl:message>
+	<wsdl:message name="GetEventsOperationResponse">
+		<wsdl:part name="output" type="GetEventsResponseType"/>
+	</wsdl:message>
+	<wsdl:message name="GetStatesOperationRequest">
+		<wsdl:part name="GetStatesOperation" type="GetStatesRequestType"/>
+	</wsdl:message>
+	<wsdl:message name="GetStatesOperationResponse">
+		<wsdl:part name="output" type="GetStatesResponseType"/>
+	</wsdl:message>
+	<wsdl:portType name="TellMeWhatToDoDemoServicePortType">
+		<wsdl:operation name="doTestRegisterOperation">
+			<wsdl:input message="doTestRegisterOperationRequest"/>
+			<wsdl:output message="doTestRegisterOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="doTestCompletedOperation">
+			<wsdl:input message="doTestCompletedOperationRequest"/>
+			<wsdl:output message="doTestCompletedOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="doTestFaultOperation">
+			<wsdl:input message="doTestFaultOperationRequest"/>
+			<wsdl:output message="doTestFaultOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="doTestCompensatedOperation">
+			<wsdl:input message="doTestCompensatedOperationRequest"/>
+			<wsdl:output message="doTestCompensatedOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="doTestClosedOperation">
+			<wsdl:input message="doTestClosedOperationRequest"/>
+			<wsdl:output message="doTestClosedOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="doTestCanceledOperation">
+			<wsdl:input message="doTestCanceledOperationRequest"/>
+			<wsdl:output message="doTestCanceledOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="doTestExitOperation">
+			<wsdl:input message="doTestExitOperationRequest"/>
+			<wsdl:output message="doTestExitOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="doTestGetStatusOperation">
+			<wsdl:input message="doTestGetStatusOperationRequest"/>
+			<wsdl:output message="doTestGetStatusOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="doTestStatusOperation">
+			<wsdl:input message="doTestStatusOperationRequest"/>
+			<wsdl:output message="doTestStatusOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="closeOperation">
+			<wsdl:input message="closeOperationRequest"/>
+			<wsdl:output message="closeOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="cancelOperation">
+			<wsdl:input message="cancelOperationRequest"/>
+			<wsdl:output message="cancelOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="compensateOperation">
+			<wsdl:input message="compensateOperationRequest"/>
+			<wsdl:output message="compensateOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="completeOperation">
+			<wsdl:input message="completeOperationRequest"/>
+			<wsdl:output message="completeOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="faultedOperation">
+			<wsdl:input message="faultedOperationRequest"/>
+			<wsdl:output message="faultedOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="exitedOperation">
+			<wsdl:input message="exitedOperationRequest"/>
+			<wsdl:output message="exitedOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="getStatusOperation">
+			<wsdl:input message="getStatusOperationRequest"/>
+			<wsdl:output message="getStatusOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="statusOperation">
+			<wsdl:input message="statusOperationRequest"/>
+			<wsdl:output message="statusOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetEventsOperation">
+			<wsdl:input message="GetEventsOperationRequest"/>
+			<wsdl:output message="GetEventsOperationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetStatesOperation">
+			<wsdl:input message="GetStatesOperationRequest"/>
+			<wsdl:output message="GetStatesOperationResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="TellMeWhatToDoDemoServiceSoapBinding"
+								type="TellMeWhatToDoDemoServicePortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="doTestRegisterOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/doTestRegisterOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestRegisterOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestRegisterOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="doTestCompletedOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/doTestCompletedOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestCompletedOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestCompletedOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="doTestFaultOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/doTestFaultOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestFaultOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestFaultOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="doTestCompensatedOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/doTestCompensatedOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestCompensatedOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestCompensatedOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="doTestClosedOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/doTestClosedOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestClosedOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestClosedOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="doTestCanceledOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/doTestCanceledOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestCanceledOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestCanceledOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="doTestExitOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/doTestExitOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestExitOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestExitOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="doTestGetStatusOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/doTestGetStatusOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestGetStatusOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestGetStatusOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="doTestStatusOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/doTestStatusOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestStatusOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="doTestStatusOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="closeOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/closeOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="closeOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="closeOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="cancelOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/cancelOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="cancelOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="cancelOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="compensateOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/compensateOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="compensateOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="compensateOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="completeOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/completeOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="completeOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="completeOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="faultedOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/faultedOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="faultedOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="faultedOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="exitedOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/exitedOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="exitedOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="exitedOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="getStatusOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/getStatusOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="getStatusOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="getStatusOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="statusOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/statusOperation"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="statusOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="statusOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetStatesOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/GetStates"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="GetStatesOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="GetStatesOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetEventsOperation">
+			<soap:operation soapAction="urn:ba.test.kandula.apache.org/GetEvents"/>
+			<wsdl:input>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="GetEventsOperationRequest" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body namespace="urn:ba.test.kandula.apache.org" parts="GetEventsOperationResponse" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="TellMeWhatToDoDemoServiceS">
+		<wsdl:port binding="TellMeWhatToDoDemoServiceSoapBinding" name="TellMeWhatToDoDemoServicePort">
+			<soap:address location="http://localhost:8181/axis/services/TellMeWhatToDoDemoService"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
