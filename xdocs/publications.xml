@@ -18,7 +18,7 @@
 				<b>"The Web Services–BusinessActivity–Initiator (WS-BA–I) Protocol: an
 Extension to the Web Services–BusinessActivity Specification"</b>, March 2007.<br />
 				Presented at the <a href="http://conferences.computer.org/icws/2007/">IEEE Int'l. Conference on Web Services 2007</a>,
-				<a href="http://stud4.tuwien.ac.at/~e0125577/WS-BA-I/20070424/WS-BusinessActivity-Initiator---Paper.pdf">PDF available</a> from tuwien.ac.at.<br />
+				<a href="http://people.apache.org/~herven/WS-BusinessActivity-Initiator---Paper.pdf">PDF available</a><br />
 				<br />
 				<small>WS-BA-I enables the use of WS-BusinessActivity in a clear three-tier architecture. The autors provided
 					implementations of WS-BA and WS-BA-I to the Kandula project, which was also the first implemenation
