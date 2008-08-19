@@ -28,14 +28,12 @@ import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.transport.http.SimpleHTTPServer;
 import org.apache.kandula.initiator.TransactionManager;
-import org.apache.kandula.integration.xsd.CreditOperation;
-import org.apache.kandula.integration.xsd.DebitOperation;
 
 public class CompletionCommitTest extends TestCase {
 
 	private String repository = "target/testing-repository";
 
-	private KandulaDemoServiceKandulaDemoServiceSOAP11Port_httpStub stub;
+	private KandulaDemoServiceStub stub;
 
 	private SimpleHTTPServer server;
 
@@ -49,7 +47,7 @@ public class CompletionCommitTest extends TestCase {
 		.createConfigurationContextFromFileSystem("target/initiator-repository", "target/initiator-repository"
 				+ "/axis2.xml");
 
-		stub = new KandulaDemoServiceKandulaDemoServiceSOAP11Port_httpStub(configurationContext, "http://localhost:8081/axis2/services/KandulaDemoService");
+		stub = new KandulaDemoServiceStub(configurationContext, "http://localhost:8081/axis2/services/KandulaDemoService");
 	}
 
 	protected void setUp() throws Exception {

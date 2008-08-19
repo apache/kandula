@@ -28,18 +28,19 @@ public class KandulaDemoService {
 
 	}
 
-	public OMElement creditOperation(OMElement element) {
-		element.build();
-		element.detach();
-//		System.out.println("done com");
-		return element;
+	public void creditOperation() {
+//		element.build();
+//		element.detach();
+////		System.out.println("done com");
+//		return element;
+		
 	}
 
 
-	public OMElement debitOperation(OMElement element) throws AxisFault {
-		element.build();
-		element.detach();
-//		MessageContext msgcts = MessageContext.getCurrentMessageContext();
+	public void debitOperation() throws AxisFault {
+//		element.build();
+//		element.detach();
+////		MessageContext msgcts = MessageContext.getCurrentMessageContext();
 //		String reqID = (String) msgcts.getProperty(AbstractContext.REQUESTER_ID);
 //		ParticipantContext participantContext = (ParticipantContext) StorageUtils
 //		.getContext(reqID);
@@ -50,7 +51,7 @@ public class KandulaDemoService {
 //			throw new AxisFault(e);
 //		}
 //		throw new AxisFault("thilina");
-		return element;
+//		return element;
 	}
 
 }

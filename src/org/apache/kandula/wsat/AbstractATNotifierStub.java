@@ -17,6 +17,7 @@
 package org.apache.kandula.wsat;
 
 import java.io.IOException;
+import java.util.Random;
 
 import org.apache.axiom.om.OMAbstractFactory;
 import org.apache.axiom.om.OMElement;
@@ -27,6 +28,7 @@ import org.apache.axis2.AxisFault;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
@@ -49,18 +51,25 @@ public abstract class AbstractATNotifierStub {
 	protected ServiceContext serviceContext;
 
 	protected EndpointReference toEPR;
+	
+	protected ServiceClient  _serviceClient;
 
+	//TODO: Review this with the latest axis2 changes
 	public AbstractATNotifierStub(ConfigurationContext configurationContext)
 			throws AbstractKandulaException {
-		this.service = new AxisService("annonService" + this.hashCode());
+
+		this.service = new AxisService("annonService" + new Random().nextInt());
 		try {
-			configurationContext.getAxisConfiguration().addService(service);
+		//	configurationContext.getAxisConfiguration().addService(service);
+		
+	    _serviceClient = new org.apache.axis2.client.ServiceClient(configurationContext,service);
 		} catch (AxisFault e1) {
 			throw new KandulaGeneralException(e1);
 		}
-		ServiceGroupContext sgc = new ServiceGroupContext(configurationContext,
-				(AxisServiceGroup) this.service.getParent());
-		this.serviceContext = new ServiceContext(service, sgc);
+//	        
+//		ServiceGroupContext sgc = new ServiceGroupContext(configurationContext,
+//				(AxisServiceGroup) this.service.getParent());
+//		this.serviceContext = new ServiceContext(service, sgc);
 	}
 
 	/**
@@ -83,9 +92,8 @@ public abstract class AbstractATNotifierStub {
 		try {
 			Options options = new Options();
 			messageContext = new MessageContext();
-			final OperationClient client = operations[opIndex].createClient(
-					serviceContext, options);
-
+			final OperationClient client = _serviceClient.createClient(operations[opIndex].getName());
+				
 			SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
 			SOAPEnvelope env = factory.getDefaultEnvelope();
 
@@ -107,6 +115,7 @@ public abstract class AbstractATNotifierStub {
 			// System.out.println(operations[opIndex]);
 			client.addMessageContext(messageContext);
 			/*
+			 * TODO: Fix the following
 			 * hacking till we get fire and forget corretly in Axis2
 			 */
 			Thread thread = new Thread(new Runnable() {

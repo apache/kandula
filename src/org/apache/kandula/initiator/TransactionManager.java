@@ -35,7 +35,7 @@ import org.apache.kandula.wsat.completion.CompletionCoordinatorPortTypeRawXMLStu
 import org.apache.kandula.wsat.completion.CompletionInitiatorServiceListener;
 import org.apache.kandula.wscoor.ActivationServiceStub;
 import org.apache.kandula.wscoor.RegistrationServiceStub;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type3;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type0;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContext;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponse;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponseType;
@@ -179,7 +179,7 @@ public class TransactionManager {
 				.CreateCoordinationContextOperation(context);
 		CreateCoordinationContextResponseType createCoordinationContextResponse = response
 				.getCreateCoordinationContextResponse();
-		CoordinationContext_type3 coordinationContextType = createCoordinationContextResponse.getCoordinationContext();
+		CoordinationContext_type0 coordinationContextType = createCoordinationContextResponse.getCoordinationContext();
 		coordinationContextType.setExtraAttributes(null);
 		CoordinationContext coordinationContext = new ADBCoordinationContext(
 				coordinationContextType);

@@ -6,30 +6,22 @@
  */
 package org.apache.kandula.wscoor;
 
-import java.util.Map;
-
-import org.apache.axiom.om.OMElement;
 import org.apache.axis2.AxisFault;
 import org.apache.axis2.context.ServiceContext;
 import org.apache.axis2.databinding.types.URI;
 import org.apache.axis2.databinding.types.UnsignedInt;
 import org.apache.axis2.databinding.types.URI.MalformedURIException;
-import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.coordinator.Coordinator;
 import org.apache.kandula.faults.AbstractKandulaException;
-import org.apache.kandula.storage.StorageUtils;
 import org.apache.kandula.utility.EndpointReferenceFactory;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type3;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type0;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponse;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextResponseType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.CreateCoordinationContextType;
 import org.oasis_open.docs.ws_tx.wscoor._2006._06.Expires_type0;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.Identifier_type1;
-import org.xmlsoap.schemas.ws._2004._08.addressing.AttributedURI;
-import org.xmlsoap.schemas.ws._2004._08.addressing.EndpointReferenceType;
-import org.xmlsoap.schemas.ws._2004._08.addressing.ReferenceParametersType;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.Identifier_type0;
 
 /**
  * ActivationServiceSkeleton java skeleton for the axisService
@@ -74,7 +66,7 @@ public class ActivationServiceSkeleton {
 			CoordinationContext coordinationContext = context.getCoordinationContext();
 
 			// filling the data bounded coordination context
-			CoordinationContext_type3 coordinationContext_type3 = new CoordinationContext_type3();
+			CoordinationContext_type0 coordinationContext_type3 = new CoordinationContext_type0();
 			coordinationContext_type3.setCoordinationType(new URI(coordinationContext
 					.getCoordinationType()));
 			Expires_type0 expires_type0 = new Expires_type0();
@@ -84,7 +76,7 @@ public class ActivationServiceSkeleton {
 			coordinationContext_type3.setRegistrationService(EndpointReferenceFactory
 					.getEPRTypeFromEPR(coordinationContext.getRegistrationService()));
 
-			Identifier_type1 identifier_type1 = new Identifier_type1();
+			Identifier_type0 identifier_type1 = new Identifier_type0();
 			identifier_type1.setAnyURI(new URI("http", "thilina"));
 			coordinationContext_type3.setIdentifier(identifier_type1);
 

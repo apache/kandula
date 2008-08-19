@@ -28,14 +28,13 @@ import org.apache.axis2.addressing.AddressingConstants;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.axis2.client.OperationClient;
 import org.apache.axis2.client.Options;
+import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.ConfigurationContextFactory;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.axis2.description.OutInAxisOperation;
 
 /**
@@ -52,6 +51,8 @@ public class TestServiceStub extends org.apache.axis2.client.Stub {
 	private ServiceContext serviceContext;
 
 	private EndpointReference toEPR;
+	
+	private ServiceClient _serviceClient;
 
 	private static org.apache.axis2.description.AxisOperation[] operations;
 	{// creating the Service
@@ -78,10 +79,7 @@ public class TestServiceStub extends org.apache.axis2.client.Stub {
 				.createConfigurationContextFromFileSystem(axis2Home, axis2Home
 						+ "/axis2.xml");
 		configurationContext.getAxisConfiguration().addService(_service);
-		ServiceGroupContext sgc = new ServiceGroupContext(
-				this.configurationContext, (AxisServiceGroup) _service
-						.getParent());
-		this.serviceContext = new ServiceContext(_service, sgc);
+	    _serviceClient = new org.apache.axis2.client.ServiceClient(configurationContext,_service);
 
 	}
 

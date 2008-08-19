@@ -20,7 +20,7 @@ import org.apache.axiom.om.OMElement;
 import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.context.impl.ADBCoordinationContext;
 import org.apache.kandula.context.impl.SimpleCoordinationContext;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type3;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type0;
 
 public interface CoordinationContext {
 	public static final class Factory {
@@ -34,7 +34,7 @@ public interface CoordinationContext {
 					epr);
 		}
 		
-		public static CoordinationContext newContext(CoordinationContext_type3 context_type3) {
+		public static CoordinationContext newContext(CoordinationContext_type0 context_type3) {
 			return new ADBCoordinationContext(context_type3);
 		}
 
@@ -60,5 +60,5 @@ public interface CoordinationContext {
 
 	public abstract void setRegistrationService(EndpointReference value);
 
-	public abstract OMElement toOM();
+	public abstract OMElement toOM() throws Exception;
 }

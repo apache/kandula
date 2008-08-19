@@ -33,7 +33,7 @@ import org.apache.kandula.Constants;
 import org.apache.kandula.context.AbstractContext;
 import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.faults.AbstractKandulaException;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type3;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type0;
 import org.xmlsoap.schemas.ws._2004._08.addressing.ReferenceParametersType;
 
 public class TransactionOutHandler extends AbstractHandler {
@@ -41,24 +41,28 @@ public class TransactionOutHandler extends AbstractHandler {
 	/**
 	 * Field log
 	 */
-	private static final Log log = LogFactory.getLog(TransactionOutHandler.class);
+	private static final Log log = LogFactory
+			.getLog(TransactionOutHandler.class);
 
 	private static final long serialVersionUID = 4133392345837905499L;
 
-	public InvocationResponse invoke(MessageContext msgContext) throws AxisFault {
+	public InvocationResponse invoke(MessageContext msgContext)
+			throws AxisFault {
 
 		String wsaAction = msgContext.getWSAAction();
 		if (!(Constants.WS_COOR_CREATE_COORDINATIONCONTEXT.equals(wsaAction))
 				&& !(Constants.WS_COOR_REGISTER.equals(wsaAction))
-				&& !(Constants.WS_AT_COMMIT.equals(wsaAction)) && !(Constants.WS_AT_ROLLBACK.equals(wsaAction))) {
+				&& !(Constants.WS_AT_COMMIT.equals(wsaAction))
+				&& !(Constants.WS_AT_ROLLBACK.equals(wsaAction))) {
 			Object context = null;
 			try {
 				context = TransactionManager.getTransaction();
 			} catch (AbstractKandulaException e) {
-				throw  AxisFault.makeFault(e);
+				throw AxisFault.makeFault(e);
 			}
 			if (context == null) {
-				context = msgContext.getProperty(Constants.Configuration.TRANSACTION_CONTEXT);
+				context = msgContext
+						.getProperty(Constants.Configuration.TRANSACTION_CONTEXT);
 			}
 			// We let the message to pass through if no transaction is found in
 			// the thread or in msgContext
@@ -67,39 +71,54 @@ public class TransactionOutHandler extends AbstractHandler {
 						.getProperty(Constants.Configuration.PARTICIPANT_IDENTIFIER);
 				AbstractContext txContext = (AbstractContext) context;
 				SOAPHeader soapHeader = msgContext.getEnvelope().getHeader();
-				CoordinationContext coorContext = txContext.getCoordinationContext();
-	
-				//ws-ba users can set a identifier for the participants
-				if (registrationID != null) {
-					CoordinationContext_type3 context_type32 = null;
-					ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-					try {
+				CoordinationContext coorContext = txContext
+						.getCoordinationContext();
+
+				try {
+					// ws-ba users can set a identifier for the participants
+					if (registrationID != null) {
+						CoordinationContext_type0 context_type32 = null;
+						ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
 						coorContext.toOM().serialize(byteArrayOutputStream);
-						context_type32 = CoordinationContext_type3.Factory.parse(StAXUtils
-								.createXMLStreamReader(new ByteArrayInputStream(
-										byteArrayOutputStream.toByteArray())));
+						context_type32 = CoordinationContext_type0.Factory
+								.parse(StAXUtils
+										.createXMLStreamReader(new ByteArrayInputStream(
+												byteArrayOutputStream
+														.toByteArray())));
 						context_type32.setExtraAttributes(null);
-					} catch (Exception e) {
-						throw AxisFault.makeFault(e);
+
+						ReferenceParametersType referenceParametersType = context_type32
+								.getRegistrationService()
+								.getReferenceParameters();
+						OMElement omElement = soapHeader.getOMFactory()
+								.createOMElement(
+										Constants.PARTICIPANT_ID_PARAMETER,
+										null);
+						omElement.setText((String) registrationID);
+						referenceParametersType.addExtraElement(omElement);
+						soapHeader.addChild(context_type32.getOMElement(
+								new QName(Constants.WS_COOR,
+										"CoordinationContext"), soapHeader
+										.getOMFactory()));
+
+						log.info("Transaction Context found for message ID"
+								+ msgContext.getMessageID()
+								+ ". Participant ID :" + registrationID);
+
+					} else {
+						soapHeader.addChild(coorContext.toOM());
+						log.info("Transaction Context found for message ID"
+								+ msgContext.getMessageID());
 					}
-					ReferenceParametersType referenceParametersType = context_type32
-							.getRegistrationService().getReferenceParameters();
-					OMElement omElement = soapHeader.getOMFactory().createOMElement(
-							Constants.PARTICIPANT_ID_PARAMETER, null);
-					omElement.setText((String) registrationID);
-					referenceParametersType.addExtraElement(omElement);
-					soapHeader.addChild(context_type32.getOMElement(new QName(Constants.WS_COOR,
-							"CoordinationContext"), soapHeader.getOMFactory()));
-					log.info("Transaction Context found for message ID" + msgContext.getMessageID()
-							+ ". Participant ID :" + registrationID);
-				} else {
-					soapHeader.addChild(coorContext.toOM());
-					log.info("Transaction Context found for message ID" + msgContext.getMessageID());
+				} catch (Exception e) {
+					throw AxisFault.makeFault(e);
 				}
 
 			} else {
-				log.debug("Transaction Handler Engaged. "
-						+ "But no transaction information was found in the thread.");
+				log
+						.debug("Transaction Handler Engaged. "
+								+ "But no transaction information was found in the thread.");
 			}
 		}
 		return InvocationResponse.CONTINUE;

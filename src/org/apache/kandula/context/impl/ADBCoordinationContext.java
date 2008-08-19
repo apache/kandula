@@ -26,12 +26,12 @@ import org.apache.axis2.addressing.EndpointReference;
 import org.apache.kandula.Constants;
 import org.apache.kandula.context.CoordinationContext;
 import org.apache.kandula.utility.EndpointReferenceFactory;
-import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type3;
+import org.oasis_open.docs.ws_tx.wscoor._2006._06.CoordinationContext_type0;
 
 public class ADBCoordinationContext implements CoordinationContext {
 
-	CoordinationContext_type3 context_type3;
-	public ADBCoordinationContext(CoordinationContext_type3 context_type3) {
+	CoordinationContext_type0 context_type3;
+	public ADBCoordinationContext(CoordinationContext_type0 context_type3) {
 		super();
 		this.context_type3 = context_type3;
 	}
@@ -69,7 +69,7 @@ public class ADBCoordinationContext implements CoordinationContext {
 		// TODO Auto-generated method stub
 		
 	}
-	public OMElement toOM() {
+	public OMElement toOM() throws Exception {
 		return context_type3.getOMElement(new QName(Constants.WS_COOR,"CoordinationContext"),
                 org.apache.axiom.om.OMAbstractFactory.getOMFactory());
 	}
