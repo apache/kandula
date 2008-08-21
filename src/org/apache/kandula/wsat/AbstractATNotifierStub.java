@@ -32,10 +32,8 @@ import org.apache.axis2.client.ServiceClient;
 import org.apache.axis2.context.ConfigurationContext;
 import org.apache.axis2.context.MessageContext;
 import org.apache.axis2.context.ServiceContext;
-import org.apache.axis2.context.ServiceGroupContext;
 import org.apache.axis2.description.AxisOperation;
 import org.apache.axis2.description.AxisService;
-import org.apache.axis2.description.AxisServiceGroup;
 import org.apache.kandula.Constants;
 import org.apache.kandula.faults.AbstractKandulaException;
 import org.apache.kandula.faults.KandulaGeneralException;
@@ -51,25 +49,20 @@ public abstract class AbstractATNotifierStub {
 	protected ServiceContext serviceContext;
 
 	protected EndpointReference toEPR;
-	
-	protected ServiceClient  _serviceClient;
 
-	//TODO: Review this with the latest axis2 changes
+	protected ServiceClient _serviceClient;
+
+	// TODO: Review this with the latest axis2 changes
 	public AbstractATNotifierStub(ConfigurationContext configurationContext)
 			throws AbstractKandulaException {
 
 		this.service = new AxisService("annonService" + new Random().nextInt());
 		try {
-		//	configurationContext.getAxisConfiguration().addService(service);
-		
-	    _serviceClient = new org.apache.axis2.client.ServiceClient(configurationContext,service);
+			_serviceClient = new org.apache.axis2.client.ServiceClient(
+					configurationContext, service);
 		} catch (AxisFault e1) {
 			throw new KandulaGeneralException(e1);
 		}
-//	        
-//		ServiceGroupContext sgc = new ServiceGroupContext(configurationContext,
-//				(AxisServiceGroup) this.service.getParent());
-//		this.serviceContext = new ServiceContext(service, sgc);
 	}
 
 	/**
@@ -90,10 +83,11 @@ public abstract class AbstractATNotifierStub {
 			EndpointReference replyToEPR) throws AbstractKandulaException {
 		MessageContext messageContext;
 		try {
-			Options options = new Options();
 			messageContext = new MessageContext();
-			final OperationClient client = _serviceClient.createClient(operations[opIndex].getName());
-				
+			final OperationClient client = _serviceClient
+					.createClient(operations[opIndex].getName());
+			Options options = client.getOptions();
+
 			SOAPFactory factory = OMAbstractFactory.getSOAP12Factory();
 			SOAPEnvelope env = factory.getDefaultEnvelope();
 
@@ -111,12 +105,10 @@ public abstract class AbstractATNotifierStub {
 						"http://www.w3.org/2005/08/addressing/none"));
 			}
 			options.setAction(action);
-			// options.setTranportOut(org.apache.axis2.Constants.TRANSPORT_HTTP);
-			// System.out.println(operations[opIndex]);
 			client.addMessageContext(messageContext);
 			/*
-			 * TODO: Fix the following
-			 * hacking till we get fire and forget corretly in Axis2
+			 * TODO: Fix the following hacking till we get fire and forget
+			 * corretly in Axis2
 			 */
 			Thread thread = new Thread(new Runnable() {
 				public void run() {

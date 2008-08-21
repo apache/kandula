@@ -45,13 +45,13 @@ public class CompletionCoordinatorPortTypeRawXMLStub extends
 		operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
 				"commitOperation"));
 		operations[0] = operation;
-//		service.addOperation(operation);
+		service.addOperation(operation);
 
 		operation = new OutOnlyAxisOperation();
 		operation.setName(new javax.xml.namespace.QName(Constants.WS_AT,
 				"rollbackOperation"));
 		operations[1] = operation;
-//		service.addOperation(operation);
+		service.addOperation(operation);
 	}
 
 	public void commitOperation() throws AbstractKandulaException {
